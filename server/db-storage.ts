@@ -274,7 +274,9 @@ export class DatabaseStorage implements IStorage {
     
     // Fetch users for the comments
     const userIds = comments.map(comment => comment.userId);
-    const usersList = await db.select().from(users).where(users.id.in(userIds));
+    const usersList = userIds.length > 0 
+      ? await db.select().from(users).where(sql`${users.id} IN (${userIds.join(',')})`)
+      : [];
     
     // Map users to comments
     const usersMap = new Map(usersList.map(user => [user.id, user]));
@@ -378,7 +380,9 @@ export class DatabaseStorage implements IStorage {
     
     // Fetch users for the reviews
     const userIds = reviews.map(review => review.userId);
-    const usersList = await db.select().from(users).where(users.id.in(userIds));
+    const usersList = userIds.length > 0 
+      ? await db.select().from(users).where(sql`${users.id} IN (${userIds.join(',')})`)
+      : [];
     
     // Map users to reviews
     const usersMap = new Map(usersList.map(user => [user.id, user]));
