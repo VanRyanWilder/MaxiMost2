@@ -1,9 +1,9 @@
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { db } from "./db";
 import {
   users, programs, tasks, userTasks, resources, metrics,
   forumPosts, forumComments, motivationalContent,
-  supplements, supplementReviews, supplementVotes,
+  supplements, supplementReviews, supplementVotes, reviewHelpfulVotes,
   bodyStats, bloodwork, sleepData, heartRateData,
   type User, type InsertUser,
   type Program, type InsertProgram,
@@ -17,6 +17,7 @@ import {
   type Supplement, type InsertSupplement,
   type SupplementReview, type InsertSupplementReview,
   type SupplementVote, type InsertSupplementVote,
+  type ReviewHelpfulVote, type InsertReviewHelpfulVote,
   type BodyStat, type InsertBodyStat,
   type Bloodwork, type InsertBloodwork,
   type SleepData, type InsertSleepData,
@@ -407,6 +408,51 @@ export class DatabaseStorage implements IStorage {
     return review;
   }
 
+  async updateSupplementReview(id: number, data: { rating: number, content: string | null }): Promise<SupplementReview | undefined> {
+    // Get the existing review to get the supplementId
+    const existingReview = await this.getSupplementReview(id);
+    if (!existingReview) return undefined;
+    
+    // Update the review
+    const [updatedReview] = await db
+      .update(supplementReviews)
+      .set({
+        rating: data.rating,
+        content: data.content,
+        updatedAt: new Date()
+      })
+      .where(eq(supplementReviews.id, id))
+      .returning();
+    
+    // Update the supplement statistics
+    if (updatedReview) {
+      await this.updateSupplementReviewStatistics(updatedReview.supplementId);
+    }
+    
+    return updatedReview;
+  }
+  
+  async deleteSupplementReview(id: number): Promise<void> {
+    // Get the existing review to get the supplementId
+    const existingReview = await this.getSupplementReview(id);
+    if (!existingReview) return;
+    
+    const supplementId = existingReview.supplementId;
+    
+    // Delete any helpful votes related to this review
+    await db
+      .delete(reviewHelpfulVotes)
+      .where(eq(reviewHelpfulVotes.reviewId, id));
+    
+    // Delete the review
+    await db
+      .delete(supplementReviews)
+      .where(eq(supplementReviews.id, id));
+    
+    // Update supplement statistics
+    await this.updateSupplementReviewStatistics(supplementId);
+  }
+  
   async updateSupplementReviewStatus(supplementId: number, totalReviews: number, averageRating: number): Promise<Supplement | undefined> {
     const [updated] = await db
       .update(supplements)
@@ -439,6 +485,89 @@ export class DatabaseStorage implements IStorage {
     
     // Update the supplement
     await this.updateSupplementReviewStatus(supplementId, totalReviews, averageRating);
+  }
+  
+  // Review Helpful Votes methods
+  async getUserReviewHelpfulVotes(userId: number): Promise<ReviewHelpfulVote[]> {
+    return await db
+      .select()
+      .from(reviewHelpfulVotes)
+      .where(eq(reviewHelpfulVotes.userId, userId));
+  }
+  
+  async getReviewHelpfulVote(reviewId: number, userId: number): Promise<ReviewHelpfulVote | undefined> {
+    const [vote] = await db
+      .select()
+      .from(reviewHelpfulVotes)
+      .where(and(
+        eq(reviewHelpfulVotes.reviewId, reviewId),
+        eq(reviewHelpfulVotes.userId, userId)
+      ));
+    return vote;
+  }
+  
+  async createReviewHelpfulVote(vote: InsertReviewHelpfulVote): Promise<ReviewHelpfulVote> {
+    const [newVote] = await db
+      .insert(reviewHelpfulVotes)
+      .values(vote)
+      .returning();
+    
+    // Update the helpful/unhelpful counts on the review
+    await this.updateReviewHelpfulCounts(newVote.reviewId);
+    
+    return newVote;
+  }
+  
+  async updateReviewHelpfulVote(reviewId: number, userId: number, isHelpful: boolean): Promise<ReviewHelpfulVote | undefined> {
+    const [updatedVote] = await db
+      .update(reviewHelpfulVotes)
+      .set({ isHelpful })
+      .where(and(
+        eq(reviewHelpfulVotes.reviewId, reviewId),
+        eq(reviewHelpfulVotes.userId, userId)
+      ))
+      .returning();
+    
+    // Update the helpful/unhelpful counts on the review
+    if (updatedVote) {
+      await this.updateReviewHelpfulCounts(reviewId);
+    }
+    
+    return updatedVote;
+  }
+  
+  // Helper method to update helpful/unhelpful vote counts
+  private async updateReviewHelpfulCounts(reviewId: number): Promise<void> {
+    // Count helpful votes
+    const helpfulResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(reviewHelpfulVotes)
+      .where(and(
+        eq(reviewHelpfulVotes.reviewId, reviewId),
+        eq(reviewHelpfulVotes.isHelpful, true)
+      ));
+    
+    // Count unhelpful votes
+    const unhelpfulResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(reviewHelpfulVotes)
+      .where(and(
+        eq(reviewHelpfulVotes.reviewId, reviewId),
+        eq(reviewHelpfulVotes.isHelpful, false)
+      ));
+    
+    const helpfulVotes = helpfulResult[0]?.count || 0;
+    const unhelpfulVotes = unhelpfulResult[0]?.count || 0;
+    
+    // Update the review
+    await db
+      .update(supplementReviews)
+      .set({
+        helpfulVotes,
+        unhelpfulVotes,
+        updatedAt: new Date()
+      })
+      .where(eq(supplementReviews.id, reviewId));
   }
 
   // Supplement Vote methods

@@ -351,6 +351,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  app.patch("/api/supplements/reviews/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid review ID" });
+      }
+      
+      const { rating, content } = req.body;
+      if (typeof rating !== 'number' || rating < 1 || rating > 5) {
+        return res.status(400).json({ message: "Rating must be between 1 and 5" });
+      }
+      
+      const existingReview = await storage.getSupplementReview(id);
+      if (!existingReview) {
+        return res.status(404).json({ message: "Review not found" });
+      }
+      
+      const updatedReview = await storage.updateSupplementReview(id, { rating, content });
+      res.json(updatedReview);
+    } catch (error) {
+      console.error("Update review error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  app.delete("/api/supplements/reviews/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid review ID" });
+      }
+      
+      const existingReview = await storage.getSupplementReview(id);
+      if (!existingReview) {
+        return res.status(404).json({ message: "Review not found" });
+      }
+      
+      await storage.deleteSupplementReview(id);
+      res.status(200).json({ message: "Review deleted successfully" });
+    } catch (error) {
+      console.error("Delete review error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Review helpful votes routes
+  app.get("/api/supplements/reviews/helpful/:userId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const votes = await storage.getUserReviewHelpfulVotes(userId);
+      res.json(votes);
+    } catch (error) {
+      console.error("Get helpful votes error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  app.post("/api/supplements/reviews/helpful", async (req, res) => {
+    try {
+      const voteData = insertReviewHelpfulVoteSchema.parse(req.body);
+      
+      // Check if user already voted on this review
+      const existingVote = await storage.getReviewHelpfulVote(voteData.reviewId, voteData.userId);
+      
+      let vote;
+      if (existingVote) {
+        // Update existing vote if the helpful status is different
+        if (existingVote.isHelpful !== voteData.isHelpful) {
+          vote = await storage.updateReviewHelpfulVote(voteData.reviewId, voteData.userId, voteData.isHelpful);
+        } else {
+          vote = existingVote;
+        }
+      } else {
+        // Create new vote
+        vote = await storage.createReviewHelpfulVote(voteData);
+      }
+      
+      res.status(201).json(vote);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      console.error("Create helpful vote error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
   // Supplement Votes routes
   app.post("/api/supplements/votes", async (req, res) => {
     try {
