@@ -1206,7 +1206,7 @@ export function HighRoiActivities() {
         
         {/* Morning Routine Dialog - Simplified with hover */}
         <Dialog open={morningRoutineDialogOpen} onOpenChange={setMorningRoutineDialogOpen}>
-          <DialogContent className="sm:max-w-[450px]">
+          <DialogContent className="sm:max-w-[450px] max-h-[85vh] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>Expert Morning Routines</DialogTitle>
               <DialogDescription>
@@ -1214,7 +1214,7 @@ export function HighRoiActivities() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="my-4">
+            <div className="my-4 flex-1 overflow-y-auto pr-1">
               <div className="grid grid-cols-1 gap-3">
                 {morningRoutines.map(routine => (
                   <div 
@@ -1280,7 +1280,7 @@ export function HighRoiActivities() {
 
         {/* Activity Plan Dialog */}
         <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] h-[85vh] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>Customize Your Daily Plan</DialogTitle>
               <DialogDescription>
@@ -1300,7 +1300,7 @@ export function HighRoiActivities() {
               </div>
             </div>
             
-            <div>
+            <div className="flex-1 overflow-y-auto pr-1">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="font-medium">Selected Activities</h4>
                 <span className="text-xs text-muted-foreground">{selectedActivities.length} selected</span>
@@ -1527,7 +1527,7 @@ export function HighRoiActivities() {
               )}
             </div>
             
-            <DialogFooter>
+            <DialogFooter className="mt-2 border-t pt-4 sticky bottom-0 bg-background">
               <Button variant="outline" onClick={() => setPlanDialogOpen(false)}>
                 Cancel
               </Button>
