@@ -81,7 +81,7 @@ export default function SupplementsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [tierFilter, setTierFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"browse" | "top10">("browse");
+  const [activeTab, setActiveTab] = useState<"browse" | "top10">("top10");
 
   // Top 10 supplements data with expert insights
   const topSupplements: TopSupplement[] = [
@@ -503,16 +503,16 @@ export default function SupplementsPage() {
   });
 
   return (
-    <PageContainer title="Supplements - Maximum ROI for Health & Performance">
+    <PageContainer title="Top 10 Supplements - Maximum ROI for Health & Performance">
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "browse" | "top10")}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="browse" className="text-base">
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Browse All
-          </TabsTrigger>
           <TabsTrigger value="top10" className="text-base">
             <Trophy className="h-4 w-4 mr-2" />
             Top 10 Expert Picks
+          </TabsTrigger>
+          <TabsTrigger value="browse" className="text-base">
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Browse All
           </TabsTrigger>
         </TabsList>
           

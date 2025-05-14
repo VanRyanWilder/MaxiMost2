@@ -37,9 +37,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
     { 
       path: "/supplements", 
-      name: "Supplements", 
-      icon: <Pill className="w-5 h-5" />,
-      description: "Science-backed supplements with expert top 10 list"
+      name: "Top 10 Supplements", 
+      icon: <Trophy className="w-5 h-5 text-amber-500" />,
+      description: "Expert-recommended supplements with highest ROI"
     },
     { 
       path: "/experts", 
