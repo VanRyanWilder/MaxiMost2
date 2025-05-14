@@ -57,9 +57,6 @@ type Completion = {
   date: Date;
 };
 
-// The useHabitTracker approach would be preferable in a larger application,
-// but for simplicity and to avoid context-related errors, we'll use a simpler event-based approach
-
 export function StreakHabitTracker() {
   const [viewMode, setViewMode] = useState('calendar');
   const [weekOffset, setWeekOffset] = useState(0);
@@ -535,19 +532,22 @@ export function StreakHabitTracker() {
       
       {/* Add Habit Dialog */}
       <Dialog open={showAddHabitDialog} onOpenChange={setShowAddHabitDialog}>
-        <DialogContent className="sm:max-w-[500px]">
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            saveNewHabit();
-          }}>
-            <DialogHeader>
+        <DialogContent className="p-0 overflow-hidden">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              saveNewHabit();
+            }}
+            className="flex flex-col h-full"
+          >
+            <DialogHeader className="p-6 pb-2">
               <DialogTitle>Add New Habit</DialogTitle>
               <DialogDescription>
                 Create a custom habit to track. High-ROI activities produce the most results with minimal effort.
               </DialogDescription>
             </DialogHeader>
             
-            <div className="my-6 max-h-[60vh] overflow-y-auto pr-2 space-y-4">
+            <div className="overflow-y-auto px-6 py-4 space-y-4 max-h-[60vh]">
               <div>
                 <Label htmlFor="habit-title">Habit Title*</Label>
                 <Input 
@@ -707,33 +707,38 @@ export function StreakHabitTracker() {
               </div>
             </div>
             
-            <DialogFooter className="mt-4 gap-2">
-              <Button type="button" variant="outline" onClick={() => setShowAddHabitDialog(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                Add Habit
-              </Button>
-            </DialogFooter>
+            <div className="p-6 pt-3 mt-auto border-t">
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setShowAddHabitDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  Add Habit
+                </Button>
+              </div>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
       
       {/* Edit Habit Dialog */}
       <Dialog open={showEditHabitDialog} onOpenChange={setShowEditHabitDialog}>
-        <DialogContent className="sm:max-w-[500px]">
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            updateHabit();
-          }}>
-            <DialogHeader>
+        <DialogContent className="p-0 overflow-hidden">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateHabit();
+            }}
+            className="flex flex-col h-full"
+          >
+            <DialogHeader className="p-6 pb-2">
               <DialogTitle>Edit Habit</DialogTitle>
               <DialogDescription>
                 Update your habit details and tracking preferences
               </DialogDescription>
             </DialogHeader>
             
-            <div className="my-6 max-h-[60vh] overflow-y-auto pr-2 space-y-4">
+            <div className="overflow-y-auto px-6 py-4 space-y-4 max-h-[60vh]">
               <div>
                 <Label htmlFor="edit-habit-title">Habit Title*</Label>
                 <Input 
@@ -879,14 +884,16 @@ export function StreakHabitTracker() {
               </div>
             </div>
             
-            <DialogFooter className="mt-4 gap-2">
-              <Button type="button" variant="outline" onClick={() => setShowEditHabitDialog(false)}>
-                Cancel
-              </Button>
-              <Button type="submit">
-                Update Habit
-              </Button>
-            </DialogFooter>
+            <div className="p-6 pt-3 mt-auto border-t">
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setShowEditHabitDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  Update Habit
+                </Button>
+              </div>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
