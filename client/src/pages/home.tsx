@@ -23,8 +23,9 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="pt-6 flex justify-between items-center">
-          <div className="text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent">
-            BeastMode
+          <div className="text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent flex items-center gap-1">
+            Maximus Gains
+            <span className="text-xs bg-purple-700 px-1 py-0.5 rounded text-white align-top mt-2">ALPHA</span>
           </div>
           <div className="space-x-4">
             <Button variant="outline" onClick={() => setLocation("/login")}>
@@ -43,14 +44,25 @@ export default function Home() {
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-                <span className="block">Maximum results with</span>
+                <span className="block">Unlock your</span>
                 <span className="block bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent">
-                  minimum effort
+                  MAXIMUS Potential
                 </span>
               </h1>
               <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Evidence-based approach to health optimization through high-ROI activities backed by scientific research. Get the biggest returns on your health investment.
+                Focus only on the highest-impact habits that deliver exponential gains. Our evidence-based system helps you achieve maximum results with the least wasted effort.
               </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <span className="bg-indigo-900/40 text-indigo-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3" /> High-ROI Focus
+                </span>
+                <span className="bg-purple-900/40 text-purple-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                  <FileText className="h-3 w-3" /> Scientific Principles
+                </span>
+                <span className="bg-rose-900/40 text-rose-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                  <Percent className="h-3 w-3" /> Compound Gains
+                </span>
+              </div>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left">
                 <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
                   <Button 
