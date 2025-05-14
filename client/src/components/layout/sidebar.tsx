@@ -1,0 +1,142 @@
+import { cn } from "@/lib/utils";
+import { Link, useLocation } from "wouter";
+import { 
+  Home, 
+  CheckSquare, 
+  Dumbbell, 
+  Brain, 
+  Apple, 
+  BookOpen, 
+  Calendar, 
+  Settings, 
+  LogOut 
+} from "lucide-react";
+import { useUser } from "@/context/user-context";
+
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+  const [location] = useLocation();
+  const { user, userLoading } = useUser();
+
+  const navItems = [
+    { 
+      path: "/", 
+      name: "Dashboard", 
+      icon: <Home className="w-5 h-5" /> 
+    },
+    { 
+      path: "/tasks", 
+      name: "Daily Tasks", 
+      icon: <CheckSquare className="w-5 h-5" /> 
+    },
+    { 
+      path: "/workouts", 
+      name: "Workouts", 
+      icon: <Dumbbell className="w-5 h-5" /> 
+    },
+    { 
+      path: "/mind-spirit", 
+      name: "Mind & Spirit", 
+      icon: <Brain className="w-5 h-5" /> 
+    },
+    { 
+      path: "/nutrition", 
+      name: "Nutrition", 
+      icon: <Apple className="w-5 h-5" /> 
+    },
+    { 
+      path: "/resources", 
+      name: "Resources", 
+      icon: <BookOpen className="w-5 h-5" /> 
+    },
+    { 
+      path: "/programs", 
+      name: "Programs", 
+      icon: <Calendar className="w-5 h-5" /> 
+    }
+  ];
+
+  return (
+    <aside 
+      className={cn(
+        "w-64 bg-dark text-white fixed h-full overflow-y-auto transition-transform duration-300 ease-in-out z-30",
+        isOpen ? "transform-none" : "-translate-x-full lg:translate-x-0"
+      )}
+    >
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold font-accent">BeastMode</h1>
+          <button className="lg:hidden focus:outline-none" onClick={() => setIsOpen(false)}>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {!userLoading && user && (
+          <div className="mb-8">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold">{user.name}</h3>
+                <p className="text-xs text-gray-400">12-Week Program</p>
+              </div>
+            </div>
+            <div className="bg-gray-800 rounded-lg p-3">
+              <div className="flex justify-between mb-1.5">
+                <span className="text-sm text-gray-400">Program Progress</span>
+                <span className="text-sm font-medium">32%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: "32%" }}></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <nav>
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item.path}>
+                <Link href={item.path}>
+                  <a
+                    className={cn(
+                      "flex items-center space-x-3 p-3 rounded-lg", 
+                      location === item.path 
+                        ? "bg-primary bg-opacity-20 text-primary" 
+                        : "hover:bg-gray-800 text-white"
+                    )}
+                  >
+                    {item.icon}
+                    <span>{item.name}</span>
+                  </a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <div className="p-6 border-t border-gray-700">
+        <Link href="/settings">
+          <a className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800">
+            <Settings className="w-5 h-5" />
+            <span>Settings</span>
+          </a>
+        </Link>
+        <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800 text-red-400 w-full text-left">
+          <LogOut className="w-5 h-5" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
