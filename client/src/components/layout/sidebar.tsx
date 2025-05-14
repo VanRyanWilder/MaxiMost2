@@ -49,6 +49,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <Apple className="w-5 h-5" /> 
     },
     { 
+      path: "/supplements", 
+      name: "Supplements", 
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 21h8a2 2 0 0 0 2-2v-6.5l-4-4V3.5a1.5 1.5 0 0 0-3 0V9l-4 3.5V19a2 2 0 0 0 2 2z" />
+      </svg> 
+    },
+    { 
+      path: "/body-stats", 
+      name: "Body Stats", 
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 21v-8a2 2 0 0 0-2-2h-1V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v7H6a2 2 0 0 0-2 2v8" />
+        <path d="M8 15h8" />
+      </svg> 
+    },
+    { 
       path: "/resources", 
       name: "Resources", 
       icon: <BookOpen className="w-5 h-5" /> 

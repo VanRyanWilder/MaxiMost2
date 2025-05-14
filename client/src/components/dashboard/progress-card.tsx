@@ -1,17 +1,86 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { type UserTask } from "@shared/schema";
+import { useState, useEffect } from "react";
+import { type UserTask, type Task } from "@shared/schema";
 import { useUser } from "@/context/user-context";
 
 export function ProgressCard() {
   const { user } = useUser();
   const today = new Date();
+  const [userTasks, setUserTasks] = useState<(UserTask & { task: Task })[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const { data: userTasks, isLoading } = useQuery<(UserTask & { task: { title: string } })[]>({
-    queryKey: ["/api/user-tasks/1", today.toISOString().split('T')[0]],
-    enabled: !!user
-  });
+  // Mock user tasks
+  useEffect(() => {
+    if (user) {
+      // In a real app, we would fetch this from the API
+      const mockUserTasks: (UserTask & { task: Task })[] = [
+        {
+          id: 1,
+          userId: 1,
+          taskId: 1,
+          completed: true,
+          date: new Date(),
+          task: {
+            id: 1,
+            title: "Morning Prayer/Meditation",
+            description: "10 minutes of focused meditation",
+            category: "Spirit",
+            frequency: "Must-Do",
+            programId: 1
+          }
+        },
+        {
+          id: 2,
+          userId: 1,
+          taskId: 2,
+          completed: true,
+          date: new Date(),
+          task: {
+            id: 2,
+            title: "Morning Workout",
+            description: "30 min strength training",
+            category: "Body",
+            frequency: "Must-Do",
+            programId: 1
+          }
+        },
+        {
+          id: 3,
+          userId: 1,
+          taskId: 3,
+          completed: false,
+          date: new Date(),
+          task: {
+            id: 3,
+            title: "Brain Dump Journaling",
+            description: "Write 3 pages of stream-of-consciousness",
+            category: "Mind",
+            frequency: "Must-Do",
+            programId: 1
+          }
+        },
+        {
+          id: 4,
+          userId: 1,
+          taskId: 4,
+          completed: false,
+          date: new Date(),
+          task: {
+            id: 4,
+            title: "Cold Shower",
+            description: "2-minute minimum cold exposure",
+            category: "Body",
+            frequency: "Must-Do",
+            programId: 1
+          }
+        }
+      ];
+      
+      setUserTasks(mockUserTasks);
+      setIsLoading(false);
+    }
+  }, [user]);
   
   const totalTasks = userTasks?.length || 0;
   const completedTasks = userTasks?.filter(t => t.completed).length || 0;

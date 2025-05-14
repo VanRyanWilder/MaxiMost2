@@ -1,11 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@/context/user-context";
 import { type Task } from "@shared/schema";
 import { categoryColors, frequencyColors } from "@/lib/utils";
-import { apiRequest } from "@/lib/queryClient";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { queryClient } from "@/lib/queryClient";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 interface UserTaskStatus {
@@ -17,12 +14,84 @@ export function DailyTasks() {
   const { toast } = useToast();
   const [taskStatus, setTaskStatus] = useState<UserTaskStatus>({});
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
+  const [tasks, setTasks] = useState<Task[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Fetch tasks
-  const { data: tasks, isLoading } = useQuery<Task[]>({
-    queryKey: ["/api/tasks"],
-    enabled: !!user?.id
-  });
+  // Mock tasks data
+  useEffect(() => {
+    if (user) {
+      // In a real app, we would fetch this from the API
+      const mockTasks: Task[] = [
+        {
+          id: 1,
+          title: "Morning Prayer/Meditation",
+          description: "10 minutes of focused meditation",
+          category: "Spirit",
+          frequency: "Must-Do",
+          programId: 1
+        },
+        {
+          id: 2,
+          title: "Morning Workout",
+          description: "30 min strength training",
+          category: "Body",
+          frequency: "Must-Do",
+          programId: 1
+        },
+        {
+          id: 3,
+          title: "Brain Dump Journaling",
+          description: "Write 3 pages of stream-of-consciousness",
+          category: "Mind",
+          frequency: "Must-Do",
+          programId: 1
+        },
+        {
+          id: 4,
+          title: "Cold Shower",
+          description: "2-minute minimum cold exposure",
+          category: "Body",
+          frequency: "Must-Do",
+          programId: 1
+        },
+        {
+          id: 5,
+          title: "Supplements",
+          description: "Morning supplement stack",
+          category: "Health",
+          frequency: "Must-Do",
+          programId: 1
+        },
+        {
+          id: 6,
+          title: "Read Stoic Philosophy",
+          description: "20 pages minimum",
+          category: "Mind",
+          frequency: "3x Weekly",
+          programId: 1
+        },
+        {
+          id: 7,
+          title: "Cardio Session",
+          description: "30 min zone 2 cardio",
+          category: "Body",
+          frequency: "5x Weekly",
+          programId: 1
+        },
+        {
+          id: 8,
+          title: "Intermittent Fasting",
+          description: "16:8 fasting window",
+          category: "Health",
+          frequency: "5x Weekly",
+          programId: 1
+        }
+      ];
+      
+      setTasks(mockTasks);
+      setIsLoading(false);
+    }
+  }, [user]);
   
   // Filter tasks based on frequency
   const mustDoTasks = tasks?.filter(task => task.frequency === "Must-Do") || [];

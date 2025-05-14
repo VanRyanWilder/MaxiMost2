@@ -1,16 +1,33 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { useUser } from "@/context/user-context";
 import { type Program } from "@shared/schema";
 import { getProgramColorClasses } from "@/lib/utils";
 
 export function ProgramCard() {
   const { user } = useUser();
+  const [program, setProgram] = useState<Program | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const { data: program, isLoading } = useQuery<Program>({
-    queryKey: [`/api/programs/${user?.currentProgramId}`],
-    enabled: !!user?.currentProgramId
-  });
+  // Mock program data for development
+  useEffect(() => {
+    if (user?.currentProgramId) {
+      // In a real app, we would fetch this from the API
+      const mockProgram: Program = {
+        id: 3,
+        name: "Complete Transformation",
+        description: "Comprehensive program to transform your body, mind, and habits. This is our flagship program for those serious about change.",
+        duration: 12,
+        level: "Advanced",
+        features: ["Full blood work analysis", "Custom supplement protocol", "Advanced fitness programming", "Deep habit reconstruction"],
+        color: "progress",
+        isPopular: true
+      };
+      
+      setProgram(mockProgram);
+      setIsLoading(false);
+    }
+  }, [user]);
   
   if (isLoading || !program) {
     return (
