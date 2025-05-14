@@ -349,31 +349,84 @@ export function HighRoiActivities() {
   // Dialog states
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [addHabitDialogOpen, setAddHabitDialogOpen] = useState(false);
+  const [morningRoutineDialogOpen, setMorningRoutineDialogOpen] = useState(false);
+  const [selectedRoutine, setSelectedRoutine] = useState<typeof morningRoutines[0] | null>(null);
   
   // Load saved data from localStorage on component mount
   useEffect(() => {
-    const savedActivities = localStorage.getItem('high-roi-activities');
-    const savedCompletedActivities = localStorage.getItem('completed-activities');
-    const savedDailyPlans = localStorage.getItem('daily-activity-plans');
-    
-    if (savedActivities) {
-      setActivities(JSON.parse(savedActivities));
-    } else {
+    try {
+      const savedActivities = localStorage.getItem('high-roi-activities');
+      const savedCompletedActivities = localStorage.getItem('completed-activities');
+      const savedDailyPlans = localStorage.getItem('daily-activity-plans');
+      
+      if (savedActivities) {
+        const parsedActivities = JSON.parse(savedActivities);
+        
+        // Recreate the React elements for icons
+        const iconMap = {
+          'Brain': <Brain className="h-8 w-8 text-purple-500" />,
+          'Activity': <Activity className="h-8 w-8 text-emerald-500" />,
+          'BookOpen': <BookOpen className="h-8 w-8 text-blue-500" />,
+          'Sun': <Sun className="h-8 w-8 text-amber-500" />,
+          'AlertTriangle': <AlertTriangle className="h-8 w-8 text-red-500" />,
+          'CheckCircle': <CheckCircle className="h-8 w-8 text-emerald-500" />
+        };
+        
+        const reconstitutedActivities = parsedActivities.map((activity: any) => {
+          // Create a new icon based on the stored string description
+          let icon = iconMap['Activity']; // Default icon
+          
+          if (activity.icon && typeof activity.icon === 'string') {
+            const iconType = activity.icon.split(':')[1] || '';
+            
+            // Search for the icon type in the map
+            Object.entries(iconMap).forEach(([key, value]) => {
+              if (iconType.includes(key)) {
+                icon = value;
+              }
+            });
+          }
+          
+          return {
+            ...activity,
+            icon
+          };
+        });
+        
+        setActivities(reconstitutedActivities);
+      } else {
+        setActivities(defaultActivities);
+      }
+      
+      if (savedCompletedActivities) {
+        // Parse dates correctly
+        const parsedCompleted = JSON.parse(savedCompletedActivities).map((item: any) => ({
+          ...item,
+          date: new Date(item.date)
+        }));
+        setCompletedActivities(parsedCompleted);
+      }
+      
+      if (savedDailyPlans) {
+        setDailyPlans(JSON.parse(savedDailyPlans));
+      } else {
+        // Create a default plan for today if none exists
+        const today = format(new Date(), 'yyyy-MM-dd');
+        const absoluteActivities = defaultActivities
+          .filter(a => a.isAbsolute)
+          .map(a => a.id);
+        
+        setDailyPlans([{
+          id: 'default-plan',
+          date: today,
+          activityIds: absoluteActivities
+        }]);
+      }
+    } catch (error) {
+      console.error("Error loading saved data:", error);
+      // If there's an error, use default activities
       setActivities(defaultActivities);
-    }
-    
-    if (savedCompletedActivities) {
-      // Parse dates correctly
-      const parsedCompleted = JSON.parse(savedCompletedActivities).map((item: any) => ({
-        ...item,
-        date: new Date(item.date)
-      }));
-      setCompletedActivities(parsedCompleted);
-    }
-    
-    if (savedDailyPlans) {
-      setDailyPlans(JSON.parse(savedDailyPlans));
-    } else {
+      
       // Create a default plan for today if none exists
       const today = format(new Date(), 'yyyy-MM-dd');
       const absoluteActivities = defaultActivities
@@ -411,19 +464,42 @@ export function HighRoiActivities() {
   // Save data to localStorage when it changes
   useEffect(() => {
     if (activities.length > 0) {
-      localStorage.setItem('high-roi-activities', JSON.stringify(activities));
+      try {
+        // Create a serializable version without circular references
+        const serializableActivities = activities.map(activity => {
+          // Convert the React element icon to a description string
+          const iconType = activity.icon?.type?.name || 'DefaultIcon';
+          
+          return {
+            ...activity,
+            icon: `Icon:${iconType}` // Just store a string representation
+          };
+        });
+        
+        localStorage.setItem('high-roi-activities', JSON.stringify(serializableActivities));
+      } catch (error) {
+        console.error("Error saving activities to localStorage:", error);
+      }
     }
   }, [activities]);
   
   useEffect(() => {
     if (completedActivities.length > 0) {
-      localStorage.setItem('completed-activities', JSON.stringify(completedActivities));
+      try {
+        localStorage.setItem('completed-activities', JSON.stringify(completedActivities));
+      } catch (error) {
+        console.error("Error saving completed activities to localStorage:", error);
+      }
     }
   }, [completedActivities]);
   
   useEffect(() => {
     if (dailyPlans.length > 0) {
-      localStorage.setItem('daily-activity-plans', JSON.stringify(dailyPlans));
+      try {
+        localStorage.setItem('daily-activity-plans', JSON.stringify(dailyPlans));
+      } catch (error) {
+        console.error("Error saving daily plans to localStorage:", error);
+      }
     }
   }, [dailyPlans]);
   
@@ -609,6 +685,41 @@ export function HighRoiActivities() {
     setAddHabitDialogOpen(false);
   };
   
+  // Create a morning routine habit
+  const createMorningRoutineHabit = () => {
+    if (!selectedRoutine) return;
+    
+    const routineId = `routine-${Date.now()}`;
+    
+    const steps = selectedRoutine.steps.join("\n• ");
+    const description = `${selectedRoutine.description}\n\nSteps:\n• ${steps}`;
+    
+    const routineHabit: HighRoiActivity = {
+      id: routineId,
+      title: `${selectedRoutine.author} Morning Routine`,
+      description: description,
+      icon: <Sun className="h-8 w-8 text-amber-500" />,
+      impact: 9,
+      effort: 6,
+      timeCommitment: selectedRoutine.timeCommitment,
+      frequency: "daily",
+      isAbsolute: true,
+      streak: 0,
+      type: "custom"
+    };
+    
+    // Add to activities list
+    setActivities(prev => [...prev, routineHabit]);
+    
+    // Add it to today's plan
+    setSelectedActivities(prev => [...prev, routineId]);
+    saveCurrentPlan();
+    
+    // Reset selected routine
+    setSelectedRoutine(null);
+    setMorningRoutineDialogOpen(false);
+  };
+  
   // Get absolute and non-absolute activities
   const absoluteActivities = todaysPlanActivities.filter(a => a.isAbsolute);
   const optionalActivities = todaysPlanActivities.filter(a => !a.isAbsolute);
@@ -647,6 +758,15 @@ export function HighRoiActivities() {
             >
               <PlusCircle className="h-4 w-4" />
               Add Custom Habit
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setMorningRoutineDialogOpen(true)}
+              className="flex items-center gap-1"
+            >
+              <Sun className="h-4 w-4" />
+              Expert Morning Routines
             </Button>
           </div>
         </div>
@@ -954,6 +1074,80 @@ export function HighRoiActivities() {
           </DialogContent>
         </Dialog>
         
+        {/* Morning Routine Dialog - Simplified with hover */}
+        <Dialog open={morningRoutineDialogOpen} onOpenChange={setMorningRoutineDialogOpen}>
+          <DialogContent className="sm:max-w-[450px]">
+            <DialogHeader>
+              <DialogTitle>Expert Morning Routines</DialogTitle>
+              <DialogDescription>
+                Select an expert's morning routine to add to your habits. Hover over each option to see details.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="my-4">
+              <div className="grid grid-cols-1 gap-3">
+                {morningRoutines.map(routine => (
+                  <div 
+                    key={routine.id}
+                    className={`p-3 rounded-lg border cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all relative group
+                      ${selectedRoutine?.id === routine.id ? 'border-primary bg-primary/10' : 'border-border'}`}
+                    onClick={() => setSelectedRoutine(routine)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-secondary/30 p-2 rounded-full">
+                          <Sun className="h-5 w-5 text-amber-500" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-base">{routine.author}'s Routine</h3>
+                          <p className="text-xs text-muted-foreground">{routine.timeCommitment}</p>
+                        </div>
+                      </div>
+                      <div className="bg-secondary/30 rounded-full h-6 w-6 flex items-center justify-center">
+                        {selectedRoutine?.id === routine.id && <Check className="h-3.5 w-3.5 text-primary" />}
+                      </div>
+                    </div>
+                    
+                    {/* Hover tooltip with details */}
+                    <div className="absolute left-0 right-0 top-full mt-2 bg-card border rounded-md shadow-lg p-3 z-10 
+                      opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200 w-[300px]">
+                      <h4 className="font-medium text-sm mb-1">{routine.title}</h4>
+                      <p className="text-xs text-muted-foreground mb-2">{routine.description}</p>
+                      <div className="text-xs font-medium mb-1">Key Steps:</div>
+                      <ul className="text-xs space-y-1">
+                        {routine.steps.map((step, index) => (
+                          <li key={index} className="flex items-start gap-1">
+                            <CheckCircle className="h-3 w-3 text-primary shrink-0 mt-0.5" />
+                            <span className="line-clamp-1">{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setSelectedRoutine(null);
+                  setMorningRoutineDialogOpen(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={createMorningRoutineHabit}
+                disabled={!selectedRoutine}
+              >
+                Add to My Habits
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         {/* Activity Plan Dialog */}
         <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
           <DialogContent className="sm:max-w-[500px]">
@@ -1018,15 +1212,26 @@ export function HighRoiActivities() {
               
               <div className="flex justify-between items-center mb-2">
                 <h4 className="font-medium">Available Activities</h4>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setAddHabitDialogOpen(true)}
-                  className="h-7 px-2 text-xs flex items-center gap-1"
-                >
-                  <PlusCircle className="h-3.5 w-3.5" />
-                  Create New
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setAddHabitDialogOpen(true)}
+                    className="h-7 px-2 text-xs flex items-center gap-1"
+                  >
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    Custom Habit
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setMorningRoutineDialogOpen(true)}
+                    className="h-7 px-2 text-xs flex items-center gap-1"
+                  >
+                    <Sun className="h-3.5 w-3.5" />
+                    Morning Routines
+                  </Button>
+                </div>
               </div>
               
               <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
