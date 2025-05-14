@@ -46,6 +46,19 @@ type ReviewScore = {
   overall: number;
 };
 
+interface ExpertInsight {
+  expert: string;
+  insight: string;
+}
+
+interface TopSupplement {
+  id: number;
+  name: string;
+  benefits: string;
+  expertInsights: ExpertInsight[];
+  dosage: string;
+}
+
 interface Supplement {
   id: string;
   name: string;
