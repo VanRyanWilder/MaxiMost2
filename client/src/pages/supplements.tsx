@@ -266,16 +266,16 @@ export default function Supplements() {
               </p>
             </div>
             
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div className="bg-card rounded-xl shadow-sm p-6 mb-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
                   <h3 className="font-bold text-xl">Supplement Rankings</h3>
-                  <p className="text-sm text-gray-500">Ranked by efficacy, user ratings, and scientific evidence</p>
+                  <p className="text-sm text-muted-foreground">Ranked by efficacy, user ratings, and scientific evidence</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <select 
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="text-sm border border-input rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
@@ -286,7 +286,7 @@ export default function Supplements() {
                   </select>
                   
                   <select 
-                    className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="text-sm border border-input rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                   >
