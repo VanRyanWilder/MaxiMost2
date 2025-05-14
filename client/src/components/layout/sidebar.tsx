@@ -33,20 +33,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const navItems = [
     { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
-    { path: "/tasks", name: "BeastMode Toolbox", icon: <CheckSquare className="w-5 h-5" /> },
-    { path: "/progress", name: "Progress Analytics", icon: <BarChart3 className="w-5 h-5" /> },
-    { path: "/motivation", name: "Motivation Center", icon: <Quote className="w-5 h-5" /> },
-    { path: "/research", name: "AI Research", icon: <Bot className="w-5 h-5" /> },
-    { path: "/community", name: "Community Forum", icon: <MessageSquare className="w-5 h-5" /> },
     { path: "/principles", name: "Core Principles", icon: <BookOpen className="w-5 h-5" /> },
-    { path: "/workouts", name: "Workouts", icon: <Dumbbell className="w-5 h-5" /> },
-    { path: "/mind-spirit", name: "Mind & Spirit", icon: <Brain className="w-5 h-5" /> },
-    { path: "/nutrition", name: "Nutrition", icon: <Apple className="w-5 h-5" /> },
     { path: "/sugar", name: "Sugar: The Hidden Poison", icon: <AlertTriangle className="w-5 h-5 text-red-500" /> },
     { path: "/supplements", name: "Supplements", icon: <Pill className="w-5 h-5" /> },
-    { path: "/body-stats", name: "Body Stats", icon: <LineChart className="w-5 h-5" /> },
-    { path: "/resources", name: "Resources", icon: <BookOpenText className="w-5 h-5" /> },
-    { path: "/programs", name: "Programs", icon: <Calendar className="w-5 h-5" /> }
+    { path: "/research", name: "Health Research", icon: <Bot className="w-5 h-5" /> },
+    { path: "/community", name: "Community Forum", icon: <MessageSquare className="w-5 h-5" /> }
   ];
 
   // Handle navigation
