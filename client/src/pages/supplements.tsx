@@ -64,11 +64,14 @@ const sampleSupplements: Supplement[] = [
     dosage: "5,000-10,000 IU daily",
     sideEffects: "Rare at recommended doses. Excessive amounts may lead to hypercalcemia.",
     interactions: "May interact with certain medications including statins and blood thinners.",
-    categories: "Essential,Vitamin,Hormone",
+    categories: "Essential,Daily,Foundational",
     upvotes: 842,
     downvotes: 21,
     totalReviews: 156,
     averageRating: "4.8",
+    valueRating: 8.8,
+    monthlyCostEstimate: "$5-15",
+    bestValue: true,
     imageUrl: null,
     amazonUrl: "https://www.amazon.com/dp/B07XYQJR65?tag=beastmode-20",
     createdAt: new Date().toISOString(),
@@ -87,11 +90,14 @@ const sampleSupplements: Supplement[] = [
     dosage: "300-400mg daily",
     sideEffects: "Generally well-tolerated. May cause loose stools at high doses.",
     interactions: "May interact with certain antibiotics and medications.",
-    categories: "Essential,Mineral,Sleep",
+    categories: "Essential,Daily,Foundational",
     upvotes: 756,
     downvotes: 18,
     totalReviews: 124,
     averageRating: "4.7",
+    valueRating: 8.5,
+    monthlyCostEstimate: "$10-25",
+    bestValue: true,
     imageUrl: null,
     amazonUrl: "https://www.amazon.com/dp/B07RM7VXFV?tag=beastmode-20",
     createdAt: new Date().toISOString(),
@@ -167,8 +173,11 @@ export default function Supplements() {
     // Parse categories
     const parsedCategories = supplement.categories.split(',').map(c => c.trim());
     
-    // Calculate cost-effectiveness (mock for now, would be based on some algorithm)
-    const costEffectiveness = Math.round((supplement.upvotes / (supplement.upvotes + supplement.downvotes || 1)) * 10);
+    // We now use valueRating directly from the database, but compute cost-effectiveness as fallback
+    // This will be removed once all supplements have valueRating data
+    const costEffectiveness = typeof supplement.valueRating === 'number' 
+      ? supplement.valueRating 
+      : Math.round((supplement.upvotes / (supplement.upvotes + supplement.downvotes || 1)) * 10);
     
     return {
       ...supplement,
@@ -377,10 +386,10 @@ export default function Supplements() {
                                 <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
                                   <div 
                                     className={`h-2.5 rounded-full ${supplement.bestValue ? 'bg-green-500' : 'bg-primary'}`}
-                                    style={{ width: `${supplement.valueRating * 10}%` }}
+                                    style={{ width: `${(typeof supplement.valueRating === 'number' ? supplement.valueRating : 5) * 10}%` }}
                                   ></div>
                                 </div>
-                                <span className="text-sm font-medium">{supplement.valueRating.toFixed(1)}/10</span>
+                                <span className="text-sm font-medium">{typeof supplement.valueRating === 'number' ? supplement.valueRating.toFixed(1) : supplement.valueRating}/10</span>
                               </div>
                               {supplement.bestValue && (
                                 <div className="mt-1">
