@@ -8,7 +8,12 @@ import {
   insertTaskSchema, 
   insertUserTaskSchema, 
   insertResourceSchema, 
-  insertMetricSchema 
+  insertMetricSchema,
+  insertSupplementSchema,
+  insertSupplementReviewSchema,
+  insertSupplementVoteSchema,
+  insertBodyStatSchema,
+  insertBloodworkSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -278,6 +283,190 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(updatedMetric);
     } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Supplements routes
+  app.get("/api/supplements", async (req, res) => {
+    const { category } = req.query;
+    
+    if (category) {
+      const supplements = await storage.getSupplementsByCategory(category as string);
+      return res.json(supplements);
+    }
+    
+    const supplements = await storage.getSupplements();
+    res.json(supplements);
+  });
+  
+  app.get("/api/supplements/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid supplement ID" });
+    }
+    
+    const supplement = await storage.getSupplement(id);
+    if (!supplement) {
+      return res.status(404).json({ message: "Supplement not found" });
+    }
+    
+    res.json(supplement);
+  });
+  
+  app.post("/api/supplements", async (req, res) => {
+    try {
+      const supplementData = insertSupplementSchema.parse(req.body);
+      const supplement = await storage.createSupplement(supplementData);
+      res.status(201).json(supplement);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Supplement Reviews routes
+  app.get("/api/supplements/:supplementId/reviews", async (req, res) => {
+    const supplementId = parseInt(req.params.supplementId);
+    if (isNaN(supplementId)) {
+      return res.status(400).json({ message: "Invalid supplement ID" });
+    }
+    
+    const reviews = await storage.getSupplementReviews(supplementId);
+    res.json(reviews);
+  });
+  
+  app.post("/api/supplements/reviews", async (req, res) => {
+    try {
+      const reviewData = insertSupplementReviewSchema.parse(req.body);
+      const review = await storage.createSupplementReview(reviewData);
+      res.status(201).json(review);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Supplement Votes routes
+  app.post("/api/supplements/votes", async (req, res) => {
+    try {
+      const { userId, supplementId, voteType } = req.body;
+      
+      if (!userId || !supplementId || !voteType) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      
+      if (voteType !== "up" && voteType !== "down") {
+        return res.status(400).json({ message: "Invalid vote type" });
+      }
+      
+      // Check if user already voted
+      const existingVote = await storage.getSupplementVote(userId, supplementId);
+      
+      if (existingVote) {
+        // If vote type is the same, don't do anything
+        if (existingVote.voteType === voteType) {
+          return res.json(existingVote);
+        }
+        
+        // Update existing vote
+        const updatedVote = await storage.updateSupplementVote(userId, supplementId, voteType);
+        return res.json(updatedVote);
+      } else {
+        // Create new vote
+        const voteData = insertSupplementVoteSchema.parse({
+          userId,
+          supplementId,
+          voteType
+        });
+        
+        const vote = await storage.createSupplementVote(voteData);
+        res.status(201).json(vote);
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Body Stats routes
+  app.get("/api/users/:userId/body-stats", async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const bodyStats = await storage.getUserBodyStats(userId);
+    res.json(bodyStats);
+  });
+  
+  app.get("/api/users/:userId/body-stats/latest", async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const latestStats = await storage.getLatestBodyStat(userId);
+    if (!latestStats) {
+      return res.status(404).json({ message: "No body stats found for user" });
+    }
+    
+    res.json(latestStats);
+  });
+  
+  app.post("/api/body-stats", async (req, res) => {
+    try {
+      const bodyStatData = insertBodyStatSchema.parse(req.body);
+      const bodyStat = await storage.createBodyStat(bodyStatData);
+      res.status(201).json(bodyStat);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
+  // Bloodwork routes
+  app.get("/api/users/:userId/bloodwork", async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    const bloodworkResults = await storage.getUserBloodworkResults(userId);
+    res.json(bloodworkResults);
+  });
+  
+  app.get("/api/bloodwork/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid bloodwork ID" });
+    }
+    
+    const bloodworkResult = await storage.getBloodworkResult(id);
+    if (!bloodworkResult) {
+      return res.status(404).json({ message: "Bloodwork result not found" });
+    }
+    
+    res.json(bloodworkResult);
+  });
+  
+  app.post("/api/bloodwork", async (req, res) => {
+    try {
+      const bloodworkData = insertBloodworkSchema.parse(req.body);
+      const bloodworkResult = await storage.createBloodworkResult(bloodworkData);
+      res.status(201).json(bloodworkResult);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
       res.status(500).json({ message: "Internal server error" });
     }
   });
