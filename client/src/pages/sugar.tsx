@@ -1,783 +1,774 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+import { PageContainer } from "@/components/layout/page-container";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, Brain, ChevronRight, Droplets, HeartPulse, Scale, Skull, Zap } from "lucide-react";
+import { 
+  Lightbulb,
+  AlertTriangle,
+  Heart,
+  Brain,
+  BarChart2,
+  Zap,
+  MoveDown,
+  Pill,
+  Scale,
+  Flame,
+  FileText,
+  ExternalLink,
+  BookOpen,
+  Info
+} from "lucide-react";
 
-export default function Sugar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+export default function SugarPage() {
   return (
-    <div className="bg-gray-50 text-gray-900 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-3xl font-bold flex items-center gap-2">
-                  <AlertTriangle className="h-8 w-8 text-red-500" />
-                  Sugar: The Hidden Poison
-                </h1>
-                <p className="text-gray-600 mt-1">Understanding sugar addiction and how to break free</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="destructive" className="px-3 py-1 flex items-center gap-1">
-                  <Skull className="h-3.5 w-3.5" />
-                  <span>Health Hazard</span>
-                </Badge>
-                <Badge variant="outline" className="px-3 py-1 flex items-center gap-1">
-                  <Brain className="h-3.5 w-3.5" />
-                  <span>Neuroscience</span>
-                </Badge>
-              </div>
-            </div>
-            
-            {/* Hero Section */}
-            <div className="bg-gradient-to-r from-red-500/10 to-red-500/5 rounded-xl p-6 mb-8">
-              <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">Sugar Is More Addictive Than Cocaine</h2>
-                <p className="text-lg text-gray-700 mb-6">
-                  Studies show that sugar triggers the same reward pathways in the brain as many drugs, 
-                  making it one of the most addictive substances we regularly consume.
+    <PageContainer title="Sugar: The Hidden Poison">
+      {/* Introduction */}
+      <div className="mb-8 bg-red-50 dark:bg-red-950/20 p-6 rounded-lg border border-red-200 dark:border-red-900/50">
+        <div className="flex items-start gap-4">
+          <div className="bg-red-100 dark:bg-red-900/30 rounded-full p-3">
+            <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold mb-2 text-red-800 dark:text-red-400">
+              Understanding the True Impact of Sugar
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              Sugar is arguably the most destructive substance in the modern diet, yet it's hidden in nearly 80% of processed foods. 
+              This page compiles research showing how excess sugar consumption drives inflammation, obesity, diabetes, heart disease, 
+              and even cancer. The good news? Cutting sugar produces rapid health improvements.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+              <div className="bg-white dark:bg-background p-4 rounded-lg border border-red-100 dark:border-red-900/30 flex flex-col items-center text-center">
+                <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-full mb-2">
+                  <Brain className="h-5 w-5 text-red-600 dark:text-red-400" />
+                </div>
+                <h3 className="text-sm font-medium mb-1">Brain Function</h3>
+                <p className="text-xs text-muted-foreground">
+                  Sugar impairs cognitive function and contributes to depression and anxiety.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Button className="bg-red-500 hover:bg-red-600" onClick={() => document.getElementById('dangers')?.scrollIntoView({ behavior: 'smooth' })}>
-                    Discover the Dangers
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
-                  <Button variant="outline" onClick={() => document.getElementById('detox')?.scrollIntoView({ behavior: 'smooth' })}>
-                    Sugar Detox Plan
-                    <ChevronRight className="h-4 w-4 ml-1" />
-                  </Button>
-                </div>
               </div>
-            </div>
-            
-            {/* Main Content Tabs */}
-            <Tabs defaultValue="dangers" className="mb-8">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="dangers" id="dangers">The Dangers</TabsTrigger>
-                <TabsTrigger value="science">The Science</TabsTrigger>
-                <TabsTrigger value="detox" id="detox">Breaking Free</TabsTrigger>
-              </TabsList>
-              
-              {/* The Dangers Tab */}
-              <TabsContent value="dangers" className="mt-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card className="border-l-4 border-l-red-500">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <HeartPulse className="h-5 w-5 text-red-500" />
-                        Chronic Disease Risk
-                      </CardTitle>
-                      <CardDescription>Sugar significantly increases your risk of serious health conditions</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-4">
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
-                            <span className="text-red-500 font-semibold">1</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Type 2 Diabetes</h4>
-                            <p className="text-gray-600">
-                              Regular consumption of added sugars leads to insulin resistance and can eventually 
-                              cause type 2 diabetes, affecting over 400 million people worldwide.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
-                            <span className="text-red-500 font-semibold">2</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Heart Disease</h4>
-                            <p className="text-gray-600">
-                              High sugar intake raises triglycerides, blood pressure, and contributes to arterial 
-                              inflammation, significantly increasing heart attack and stroke risk.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
-                            <span className="text-red-500 font-semibold">3</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Non-Alcoholic Fatty Liver</h4>
-                            <p className="text-gray-600">
-                              Excess fructose (in table sugar and high-fructose corn syrup) gets converted to fat 
-                              in the liver, leading to non-alcoholic fatty liver disease.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center mt-0.5">
-                            <span className="text-red-500 font-semibold">4</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Cancer Risk</h4>
-                            <p className="text-gray-600">
-                              Research links high sugar consumption to increased risk of several cancers, including 
-                              breast, colon, and pancreatic cancer, due to chronic inflammation and insulin resistance.
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border-l-4 border-l-orange-500">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Brain className="h-5 w-5 text-orange-500" />
-                        Cognitive & Mental Effects
-                      </CardTitle>
-                      <CardDescription>Sugar devastates your brain function and mental health</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-4">
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-orange-100 flex items-center justify-center mt-0.5">
-                            <span className="text-orange-500 font-semibold">1</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Addiction & Dependence</h4>
-                            <p className="text-gray-600">
-                              Sugar triggers dopamine release in the brain's reward centers similar to drugs like cocaine, 
-                              creating powerful addiction cycles and withdrawal symptoms.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-orange-100 flex items-center justify-center mt-0.5">
-                            <span className="text-orange-500 font-semibold">2</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Depression & Anxiety</h4>
-                            <p className="text-gray-600">
-                              High sugar consumption is linked to higher rates of depression and anxiety, as blood sugar 
-                              spikes and crashes disrupt brain chemistry and hormone function.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-orange-100 flex items-center justify-center mt-0.5">
-                            <span className="text-orange-500 font-semibold">3</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Cognitive Decline</h4>
-                            <p className="text-gray-600">
-                              Chronic high blood sugar damages brain cells and blood vessels, accelerating cognitive decline 
-                              and increasing risk of dementia and Alzheimer's disease.
-                            </p>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="h-6 w-6 rounded-full bg-orange-100 flex items-center justify-center mt-0.5">
-                            <span className="text-orange-500 font-semibold">4</span>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-gray-900">Brain Fog & Memory Issues</h4>
-                            <p className="text-gray-600">
-                              Sugar impairs memory formation and causes inflammation in the hippocampus, leading to "brain fog" 
-                              and reduced cognitive performance.
-                            </p>
-                          </div>
-                        </li>
-                      </ul>
-                    </CardContent>
-                  </Card>
+              <div className="bg-white dark:bg-background p-4 rounded-lg border border-red-100 dark:border-red-900/30 flex flex-col items-center text-center">
+                <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-full mb-2">
+                  <Heart className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-                
-                <div className="bg-red-50 border border-red-100 rounded-lg p-6 mt-8">
-                  <h3 className="text-xl font-semibold mb-4 text-red-700">Hidden Sugars: Where They're Hiding</h3>
-                  <p className="mb-4 text-gray-700">
-                    Sugar hides under at least 60 different names on food labels. Manufacturers deliberately use 
-                    multiple types of sugar so they don't have to list "sugar" as the first ingredient.
-                  </p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-white rounded p-3 shadow-sm">
-                      <h4 className="font-medium text-red-600 mb-2">Beverages</h4>
-                      <ul className="text-sm space-y-1 text-gray-700">
-                        <li>• Fruit juices</li>
-                        <li>• Sports drinks</li>
-                        <li>• Flavored coffees</li>
-                        <li>• Vitamin waters</li>
-                      </ul>
-                    </div>
-                    <div className="bg-white rounded p-3 shadow-sm">
-                      <h4 className="font-medium text-red-600 mb-2">Sauces & Dressings</h4>
-                      <ul className="text-sm space-y-1 text-gray-700">
-                        <li>• Ketchup</li>
-                        <li>• BBQ sauce</li>
-                        <li>• Salad dressings</li>
-                        <li>• Pasta sauces</li>
-                      </ul>
-                    </div>
-                    <div className="bg-white rounded p-3 shadow-sm">
-                      <h4 className="font-medium text-red-600 mb-2">"Health" Foods</h4>
-                      <ul className="text-sm space-y-1 text-gray-700">
-                        <li>• Granola bars</li>
-                        <li>• Protein bars</li>
-                        <li>• Yogurts</li>
-                        <li>• Breakfast cereals</li>
-                      </ul>
-                    </div>
-                    <div className="bg-white rounded p-3 shadow-sm">
-                      <h4 className="font-medium text-red-600 mb-2">Common Names</h4>
-                      <ul className="text-sm space-y-1 text-gray-700">
-                        <li>• High-fructose corn syrup</li>
-                        <li>• Dextrose, maltose</li>
-                        <li>• Cane juice/crystals</li>
-                        <li>• Anything ending in "-ose"</li>
-                      </ul>
-                    </div>
-                  </div>
+                <h3 className="text-sm font-medium mb-1">Heart Disease</h3>
+                <p className="text-xs text-muted-foreground">
+                  Sugar triggers inflammation and raises triglycerides, increasing heart attack risk.
+                </p>
+              </div>
+              <div className="bg-white dark:bg-background p-4 rounded-lg border border-red-100 dark:border-red-900/30 flex flex-col items-center text-center">
+                <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded-full mb-2">
+                  <Scale className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
-              </TabsContent>
-              
-              {/* The Science Tab */}
-              <TabsContent value="science" className="mt-6">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <Card className="lg:col-span-2">
-                    <CardHeader>
-                      <CardTitle>The Neuroscience of Sugar Addiction</CardTitle>
-                      <CardDescription>How sugar hijacks your brain's reward system</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="prose max-w-none">
-                        <p>
-                          Sugar triggers an intense response in the brain's reward system by stimulating the release of dopamine, 
-                          the same neurotransmitter activated by drugs like cocaine and heroin. This creates a powerful feedback 
-                          loop that drives cravings and addiction.
-                        </p>
-                        
-                        <h4>The Dopamine Surge</h4>
-                        <p>
-                          When you consume sugar, your brain releases dopamine in the nucleus accumbens—the same "pleasure center" 
-                          targeted by drugs of abuse. Research shows that sugar can cause even more intense dopamine release than 
-                          some addictive drugs, especially when combined with fat.
-                        </p>
-                        
-                        <h4>Tolerance Development</h4>
-                        <p>
-                          With repeated sugar consumption, the brain adapts by reducing dopamine receptors—a process called 
-                          downregulation. This means you need more and more sugar to get the same pleasure response, creating a 
-                          cycle of increasing consumption and diminishing satisfaction.
-                        </p>
-                        
-                        <h4>Withdrawal Effects</h4>
-                        <p>
-                          Sudden sugar reduction triggers genuine withdrawal symptoms including headaches, irritability, anxiety, 
-                          fatigue, and intense cravings. These symptoms reflect actual neurochemical changes and can be as 
-                          uncomfortable as withdrawal from certain drugs.
-                        </p>
-                        
-                        <blockquote>
-                          "In certain circumstances, intermittent access to sugar can lead to behavior and neurochemical changes 
-                          that resemble the effects of a substance of abuse." 
-                          <cite>— Princeton University researchers, Neuroscience & Biobehavioral Reviews</cite>
-                        </blockquote>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gradient-to-b from-orange-50 to-red-50">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Scale className="h-5 w-5 text-red-500" />
-                        Sugar vs. Drugs: The Evidence
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-6">
-                        <div>
-                          <h4 className="font-semibold mb-2">Laboratory Studies</h4>
-                          <p className="text-sm text-gray-700 mb-2">
-                            When given the choice between sugar water and cocaine, lab rats consistently choose sugar, even when 
-                            they're already addicted to cocaine.
-                          </p>
-                          <div className="h-2 w-full bg-gray-200 rounded-full">
-                            <div className="h-2 rounded-full bg-red-500" style={{ width: '85%' }}></div>
-                          </div>
-                          <div className="flex justify-between text-xs mt-1">
-                            <span>Sugar Preference</span>
-                            <span>85%</span>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold mb-2">Withdrawal Severity</h4>
-                          <p className="text-sm text-gray-700 mb-2">
-                            Sugar withdrawal produces anxiety, depression, and cravings comparable to withdrawal from other 
-                            addictive substances.
-                          </p>
-                          <div className="h-2 w-full bg-gray-200 rounded-full">
-                            <div className="h-2 rounded-full bg-orange-500" style={{ width: '75%' }}></div>
-                          </div>
-                          <div className="flex justify-between text-xs mt-1">
-                            <span>Symptom Similarity</span>
-                            <span>75%</span>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold mb-2">Neurochemical Impact</h4>
-                          <p className="text-sm text-gray-700 mb-2">
-                            Sugar consumption affects the same brain regions and neurotransmitter systems as drugs of abuse.
-                          </p>
-                          <div className="h-2 w-full bg-gray-200 rounded-full">
-                            <div className="h-2 rounded-full bg-red-500" style={{ width: '90%' }}></div>
-                          </div>
-                          <div className="flex justify-between text-xs mt-1">
-                            <span>Brain Pathway Overlap</span>
-                            <span>90%</span>
-                          </div>
-                        </div>
-                        
-                        <div className="bg-white rounded-lg p-4 border border-red-100">
-                          <h4 className="font-semibold mb-2 text-red-600">Expert Opinion</h4>
-                          <p className="text-sm">
-                            "The data is so overwhelming the field has to accept it. We are finding tremendous overlaps between drugs 
-                            of abuse and sugar, from the standpoint of brain neurochemistry as well as behavior."
-                          </p>
-                          <p className="text-xs text-gray-500 mt-2">
-                            — Dr. Nora Volkow, Director of the National Institute on Drug Abuse
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                <div className="mt-8 bg-gray-100 rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Metabolic Effects of Sugar</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Zap className="h-5 w-5 text-yellow-500" />
-                        <h4 className="font-semibold">Insulin Response</h4>
-                      </div>
-                      <p className="text-sm text-gray-700">
-                        Sugar causes rapid insulin spikes followed by crashes, leading to hunger, cravings, and energy fluctuations. 
-                        Over time, this causes insulin resistance where cells no longer respond properly to insulin.
-                      </p>
-                    </div>
-                    
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Droplets className="h-5 w-5 text-blue-500" />
-                        <h4 className="font-semibold">Liver Metabolism</h4>
-                      </div>
-                      <p className="text-sm text-gray-700">
-                        Unlike glucose, which can be used by every cell in the body, fructose (half of table sugar) must be processed 
-                        by the liver. High fructose intake overloads the liver and gets converted directly to fat.
-                      </p>
-                    </div>
-                    
-                    <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="flex items-center gap-2 mb-3">
-                        <HeartPulse className="h-5 w-5 text-red-500" />
-                        <h4 className="font-semibold">Inflammation</h4>
-                      </div>
-                      <p className="text-sm text-gray-700">
-                        Sugar triggers the release of inflammatory cytokines throughout the body, contributing to chronic inflammation
-                        —a root cause of heart disease, cancer, and accelerated aging processes.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-              
-              {/* Breaking Free Tab */}
-              <TabsContent value="detox" className="mt-6">
-                <div className="max-w-3xl mx-auto">
-                  <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 mb-8">
-                    <h3 className="text-xl font-bold mb-3">The 30-Day Sugar Detox Challenge</h3>
-                    <p className="mb-4">
-                      Breaking sugar addiction requires a systematic approach. This 30-day plan gradually eliminates 
-                      sugar while supporting your body through withdrawal symptoms.
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-medium text-green-700 mb-2">Days 1-10: Preparation</h4>
-                        <ul className="text-sm space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-green-600 mt-0.5">•</span>
-                            <span>Eliminate obvious sugars (soda, candy, desserts)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-green-600 mt-0.5">•</span>
-                            <span>Start reading food labels for hidden sugars</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-green-600 mt-0.5">•</span>
-                            <span>Increase protein and healthy fat intake</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-green-600 mt-0.5">•</span>
-                            <span>Begin taking magnesium supplements</span>
-                          </li>
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-medium text-blue-700 mb-2">Days 11-20: Elimination</h4>
-                        <ul className="text-sm space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-blue-600 mt-0.5">•</span>
-                            <span>Remove all added sugars from diet</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-blue-600 mt-0.5">•</span>
-                            <span>Eliminate processed carbs (white bread, pasta)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-blue-600 mt-0.5">•</span>
-                            <span>Stay hydrated (withdrawal symptom relief)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-blue-600 mt-0.5">•</span>
-                            <span>Use cinnamon to help stabilize blood sugar</span>
-                          </li>
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-medium text-purple-700 mb-2">Days 21-30: Rewiring</h4>
-                        <ul className="text-sm space-y-2">
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-purple-600 mt-0.5">•</span>
-                            <span>Monitor changes in taste preferences</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-purple-600 mt-0.5">•</span>
-                            <span>Introduce small amounts of natural sweeteners (berries)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-purple-600 mt-0.5">•</span>
-                            <span>Continue high protein, moderate fat, low carb diet</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="font-bold text-purple-600 mt-0.5">•</span>
-                            <span>Establish long-term sustainable habits</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Managing Withdrawal Symptoms</CardTitle>
-                        <CardDescription>How to handle the challenging first 5-7 days</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          <div className="flex items-start gap-3">
-                            <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                              <span className="text-blue-500 font-semibold">1</span>
-                            </div>
-                            <div>
-                              <h4 className="font-semibold">Headaches & Brain Fog</h4>
-                              <p className="text-sm text-gray-600 mb-2">
-                                Caused by changing glucose levels and neurotransmitter adjustments.
-                              </p>
-                              <div className="text-sm">
-                                <span className="font-medium">Remedies:</span> Stay hydrated, take magnesium supplements, 
-                                get adequate sleep, and consider OTC pain relievers if needed.
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                              <span className="text-blue-500 font-semibold">2</span>
-                            </div>
-                            <div>
-                              <h4 className="font-semibold">Intense Cravings</h4>
-                              <p className="text-sm text-gray-600 mb-2">
-                                Your brain demanding the dopamine hit it's accustomed to receiving.
-                              </p>
-                              <div className="text-sm">
-                                <span className="font-medium">Remedies:</span> Eat protein-rich snacks, take L-glutamine 
-                                supplements, exercise, or distract yourself with activities.
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                              <span className="text-blue-500 font-semibold">3</span>
-                            </div>
-                            <div>
-                              <h4 className="font-semibold">Irritability & Mood Swings</h4>
-                              <p className="text-sm text-gray-600 mb-2">
-                                Result from changing brain chemistry and blood sugar fluctuations.
-                              </p>
-                              <div className="text-sm">
-                                <span className="font-medium">Remedies:</span> Regular small meals with protein and fat, 
-                                meditation, deep breathing, and light exercise.
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mt-0.5">
-                              <span className="text-blue-500 font-semibold">4</span>
-                            </div>
-                            <div>
-                              <h4 className="font-semibold">Fatigue & Low Energy</h4>
-                              <p className="text-sm text-gray-600 mb-2">
-                                Your body adjusting to using fat instead of sugar as primary fuel.
-                              </p>
-                              <div className="text-sm">
-                                <span className="font-medium">Remedies:</span> Increase healthy fats, ensure adequate salt 
-                                intake, try adaptogenic herbs like ashwagandha, and rest as needed.
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Sugar Substitutes: The Good and Bad</CardTitle>
-                        <CardDescription>Not all alternatives are created equal</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-5">
-                          <div>
-                            <h4 className="font-semibold text-green-700 mb-2">Natural Options (Use Moderately)</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="bg-green-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Stevia</h5>
-                                <p className="text-xs text-gray-600">
-                                  Plant-based, zero-calorie, minimal impact on blood sugar. Use in small amounts.
-                                </p>
-                              </div>
-                              <div className="bg-green-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Monk Fruit</h5>
-                                <p className="text-xs text-gray-600">
-                                  Zero-calorie, antioxidant properties, no impact on blood sugar or insulin.
-                                </p>
-                              </div>
-                              <div className="bg-green-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Allulose</h5>
-                                <p className="text-xs text-gray-600">
-                                  Rare sugar with 90% fewer calories than sucrose and minimal glycemic impact.
-                                </p>
-                              </div>
-                              <div className="bg-yellow-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Raw Honey (Limited)</h5>
-                                <p className="text-xs text-gray-600">
-                                  Contains nutrients but still impacts blood sugar. Use sparingly and only after detox.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-semibold text-red-700 mb-2">Artificial Sweeteners (Avoid)</h4>
-                            <div className="grid grid-cols-2 gap-3">
-                              <div className="bg-red-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Aspartame</h5>
-                                <p className="text-xs text-gray-600">
-                                  Linked to neurological issues, weight gain, and gut microbiome disruption.
-                                </p>
-                              </div>
-                              <div className="bg-red-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Sucralose</h5>
-                                <p className="text-xs text-gray-600">
-                                  Alters gut bacteria, may increase insulin resistance despite zero calories.
-                                </p>
-                              </div>
-                              <div className="bg-red-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Saccharin</h5>
-                                <p className="text-xs text-gray-600">
-                                  Can trigger insulin response and increase sugar cravings over time.
-                                </p>
-                              </div>
-                              <div className="bg-red-50 p-3 rounded-lg">
-                                <h5 className="font-medium text-sm mb-1">Sugar Alcohols</h5>
-                                <p className="text-xs text-gray-600">
-                                  Xylitol, erythritol can cause digestive issues and maintain sweet cravings.
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="bg-blue-50 p-4 rounded-lg">
-                            <h4 className="font-medium text-blue-700 mb-2">The Reset Effect</h4>
-                            <p className="text-sm text-gray-700">
-                              After 30 days without added sugar, your taste perception fundamentally changes. Foods you 
-                              never found sweet before (like berries or carrots) will taste naturally sweet, and 
-                              conventional sweets will taste overwhelmingly intense.
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                  
-                  <div className="rounded-lg overflow-hidden bg-gradient-to-r from-green-100 to-green-50 shadow-sm">
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-green-800 mb-3">What to Expect After Quitting Sugar</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                          <h4 className="font-semibold text-green-700 mb-2">7 Days</h4>
-                          <ul className="text-sm space-y-2">
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Reduced hunger & cravings</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Improved energy stability</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Better digestive function</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Initial weight loss (water)</span>
-                            </li>
-                          </ul>
-                        </div>
-                        
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                          <h4 className="font-semibold text-green-700 mb-2">30 Days</h4>
-                          <ul className="text-sm space-y-2">
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Improved skin clarity</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Enhanced mental clarity</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Continued weight loss</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Stabilized mood</span>
-                            </li>
-                          </ul>
-                        </div>
-                        
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                          <h4 className="font-semibold text-green-700 mb-2">3 Months</h4>
-                          <ul className="text-sm space-y-2">
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Normalized blood pressure</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Lower inflammation markers</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Improved lipid profiles</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Reduced joint pain</span>
-                            </li>
-                          </ul>
-                        </div>
-                        
-                        <div className="bg-white rounded-lg p-4 shadow-sm">
-                          <h4 className="font-semibold text-green-700 mb-2">1 Year+</h4>
-                          <ul className="text-sm space-y-2">
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Normalized insulin sensitivity</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Reduced risk of chronic disease</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Improved dental health</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="font-bold text-green-600 mt-0.5">✓</span>
-                              <span>Long-term weight maintenance</span>
-                            </li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-            
-            <div className="p-6 bg-gray-100 rounded-lg mt-6">
-              <h3 className="text-xl font-bold mb-4">Further Reading & Resources</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Books</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>"The Case Against Sugar" by Gary Taubes</li>
-                      <li>"Sugar Blues" by William Dufty</li>
-                      <li>"Sweet Poison" by David Gillespie</li>
-                      <li>"Brain Wash" by David Perlmutter</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Documentaries</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>"That Sugar Film" (2014)</li>
-                      <li>"Fed Up" (2014)</li>
-                      <li>"Sugar Coated" (2015)</li>
-                      <li>"The Magic Pill" (2017)</li>
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Scientific Studies</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>Johnson et al. (2017). "Sugar addiction: Is it real?"</li>
-                      <li>DiNicolantonio et al. (2018). "Sugar addiction: a possible model"</li>
-                      <li>Avena et al. (2008). "Evidence for sugar addiction"</li>
-                      <li>Lustig et al. (2012). "The toxic truth about sugar"</li>
-                    </ul>
-                  </CardContent>
-                </Card>
+                <h3 className="text-sm font-medium mb-1">Weight Gain</h3>
+                <p className="text-xs text-muted-foreground">
+                  Sugar hijacks hunger hormones and drives overeating through dopamine signaling.
+                </p>
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
+
+      {/* Information Tabs */}
+      <Tabs defaultValue="science" className="mb-10">
+        <TabsList className="mb-6 w-full grid grid-cols-4 h-auto">
+          <TabsTrigger value="science" className="py-3 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/20">
+            <div className="flex flex-col items-center">
+              <Lightbulb className="h-4 w-4 mb-1" />
+              <span className="text-xs">The Science</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="hidden" className="py-3 data-[state=active]:bg-purple-50 dark:data-[state=active]:bg-purple-900/20">
+            <div className="flex flex-col items-center">
+              <Info className="h-4 w-4 mb-1" />
+              <span className="text-xs">Hidden Sugar</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="addiction" className="py-3 data-[state=active]:bg-amber-50 dark:data-[state=active]:bg-amber-900/20">
+            <div className="flex flex-col items-center">
+              <Zap className="h-4 w-4 mb-1" />
+              <span className="text-xs">Addiction</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger value="alternatives" className="py-3 data-[state=active]:bg-green-50 dark:data-[state=active]:bg-green-900/20">
+            <div className="flex flex-col items-center">
+              <Flame className="h-4 w-4 mb-1" />
+              <span className="text-xs">Alternatives</span>
+            </div>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="science">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Lightbulb className="h-5 w-5 text-blue-600" />
+            The Hard Science on Sugar
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Metabolic Dysfunction</CardTitle>
+                <CardDescription>From Robert Lustig, MD - UCSF</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm mb-3">
+                  "Fructose, which makes up half of table sugar and nearly all of high-fructose corn syrup, is 
+                  metabolized primarily by the liver. Unlike glucose, which is processed by all cells in the body, 
+                  fructose metabolism places a huge burden on the liver, promoting non-alcoholic fatty liver disease, 
+                  insulin resistance, and metabolic syndrome."
+                </p>
+                <p className="text-sm mb-3">
+                  Research has shown that consuming 150 calories of fructose daily significantly increases visceral 
+                  fat, raises LDL cholesterol, and leads to insulin resistance in just 10 days in healthy subjects.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-end border-t pt-4">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Read Research Paper
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Inflammation & Immune Function</CardTitle>
+                <CardDescription>From Journal of Clinical Investigation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm mb-3">
+                  "High sugar consumption activates inflammatory pathways through advanced glycation end products (AGEs)
+                  which damage cellular proteins and DNA. Additionally, excess sugar intake has been shown to impair 
+                  white blood cell function, reducing immune response by up to 50% for several hours after consumption."
+                </p>
+                <p className="text-sm mb-3">
+                  Research from 2018 found that maintaining blood glucose levels above 140 mg/dL 
+                  impairs neutrophil function and dramatically increases infection risk.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-end border-t pt-4">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Read Research Paper
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Brain Function & Mental Health</CardTitle>
+                <CardDescription>From Journal of Neuroscience</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm mb-3">
+                  "High sugar diets reduce production of brain-derived neurotrophic factor (BDNF), a crucial molecule 
+                  for neuronal health and learning. Low BDNF levels are associated with depression, dementia, and 
+                  Alzheimer's disease."
+                </p>
+                <p className="text-sm mb-3">
+                  A 2017 longitudinal study found men consuming 67g or more of sugar daily had a 23% higher risk of 
+                  depression over 5 years compared to men consuming less than 40g daily. Sugar-induced inflammation 
+                  appears to be the primary mechanism.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-end border-t pt-4">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Read Research Paper
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Cancer Risk</CardTitle>
+                <CardDescription>From Cancer Research Journal</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm mb-3">
+                  "Cancer cells preferentially metabolize glucose through aerobic glycolysis (the Warburg effect), 
+                  consuming up to 200 times more glucose than normal cells. High sugar consumption, particularly in the 
+                  context of obesity and insulin resistance, creates an environment that promotes cancer growth and 
+                  reduces apoptosis."
+                </p>
+                <p className="text-sm mb-3">
+                  A 9-year study involving 47,000 participants found that those who consumed high-sugar diets had a 
+                  significantly elevated risk of several cancers, particularly colorectal, breast, and pancreatic.
+                </p>
+              </CardContent>
+              <CardFooter className="flex justify-end border-t pt-4">
+                <Button variant="outline" size="sm">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Read Research Paper
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg">
+            <h4 className="text-sm font-medium mb-2">The Evidence is Clear</h4>
+            <p className="text-sm text-muted-foreground">
+              Over 25,000 published scientific papers now link sugar consumption to serious health conditions. 
+              The World Health Organization, American Heart Association, and other major medical organizations recommend 
+              limiting added sugar to less than 25g daily (6 teaspoons) for optimal health.
+            </p>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="hidden">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Info className="h-5 w-5 text-purple-600" />
+            Hidden Sugar in "Healthy" Foods
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Yogurt</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to 30g (7.5 tsp) per cup
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Many flavored yogurts contain more sugar than a candy bar. Plain Greek yogurt with fresh 
+                  fruit is a much better alternative.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Granola/Protein Bars</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to 25g (6 tsp) per bar
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Marketing terms like "natural," "energy," or "protein" often mask high sugar content. 
+                  Many bars are essentially cookies with added protein.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Smoothies & Juices</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to 50g (12.5 tsp) per bottle
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Store-bought smoothies often contain added sugars, fruit concentrates, or excessive fruit. 
+                  One bottle can exceed your daily sugar limit.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Salad Dressings</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to 12g (3 tsp) per serving
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Low-fat dressings often replace fat with sugar and thickeners. Oil and vinegar or 
+                  lemon with herbs is a simple alternative.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Pasta Sauce</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to 15g (3.75 tsp) per half cup
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Commercial pasta sauces can contain as much sugar as two cookies. Look for versions with 
+                  less than 5g per serving.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="flex flex-col">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Dried Fruit</CardTitle>
+                <Badge variant="outline" className="w-fit bg-purple-50 text-purple-700 border-purple-200">
+                  Up to x3 sugar of fresh fruit
+                </Badge>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p className="text-sm">
+                  Dehydration concentrates the sugars. Many dried fruits also have added sugar, sometimes 
+                  disguised as apple or grape juice concentrate.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="bg-purple-50 dark:bg-purple-900/10 p-4 rounded-lg">
+            <h4 className="text-sm font-medium mb-2">Sugar's Many Disguises (Names to Look For)</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <Badge variant="outline" className="justify-start">High-fructose corn syrup</Badge>
+              <Badge variant="outline" className="justify-start">Agave nectar</Badge>
+              <Badge variant="outline" className="justify-start">Rice syrup</Badge>
+              <Badge variant="outline" className="justify-start">Cane juice</Badge>
+              <Badge variant="outline" className="justify-start">Maltose/dextrose</Badge>
+              <Badge variant="outline" className="justify-start">Fruit juice concentrate</Badge>
+              <Badge variant="outline" className="justify-start">Maple syrup</Badge>
+              <Badge variant="outline" className="justify-start">Honey</Badge>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="addiction">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-600" />
+            Sugar Addiction: It's Real
+          </h3>
+          
+          <Card className="mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle>The Science of Sugar Addiction</CardTitle>
+              <CardDescription>From Dr. Nicole Avena, Mount Sinai School of Medicine</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">
+                Sugar triggers the release of dopamine in the brain's reward center, similar to addictive drugs. 
+                Over time, more sugar is needed for the same reward, creating a dangerous cycle of dependence.
+              </p>
+              <div className="space-y-4">
+                <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-lg border border-amber-100">
+                  <h4 className="text-sm font-medium mb-1 flex items-center">
+                    <Brain className="h-4 w-4 text-amber-600 mr-2" />
+                    Brain Scans Show Similar Patterns
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Functional MRI studies show sugar activates the same brain regions as cocaine. Those who regularly 
+                    consume high quantities of sugar show downregulation of dopamine receptors.
+                  </p>
+                </div>
+                <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-lg border border-amber-100">
+                  <h4 className="text-sm font-medium mb-1 flex items-center">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 mr-2" />
+                    Withdrawal Symptoms Are Real
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Abruptly quitting sugar can cause withdrawal symptoms including headaches, mood swings, cravings, 
+                    and fatigue. This typically peaks 2-5 days after quitting and resolves within 7-14 days.
+                  </p>
+                </div>
+                <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-lg border border-amber-100">
+                  <h4 className="text-sm font-medium mb-1 flex items-center">
+                    <Zap className="h-4 w-4 text-amber-600 mr-2" />
+                    Breaking the Cycle
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    After 2 weeks of reduced sugar intake, taste buds reset and cravings significantly diminish. 
+                    Foods that once tasted normal now taste excessively sweet. This is evidence of your brain 
+                    chemistry returning to balance.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h4 className="text-base font-medium mb-3">The Addiction Cycle</h4>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                    <span className="font-medium text-amber-800 dark:text-amber-400">1</span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium">Sugar Consumption</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Sugar causes rapid blood glucose spikes followed by insulin release
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                    <span className="font-medium text-amber-800 dark:text-amber-400">2</span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium">Dopamine Release</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Brain's reward system activates, creating a pleasurable sensation
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                    <span className="font-medium text-amber-800 dark:text-amber-400">3</span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium">Blood Sugar Crash</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Insulin overcompensation leads to low blood sugar
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                    <span className="font-medium text-amber-800 dark:text-amber-400">4</span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium">Cravings Begin</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Body demands more sugar to restore blood glucose and dopamine
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                    <span className="font-medium text-amber-800 dark:text-amber-400">5</span>
+                  </div>
+                  <div>
+                    <h5 className="text-sm font-medium">Tolerance Develops</h5>
+                    <p className="text-sm text-muted-foreground">
+                      Brain requires more sugar for the same dopamine response
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-base font-medium mb-3">7-Day Sugar Detox Plan</h4>
+              <Card>
+                <CardContent className="pt-6">
+                  <ol className="space-y-2 text-sm">
+                    <li className="pb-2 border-b">
+                      <span className="font-medium">Days 1-2: </span>
+                      Eliminate obvious sources (sweets, soda, juices). Add protein to each meal to stabilize blood sugar.
+                    </li>
+                    <li className="pb-2 border-b">
+                      <span className="font-medium">Days 3-4: </span>
+                      Cut hidden sources (sauces, bread, flavored yogurt). Increase healthy fats to reduce cravings.
+                    </li>
+                    <li className="pb-2 border-b">
+                      <span className="font-medium">Days 5-6: </span>
+                      Stay hydrated. Exercise to boost dopamine naturally. Supplement with magnesium if experiencing headaches.
+                    </li>
+                    <li>
+                      <span className="font-medium">Day 7: </span>
+                      Reassess. Cravings should be significantly reduced. Gradually reintroduce small amounts of whole fruits.
+                    </li>
+                  </ol>
+                </CardContent>
+                <CardFooter className="pt-2">
+                  <Button size="sm" className="w-full">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Download Complete Sugar Detox Guide
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="alternatives">
+          <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Flame className="h-5 w-5 text-green-600" />
+            Better Alternatives
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Natural Sweetener Options</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-12 h-12 rounded-md bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                      <Leaf className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Stevia</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Plant-based, zero-calorie sweetener with no glycemic impact. Good for beverages and baking.
+                      </p>
+                      <Badge variant="outline" className="mt-1 bg-green-50 text-green-600 border-green-200">Recommended</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-12 h-12 rounded-md bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                      <Leaf className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Monk Fruit Extract</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Zero-calorie, natural sweetener with antioxidant properties. No bitter aftertaste.
+                      </p>
+                      <Badge variant="outline" className="mt-1 bg-green-50 text-green-600 border-green-200">Recommended</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-12 h-12 rounded-md bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                      <Leaf className="h-6 w-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Erythritol</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Sugar alcohol with 6% the calories of sugar. Minimal digestive issues compared to other sugar alcohols.
+                      </p>
+                      <Badge variant="outline" className="mt-1 bg-amber-50 text-amber-600 border-amber-200">Use Moderately</Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-12 h-12 rounded-md bg-red-50 dark:bg-red-900/20 flex items-center justify-center">
+                      <AlertTriangle className="h-6 w-6 text-red-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Coconut Sugar / Honey / Maple Syrup</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Still primarily sugar, though with minor nutritional benefits. Use very sparingly.
+                      </p>
+                      <Badge variant="outline" className="mt-1 bg-red-50 text-red-600 border-red-200">Limited Use</Badge>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base">Sweet Craving Strategies</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <span className="text-sm font-medium text-green-800">1</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Focus on Fat</h4>
+                      <p className="text-xs text-muted-foreground">
+                        When sweet cravings hit, try consuming healthy fats like avocado, nuts, or full-fat yogurt. 
+                        Fats provide satiety and help stabilize blood sugar.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <span className="text-sm font-medium text-green-800">2</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Spice Instead of Sweet</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Cinnamon, vanilla, cardamom, and nutmeg can trick the brain into perceiving sweetness 
+                        without actual sugar. Add to coffee, yogurt, or oatmeal.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <span className="text-sm font-medium text-green-800">3</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Berries & Dark Chocolate</h4>
+                      <p className="text-xs text-muted-foreground">
+                        When you must have something sweet, opt for berries (lowest sugar fruits) or 85%+ dark chocolate 
+                        (contains minimal sugar and beneficial antioxidants).
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                      <span className="text-sm font-medium text-green-800">4</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Hydrate First</h4>
+                      <p className="text-xs text-muted-foreground">
+                        Many sugar cravings are actually dehydration in disguise. Drink a full glass of water when 
+                        cravings hit and wait 15 minutes to see if they subside.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Surprising Sweet-Tasting Snacks with No Added Sugar</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Frozen Banana "Ice Cream"</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Blend frozen banana chunks until creamy. Add unsweetened cocoa powder or cinnamon.
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Greek Yogurt with Berries</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Full-fat Greek yogurt with fresh berries and a sprinkle of cinnamon.
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Coconut Chia Pudding</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Unsweetened coconut milk with chia seeds, vanilla extract, and a few berries.
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Nut Butter-Stuffed Dates</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Whole date with almond butter. Natural sweetness plus healthy fat and protein.
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Sweet Potato Rounds</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Baked sweet potato slices with cinnamon and a tiny drizzle of coconut oil.
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-100">
+                  <h4 className="text-sm font-medium mb-1">Apple with Nut Butter</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Sliced apple with almond butter and a sprinkle of cinnamon.
+                  </p>
+                </div>
+              </div>
+              <Button variant="outline" className="w-full">
+                <FileText className="h-4 w-4 mr-2" />
+                Download Full Sugar-Free Recipe Book
+              </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Key Books Section */}
+      <div className="mb-10">
+        <h3 className="text-lg font-bold mb-4">Essential Reading on Sugar</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <Card className="flex flex-col h-full">
+            <CardContent className="pt-6 flex-grow">
+              <h4 className="font-bold mb-1">Pure, White, and Deadly</h4>
+              <p className="text-sm text-muted-foreground mb-2">John Yudkin</p>
+              <p className="text-xs mb-3">
+                The groundbreaking 1972 book that first exposed sugar's dangers, years before mainstream science 
+                caught up. Yudkin was vilified by the sugar industry but ultimately proven right.
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Button variant="outline" size="sm" className="w-full">
+                <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                View Book
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          <Card className="flex flex-col h-full">
+            <CardContent className="pt-6 flex-grow">
+              <h4 className="font-bold mb-1">The Case Against Sugar</h4>
+              <p className="text-sm text-muted-foreground mb-2">Gary Taubes</p>
+              <p className="text-xs mb-3">
+                A detailed investigation into sugar's role in obesity, diabetes, and heart disease. Exposes 
+                how the sugar industry influenced nutritional research for decades.
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Button variant="outline" size="sm" className="w-full">
+                <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                View Book
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          <Card className="flex flex-col h-full">
+            <CardContent className="pt-6 flex-grow">
+              <h4 className="font-bold mb-1">Fat Chance</h4>
+              <p className="text-sm text-muted-foreground mb-2">Dr. Robert Lustig</p>
+              <p className="text-xs mb-3">
+                Written by the leading researcher on sugar metabolism, this book explains how fructose is 
+                processed by the liver and drives metabolic syndrome.
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Button variant="outline" size="sm" className="w-full">
+                <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                View Book
+              </Button>
+            </CardFooter>
+          </Card>
+          
+          <Card className="flex flex-col h-full">
+            <CardContent className="pt-6 flex-grow">
+              <h4 className="font-bold mb-1">Year of No Sugar</h4>
+              <p className="text-sm text-muted-foreground mb-2">Eve Schaub</p>
+              <p className="text-xs mb-3">
+                A family's real-life experiment with eliminating added sugar for an entire year, revealing 
+                both challenges and transformative health benefits.
+              </p>
+            </CardContent>
+            <CardFooter className="pt-0">
+              <Button variant="outline" size="sm" className="w-full">
+                <ExternalLink className="h-3.5 w-3.5 mr-2" />
+                View Book
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+
+      {/* Call to Action */}
+      <Card className="border-2 border-red-200 dark:border-red-900/50 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/30 mb-6">
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-6 items-center">
+            <div className="flex-grow">
+              <h3 className="text-lg font-bold text-red-800 dark:text-red-400 mb-2">
+                Take the 21-Day Sugar Detox Challenge
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Join thousands of others breaking free from sugar addiction. Our structured 21-day program 
+                will guide you through eliminating sugar while providing daily support, recipes, and 
+                motivation. Most participants report improved energy, reduced inflammation, and weight loss.
+              </p>
+              <div className="flex gap-3">
+                <Button>
+                  Join Challenge
+                </Button>
+                <Button variant="outline">
+                  Learn More
+                </Button>
+              </div>
+            </div>
+            <div className="hidden md:block border-l border-red-200 dark:border-red-900/50 h-40"></div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-800 dark:text-red-400">76%</div>
+              <p className="text-sm text-muted-foreground">Report reduced cravings</p>
+              <div className="text-2xl font-bold text-red-800 dark:text-red-400 mt-2">68%</div>
+              <p className="text-sm text-muted-foreground">Report improved sleep</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </PageContainer>
   );
 }
