@@ -86,7 +86,15 @@ export interface IStorage {
   getSupplementReviews(supplementId: number): Promise<(SupplementReview & { user: User })[]>;
   getSupplementReview(id: number): Promise<SupplementReview | undefined>;
   createSupplementReview(review: InsertSupplementReview): Promise<SupplementReview>;
+  updateSupplementReview(id: number, data: { rating: number, content: string | null }): Promise<SupplementReview | undefined>;
+  deleteSupplementReview(id: number): Promise<void>;
   updateSupplementReviewStatus(supplementId: number, totalReviews: number, averageRating: number): Promise<Supplement | undefined>;
+  
+  // Review Helpful Votes methods
+  getUserReviewHelpfulVotes(userId: number): Promise<ReviewHelpfulVote[]>;
+  getReviewHelpfulVote(reviewId: number, userId: number): Promise<ReviewHelpfulVote | undefined>;
+  createReviewHelpfulVote(vote: InsertReviewHelpfulVote): Promise<ReviewHelpfulVote>;
+  updateReviewHelpfulVote(reviewId: number, userId: number, isHelpful: boolean): Promise<ReviewHelpfulVote | undefined>;
   
   // Supplement Vote methods
   getSupplementVote(userId: number, supplementId: number): Promise<SupplementVote | undefined>;
