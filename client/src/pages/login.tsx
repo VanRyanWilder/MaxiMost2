@@ -123,11 +123,20 @@ export default function Login() {
           
           <Button 
             className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
-            onClick={() => {
-              // For now, just use the mock user login
-              login("demo@example.com", "password");
-              setLocation("/dashboard");
+            onClick={async () => {
+              try {
+                setIsLoading(true);
+                // Use the mock user login, avoiding Firebase
+                await login("guest@example.com", "guest-password");
+                setLocation("/dashboard");
+              } catch (error) {
+                console.error("Guest login error:", error);
+                setError("Failed to login as guest. Please try again.");
+              } finally {
+                setIsLoading(false);
+              }
             }}
+            disabled={isLoading}
           >
             Continue as Guest
           </Button>

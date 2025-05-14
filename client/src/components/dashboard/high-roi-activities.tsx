@@ -129,13 +129,92 @@ export function HighRoiActivities() {
     },
   ];
   
+  // Morning routine options from various experts
+  const morningRoutines = [
+    {
+      id: "huberman-routine",
+      title: "Huberman Morning Protocol",
+      description: "Start with morning sunlight, cold exposure, delayed breakfast, and exercise to optimize hormones and energy.",
+      author: "Andrew Huberman",
+      steps: [
+        "Get sunlight in eyes within 30-60 minutes of waking",
+        "Delay breakfast by 1-2 hours to maintain fat-burning",
+        "Cold exposure for 1-3 minutes",
+        "Exercise in a fasted state",
+        "Hydrate with water and electrolytes"
+      ],
+      timeCommitment: "30-60 min"
+    },
+    {
+      id: "goggins-routine",
+      title: "Goggins Morning Protocol",
+      description: "Extreme discipline-based routine focused on mental toughness and physical resilience.",
+      author: "David Goggins",
+      steps: [
+        "Wake up at 4:30 AM",
+        "Immediate workout/run",
+        "Cold shower",
+        "Review your goals and accountability mirror",
+        "Begin work before others are awake"
+      ],
+      timeCommitment: "60-90 min"
+    },
+    {
+      id: "jocko-routine",
+      title: "Jocko Morning Protocol",
+      description: "Military-precision morning routine for maximum discipline and productivity.",
+      author: "Jocko Willink",
+      steps: [
+        "Wake up at 4:30 AM",
+        "Take a photo of your watch",
+        "Immediate workout",
+        "Plan and review the day's objectives",
+        "Begin executing on tasks before standard work hours"
+      ],
+      timeCommitment: "60-90 min"
+    },
+    {
+      id: "robbins-routine",
+      title: "5 Second Rule Morning",
+      description: "Action-oriented morning routine to build momentum through quick decisions.",
+      author: "Mel Robbins",
+      steps: [
+        "5-4-3-2-1 countdown to get out of bed immediately",
+        "Don't check your phone for first hour",
+        "3-minute mindfulness breathing",
+        "Set 3 intentional goals for the day",
+        "Physical movement for at least 10 minutes"
+      ],
+      timeCommitment: "30-40 min"
+    },
+    {
+      id: "brecka-routine",
+      title: "Brecka Optimization Protocol",
+      description: "Hormone and energy optimization focused morning routine based on evolutionary biology.",
+      author: "Mike Brecka",
+      steps: [
+        "Morning sunlight exposure for minimum 10 minutes",
+        "Cold shower or ice bath",
+        "Mobility and movement practice",
+        "Nutritional supplement stack",
+        "Protein-focused breakfast"
+      ],
+      timeCommitment: "45-60 min"
+    }
+  ];
+  
   // Get today's principle based on date
   const getTodaysPrinciple = () => {
-    const today = new Date();
-    const startOfYear = new Date(today.getFullYear(), 0, 0);
-    const diff = today.getTime() - startOfYear.getTime();
-    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return principleSummaries[dayOfYear % principleSummaries.length];
+    try {
+      const today = new Date();
+      const startOfYear = new Date(today.getFullYear(), 0, 0);
+      const diff = today.getTime() - startOfYear.getTime();
+      const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+      return principleSummaries[dayOfYear % principleSummaries.length];
+    } catch (error) {
+      console.error("Error getting today's principle:", error);
+      return principleSummaries[0]; // Return the first principle as fallback
+    }
   };
   
   // Initial activities data
@@ -205,6 +284,32 @@ export function HighRoiActivities() {
       streak: 7,
       type: "principle",
       principle: getTodaysPrinciple().title
+    },
+    {
+      id: "daily-dad",
+      title: "Daily Dad",
+      description: "Read Ryan Holiday's 'Daily Dad' for wisdom on fatherhood and life principles.",
+      icon: <BookOpen className="h-8 w-8 text-purple-500" />,
+      impact: 7,
+      effort: 2,
+      timeCommitment: "5 min/day",
+      frequency: "daily",
+      isAbsolute: false,
+      streak: 0,
+      type: "custom"
+    },
+    {
+      id: "prayer",
+      title: "Christian Prayer",
+      description: "Daily spiritual practice for mental clarity, gratitude and connection.",
+      icon: <CheckCircle className="h-8 w-8 text-emerald-500" />,
+      impact: 9,
+      effort: 2,
+      timeCommitment: "10 min/day",
+      frequency: "daily",
+      isAbsolute: false,
+      streak: 0,
+      type: "custom"
     }
   ];
   
