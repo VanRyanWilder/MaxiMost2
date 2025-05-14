@@ -100,11 +100,14 @@ export default function Supplements() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [sortOption, setSortOption] = useState<string>("upvotes");
+  const [selectedSupplement, setSelectedSupplement] = useState<number | null>(null);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useUser();
   
-  // Get logged in user (mock for now)
-  const userId = 1; // This would come from auth context in a real app
+  // Get logged in user ID
+  const userId = user?.id || 1;
   
   // Fetch supplements from the API
   const { data: supplements, isLoading, error } = useQuery({
@@ -138,6 +141,12 @@ export default function Supplements() {
   // Handle voting
   const handleVote = (supplementId: number, voteType: string) => {
     voteMutation.mutate({ userId, supplementId, voteType });
+  };
+
+  // Handle opening the review modal
+  const handleOpenReviews = (supplementId: number) => {
+    setSelectedSupplement(supplementId);
+    setReviewModalOpen(true);
   };
   
   // Parse benefits and categories from string to arrays
