@@ -30,154 +30,230 @@ export default function Supplements() {
     {
       id: 1,
       name: "Vitamin D3 with K2",
-      description: "Essential vitamin for immune function, bone health, and overall wellness.",
+      description: "Essential vitamin highlighted by both Huberman and Brecka as critical for immune function, longevity, and hormonal regulation.",
       benefits: [
-        "Immune system support",
-        "Bone health optimization",
-        "Hormone regulation",
-        "Cardiovascular health"
+        "Immune system optimization",
+        "Bone health and calcium utilization",
+        "Hormone production support",
+        "Cardiovascular health protection"
       ],
       dosage: "5,000-10,000 IU daily",
-      timing: "Morning with breakfast",
+      timing: "Morning with fat-containing meal",
       cost: "$0.10-0.30/day",
       costEffectiveness: 10,
       userScore: 4.8,
-      votes: 342,
+      votes: 842,
       category: "Essential",
-      affiliateLink: "#"
+      affiliateLink: "#vitamin-d3-k2-link"
     },
     {
       id: 2,
-      name: "Magnesium Glycinate",
-      description: "Highly bioavailable form of magnesium that supports sleep, muscle function, and stress reduction.",
+      name: "Magnesium Glycinate/Threonate",
+      description: "Andrew Huberman's top recommendation for sleep, neural plasticity, and recovery. Threonate form crosses the blood-brain barrier efficiently.",
       benefits: [
-        "Improved sleep quality",
-        "Muscle recovery enhancement",
-        "Stress reduction",
-        "Energy production support"
+        "Enhanced sleep architecture",
+        "Muscle relaxation and recovery",
+        "Stress resilience",
+        "Cognitive function support"
       ],
-      dosage: "400-600mg daily",
-      timing: "Evening before bed",
-      cost: "$0.30-0.50/day",
+      dosage: "300-400mg glycinate, 100-200mg threonate",
+      timing: "Glycinate before bed, threonate morning/afternoon",
+      cost: "$0.30-0.70/day",
       costEffectiveness: 9,
       userScore: 4.7,
-      votes: 289,
+      votes: 756,
       category: "Essential",
-      affiliateLink: "#"
+      affiliateLink: "#magnesium-link"
     },
     {
       id: 3,
-      name: "Omega-3 Fish Oil",
-      description: "Essential fatty acids that support brain health, reduce inflammation, and promote heart health.",
+      name: "Omega-3 (EPA/DHA)",
+      description: "Brecka calls this 'non-negotiable' - pure, molecularly distilled fish oil with at least 1g combined EPA/DHA for inflammation control.",
       benefits: [
-        "Brain function optimization",
-        "Inflammation reduction",
-        "Joint health improvement",
-        "Heart health support"
+        "Reduced systemic inflammation",
+        "Enhanced brain function and neuroplasticity",
+        "Improved cardiovascular markers",
+        "Joint health optimization"
       ],
-      dosage: "2-3g daily",
+      dosage: "1-3g EPA/DHA combined daily",
       timing: "With meals (split dosage)",
-      cost: "$0.40-0.70/day",
-      costEffectiveness: 8,
-      userScore: 4.5,
-      votes: 401,
+      cost: "$0.40-0.90/day",
+      costEffectiveness: 9,
+      userScore: 4.6,
+      votes: 801,
       category: "Essential",
-      affiliateLink: "#"
+      affiliateLink: "#omega3-link"
     },
     {
       id: 4,
       name: "Creatine Monohydrate",
-      description: "The most well-researched supplement for strength, power, and muscle performance.",
+      description: "Huberman's top cognitive and physical performance enhancer with over 500 studies supporting safety and efficacy.",
       benefits: [
-        "Increased strength and power",
-        "Improved high-intensity performance",
-        "Enhanced muscle recovery",
-        "Cognitive benefits"
+        "Increased power output and strength",
+        "Enhanced cognitive performance",
+        "Improved recovery between training",
+        "Neuroprotective properties"
       ],
-      dosage: "5g daily",
-      timing: "Any time (consistent daily)",
+      dosage: "5g daily (no loading phase needed)",
+      timing: "Any time (consistency matters most)",
       cost: "$0.10-0.30/day",
       costEffectiveness: 10,
       userScore: 4.9,
-      votes: 536,
+      votes: 936,
       category: "Performance",
-      affiliateLink: "#"
+      affiliateLink: "#creatine-link"
     },
     {
       id: 5,
-      name: "Berberine",
-      description: "Natural compound that supports metabolic health and glucose management.",
+      name: "Athletic Greens/AG1",
+      description: "Comprehensive micronutrient insurance policy recommended by both Huberman and Brecka for covering nutritional bases.",
       benefits: [
-        "Blood glucose regulation",
-        "Gut health improvement",
-        "Cardiovascular support",
-        "Longevity enhancement"
+        "Comprehensive micronutrient support",
+        "Digestive enzyme optimization",
+        "Prebiotic and probiotic blend",
+        "Adaptogen and antioxidant complex"
       ],
-      dosage: "500mg, 3x daily",
-      timing: "Before meals",
-      cost: "$0.60-1.00/day",
+      dosage: "1 serving daily",
+      timing: "Morning on empty stomach",
+      cost: "$2.50-3.30/day",
       costEffectiveness: 7,
-      userScore: 4.3,
-      votes: 178,
-      category: "Metabolic",
-      affiliateLink: "#"
+      userScore: 4.5,
+      votes: 678,
+      category: "Essential",
+      affiliateLink: "#greens-link"
     },
     {
       id: 6,
-      name: "NAC (N-Acetyl Cysteine)",
-      description: "Powerful antioxidant and glutathione precursor that supports detoxification.",
+      name: "Tongkat Ali (Longjack)",
+      description: "Huberman's go-to recommendation for hormonal support, particularly for testosterone optimization in both men and women.",
       benefits: [
-        "Glutathione production",
-        "Respiratory health support",
-        "Detoxification enhancement",
-        "Cognitive support"
+        "Natural testosterone support",
+        "Libido enhancement",
+        "Energy and vitality improvement",
+        "Cortisol modulation"
       ],
-      dosage: "600-1200mg daily",
-      timing: "With or without food",
-      cost: "$0.30-0.60/day",
+      dosage: "400-600mg daily (with 2% eurycomanone)",
+      timing: "Morning with breakfast",
+      cost: "$0.50-1.00/day",
       costEffectiveness: 8,
       userScore: 4.4,
-      votes: 203,
-      category: "Antioxidant",
-      affiliateLink: "#"
+      votes: 543,
+      category: "Hormonal",
+      affiliateLink: "#tongkat-link"
     },
     {
       id: 7,
-      name: "Ashwagandha",
-      description: "Adaptogenic herb that helps the body manage stress and supports hormonal balance.",
+      name: "Berberine",
+      description: "Gary Brecka's 'metformin alternative' for blood glucose regulation and metabolic health optimization.",
       benefits: [
-        "Stress reduction",
-        "Testosterone support",
-        "Anxiety reduction",
-        "Immune function enhancement"
+        "Blood glucose management",
+        "AMPK activation pathway",
+        "Lipid profile improvement",
+        "Gut health and microbiome support"
       ],
-      dosage: "600-1200mg daily",
-      timing: "Morning or evening",
-      cost: "$0.20-0.40/day",
-      costEffectiveness: 9,
-      userScore: 4.6,
-      votes: 312,
-      category: "Adaptogen",
-      affiliateLink: "#"
+      dosage: "500mg, 2-3x daily",
+      timing: "Before or with meals",
+      cost: "$0.60-1.00/day",
+      costEffectiveness: 8,
+      userScore: 4.3,
+      votes: 478,
+      category: "Metabolic",
+      affiliateLink: "#berberine-link"
     },
     {
       id: 8,
-      name: "Zinc Picolinate",
-      description: "Highly absorbable form of zinc that supports immune function and testosterone production.",
+      name: "Protein Powder (Whey Isolate)",
+      description: "Complete protein source with all essential amino acids, recommended by Huberman for muscle protein synthesis and recovery.",
       benefits: [
-        "Immune system enhancement",
-        "Testosterone support",
-        "Skin health improvement",
-        "Protein synthesis support"
+        "Muscle recovery acceleration",
+        "Lean mass preservation",
+        "Appetite regulation",
+        "Immune system support"
       ],
-      dosage: "15-30mg daily",
-      timing: "With food",
-      cost: "$0.05-0.15/day",
+      dosage: "20-40g per serving, 1-2 servings daily",
+      timing: "Post-workout and/or between meals",
+      cost: "$1.00-2.00/day",
       costEffectiveness: 9,
-      userScore: 4.5,
-      votes: 245,
-      category: "Essential",
-      affiliateLink: "#"
+      userScore: 4.7,
+      votes: 865,
+      category: "Performance",
+      affiliateLink: "#protein-link"
+    },
+    {
+      id: 9,
+      name: "Apigenin",
+      description: "Huberman's recommendation for sleep enhancement and estrogen management, naturally found in chamomile and parsley.",
+      benefits: [
+        "Sleep quality enhancement",
+        "Estrogen modulation",
+        "Antioxidant properties",
+        "Cognitive support"
+      ],
+      dosage: "50mg daily",
+      timing: "30-60 minutes before bedtime",
+      cost: "$0.20-0.40/day",
+      costEffectiveness: 8,
+      userScore: 4.2,
+      votes: 342,
+      category: "Sleep",
+      affiliateLink: "#apigenin-link"
+    },
+    {
+      id: 10,
+      name: "L-Theanine",
+      description: "Amino acid that promotes relaxation without sedation, particularly effective when combined with caffeine.",
+      benefits: [
+        "Calm focus enhancement",
+        "Stress reduction",
+        "Alpha brain wave promotion",
+        "Sleep quality improvement"
+      ],
+      dosage: "100-200mg, 1-3x daily",
+      timing: "Morning with coffee, afternoon, and/or evening",
+      cost: "$0.10-0.25/day",
+      costEffectiveness: 10,
+      userScore: 4.6,
+      votes: 723,
+      category: "Cognitive",
+      affiliateLink: "#theanine-link"
+    },
+    {
+      id: 11,
+      name: "Fadogia Agrestis",
+      description: "Paired with Tongkat Ali in Huberman's hormone optimization protocol for enhanced testosterone support.",
+      benefits: [
+        "Luteinizing hormone support",
+        "Testosterone level optimization",
+        "Libido enhancement",
+        "Recovery acceleration"
+      ],
+      dosage: "600mg daily (10:1 extract)",
+      timing: "Morning with breakfast",
+      cost: "$0.70-1.20/day",
+      costEffectiveness: 7,
+      userScore: 4.1,
+      votes: 385,
+      category: "Hormonal",
+      affiliateLink: "#fadogia-link"
+    },
+    {
+      id: 12,
+      name: "NAC (N-Acetyl Cysteine)",
+      description: "Brecka's recommendation for glutathione production and detoxification support, especially important in modern environments.",
+      benefits: [
+        "Master antioxidant glutathione production",
+        "Liver detoxification enhancement",
+        "Respiratory pathway support",
+        "Mental clarity improvement"
+      ],
+      dosage: "600-1200mg daily",
+      timing: "Morning or evening",
+      cost: "$0.30-0.60/day",
+      costEffectiveness: 8,
+      userScore: 4.4,
+      votes: 503,
+      category: "Antioxidant",
+      affiliateLink: "#nac-link"
     }
   ];
   
