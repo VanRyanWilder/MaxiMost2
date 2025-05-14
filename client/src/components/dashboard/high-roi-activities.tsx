@@ -1280,7 +1280,7 @@ export function HighRoiActivities() {
 
         {/* Activity Plan Dialog */}
         <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
-          <DialogContent className="sm:max-w-[500px] h-[80vh] max-h-[600px] flex flex-col overflow-hidden">
+          <DialogContent className="sm:max-w-[500px] max-h-[85vh] h-[650px] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>Customize Your Daily Plan</DialogTitle>
               <DialogDescription>
@@ -1300,7 +1300,7 @@ export function HighRoiActivities() {
               </div>
             </div>
             
-            <div className="flex-grow overflow-y-auto pr-1 min-h-[300px]">
+            <div className="flex-grow overflow-y-auto pr-1 min-h-[400px]">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="font-medium">Selected Activities</h4>
                 <span className="text-xs text-muted-foreground">{selectedActivities.length} selected</span>
@@ -1379,7 +1379,7 @@ export function HighRoiActivities() {
                   </TabsList>
                   
                   <TabsContent value="all" className="mt-0 flex-grow overflow-hidden">
-                    <div className="space-y-2 max-h-[220px] overflow-y-auto p-1">
+                    <div className="space-y-2 max-h-[250px] overflow-y-auto p-1">
                       {availableActivities.map(activity => (
                         <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
                           <div className="flex items-center gap-2">
