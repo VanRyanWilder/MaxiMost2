@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -57,32 +57,8 @@ type Completion = {
   date: Date;
 };
 
-// Create a context to share the habit tracker functionality with other components
-import { createContext, useContext } from 'react';
-
-interface HabitTrackerContextType {
-  addHabit: (habit: {
-    title: string;
-    description: string;
-    icon: string;
-    impact: number;
-    effort: number;
-    timeCommitment: string;
-    frequency: Frequency;
-    isAbsolute: boolean;
-    category: string;
-  }) => void;
-}
-
-export const HabitTrackerContext = createContext<HabitTrackerContextType | null>(null);
-
-export function useHabitTracker() {
-  const context = useContext(HabitTrackerContext);
-  if (!context) {
-    throw new Error('useHabitTracker must be used within a HabitTrackerProvider');
-  }
-  return context;
-}
+// The useHabitTracker approach would be preferable in a larger application,
+// but for simplicity and to avoid context-related errors, we'll use a simpler event-based approach
 
 export function StreakHabitTracker() {
   const [viewMode, setViewMode] = useState('calendar');
@@ -294,32 +270,67 @@ export function StreakHabitTracker() {
     return habit.category === filterCategory;
   });
   
-  // Function to handle pre-filled habits from other components
-  const addPrefilledHabit = (habitData: any) => {
-    setNewHabit({
-      title: habitData.title,
-      description: habitData.description,
-      icon: typeof habitData.icon === 'string' 
-        ? habitData.icon 
-        : habitData.icon.type?.name?.toLowerCase() || 'activity',
-      impact: habitData.impact,
-      effort: habitData.effort,
-      timeCommitment: habitData.timeCommitment,
-      frequency: habitData.frequency as Frequency,
-      isAbsolute: !!habitData.isAbsolute,
-      category: habitData.category || 'mind'
-    });
-    setShowAddHabitDialog(true);
-  };
+  // Listen for custom 'add-prefilled-habit' events
+  useEffect(() => {
+    const handleAddPrefilledHabit = (event: any) => {
+      const habitData = event.detail;
+      console.log('Received prefilled habit:', habitData);
+      
+      // Set newHabit state with the data received
+      setNewHabit({
+        title: habitData.title,
+        description: habitData.description,
+        icon: habitData.icon.type?.name?.toLowerCase() || 'activity',
+        impact: habitData.impact || 7,
+        effort: habitData.effort || 3,
+        timeCommitment: habitData.timeCommitment || '10 min',
+        frequency: habitData.frequency as Frequency || 'daily',
+        isAbsolute: !!habitData.isAbsolute,
+        category: habitData.category || 'mind'
+      });
+      
+      // Open the dialog
+      setShowAddHabitDialog(true);
+    };
+    
+    // Add the event listener
+    document.addEventListener('add-prefilled-habit', handleAddPrefilledHabit);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('add-prefilled-habit', handleAddPrefilledHabit);
+    };
+  }, []);
   
-  // Context value to share with other components
-  const habitTrackerValue = {
-    addHabit: addPrefilledHabit
-  };
+  // Listen for the custom event to add prefilled habits
+  useEffect(() => {
+    const handlePrefilledHabit = (event: any) => {
+      const habitData = event.detail;
+      setNewHabit({
+        title: habitData.title,
+        description: habitData.description,
+        icon: typeof habitData.icon === 'string' 
+          ? habitData.icon 
+          : habitData.icon.type?.name?.toLowerCase() || 'activity',
+        impact: habitData.impact,
+        effort: habitData.effort,
+        timeCommitment: habitData.timeCommitment,
+        frequency: habitData.frequency as Frequency,
+        isAbsolute: !!habitData.isAbsolute,
+        category: habitData.category || 'mind'
+      });
+      setShowAddHabitDialog(true);
+    };
+    
+    document.addEventListener('add-prefilled-habit', handlePrefilledHabit);
+    
+    return () => {
+      document.removeEventListener('add-prefilled-habit', handlePrefilledHabit);
+    };
+  }, []);
 
   return (
-    <HabitTrackerContext.Provider value={habitTrackerValue}>
-      <Card className="shadow-md">
+    <Card className="shadow-md">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl flex items-center gap-2">
@@ -1036,6 +1047,5 @@ export function StreakHabitTracker() {
         </DialogContent>
       </Dialog>
     </Card>
-    </HabitTrackerContext.Provider>
   );
 }
