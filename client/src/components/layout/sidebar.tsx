@@ -163,19 +163,18 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.path}>
-                <Link href={item.path}>
-                  <a
-                    className={cn(
-                      "flex items-center space-x-3 p-3 rounded-lg", 
-                      location === item.path 
-                        ? "bg-primary bg-opacity-20 text-primary" 
-                        : "hover:bg-accent text-foreground"
-                    )}
-                  >
-                    {item.icon}
-                    <span>{item.name}</span>
-                  </a>
-                </Link>
+                <div
+                  className={cn(
+                    "flex items-center space-x-3 p-3 rounded-lg cursor-pointer", 
+                    location === item.path 
+                      ? "bg-primary bg-opacity-20 text-primary" 
+                      : "hover:bg-accent text-foreground"
+                  )}
+                  onClick={() => window.location.href = item.path}
+                >
+                  {item.icon}
+                  <span>{item.name}</span>
+                </div>
               </li>
             ))}
           </ul>
@@ -183,12 +182,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       </div>
 
       <div className="p-6 border-t border-border">
-        <Link href="/settings">
-          <a className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent text-foreground">
-            <Settings className="w-5 h-5" />
-            <span>Settings</span>
-          </a>
-        </Link>
+        <div 
+          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent text-foreground cursor-pointer"
+          onClick={() => window.location.href = "/settings"}
+        >
+          <Settings className="w-5 h-5" />
+          <span>Settings</span>
+        </div>
         <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent text-destructive w-full text-left">
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
