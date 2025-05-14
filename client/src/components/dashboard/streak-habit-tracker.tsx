@@ -57,6 +57,33 @@ type Completion = {
   date: Date;
 };
 
+// Create a context to share the habit tracker functionality with other components
+import { createContext, useContext } from 'react';
+
+interface HabitTrackerContextType {
+  addHabit: (habit: {
+    title: string;
+    description: string;
+    icon: string;
+    impact: number;
+    effort: number;
+    timeCommitment: string;
+    frequency: Frequency;
+    isAbsolute: boolean;
+    category: string;
+  }) => void;
+}
+
+export const HabitTrackerContext = createContext<HabitTrackerContextType | null>(null);
+
+export function useHabitTracker() {
+  const context = useContext(HabitTrackerContext);
+  if (!context) {
+    throw new Error('useHabitTracker must be used within a HabitTrackerProvider');
+  }
+  return context;
+}
+
 export function StreakHabitTracker() {
   const [viewMode, setViewMode] = useState('calendar');
   const [weekOffset, setWeekOffset] = useState(0);
