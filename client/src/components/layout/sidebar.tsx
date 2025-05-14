@@ -18,7 +18,8 @@ import {
   Pill,
   LineChart,
   BookOpenText,
-  MessageSquare
+  MessageSquare,
+  Users
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 
@@ -38,6 +39,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Supplements", 
       icon: <Pill className="w-5 h-5" />,
       description: "Science-backed supplements ranked by effectiveness"
+    },
+    { 
+      path: "/experts", 
+      name: "Health Experts", 
+      icon: <Users className="w-5 h-5" />,
+      description: "Top health & performance experts to follow"
     },
     { 
       path: "/research", 
