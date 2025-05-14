@@ -18,7 +18,8 @@ import {
   FileText,
   ExternalLink,
   BookOpen,
-  Info
+  Info,
+  Leaf
 } from "lucide-react";
 
 export default function SugarPage() {
