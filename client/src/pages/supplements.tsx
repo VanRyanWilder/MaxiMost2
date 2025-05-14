@@ -259,23 +259,23 @@ export default function Supplements() {
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-3xl font-bold mb-6">Supplement Recommendations</h1>
             
-            <div className="bg-gradient-to-r from-accent to-primary rounded-xl p-6 text-white mb-8">
+            <div className="bg-gradient-to-r from-primary/80 to-primary rounded-xl p-6 text-primary-foreground mb-8">
               <h2 className="text-2xl font-bold mb-2">Supplement Strategy</h2>
-              <p className="text-white text-opacity-90 max-w-3xl">
+              <p className="text-primary-foreground/90 max-w-3xl">
                 "Quality supplements are force multipliers for your health and performance, but they don't replace a solid foundation of nutrition, sleep, and exercise. Focus on these highest-impact options for the best return on investment." — Gary Brecka
               </p>
             </div>
             
-            <div className="bg-card rounded-xl shadow-sm p-6 mb-8">
+            <div className="bg-card shadow-sm border border-border rounded-xl p-6 mb-8">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
-                  <h3 className="font-bold text-xl">Supplement Rankings</h3>
+                  <h3 className="font-bold text-xl text-card-foreground">Supplement Rankings</h3>
                   <p className="text-sm text-muted-foreground">Ranked by efficacy, user ratings, and scientific evidence</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <select 
-                    className="text-sm border border-input rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    className="text-sm border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-input bg-background text-foreground"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
@@ -286,7 +286,7 @@ export default function Supplements() {
                   </select>
                   
                   <select 
-                    className="text-sm border border-input rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    className="text-sm border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-input bg-background text-foreground"
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                   >
@@ -335,12 +335,12 @@ export default function Supplements() {
                                 <div className="flex">
                                   {renderStars(supplement.averageRating)}
                                 </div>
-                                <span className="text-sm text-gray-500">({supplement.totalReviews} reviews)</span>
+                                <span className="text-sm text-muted-foreground">({supplement.totalReviews} reviews)</span>
                               </div>
                             </div>
                             <div className="flex gap-1">
                               {supplement.parsedCategories.map(category => (
-                                <Badge key={category} variant="outline" className="text-xs px-2 py-1 bg-gray-100">
+                                <Badge key={category} variant="outline" className="text-xs px-2 py-1 bg-secondary/30 text-secondary-foreground">
                                   {category}
                                 </Badge>
                               ))}
