@@ -77,17 +77,17 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-sm">{user.name}</h3>
-                  <p className="text-xs text-muted-foreground">12-Week Program</p>
+                  <h3 className="font-medium text-sm">{user.name || "Beast Mode User"}</h3>
+                  <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
               <div className="rounded-md bg-secondary/30 p-2">
                 <div className="flex justify-between mb-1">
-                  <span className="text-xs font-medium">Program Progress</span>
-                  <span className="text-xs font-medium">32%</span>
+                  <span className="text-xs font-medium">Daily Habit Streak</span>
+                  <span className="text-xs font-medium">7 days</span>
                 </div>
                 <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-1.5 rounded-full" style={{ width: "32%" }}></div>
+                  <div className="bg-primary h-1.5 rounded-full" style={{ width: "70%" }}></div>
                 </div>
               </div>
             </div>
