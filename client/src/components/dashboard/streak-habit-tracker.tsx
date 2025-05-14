@@ -677,14 +677,14 @@ export function StreakHabitTracker() {
       {/* Add Custom Habit Dialog */}
       <Dialog open={showAddHabitDialog} onOpenChange={setShowAddHabitDialog}>
         <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col overflow-hidden">
-          <DialogHeader>
+          <DialogHeader className="pb-2">
             <DialogTitle>Add New Habit</DialogTitle>
             <DialogDescription>
               Create a custom habit to track. High-ROI activities produce the most results with minimal effort.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-y-auto pr-1 space-y-4 my-2">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4 my-2" style={{ maxHeight: 'calc(80vh - 180px)' }}>
             <div>
               <Label htmlFor="habit-title">Habit Title*</Label>
               <Input 
