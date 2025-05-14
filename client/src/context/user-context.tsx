@@ -2,6 +2,18 @@ import { createContext, useContext, useState, ReactNode } from "react";
 import type { User } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 
+// Create a static mock user for development
+const mockUser: User = {
+  id: 1,
+  username: "beastmode_user",
+  password: "password123",
+  name: "John Doe",
+  email: "john@example.com",
+  currentProgramId: 3,
+  programStartDate: new Date("2023-04-15"),
+  programProgress: 32
+};
+
 interface UserContextType {
   user: User | null;
   userLoading: boolean;
@@ -11,29 +23,25 @@ interface UserContextType {
   refetchUser: () => Promise<void>;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+// Create context with a default value to avoid undefined checks
+const defaultUserContext: UserContextType = {
+  user: mockUser,
+  userLoading: false,
+  userError: null,
+  login: async () => {},
+  logout: () => {},
+  refetchUser: async () => {},
+};
+
+const UserContext = createContext<UserContextType>(defaultUserContext);
 
 interface UserProviderProps {
   children: ReactNode;
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  // Use a static mock user for development instead of API calls
   const [userLoading, setUserLoading] = useState(false);
   const [userError, setUserError] = useState<Error | null>(null);
-  
-  // Mock user data
-  const mockUser: User = {
-    id: 1,
-    username: "beastmode_user",
-    password: "password123",
-    name: "John Doe",
-    email: "john@example.com",
-    currentProgramId: 3,
-    programStartDate: new Date("2023-04-15"),
-    programProgress: 32
-  };
-  
   const [user, setUser] = useState<User | null>(mockUser);
 
   const login = async (username: string, password: string) => {
@@ -61,7 +69,7 @@ export function UserProvider({ children }: UserProviderProps) {
     setUser(mockUser);
   };
 
-  const value = {
+  const value: UserContextType = {
     user,
     userLoading,
     userError,
@@ -75,8 +83,5 @@ export function UserProvider({ children }: UserProviderProps) {
 
 export function useUser() {
   const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
   return context;
 }
