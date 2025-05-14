@@ -9,7 +9,11 @@ import {
   BookOpen, 
   Calendar, 
   Settings, 
-  LogOut 
+  LogOut,
+  TrendingUp,
+  Bot,
+  BarChart3,
+  Quote
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 
@@ -24,7 +28,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const navItems = [
     { 
-      path: "/", 
+      path: "/dashboard", 
       name: "Dashboard", 
       icon: <Home className="w-5 h-5" /> 
     },
@@ -32,6 +36,21 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       path: "/tasks", 
       name: "BeastMode Toolbox", 
       icon: <CheckSquare className="w-5 h-5" /> 
+    },
+    { 
+      path: "/progress", 
+      name: "Progress Analytics", 
+      icon: <BarChart3 className="w-5 h-5" /> 
+    },
+    { 
+      path: "/motivation", 
+      name: "Motivation Center", 
+      icon: <Quote className="w-5 h-5" /> 
+    },
+    { 
+      path: "/research", 
+      name: "AI Research", 
+      icon: <Bot className="w-5 h-5" /> 
     },
     { 
       path: "/community", 
