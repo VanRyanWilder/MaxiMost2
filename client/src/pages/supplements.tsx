@@ -16,13 +16,16 @@ import {
   Dumbbell, 
   BarChart2, 
   Beaker, 
-
   FileText,
   Filter,
   LayoutGrid,
   List,
   Search,
-  ExternalLink
+  ExternalLink,
+  Trophy,
+  User,
+  Quote,
+  ArrowRight
 } from "lucide-react";
 
 // Define supplement types
