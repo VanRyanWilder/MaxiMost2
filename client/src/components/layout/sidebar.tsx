@@ -39,13 +39,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       path: "/supplements", 
       name: "Supplements", 
       icon: <Pill className="w-5 h-5" />,
-      description: "Science-backed supplements ranked by effectiveness"
-    },
-    { 
-      path: "/supplements-top10", 
-      name: "Top 10 Supplements", 
-      icon: <Trophy className="w-5 h-5 text-amber-500" />,
-      description: "Expert-recommended supplements with highest ROI"
+      description: "Science-backed supplements with expert top 10 list"
     },
     { 
       path: "/experts", 

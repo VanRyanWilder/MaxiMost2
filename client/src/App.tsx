@@ -10,7 +10,6 @@ import Resources from "@/pages/resources";
 import Programs from "@/pages/programs";
 import Tasks from "@/pages/tasks";
 import Supplements from "@/pages/supplements";
-import SupplementsNew from "@/pages/supplements-new";
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -78,10 +77,6 @@ function App() {
       </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
-      </Route>
-        
-      <Route path="/supplements-top10">
-        <PrivateRoute component={SupplementsNew} />
       </Route>
       <Route path="/body-stats">
         <PrivateRoute component={BodyStats} />

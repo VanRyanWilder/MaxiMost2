@@ -503,7 +503,7 @@ export default function SupplementsPage() {
   });
 
   return (
-    <PageContainer title="Science-Backed Supplements">
+    <PageContainer title="Supplements - Maximum ROI for Health & Performance">
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "browse" | "top10")}>
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="browse" className="text-base">
@@ -782,10 +782,10 @@ export default function SupplementsPage() {
         <TabsContent value="top10">
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <Trophy className="h-6 w-6 text-amber-500" />
-              <h2 className="text-2xl font-bold">Top 10 Supplements with Expert Insights</h2>
+              <Trophy className="h-8 w-8 text-amber-500" />
+              <h2 className="text-3xl font-bold">Top 10 Supplements with Expert Insights</h2>
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground max-w-3xl">
               These are the highest-ROI supplements backed by scientific research and recommended by leading health experts. 
               Each provides significant benefits with minimal downsides when used appropriately.
             </p>
@@ -833,6 +833,19 @@ export default function SupplementsPage() {
                           </div>
                         ))}
                       </div>
+                    </div>
+                    
+                    <div className="flex justify-end mt-4">
+                      <button 
+                        className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium"
+                        onClick={() => {
+                          setActiveTab("browse");
+                          setSearchQuery(supplement.name);
+                        }}
+                      >
+                        <span>View more details</span>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
                 </div>
