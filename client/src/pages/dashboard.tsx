@@ -15,13 +15,13 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="bg-background font-sans">
+    <div className="bg-background font-sans min-h-screen overflow-hidden">
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
       
-      <div className="flex min-h-screen">
+      <div className="flex h-screen">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         
-        <main className="flex-1 lg:ml-64">
+        <main className="flex-1 lg:ml-64 overflow-y-auto pb-20">
           <div className="container mx-auto px-4 py-6">
             <WelcomeBanner />
             
