@@ -313,24 +313,64 @@ export function DailyTasks() {
                 key={task.id} 
                 className={`task-item border-l-4 border-l-emerald-500 border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'} hover:shadow-sm`}
               >
-                <Checkbox
-                  checked={taskStatus[task.id] || false}
-                  onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
-                  className="mr-3 h-5 w-5"
-                />
+                <div className="flex items-center gap-2 mr-2">
+                  <div className="flex flex-col">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => moveTask(task.id, 'up')}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => moveTask(task.id, 'down')}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Checkbox
+                    checked={taskStatus[task.id] || false}
+                    onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
+                    className="h-5 w-5"
+                  />
+                </div>
                 <div className="flex-1">
                   <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
                     {task.title}
                   </h4>
                   <p className="text-sm text-gray-500">{task.description}</p>
                 </div>
-                <div className="flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-                  <span className="inline-flex items-center bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-1 rounded-full">
-                    Must-Do
-                  </span>
-                  <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
-                    {task.category}
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <div className="hidden sm:flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mr-2">
+                    <span className="inline-flex items-center bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                      Must-Do
+                    </span>
+                    <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
+                      {task.category}
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-500 hover:text-blue-600" 
+                      onClick={() => handleEditTask(task)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-500 hover:text-red-600" 
+                      onClick={() => handleDeleteTask(task.id)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))
@@ -373,24 +413,64 @@ export function DailyTasks() {
                 key={task.id} 
                 className={`task-item border-l-4 border-l-blue-500 border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'} hover:shadow-sm`}
               >
-                <Checkbox
-                  checked={taskStatus[task.id] || false}
-                  onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
-                  className="mr-3 h-5 w-5"
-                />
+                <div className="flex items-center gap-2 mr-2">
+                  <div className="flex flex-col">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => moveTask(task.id, 'up')}
+                    >
+                      <ChevronUp className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-6 w-6" 
+                      onClick={() => moveTask(task.id, 'down')}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <Checkbox
+                    checked={taskStatus[task.id] || false}
+                    onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
+                    className="h-5 w-5"
+                  />
+                </div>
                 <div className="flex-1">
                   <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
                     {task.title}
                   </h4>
                   <p className="text-sm text-gray-500">{task.description}</p>
                 </div>
-                <div className="flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
-                  <span className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
-                    {task.frequency}
-                  </span>
-                  <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
-                    {task.category}
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <div className="hidden sm:flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2 mr-2">
+                    <span className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                      {task.frequency}
+                    </span>
+                    <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
+                      {task.category}
+                    </span>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-500 hover:text-blue-600" 
+                      onClick={() => handleEditTask(task)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 text-gray-500 hover:text-red-600" 
+                      onClick={() => handleDeleteTask(task.id)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))
