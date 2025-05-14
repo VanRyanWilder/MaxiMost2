@@ -11,7 +11,7 @@ export default function Sugar() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <div className="bg-gray-50 text-gray-900 font-sans">
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
       
       <div className="flex min-h-screen">
@@ -44,7 +44,7 @@ export default function Sugar() {
             <div className="bg-gradient-to-r from-red-500/10 to-red-500/5 rounded-xl p-6 mb-8">
               <div className="max-w-4xl mx-auto text-center">
                 <h2 className="text-2xl md:text-3xl font-bold mb-4">Sugar Is More Addictive Than Cocaine</h2>
-                <p className="text-lg mb-6">
+                <p className="text-lg text-gray-700 mb-6">
                   Studies show that sugar triggers the same reward pathways in the brain as many drugs, 
                   making it one of the most addictive substances we regularly consume.
                 </p>
