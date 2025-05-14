@@ -1280,7 +1280,7 @@ export function HighRoiActivities() {
 
         {/* Activity Plan Dialog */}
         <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
-          <DialogContent className="sm:max-w-[500px] h-[85vh] flex flex-col overflow-hidden">
+          <DialogContent className="sm:max-w-[500px] h-[80vh] max-h-[600px] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>Customize Your Daily Plan</DialogTitle>
               <DialogDescription>
@@ -1300,7 +1300,7 @@ export function HighRoiActivities() {
               </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto pr-1">
+            <div className="flex-grow overflow-y-auto pr-1 min-h-[300px]">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="font-medium">Selected Activities</h4>
                 <span className="text-xs text-muted-foreground">{selectedActivities.length} selected</span>
@@ -1369,8 +1369,8 @@ export function HighRoiActivities() {
                   All activities selected
                 </div>
               ) : (
-                <Tabs defaultValue="all" className="w-full">
-                  <TabsList className="grid grid-cols-5 mb-2 h-8">
+                <Tabs defaultValue="all" className="w-full flex flex-col flex-grow">
+                  <TabsList className="grid grid-cols-5 mb-2 h-8 shrink-0">
                     <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
                     <TabsTrigger value="health" className="text-xs">Health</TabsTrigger>
                     <TabsTrigger value="fitness" className="text-xs">Fitness</TabsTrigger>
@@ -1378,8 +1378,8 @@ export function HighRoiActivities() {
                     <TabsTrigger value="social" className="text-xs">Social</TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="all" className="mt-0">
-                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                  <TabsContent value="all" className="mt-0 flex-grow overflow-hidden">
+                    <div className="space-y-2 max-h-[220px] overflow-y-auto p-1">
                       {availableActivities.map(activity => (
                         <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
                           <div className="flex items-center gap-2">
@@ -1527,7 +1527,7 @@ export function HighRoiActivities() {
               )}
             </div>
             
-            <DialogFooter className="mt-2 border-t pt-4 sticky bottom-0 bg-background">
+            <DialogFooter className="mt-1 border-t pt-2 sticky bottom-0 bg-background shrink-0">
               <Button variant="outline" onClick={() => setPlanDialogOpen(false)}>
                 Cancel
               </Button>
