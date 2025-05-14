@@ -133,10 +133,17 @@ export function DailyMotivation() {
     },
   ];
 
-  // Function to handle adding a pre-filled habit (would be connected to the streak tracker component in a real app)
+  // Function to handle adding a pre-filled habit
   const addPrefilledHabit = (habit: any) => {
     console.log("Adding prefilled habit:", habit);
     // In a real app, this would trigger the add habit dialog in the streak tracker with pre-filled values
+    
+    // Create a custom event to pass the habit data to the streak tracker
+    const event = new CustomEvent('add-prefilled-habit', { 
+      detail: habit,
+      bubbles: true 
+    });
+    document.dispatchEvent(event);
   };
 
   return (
