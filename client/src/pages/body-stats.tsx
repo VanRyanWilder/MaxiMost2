@@ -6,7 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CalendarIcon, LineChart, Percent, TrendingDown, TrendingUp, Upload, Weight } from "lucide-react";
+import { 
+  CalendarIcon, 
+  LineChart, 
+  Percent, 
+  TrendingDown, 
+  TrendingUp, 
+  Upload, 
+  Weight, 
+  Heart, 
+  Droplets, 
+  Moon, 
+  Activity, 
+  Dumbbell
+} from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -31,9 +44,55 @@ interface BloodworkMarker {
   date: Date;
 }
 
+interface SleepData {
+  id: number;
+  date: Date;
+  totalDuration: number; // in minutes
+  deepSleep: number; // in minutes
+  remSleep: number; // in minutes
+  lightSleep: number; // in minutes
+  awakeDuration: number; // in minutes
+  sleepScore: number; // out of 100
+  hrv: number; // in ms
+  restingHeartRate: number; // bpm
+  source: string;
+}
+
+interface HeartRateData {
+  id: number;
+  date: Date;
+  restingHeartRate: number; // bpm
+  maxHeartRate: number; // bpm
+  avgHeartRate: number; // bpm
+  hrvMorning: number; // ms
+  hrvNight: number; // ms
+  hrvAverage: number; // ms
+  recoveryScore: number; // out of 100
+  source: string;
+}
+
+interface WaterIntakeData {
+  id: number;
+  date: Date;
+  amount: number; // in oz
+  goal: number; // in oz
+  source: string;
+}
+
+interface ActivityData {
+  id: number;
+  date: Date;
+  steps: number;
+  activeMinutes: number;
+  caloriesBurned: number;
+  activitiesCompleted: number;
+  source: string;
+}
+
 export default function BodyStats() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [date, setDate] = useState<Date>(new Date());
+  const [activeTab, setActiveTab] = useState("composition");
   
   // Mock body composition stats
   const bodyStats: BodyStat[] = [
@@ -79,6 +138,227 @@ export default function BodyStats() {
     }
   ];
   
+  // Mock sleep data
+  const sleepData: SleepData[] = [
+    {
+      id: 1,
+      date: new Date(2023, 5, 7),
+      totalDuration: 415, // 6h 55m
+      deepSleep: 82,
+      remSleep: 105,
+      lightSleep: 228,
+      awakeDuration: 15,
+      sleepScore: 78,
+      hrv: 42,
+      restingHeartRate: 58,
+      source: "Oura Ring"
+    },
+    {
+      id: 2,
+      date: new Date(2023, 5, 8),
+      totalDuration: 445, // 7h 25m
+      deepSleep: 102,
+      remSleep: 118,
+      lightSleep: 225,
+      awakeDuration: 12,
+      sleepScore: 86,
+      hrv: 45,
+      restingHeartRate: 56,
+      source: "Oura Ring"
+    },
+    {
+      id: 3,
+      date: new Date(2023, 5, 9),
+      totalDuration: 390, // 6h 30m
+      deepSleep: 65,
+      remSleep: 95,
+      lightSleep: 230,
+      awakeDuration: 25,
+      sleepScore: 72,
+      hrv: 38,
+      restingHeartRate: 60,
+      source: "Oura Ring"
+    },
+    {
+      id: 4,
+      date: new Date(2023, 5, 10),
+      totalDuration: 460, // 7h 40m
+      deepSleep: 98,
+      remSleep: 125,
+      lightSleep: 237,
+      awakeDuration: 10,
+      sleepScore: 92,
+      hrv: 48,
+      restingHeartRate: 54,
+      source: "Oura Ring"
+    },
+    {
+      id: 5,
+      date: new Date(2023, 5, 11),
+      totalDuration: 432, // 7h 12m
+      deepSleep: 90,
+      remSleep: 112,
+      lightSleep: 230,
+      awakeDuration: 18,
+      sleepScore: 84,
+      hrv: 44,
+      restingHeartRate: 57,
+      source: "Oura Ring"
+    }
+  ];
+  
+  // Mock heart rate data
+  const heartRateData: HeartRateData[] = [
+    {
+      id: 1,
+      date: new Date(2023, 5, 7),
+      restingHeartRate: 58,
+      maxHeartRate: 162,
+      avgHeartRate: 72,
+      hrvMorning: 42,
+      hrvNight: 50,
+      hrvAverage: 46,
+      recoveryScore: 82,
+      source: "Whoop"
+    },
+    {
+      id: 2,
+      date: new Date(2023, 5, 8),
+      restingHeartRate: 56,
+      maxHeartRate: 175,
+      avgHeartRate: 74,
+      hrvMorning: 45,
+      hrvNight: 53,
+      hrvAverage: 49,
+      recoveryScore: 88,
+      source: "Whoop"
+    },
+    {
+      id: 3,
+      date: new Date(2023, 5, 9),
+      restingHeartRate: 60,
+      maxHeartRate: 168,
+      avgHeartRate: 76,
+      hrvMorning: 38,
+      hrvNight: 46,
+      hrvAverage: 42,
+      recoveryScore: 75,
+      source: "Whoop"
+    },
+    {
+      id: 4,
+      date: new Date(2023, 5, 10),
+      restingHeartRate: 54,
+      maxHeartRate: 182,
+      avgHeartRate: 73,
+      hrvMorning: 48,
+      hrvNight: 56,
+      hrvAverage: 52,
+      recoveryScore: 94,
+      source: "Whoop"
+    },
+    {
+      id: 5,
+      date: new Date(2023, 5, 11),
+      restingHeartRate: 57,
+      maxHeartRate: 168,
+      avgHeartRate: 72,
+      hrvMorning: 44,
+      hrvNight: 51,
+      hrvAverage: 48,
+      recoveryScore: 85,
+      source: "Whoop"
+    }
+  ];
+  
+  // Mock water intake data
+  const waterIntakeData: WaterIntakeData[] = [
+    {
+      id: 1,
+      date: new Date(2023, 5, 7),
+      amount: 74,
+      goal: 100,
+      source: "Manual Entry"
+    },
+    {
+      id: 2,
+      date: new Date(2023, 5, 8),
+      amount: 85,
+      goal: 100,
+      source: "Manual Entry"
+    },
+    {
+      id: 3,
+      date: new Date(2023, 5, 9),
+      amount: 68,
+      goal: 100,
+      source: "Manual Entry"
+    },
+    {
+      id: 4,
+      date: new Date(2023, 5, 10),
+      amount: 92,
+      goal: 100,
+      source: "Manual Entry"
+    },
+    {
+      id: 5,
+      date: new Date(2023, 5, 11),
+      amount: 96,
+      goal: 100,
+      source: "Manual Entry"
+    }
+  ];
+  
+  // Mock activity data
+  const activityData: ActivityData[] = [
+    {
+      id: 1,
+      date: new Date(2023, 5, 7),
+      steps: 8542,
+      activeMinutes: 45,
+      caloriesBurned: 2450,
+      activitiesCompleted: 1,
+      source: "Fitbit"
+    },
+    {
+      id: 2,
+      date: new Date(2023, 5, 8),
+      steps: 12385,
+      activeMinutes: 68,
+      caloriesBurned: 2780,
+      activitiesCompleted: 2,
+      source: "Fitbit"
+    },
+    {
+      id: 3,
+      date: new Date(2023, 5, 9),
+      steps: 5632,
+      activeMinutes: 32,
+      caloriesBurned: 2310,
+      activitiesCompleted: 0,
+      source: "Fitbit"
+    },
+    {
+      id: 4,
+      date: new Date(2023, 5, 10),
+      steps: 9874,
+      activeMinutes: 62,
+      caloriesBurned: 2650,
+      activitiesCompleted: 1,
+      source: "Fitbit"
+    },
+    {
+      id: 5,
+      date: new Date(2023, 5, 11),
+      steps: 10452,
+      activeMinutes: 58,
+      caloriesBurned: 2580,
+      activitiesCompleted: 1,
+      source: "Fitbit"
+    }
+  ];
+
   // Mock bloodwork markers
   const bloodworkMarkers: BloodworkMarker[] = [
     {
