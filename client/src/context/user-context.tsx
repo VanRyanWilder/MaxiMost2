@@ -1,5 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { createContext, useContext, useState, ReactNode } from "react";
 import type { User } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 
@@ -19,49 +18,53 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  // For a real app, we would fetch the user from an API, but for this demo,
-  // we'll just use a mock user with ID 1
-  const userId = 1; // In a real app, this would come from local storage after login
-
-  const {
-    data: user,
-    isLoading: userLoading,
-    error: userError,
-    refetch,
-  } = useQuery<User>({
-    queryKey: [`/api/users/${userId}`],
-    enabled: !!userId, // Only fetch if we have a userId
-    retry: false,
-  });
+  // Use a static mock user for development instead of API calls
+  const [userLoading, setUserLoading] = useState(false);
+  const [userError, setUserError] = useState<Error | null>(null);
+  
+  // Mock user data
+  const mockUser: User = {
+    id: 1,
+    username: "beastmode_user",
+    password: "password123",
+    name: "John Doe",
+    email: "john@example.com",
+    currentProgramId: 3,
+    programStartDate: new Date("2023-04-15"),
+    programProgress: 32
+  };
+  
+  const [user, setUser] = useState<User | null>(mockUser);
 
   const login = async (username: string, password: string) => {
     try {
+      setUserLoading(true);
       // In a real app, we would call an API to login
-      // const response = await apiRequest("POST", "/api/login", { username, password });
-      // localStorage.setItem("userId", response.user.id);
-      // queryClient.invalidateQueries({ queryKey: [`/api/users/${response.user.id}`] });
-      
-      // For now, just pretend we've logged in successfully
-      await refetch();
+      // For now, just simulate a successful login
+      setUser(mockUser);
+      setUserLoading(false);
     } catch (error) {
+      setUserLoading(false);
+      setUserError(new Error("Login failed"));
       throw new Error("Login failed");
     }
   };
 
   const logout = () => {
     // In a real app, we would call an API to logout
-    // localStorage.removeItem("userId");
+    setUser(null);
     queryClient.clear();
   };
 
   const refetchUser = async () => {
-    await refetch();
+    // In a real app, this would actually refetch the user
+    setUser(mockUser);
   };
 
   const value = {
-    user: user || null,
+    user,
     userLoading,
-    userError: userError as Error | null,
+    userError,
     login,
     logout,
     refetchUser,

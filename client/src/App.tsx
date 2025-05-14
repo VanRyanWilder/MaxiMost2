@@ -1,6 +1,4 @@
 import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider";
@@ -12,6 +10,9 @@ import MindSpirit from "@/pages/mind-spirit";
 import Nutrition from "@/pages/nutrition";
 import Resources from "@/pages/resources";
 import Programs from "@/pages/programs";
+import Tasks from "@/pages/tasks";
+import Supplements from "@/pages/supplements";
+import BodyStats from "@/pages/body-stats";
 
 function Router() {
   return (
@@ -23,6 +24,9 @@ function Router() {
       <Route path="/nutrition" component={Nutrition} />
       <Route path="/resources" component={Resources} />
       <Route path="/programs" component={Programs} />
+      <Route path="/tasks" component={Tasks} />
+      <Route path="/supplements" component={Supplements} />
+      <Route path="/body-stats" component={BodyStats} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -30,14 +34,12 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="beastmode-theme">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="light" storageKey="beastmode-theme">
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </ThemeProvider>
   );
 }
 
