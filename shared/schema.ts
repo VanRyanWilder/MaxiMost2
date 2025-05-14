@@ -264,6 +264,9 @@ export const supplementReviews = pgTable("supplement_reviews", {
   userId: integer("user_id").notNull(),
   rating: integer("rating").notNull(), // 1-5 star rating
   content: text("content"),
+  helpfulVotes: integer("helpful_votes").default(0),
+  unhelpfulVotes: integer("unhelpful_votes").default(0),
+  isVerifiedPurchase: boolean("is_verified_purchase").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -273,6 +276,25 @@ export const insertSupplementReviewSchema = createInsertSchema(supplementReviews
   userId: true,
   rating: true,
   content: true,
+  isVerifiedPurchase: true,
+});
+
+// Review helpful votes tracking
+export const reviewHelpfulVotes = pgTable("review_helpful_votes", {
+  reviewId: integer("review_id").notNull(),
+  userId: integer("user_id").notNull(),
+  isHelpful: boolean("is_helpful").notNull(), // true for helpful, false for unhelpful
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    pk: primaryKey({ columns: [table.reviewId, table.userId] }),
+  };
+});
+
+export const insertReviewHelpfulVoteSchema = createInsertSchema(reviewHelpfulVotes).pick({
+  reviewId: true,
+  userId: true,
+  isHelpful: true,
 });
 
 // Supplement votes
@@ -418,6 +440,9 @@ export type InsertSupplementReview = z.infer<typeof insertSupplementReviewSchema
 
 export type SupplementVote = typeof supplementVotes.$inferSelect;
 export type InsertSupplementVote = z.infer<typeof insertSupplementVoteSchema>;
+
+export type ReviewHelpfulVote = typeof reviewHelpfulVotes.$inferSelect;
+export type InsertReviewHelpfulVote = z.infer<typeof insertReviewHelpfulVoteSchema>;
 
 export type BodyStat = typeof bodyStats.$inferSelect;
 export type InsertBodyStat = z.infer<typeof insertBodyStatSchema>;
