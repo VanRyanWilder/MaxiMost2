@@ -19,7 +19,6 @@ export function DailyTasks() {
   const { user } = useUser();
   const { toast } = useToast();
   const [taskStatus, setTaskStatus] = useState<UserTaskStatus>({});
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
@@ -113,14 +112,9 @@ export function DailyTasks() {
   const mustDoTasks = tasks?.filter(task => task.frequency === "Must-Do") || [];
   const flexibleTasks = tasks?.filter(task => task.frequency !== "Must-Do") || [];
   
-  // Filter by category if not "All Categories"
-  const filteredMustDoTasks = selectedCategory !== "All Categories" 
-    ? mustDoTasks.filter(task => task.category === selectedCategory)
-    : mustDoTasks;
-    
-  const filteredFlexibleTasks = selectedCategory !== "All Categories"
-    ? flexibleTasks.filter(task => task.category === selectedCategory)
-    : flexibleTasks;
+  // Use all tasks without category filtering
+  const filteredMustDoTasks = mustDoTasks;
+  const filteredFlexibleTasks = flexibleTasks;
   
   // Move a task up or down in the list
   const moveTask = (taskId: number, direction: 'up' | 'down') => {
@@ -266,22 +260,6 @@ export function DailyTasks() {
             <div className="w-3 h-3 rounded-full bg-blue-500"></div>
             <span className="text-xs font-medium text-gray-600">Multiple Weekly</span>
           </div>
-          
-          <Select 
-            value={selectedCategory} 
-            onValueChange={setSelectedCategory}
-          >
-            <SelectTrigger className="w-[150px] h-9">
-              <SelectValue placeholder="Filter by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All Categories">All Categories</SelectItem>
-              <SelectItem value="Mind">Mind</SelectItem>
-              <SelectItem value="Body">Body</SelectItem>
-              <SelectItem value="Spirit">Spirit</SelectItem>
-              <SelectItem value="Health">Health</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
       
