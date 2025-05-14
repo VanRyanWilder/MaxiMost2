@@ -2,11 +2,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize the Google Generative AI with the API key
 export const initGemini = () => {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  // Access the API key directly from the environment variables
+  const apiKey = process.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+  
   if (!apiKey) {
     console.error("Gemini API key is not available");
+    console.log("Environment vars available:", Object.keys(import.meta.env).filter(key => key.startsWith('VITE_')));
     return null;
   }
+  
+  console.log("Initializing Gemini with API key (first 4 chars):", apiKey.substring(0, 4) + "...");
   return new GoogleGenerativeAI(apiKey);
 };
 

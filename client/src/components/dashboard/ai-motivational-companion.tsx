@@ -11,7 +11,8 @@ import {
   Sparkles, 
   Quote, 
   BookOpen,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { generateMotivationalContent } from "@/lib/gemini";
@@ -94,10 +95,10 @@ export function AIMotivationalCompanion({ className }: AIMotivationalCompanionPr
   };
 
   useEffect(() => {
-    if (user && import.meta.env.VITE_GEMINI_API_KEY) {
+    if (user) {
+      // Log that we're attempting to get content
+      console.log("Attempting to get motivational content...");
       getMotivationalContent();
-    } else if (user) {
-      setError("Gemini API key is not configured. Please check your environment settings.");
     }
   }, [user, customization]);
 
@@ -120,6 +121,15 @@ export function AIMotivationalCompanion({ className }: AIMotivationalCompanionPr
     { id: "practical", name: "Practical" },
     { id: "scientific", name: "Scientific" }
   ];
+
+  // Create a fallback motivational message in case the API doesn't work
+  const fallbackContent = {
+    headline: "Your Daily Dose of Motivation",
+    message: "Every day presents a new opportunity to become the best version of yourself. Remember, consistency is key - small actions performed daily lead to remarkable transformations over time.",
+    advice: "Focus on establishing one small positive habit today that you can build upon tomorrow.",
+    quote: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+    author: "Aristotle"
+  };
 
   return (
     <Card className={`overflow-hidden ${className}`}>
@@ -147,15 +157,47 @@ export function AIMotivationalCompanion({ className }: AIMotivationalCompanionPr
             </div>
           </div>
         ) : error ? (
-          <div className="text-center py-6">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button 
-              variant="outline" 
-              onClick={getMotivationalContent}
-              className="gap-2"
-            >
-              <RefreshCw className="h-4 w-4" /> Try Again
-            </Button>
+          <div className="space-y-5">
+            <div>
+              <h3 className="text-xl font-semibold mb-2 tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {fallbackContent.headline}
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {fallbackContent.message}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <div className="flex items-start gap-2 mb-2">
+                <Award className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                <p className="text-gray-700">{fallbackContent.advice}</p>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <Separator className="my-2" />
+              <div className="flex items-start gap-2">
+                <Quote className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="italic text-gray-600">"{fallbackContent.quote}"</p>
+                  <p className="text-right text-sm text-gray-500 mt-1">— {fallbackContent.author}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-amber-600 text-sm mb-2">
+                <AlertTriangle className="h-4 w-4 inline mr-1" />
+                {error || "Gemini AI is currently unavailable."}
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={getMotivationalContent}
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" /> Try Again
+              </Button>
+            </div>
           </div>
         ) : content ? (
           <div className="space-y-5">
@@ -191,22 +233,47 @@ export function AIMotivationalCompanion({ className }: AIMotivationalCompanionPr
             )}
           </div>
         ) : (
-          <div className="text-center py-6">
-            <Sparkles className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 mb-4">
-              Your personalized motivation is loading...
-            </p>
-            <Button 
-              onClick={getMotivationalContent}
-              className="gap-2"
-            >
-              <RefreshCw className="h-4 w-4" /> Generate Motivation
-            </Button>
+          <div className="space-y-5">
+            <div>
+              <h3 className="text-xl font-semibold mb-2 tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {fallbackContent.headline}
+              </h3>
+              <p className="text-gray-700 leading-relaxed">
+                {fallbackContent.message}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+              <div className="flex items-start gap-2 mb-2">
+                <Award className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                <p className="text-gray-700">{fallbackContent.advice}</p>
+              </div>
+            </div>
+            
+            <div className="pt-2">
+              <Separator className="my-2" />
+              <div className="flex items-start gap-2">
+                <Quote className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="italic text-gray-600">"{fallbackContent.quote}"</p>
+                  <p className="text-right text-sm text-gray-500 mt-1">— {fallbackContent.author}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <Button 
+                onClick={getMotivationalContent}
+                className="gap-2"
+              >
+                <RefreshCw className="h-4 w-4" /> Try with AI
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>
 
-      {content && !loading && (
+      {(content || !loading) && (
         <CardFooter className="flex-col border-t bg-gray-50/50 px-6 py-4">
           <div className="flex items-center justify-between w-full mb-3">
             <div className="flex gap-2">
