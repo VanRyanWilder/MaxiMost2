@@ -17,16 +17,40 @@ import {
   Clock,
   Calendar,
   Edit,
-  Save
+  Save,
+  Plus,
+  CheckCircle,
+  ListFilter,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  PlusCircle,
+  Filter
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState, useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
+import React, { useState, useEffect } from "react";
+import { format } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-type Frequency = "daily" | "weekly" | "custom";
+type Frequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
 
 type HighRoiActivity = {
   id: string;
@@ -40,6 +64,8 @@ type HighRoiActivity = {
   isAbsolute: boolean; // If true, this is a "must-do" activity
   lastCompleted?: Date | null;
   streak?: number;
+  type?: "principle" | "custom" | "default"; // Used to identify types of habits
+  principle?: string; // For daily principle activities
 };
 
 type CompletedActivity = {
@@ -47,7 +73,67 @@ type CompletedActivity = {
   date: Date;
 };
 
+type DailyPlan = {
+  id: string;
+  date: string; // ISO string format
+  activityIds: string[];
+};
+
+type PrincipleContent = {
+  id: number;
+  title: string;
+  author: string;
+  content: string;
+  source: string;
+};
+
 export function HighRoiActivities() {
+  // Daily principles summaries
+  const principleSummaries: PrincipleContent[] = [
+    {
+      id: 1,
+      title: "Discipline Equals Freedom",
+      author: "Jocko Willink",
+      content: "The more discipline you have to do what you don't want to do, the more freedom you'll have to do what you want to do. Wake up early, train hard, and stick to your routines to build true freedom in your life.",
+      source: "Discipline Equals Freedom: Field Manual"
+    },
+    {
+      id: 2,
+      title: "Don't Count on Motivation",
+      author: "David Goggins",
+      content: "Motivation is fleeting and unreliable. Discipline and consistency are what produce results. Get comfortable being uncomfortable and push through resistance when motivation fades.",
+      source: "Can't Hurt Me"
+    },
+    {
+      id: 3,
+      title: "The 1% Rule",
+      author: "James Clear",
+      content: "Improve by just 1% each day and you'll end up with results that are nearly 37 times better after one year. Small, consistent improvements compound dramatically over time.",
+      source: "Atomic Habits"
+    },
+    {
+      id: 4,
+      title: "The Dichotomy of Leadership",
+      author: "Jocko Willink",
+      content: "Balance is essential in leadership - be aggressive but not reckless, confident but not cocky, and attentive to details without getting lost in them. Find the balance in all aspects of life.",
+      source: "The Dichotomy of Leadership"
+    },
+    {
+      id: 5,
+      title: "The Cookie Jar Method",
+      author: "David Goggins",
+      content: "When facing challenges, mentally reach into your 'cookie jar' of past accomplishments and difficult situations you've overcome. Use these memories as fuel to push through current obstacles.",
+      source: "Can't Hurt Me"
+    },
+  ];
+  
+  // Get today's principle based on date
+  const getTodaysPrinciple = () => {
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    return principleSummaries[dayOfYear % principleSummaries.length];
+  };
+  
   // Initial activities data
   const defaultActivities: HighRoiActivity[] = [
     {
@@ -60,7 +146,8 @@ export function HighRoiActivities() {
       timeCommitment: "7-9 hrs/day",
       frequency: "daily",
       isAbsolute: true,
-      streak: 3
+      streak: 3,
+      type: "default"
     },
     {
       id: "sugar",
@@ -72,7 +159,8 @@ export function HighRoiActivities() {
       timeCommitment: "Ongoing",
       frequency: "daily",
       isAbsolute: false,
-      streak: 1
+      streak: 1,
+      type: "default"
     },
     {
       id: "sunlight",
@@ -84,7 +172,8 @@ export function HighRoiActivities() {
       timeCommitment: "10-15 min/day",
       frequency: "daily",
       isAbsolute: true,
-      streak: 5
+      streak: 5,
+      type: "default"
     },
     {
       id: "strength",
@@ -94,21 +183,24 @@ export function HighRoiActivities() {
       impact: 9,
       effort: 5,
       timeCommitment: "2-3 hrs/week",
-      frequency: "weekly",
+      frequency: "3x-week",
       isAbsolute: false,
-      streak: 2
+      streak: 2,
+      type: "default"
     },
     {
-      id: "principles",
-      title: "Apply Core Principles",
-      description: "Daily application of evidence-based mindset practices from peak performers.",
+      id: "daily-principle",
+      title: "Daily Principle",
+      description: "Read and reflect on today's principle from top performers and authors.",
       icon: <BookOpen className="h-8 w-8 text-blue-500" />,
       impact: 8,
-      effort: 4,
-      timeCommitment: "15 min/day",
+      effort: 2,
+      timeCommitment: "5 min/day",
       frequency: "daily",
       isAbsolute: true,
-      streak: 7
+      streak: 7,
+      type: "principle",
+      principle: getTodaysPrinciple().title
     }
   ];
   
@@ -117,10 +209,19 @@ export function HighRoiActivities() {
   const [completedActivities, setCompletedActivities] = useState<CompletedActivity[]>([]);
   const [editMode, setEditMode] = useState(false);
   
-  // Load saved activities data from localStorage on component mount
+  // State for daily plans
+  const [dailyPlans, setDailyPlans] = useState<DailyPlan[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  
+  // Dialog states
+  const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  
+  // Load saved data from localStorage on component mount
   useEffect(() => {
     const savedActivities = localStorage.getItem('high-roi-activities');
     const savedCompletedActivities = localStorage.getItem('completed-activities');
+    const savedDailyPlans = localStorage.getItem('daily-activity-plans');
     
     if (savedActivities) {
       setActivities(JSON.parse(savedActivities));
@@ -136,21 +237,103 @@ export function HighRoiActivities() {
       }));
       setCompletedActivities(parsedCompleted);
     }
+    
+    if (savedDailyPlans) {
+      setDailyPlans(JSON.parse(savedDailyPlans));
+    } else {
+      // Create a default plan for today if none exists
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const absoluteActivities = defaultActivities
+        .filter(a => a.isAbsolute)
+        .map(a => a.id);
+      
+      setDailyPlans([{
+        id: 'default-plan',
+        date: today,
+        activityIds: absoluteActivities
+      }]);
+    }
+    
+    // Set selected activities for today's plan
+    updateSelectedActivitiesForDate(format(new Date(), 'yyyy-MM-dd'));
+    
   }, []);
   
-  // Save to localStorage whenever activities change
+  // Update selected activities when date changes
+  const updateSelectedActivitiesForDate = (date: string) => {
+    const plan = dailyPlans.find(p => p.date === date);
+    
+    if (plan) {
+      setSelectedActivities(plan.activityIds);
+    } else {
+      // If no plan exists, select absolute activities by default
+      const absoluteActivities = activities
+        .filter(a => a.isAbsolute)
+        .map(a => a.id);
+      
+      setSelectedActivities(absoluteActivities);
+    }
+  };
+  
+  // Save data to localStorage when it changes
   useEffect(() => {
     if (activities.length > 0) {
       localStorage.setItem('high-roi-activities', JSON.stringify(activities));
     }
   }, [activities]);
   
-  // Save completed activities to localStorage
   useEffect(() => {
     if (completedActivities.length > 0) {
       localStorage.setItem('completed-activities', JSON.stringify(completedActivities));
     }
   }, [completedActivities]);
+  
+  useEffect(() => {
+    if (dailyPlans.length > 0) {
+      localStorage.setItem('daily-activity-plans', JSON.stringify(dailyPlans));
+    }
+  }, [dailyPlans]);
+  
+  // Handle date change
+  const handleDateChange = (newDate: string) => {
+    setSelectedDate(newDate);
+    updateSelectedActivitiesForDate(newDate);
+  };
+  
+  // Toggle activity selection for plan
+  const toggleActivitySelection = (activityId: string) => {
+    setSelectedActivities(prev => 
+      prev.includes(activityId)
+        ? prev.filter(id => id !== activityId)
+        : [...prev, activityId]
+    );
+  };
+  
+  // Save current plan
+  const saveCurrentPlan = () => {
+    const existingPlanIndex = dailyPlans.findIndex(p => p.date === selectedDate);
+    
+    if (existingPlanIndex >= 0) {
+      // Update existing plan
+      setDailyPlans(prev => prev.map((plan, index) => 
+        index === existingPlanIndex
+          ? { ...plan, activityIds: selectedActivities }
+          : plan
+      ));
+    } else {
+      // Create new plan
+      setDailyPlans(prev => [
+        ...prev,
+        {
+          id: `plan-${Date.now()}`,
+          date: selectedDate,
+          activityIds: selectedActivities
+        }
+      ]);
+    }
+    
+    setPlanDialogOpen(false);
+  };
 
   // Sort activities by ROI (impact divided by effort) and absolute status
   const sortedActivities = [...activities].sort((a, b) => {
@@ -161,6 +344,16 @@ export function HighRoiActivities() {
     // Then sort by ROI
     return (b.impact / b.effort) - (a.impact / a.effort);
   });
+  
+  // Get today's plan activities
+  const todaysPlanActivities = activities.filter(activity => 
+    selectedActivities.includes(activity.id)
+  );
+  
+  // Get available activities (not in today's plan)
+  const availableActivities = activities.filter(activity => 
+    !selectedActivities.includes(activity.id)
+  );
   
   // Check if activity was completed today
   const isCompletedToday = (activityId: string) => {
@@ -232,9 +425,15 @@ export function HighRoiActivities() {
     );
   };
   
-  // Get daily and weekly activities
-  const dailyActivities = sortedActivities.filter(a => a.frequency === "daily");
-  const weeklyActivities = sortedActivities.filter(a => a.frequency === "weekly");
+  // Get absolute and non-absolute activities
+  const absoluteActivities = todaysPlanActivities.filter(a => a.isAbsolute);
+  const optionalActivities = todaysPlanActivities.filter(a => !a.isAbsolute);
+  
+  // Calculate completion percentage
+  const completedCount = todaysPlanActivities.filter(a => isCompletedToday(a.id)).length;
+  const completionPercentage = todaysPlanActivities.length > 0 
+    ? Math.round((completedCount / todaysPlanActivities.length) * 100) 
+    : 0;
 
   return (
     <Card>
@@ -242,161 +441,248 @@ export function HighRoiActivities() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              High ROI Activities <MoveUp className="h-5 w-5 text-primary" />
+              Today's High ROI Activities <MoveUp className="h-5 w-5 text-primary" />
             </CardTitle>
-            <CardDescription>Maximum results with minimum effective effort</CardDescription>
+            <CardDescription>Customized plan for {format(new Date(selectedDate), 'EEEE, MMMM d')}</CardDescription>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setEditMode(!editMode)}
-            className="flex items-center gap-1"
-          >
-            {editMode ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
-            {editMode ? "Save" : "Customize"}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setPlanDialogOpen(true)}
+              className="flex items-center gap-1"
+            >
+              <ListFilter className="h-4 w-4" />
+              Customize Plan
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="daily" className="w-full">
-          <TabsList className="mb-4 grid grid-cols-2">
-            <TabsTrigger value="daily" className="flex items-center gap-1.5">
-              <Star className="h-4 w-4" /> Daily Absolutes
-            </TabsTrigger>
-            <TabsTrigger value="weekly" className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" /> Weekly Activities
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="daily" className="space-y-4">
-            {dailyActivities.map((activity) => (
-              <div key={activity.id} className={`flex items-start gap-4 p-3 rounded-lg border 
-                ${activity.isAbsolute ? 'border-primary/30 bg-primary/5' : 'border-border'}`}>
-                <div className="flex-shrink-0">
-                  {activity.icon}
+        {/* Progress Bar */}
+        <div className="mb-6">
+          <div className="flex justify-between mb-1.5">
+            <div className="text-sm font-medium">Today's Progress</div>
+            <div className="text-sm">{completedCount}/{todaysPlanActivities.length} completed</div>
+          </div>
+          <div className="w-full bg-secondary/30 h-2 rounded-full overflow-hidden">
+            <div 
+              className="bg-primary h-2 rounded-full" 
+              style={{ width: `${completionPercentage}%` }}
+            ></div>
+          </div>
+        </div>
+      
+        {todaysPlanActivities.length === 0 ? (
+          <div className="text-center py-10 border border-dashed rounded-lg">
+            <p className="text-muted-foreground mb-3">No activities planned for today</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setPlanDialogOpen(true)}
+              className="flex items-center mx-auto gap-1"
+            >
+              <Plus className="h-4 w-4" />
+              Create Daily Plan
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {/* Absolute Activities */}
+            {absoluteActivities.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
+                  <h3 className="font-medium">Must-Do Activities</h3>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-base">{activity.title}</h3>
-                    {activity.isAbsolute && <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
-                  <div className="flex items-center gap-3 mt-2">
-                    <div className="bg-secondary/30 px-2 py-1 rounded text-xs flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {activity.timeCommitment}
-                    </div>
-                    {!editMode && activity.streak && activity.streak > 0 && (
-                      <div className="text-xs font-medium text-primary flex items-center gap-1">
-                        <Activity className="h-3 w-3" />
-                        {activity.streak} day streak
+                <div className="space-y-3">
+                  {absoluteActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-4 p-3 rounded-lg border border-primary/30 bg-primary/5">
+                      <div className="flex-shrink-0">
+                        {activity.icon}
                       </div>
-                    )}
-                    {editMode && (
-                      <div className="flex items-center gap-1.5">
-                        <Switch 
-                          id={`absolute-${activity.id}`}
-                          checked={activity.isAbsolute}
-                          onCheckedChange={() => toggleAbsolute(activity.id)}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium text-base">{activity.title}</h3>
+                          <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="bg-secondary/30 px-2 py-1 rounded text-xs flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {activity.timeCommitment}
+                          </div>
+                          {activity.streak && activity.streak > 0 && (
+                            <div className="text-xs font-medium text-primary flex items-center gap-1">
+                              <Activity className="h-3 w-3" />
+                              {activity.streak} day streak
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Checkbox 
+                          className="h-6 w-6 border-2" 
+                          checked={isCompletedToday(activity.id)} 
+                          onCheckedChange={() => handleCompleteActivity(activity.id)}
                         />
-                        <Label htmlFor={`absolute-${activity.id}`} className="text-xs">
-                          Must Do Daily
-                        </Label>
+                        <div className="text-xs text-muted-foreground mt-1">Done</div>
                       </div>
-                    )}
-                  </div>
-                </div>
-                {!editMode ? (
-                  <div className="flex flex-col items-center">
-                    <Checkbox 
-                      className="h-6 w-6 border-2" 
-                      checked={isCompletedToday(activity.id)} 
-                      onCheckedChange={() => handleCompleteActivity(activity.id)}
-                    />
-                    <div className="text-xs text-muted-foreground mt-1">Done</div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <div className="text-xs text-muted-foreground">ROI</div>
-                    <div className="font-bold text-sm">{(activity.impact / activity.effort * 10).toFixed(1)}</div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </TabsContent>
-          
-          <TabsContent value="weekly" className="space-y-4">
-            {weeklyActivities.length === 0 ? (
-              <div className="text-center py-6 text-muted-foreground">
-                <p>No weekly activities set.</p>
-                <p className="text-sm mt-1">Edit your daily activities to move some to weekly.</p>
-              </div>
-            ) : (
-              weeklyActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start gap-4 p-3 rounded-lg border border-border">
-                  <div className="flex-shrink-0">
-                    {activity.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium text-base">{activity.title}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <div className="bg-secondary/30 px-2 py-1 rounded text-xs flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
-                        {activity.timeCommitment}
-                      </div>
-                      {editMode && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => changeFrequency(activity.id, 'daily')}
-                          className="h-7 text-xs"
-                        >
-                          Move to Daily
-                        </Button>
-                      )}
                     </div>
-                  </div>
-                  {!editMode ? (
-                    <div className="flex flex-col items-center">
-                      <Checkbox 
-                        className="h-6 w-6 border-2" 
-                        checked={isCompletedToday(activity.id)} 
-                        onCheckedChange={() => handleCompleteActivity(activity.id)}
-                      />
-                      <div className="text-xs text-muted-foreground mt-1">Done</div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center">
-                      <div className="text-xs text-muted-foreground">ROI</div>
-                      <div className="font-bold text-sm">{(activity.impact / activity.effort * 10).toFixed(1)}</div>
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-            
-            {editMode && dailyActivities.length > 0 && (
-              <div className="mt-4 border-t pt-4">
-                <p className="text-sm font-medium mb-2">Move daily activities to weekly:</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {dailyActivities.map(activity => (
-                    <Button 
-                      key={activity.id}
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => changeFrequency(activity.id, 'weekly')}
-                      className="justify-start"
-                    >
-                      <span className="mr-2">{activity.icon}</span>
-                      <span className="text-xs">{activity.title}</span>
-                    </Button>
                   ))}
                 </div>
               </div>
             )}
-          </TabsContent>
-        </Tabs>
+            
+            {/* Optional Activities */}
+            {optionalActivities.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4" />
+                  <h3 className="font-medium">Additional Activities</h3>
+                </div>
+                <div className="space-y-3">
+                  {optionalActivities.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-4 p-3 rounded-lg border border-border">
+                      <div className="flex-shrink-0">
+                        {activity.icon}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-base">{activity.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="bg-secondary/30 px-2 py-1 rounded text-xs flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {activity.timeCommitment}
+                          </div>
+                          <div className="text-xs text-muted-foreground flex items-center gap-1">
+                            ROI: <span className="font-medium text-primary">{(activity.impact / activity.effort * 10).toFixed(1)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Checkbox 
+                          className="h-6 w-6 border-2" 
+                          checked={isCompletedToday(activity.id)} 
+                          onCheckedChange={() => handleCompleteActivity(activity.id)}
+                        />
+                        <div className="text-xs text-muted-foreground mt-1">Done</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        
+        {/* Activity Plan Dialog */}
+        <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Customize Your Daily Plan</DialogTitle>
+              <DialogDescription>
+                Select which activities you want to include in your plan for {format(new Date(selectedDate), 'EEEE, MMMM d')}
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="my-2">
+              <Label>Date</Label>
+              <div className="mt-1">
+                <input 
+                  type="date" 
+                  value={selectedDate}
+                  onChange={(e) => handleDateChange(e.target.value)} 
+                  className="w-full rounded-md border border-border px-3 py-2"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-medium">Selected Activities</h4>
+                <span className="text-xs text-muted-foreground">{selectedActivities.length} selected</span>
+              </div>
+              
+              <div className="space-y-2 max-h-[250px] overflow-y-auto p-1">
+                {selectedActivities.length === 0 ? (
+                  <div className="text-center py-3 border border-dashed rounded-md text-sm text-muted-foreground">
+                    No activities selected
+                  </div>
+                ) : (
+                  sortedActivities
+                    .filter(a => selectedActivities.includes(a.id))
+                    .map(activity => (
+                      <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md bg-secondary/20">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-shrink-0">
+                            {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium">{activity.title}</div>
+                            <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleActivitySelection(activity.id)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))
+                )}
+              </div>
+              
+              <Separator className="my-4" />
+              
+              <div className="mb-2">
+                <h4 className="font-medium">Available Activities</h4>
+              </div>
+              
+              <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                {availableActivities.length === 0 ? (
+                  <div className="text-center py-3 border border-dashed rounded-md text-sm text-muted-foreground">
+                    All activities selected
+                  </div>
+                ) : (
+                  availableActivities.map(activity => (
+                    <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-shrink-0">
+                          {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium">{activity.title}</div>
+                          <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleActivitySelection(activity.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPlanDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={saveCurrentPlan}>
+                Save Plan
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
