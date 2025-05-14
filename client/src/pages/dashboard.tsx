@@ -3,15 +3,12 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
-import { ProgramCard } from "@/components/dashboard/program-card";
-import { MetricsCard } from "@/components/dashboard/metrics-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { AIMotivationalCompanion } from "@/components/dashboard/ai-motivational-companion";
+import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
-import { DailySchedule } from "@/components/schedule/daily-schedule";
 import { ResourceLibrary } from "@/components/resources/resource-library";
-import { ProgramList } from "@/components/programs/program-list";
 import { useState } from "react";
 
 export default function Dashboard() {
@@ -30,10 +27,7 @@ export default function Dashboard() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <div className="lg:col-span-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <ProgressCard />
-                  <ProgramCard />
-                </div>
+                <HighRoiActivities />
               </div>
               <div className="space-y-6">
                 <AIMotivationalCompanion />
@@ -46,26 +40,16 @@ export default function Dashboard() {
                 <TabsTrigger value="tasks" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Daily Tasks
                 </TabsTrigger>
-                <TabsTrigger value="schedule" className="px-4 py-2 text-sm font-medium rounded-t-lg">
-                  Today's Schedule
-                </TabsTrigger>
                 <TabsTrigger value="progress" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Progress Analytics
                 </TabsTrigger>
                 <TabsTrigger value="resources" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Resources
                 </TabsTrigger>
-                <TabsTrigger value="programs" className="px-4 py-2 text-sm font-medium rounded-t-lg">
-                  Programs
-                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="tasks">
                 <DailyTasks />
-              </TabsContent>
-              
-              <TabsContent value="schedule">
-                <DailySchedule />
               </TabsContent>
               
               <TabsContent value="progress">
@@ -74,10 +58,6 @@ export default function Dashboard() {
               
               <TabsContent value="resources">
                 <ResourceLibrary />
-              </TabsContent>
-              
-              <TabsContent value="programs">
-                <ProgramList />
               </TabsContent>
             </Tabs>
           </div>

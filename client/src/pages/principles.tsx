@@ -214,8 +214,8 @@ export default function Principles() {
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-3xl font-bold">BeastMode Principles</h1>
-                <p className="text-gray-600 mt-1">Core wisdom from top self-development books</p>
+                <h1 className="text-3xl font-bold">High ROI Principles</h1>
+                <p className="text-gray-600 mt-1">Core wisdom with maximum impact for minimal effort</p>
               </div>
               <div className="inline-flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
@@ -231,20 +231,20 @@ export default function Principles() {
               </div>
               
               <div className="relative z-10">
-                <h2 className="text-2xl font-bold mb-2">Applied Wisdom</h2>
+                <h2 className="text-2xl font-bold mb-2">The Compound Effect</h2>
                 <p className="text-white text-opacity-90 max-w-3xl">
-                  "We don't rise to the level of our goals, we fall to the level of our systems." — James Clear, <span className="italic">Atomic Habits</span>
+                  "Tiny changes, remarkable results. Small habits don't add up, they compound." — James Clear, <span className="italic">Atomic Habits</span>
                 </p>
                 
                 <div className="mt-4 flex flex-wrap gap-3">
                   <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> Daily Application
+                    <CheckCircle className="h-4 w-4 mr-1" /> 1% Better Daily
                   </div>
                   <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> Practical Examples
+                    <CheckCircle className="h-4 w-4 mr-1" /> Highest ROI Actions
                   </div>
                   <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> Actionable Steps
+                    <CheckCircle className="h-4 w-4 mr-1" /> Compound Growth
                   </div>
                 </div>
               </div>
@@ -252,8 +252,8 @@ export default function Principles() {
             
             <Tabs defaultValue="principles" className="mb-6">
               <TabsList className="mb-6">
-                <TabsTrigger value="principles">Core Principles</TabsTrigger>
-                <TabsTrigger value="integration">Daily Application</TabsTrigger>
+                <TabsTrigger value="principles">High ROI Principles</TabsTrigger>
+                <TabsTrigger value="integration">Implementation System</TabsTrigger>
               </TabsList>
               
               <TabsContent value="principles">
@@ -294,8 +294,8 @@ export default function Principles() {
               <TabsContent value="integration">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Daily Integration Framework</CardTitle>
-                    <CardDescription>Combining multiple methodologies into a cohesive system</CardDescription>
+                    <CardTitle>High ROI Implementation System</CardTitle>
+                    <CardDescription>Get 80% of results from 20% of effort with these keystone habits</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
