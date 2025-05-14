@@ -18,7 +18,7 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <div className="bg-background font-sans">
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
       
       <div className="flex min-h-screen">
@@ -42,20 +42,20 @@ export default function Dashboard() {
             </div>
             
             <Tabs defaultValue="tasks" className="mb-6">
-              <TabsList className="mb-6 border-b border-gray-200 w-full justify-start overflow-x-auto">
-                <TabsTrigger value="tasks" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+              <TabsList className="mb-6 border-b border-border w-full justify-start overflow-x-auto">
+                <TabsTrigger value="tasks" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Daily Tasks
                 </TabsTrigger>
-                <TabsTrigger value="schedule" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+                <TabsTrigger value="schedule" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Today's Schedule
                 </TabsTrigger>
-                <TabsTrigger value="progress" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+                <TabsTrigger value="progress" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Progress Analytics
                 </TabsTrigger>
-                <TabsTrigger value="resources" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+                <TabsTrigger value="resources" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Resources
                 </TabsTrigger>
-                <TabsTrigger value="programs" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+                <TabsTrigger value="programs" className="px-4 py-2 text-sm font-medium rounded-t-lg">
                   Programs
                 </TabsTrigger>
               </TabsList>
