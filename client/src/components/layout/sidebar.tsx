@@ -19,7 +19,8 @@ import {
   LineChart,
   BookOpenText,
   MessageSquare,
-  Users
+  Users,
+  Trophy
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 
@@ -39,6 +40,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Supplements", 
       icon: <Pill className="w-5 h-5" />,
       description: "Science-backed supplements ranked by effectiveness"
+    },
+    { 
+      path: "/supplements-top10", 
+      name: "Top 10 Supplements", 
+      icon: <Trophy className="w-5 h-5 text-amber-500" />,
+      description: "Expert-recommended supplements with highest ROI"
     },
     { 
       path: "/experts", 
