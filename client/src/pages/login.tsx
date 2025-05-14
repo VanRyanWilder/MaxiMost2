@@ -63,12 +63,44 @@ export default function Login() {
             Sign in to continue your self improvement journey
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 overflow-auto max-h-[60vh]">
           {error && (
             <div className="p-3 text-sm bg-red-100 border border-red-200 text-red-600 rounded">
               {error}
             </div>
           )}
+          
+          {/* Featured option for guest login at top for easier access */}
+          <Button 
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-6"
+            onClick={async () => {
+              try {
+                setIsLoading(true);
+                // Use the mock user login, avoiding Firebase
+                await login("guest@example.com", "guest-password");
+                setLocation("/dashboard");
+              } catch (error) {
+                console.error("Guest login error:", error);
+                setError("Failed to login as guest. Please try again.");
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            disabled={isLoading}
+          >
+            <span className="text-base">Continue as Guest</span>
+          </Button>
+          
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <Separator />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or Sign In With
+              </span>
+            </div>
+          </div>
           
           <Button
             variant="outline"
@@ -108,37 +140,6 @@ export default function Login() {
           >
             <SiSamsung className="h-4 w-4" />
             <span>Continue with Samsung</span>
-          </Button>
-          
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <Separator />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or
-              </span>
-            </div>
-          </div>
-          
-          <Button 
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
-            onClick={async () => {
-              try {
-                setIsLoading(true);
-                // Use the mock user login, avoiding Firebase
-                await login("guest@example.com", "guest-password");
-                setLocation("/dashboard");
-              } catch (error) {
-                console.error("Guest login error:", error);
-                setError("Failed to login as guest. Please try again.");
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-            disabled={isLoading}
-          >
-            Continue as Guest
           </Button>
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
