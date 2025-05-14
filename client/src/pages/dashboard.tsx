@@ -28,55 +28,25 @@ export default function Dashboard() {
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
               <div className="lg:col-span-2">
-                <Tabs defaultValue="calendar" className="w-full mb-6">
+                <Tabs defaultValue="loop" className="w-full mb-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold flex items-center gap-2">
-                      <MoveUp className="h-5 w-5 text-primary" />
-                      High-ROI Habits
-                    </h2>
+                    <h2 className="text-xl font-bold">High-ROI Habits</h2>
                     <TabsList>
-                      <TabsTrigger value="calendar" className="flex items-center gap-1 text-xs">
-                        <Calendar className="h-3.5 w-3.5" /> Calendar
+                      <TabsTrigger value="loop" className="text-xs">
+                        Loop Tracker
                       </TabsTrigger>
-                      <TabsTrigger value="list" className="flex items-center gap-1 text-xs">
-                        <ListChecks className="h-3.5 w-3.5" /> List
-                      </TabsTrigger>
-                      <TabsTrigger value="stats" className="flex items-center gap-1 text-xs">
-                        <BarChart2 className="h-3.5 w-3.5" /> Stats
+                      <TabsTrigger value="list" className="text-xs">
+                        List View
                       </TabsTrigger>
                     </TabsList>
                   </div>
                   
-                  <TabsContent value="calendar" className="mt-0">
-                    <HabitStreakView 
-                      activities={[]} 
-                      completedActivities={[]}
-                      onCompleteActivity={(id) => console.log(`Completing ${id}`)}
-                      onAddHabit={() => console.log('Add habit')}
-                      onShowStats={() => console.log('Show stats')}
-                      onEditHabit={() => console.log('Edit habit')}
-                    />
+                  <TabsContent value="loop" className="mt-0">
+                    <LoopHabitTracker />
                   </TabsContent>
                   
                   <TabsContent value="list" className="mt-0">
                     <HighRoiActivities />
-                  </TabsContent>
-                  
-                  <TabsContent value="stats" className="mt-0">
-                    <HabitStatistics 
-                      habitTitle="Morning Routine"
-                      habitIcon={<Sun />}
-                      completionData={{
-                        dates: Array.from({ length: 30 }).map((_, i) => new Date(Date.now() - i * 86400000)),
-                        completed: Array.from({ length: 30 }).map(() => Math.random() > 0.3)
-                      }}
-                      longestStreak={14}
-                      currentStreak={7}
-                      totalCompletions={67}
-                      successRate={78}
-                      impact={9}
-                      effort={4}
-                    />
                   </TabsContent>
                 </Tabs>
               </div>
