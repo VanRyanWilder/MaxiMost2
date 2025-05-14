@@ -19,6 +19,7 @@ import {
   Star,
   PlusCircle,
   MoveUp,
+  Pencil,
   Activity,
   Brain,
   LayoutGrid,
