@@ -56,7 +56,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              BeastMode
+              Maximus Gains
             </h1>
             <button 
               className="p-1 rounded-md text-muted-foreground hover:bg-muted lg:hidden" 

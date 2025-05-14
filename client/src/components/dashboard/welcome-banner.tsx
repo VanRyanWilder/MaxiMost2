@@ -16,16 +16,19 @@ export function WelcomeBanner() {
   const randomQuote = compoundingQuotes[Math.floor(Math.random() * compoundingQuotes.length)];
 
   return (
-    <div className="bg-gradient-to-r from-primary to-progress rounded-xl p-6 text-white mb-8">
+    <div className="bg-gradient-to-r from-primary to-purple-600 rounded-xl p-6 text-white mb-8">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <h2 className="text-2xl font-bold">
-              {getGreeting()}, {user?.name || "Achiever"}!
+              {getGreeting()}, {user?.name || "Maximus"}!
             </h2>
             <TrendingUp className="h-5 w-5" />
           </div>
-          <p className="text-white text-opacity-90 max-w-lg">"{randomQuote}"</p>
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-wider text-white text-opacity-80">MAXIMUS GAINS PHILOSOPHY</p>
+            <p className="text-white text-opacity-90 max-w-lg">"{randomQuote}"</p>
+          </div>
         </div>
         <div className="mt-4 md:mt-0 flex flex-col md:flex-row gap-3">
           <div className="bg-white bg-opacity-20 rounded-lg p-3 flex items-center gap-2">
