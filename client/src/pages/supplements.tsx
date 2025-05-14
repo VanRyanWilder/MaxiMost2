@@ -1,491 +1,581 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StarIcon, ThumbsUp, ThumbsDown, ExternalLink, ShieldCheck, MessageSquare } from "lucide-react";
+import { PageContainer } from "@/components/layout/page-container";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { Skeleton } from "@/components/ui/skeleton"; 
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useToast } from "@/hooks/use-toast";
-import { useUser } from "@/context/user-context";
-import { ReviewModal } from "@/components/supplements/review-modal";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  ThumbsUp, 
+  ThumbsDown, 
+  Pill, 
+  Leaf, 
+  Brain, 
+  Heart, 
+  Dumbbell, 
+  BarChart2, 
+  Beaker, 
 
-// Define the type based on our database schema
+  FileText,
+  Filter,
+  LayoutGrid,
+  List,
+  Search,
+  ExternalLink
+} from "lucide-react";
+
+// Define supplement types
+type SupplementCategory = 
+  | "cognitive" 
+  | "fitness" 
+  | "longevity" 
+  | "sleep" 
+  | "stress"
+  | "hormone"
+  | "general";
+
+type ReviewScore = {
+  efficacy: number;
+  evidence: number;
+  safety: number;
+  value: number;
+  overall: number;
+};
+
 interface Supplement {
-  id: number;
+  id: string;
   name: string;
+  scientificName: string;
+  category: SupplementCategory;
   description: string;
-  benefits: string;
+  effectivenessTier: "A" | "B" | "C" | "D" | "F";
+  benefits: string[];
   dosage: string;
-  sideEffects: string | null;
-  interactions: string | null;
-  categories: string;
+  warnings: string[];
+  reviewScore: ReviewScore;
   upvotes: number;
   downvotes: number;
-  totalReviews: number;
-  averageRating: string;
-  valueRating: number;
-  monthlyCostEstimate: string;
-  bestValue: boolean;
-  imageUrl: string | null;
-  amazonUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
+  researchLinks: string[];
+  amazonLink?: string;
 }
 
-// Extend the type with calculated/parsed fields for the UI
-interface SupplementWithParsedData extends Supplement {
-  parsedBenefits: string[];
-  parsedCategories: string[];
-  costEffectiveness?: number;
-}
+export default function SupplementsPage() {
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [tierFilter, setTierFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-// Sample supplements data for initial UI development
-// This will be replaced by API data
-const sampleSupplements: Supplement[] = [
-  {
-    id: 1,
-    name: "Vitamin D3 with K2",
-    description: "Essential vitamin highlighted by both Huberman and Brecka as critical for immune function, longevity, and hormonal regulation.",
-    benefits: JSON.stringify([
-      "Immune system optimization",
-      "Bone health and calcium utilization",
-      "Hormone production support",
-      "Cardiovascular health protection"
-    ]),
-    dosage: "5,000-10,000 IU daily",
-    sideEffects: "Rare at recommended doses. Excessive amounts may lead to hypercalcemia.",
-    interactions: "May interact with certain medications including statins and blood thinners.",
-    categories: "Essential,Daily,Foundational",
-    upvotes: 842,
-    downvotes: 21,
-    totalReviews: 156,
-    averageRating: "4.8",
-    valueRating: 8.8,
-    monthlyCostEstimate: "$5-15",
-    bestValue: true,
-    imageUrl: null,
-    amazonUrl: "https://www.amazon.com/dp/B07XYQJR65?tag=beastmode-20",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: 2,
-    name: "Magnesium Glycinate",
-    description: "Andrew Huberman's top recommendation for sleep, neural plasticity, and recovery.",
-    benefits: JSON.stringify([
-      "Enhanced sleep architecture",
-      "Muscle relaxation and recovery",
-      "Stress resilience",
-      "Cognitive function support"
-    ]),
-    dosage: "300-400mg daily",
-    sideEffects: "Generally well-tolerated. May cause loose stools at high doses.",
-    interactions: "May interact with certain antibiotics and medications.",
-    categories: "Essential,Daily,Foundational",
-    upvotes: 756,
-    downvotes: 18,
-    totalReviews: 124,
-    averageRating: "4.7",
-    valueRating: 8.5,
-    monthlyCostEstimate: "$10-25",
-    bestValue: true,
-    imageUrl: null,
-    amazonUrl: "https://www.amazon.com/dp/B07RM7VXFV?tag=beastmode-20",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+  // Sample data for supplements
+  const supplements: Supplement[] = [
+    {
+      id: "creatine",
+      name: "Creatine Monohydrate",
+      scientificName: "N-aminoiminomethyl-N-methylglycine",
+      category: "fitness",
+      description: "One of the most researched supplements with strong evidence for strength and performance benefits",
+      effectivenessTier: "A",
+      benefits: [
+        "Increases strength and power output",
+        "Enhances muscle recovery",
+        "Improves high-intensity exercise performance",
+        "May provide cognitive benefits"
+      ],
+      dosage: "3-5g daily, loading phase optional",
+      warnings: [
+        "May cause water retention",
+        "Stay well hydrated when supplementing"
+      ],
+      reviewScore: {
+        efficacy: 9.5,
+        evidence: 9.8,
+        safety: 9.0,
+        value: 9.5,
+        overall: 9.5
+      },
+      upvotes: 245,
+      downvotes: 12,
+      researchLinks: [
+        "https://pubmed.ncbi.nlm.nih.gov/14636102/",
+        "https://pubmed.ncbi.nlm.nih.gov/12701815/"
+      ],
+      amazonLink: "https://www.amazon.com/dp/B00E9M4XEE"
+    },
+    {
+      id: "vitamin-d",
+      name: "Vitamin D3",
+      scientificName: "Cholecalciferol",
+      category: "general",
+      description: "Essential vitamin with widespread effects on health, immunity, and overall wellbeing",
+      effectivenessTier: "A",
+      benefits: [
+        "Supports bone health",
+        "Enhances immune function",
+        "May improve mood and reduce depression risk",
+        "Associated with reduced all-cause mortality"
+      ],
+      dosage: "1,000-4,000 IU daily, based on blood levels",
+      warnings: [
+        "Toxicity possible at very high doses",
+        "Get blood levels checked periodically",
+        "Fat-soluble, best taken with a meal containing fat"
+      ],
+      reviewScore: {
+        efficacy: 9.0,
+        evidence: 9.5,
+        safety: 8.5,
+        value: 9.8,
+        overall: 9.2
+      },
+      upvotes: 198,
+      downvotes: 8,
+      researchLinks: [
+        "https://pubmed.ncbi.nlm.nih.gov/28768407/",
+        "https://pubmed.ncbi.nlm.nih.gov/29480918/"
+      ],
+      amazonLink: "https://www.amazon.com/dp/B00GB85JR4"
+    },
+    {
+      id: "magnesium",
+      name: "Magnesium Glycinate",
+      scientificName: "Magnesium Bisglycinate",
+      category: "sleep",
+      description: "Essential mineral involved in hundreds of enzymatic reactions, with excellent bioavailability",
+      effectivenessTier: "B",
+      benefits: [
+        "Improves sleep quality",
+        "Reduces muscle cramps and tension",
+        "Supports normal heart rhythm",
+        "May reduce anxiety and stress"
+      ],
+      dosage: "200-400mg elemental magnesium daily, preferably in the evening",
+      warnings: [
+        "May cause digestive upset at high doses",
+        "Consult doctor if you have kidney issues"
+      ],
+      reviewScore: {
+        efficacy: 8.0,
+        evidence: 8.0,
+        safety: 9.0,
+        value: 8.5,
+        overall: 8.4
+      },
+      upvotes: 156,
+      downvotes: 14,
+      researchLinks: [
+        "https://pubmed.ncbi.nlm.nih.gov/23853635/",
+        "https://pubmed.ncbi.nlm.nih.gov/27933574/"
+      ],
+      amazonLink: "https://www.amazon.com/dp/B07RM7VXFV"
+    },
+    {
+      id: "fish-oil",
+      name: "Fish Oil (EPA/DHA)",
+      scientificName: "Omega-3 Fatty Acids",
+      category: "general",
+      description: "Essential fatty acids with extensive research supporting cardiovascular and brain benefits",
+      effectivenessTier: "B",
+      benefits: [
+        "Supports heart health",
+        "Reduces inflammation",
+        "Improves brain function",
+        "May help with mood disorders"
+      ],
+      dosage: "1-3g combined EPA/DHA daily",
+      warnings: [
+        "May thin blood slightly",
+        "Look for purified products tested for heavy metals",
+        "Some people experience fishy burps"
+      ],
+      reviewScore: {
+        efficacy: 7.5,
+        evidence: 8.5,
+        safety: 9.0,
+        value: 7.0,
+        overall: 8.0
+      },
+      upvotes: 142,
+      downvotes: 22,
+      researchLinks: [
+        "https://pubmed.ncbi.nlm.nih.gov/16531187/",
+        "https://pubmed.ncbi.nlm.nih.gov/30122103/"
+      ],
+      amazonLink: "https://www.amazon.com/dp/B01HVDJBWA"
+    },
+    {
+      id: "ashwagandha",
+      name: "Ashwagandha",
+      scientificName: "Withania somnifera",
+      category: "stress",
+      description: "Adaptogenic herb with growing evidence for stress reduction and hormonal benefits",
+      effectivenessTier: "B",
+      benefits: [
+        "Reduces cortisol and perceived stress",
+        "May increase testosterone in men",
+        "Improves quality of sleep",
+        "Supports athletic recovery"
+      ],
+      dosage: "300-600mg extract daily (standardized to withanolides)",
+      warnings: [
+        "May interact with thyroid medication",
+        "Can cause drowsiness in some people",
+        "May lower blood pressure"
+      ],
+      reviewScore: {
+        efficacy: 7.5,
+        evidence: 7.0,
+        safety: 8.0,
+        value: 8.5,
+        overall: 7.8
+      },
+      upvotes: 130,
+      downvotes: 26,
+      researchLinks: [
+        "https://pubmed.ncbi.nlm.nih.gov/31517876/",
+        "https://pubmed.ncbi.nlm.nih.gov/23439798/"
+      ],
+      amazonLink: "https://www.amazon.com/dp/B0795DT96L"
+    }
+  ];
+
+  function getCategoryIcon(category: SupplementCategory) {
+    switch (category) {
+      case "cognitive":
+        return <Brain className="h-5 w-5" />;
+      case "fitness":
+        return <Dumbbell className="h-5 w-5" />;
+      case "longevity":
+        return <Heart className="h-5 w-5" />;
+      case "sleep":
+        return <Brain className="h-5 w-5" />;
+      case "stress":
+        return <Brain className="h-5 w-5" />;
+      case "hormone":
+        return <Beaker className="h-5 w-5" />;
+      default:
+        return <Leaf className="h-5 w-5" />;
+    }
   }
-];
+  
+  function getTierColor(tier: Supplement["effectivenessTier"]) {
+    switch (tier) {
+      case "A":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "B":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      case "C":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "D":
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case "F":
+        return "bg-red-100 text-red-800 border-red-200";
+    }
+  }
 
-export default function Supplements() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [sortOption, setSortOption] = useState<string>("upvotes");
-  const [selectedSupplement, setSelectedSupplement] = useState<number | null>(null);
-  const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const { user } = useUser();
-  
-  // Get logged in user ID
-  const userId = user?.id || 1;
-  
-  // Fetch supplements from the API
-  const { data: supplements, isLoading, error } = useQuery({
-    queryKey: ['/api/supplements'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+  // Filter supplements based on search, category, and tier
+  const filteredSupplements = supplements.filter(supplement => {
+    // Search filter
+    const matchesSearch = 
+      searchQuery === "" || 
+      supplement.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      supplement.scientificName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      supplement.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Category filter
+    const matchesCategory = 
+      categoryFilter === "all" || 
+      supplement.category === categoryFilter;
+    
+    // Tier filter
+    const matchesTier = 
+      tierFilter === "all" || 
+      supplement.effectivenessTier === tierFilter;
+    
+    return matchesSearch && matchesCategory && matchesTier;
   });
-  
-  // Vote mutation
-  const voteMutation = useMutation({
-    mutationFn: (data: { userId: number, supplementId: number, voteType: string }) => {
-      return apiRequest('POST', '/api/supplements/votes', data);
-    },
-    onSuccess: () => {
-      // Invalidate supplements to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/supplements'] });
-      toast({
-        title: "Vote recorded",
-        description: "Your vote has been recorded successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to record your vote. Please try again.",
-        variant: "destructive",
-      });
-      console.error("Vote error:", error);
-    }
-  });
-  
-  // Handle voting
-  const handleVote = (supplementId: number, voteType: string) => {
-    voteMutation.mutate({ userId, supplementId, voteType });
-  };
-
-  // Handle opening the review modal
-  const handleOpenReviews = (supplementId: number) => {
-    setSelectedSupplement(supplementId);
-    setReviewModalOpen(true);
-  };
-  
-  // Parse benefits and categories from string to arrays
-  const parseSupplementData = (supplement: Supplement): SupplementWithParsedData => {
-    // Parse benefits - either a JSON string or comma-separated list
-    let parsedBenefits: string[] = [];
-    try {
-      // Try parsing as JSON first
-      parsedBenefits = JSON.parse(supplement.benefits);
-    } catch (e) {
-      // Fall back to comma-separated parsing
-      parsedBenefits = supplement.benefits.split(',').map(b => b.trim());
-    }
-    
-    // Parse categories
-    const parsedCategories = supplement.categories.split(',').map(c => c.trim());
-    
-    // We now use valueRating directly from the database, but compute cost-effectiveness as fallback
-    // This will be removed once all supplements have valueRating data
-    const costEffectiveness = typeof supplement.valueRating === 'number' 
-      ? supplement.valueRating 
-      : Math.round((supplement.upvotes / (supplement.upvotes + supplement.downvotes || 1)) * 10);
-    
-    return {
-      ...supplement,
-      parsedBenefits,
-      parsedCategories,
-      costEffectiveness
-    };
-  };
-  
-  // Use sample data during development if API doesn't return data
-  const availableSupplements = (supplements && Array.isArray(supplements) && supplements.length > 0) 
-    ? supplements 
-    : sampleSupplements;
-  
-  // Process all supplements with parsed data
-  const processedSupplements: SupplementWithParsedData[] = 
-    Array.isArray(availableSupplements) ? availableSupplements.map(s => parseSupplementData(s as Supplement)) : [];
-  
-  // Get unique categories from all supplements
-  const allCategories = Array.from(
-    new Set(processedSupplements.length > 0 ? processedSupplements.flatMap(s => s.parsedCategories || []) : [])
-  ).sort();
-  
-  // Filter supplements by category
-  const filteredSupplements = selectedCategory === "All" 
-    ? processedSupplements
-    : processedSupplements.filter(supplement => 
-        supplement.parsedCategories.includes(selectedCategory)
-      );
-      
-  // Sort supplements based on selected option
-  const sortedSupplements = [...filteredSupplements].sort((a, b) => {
-    if (sortOption === "upvotes") {
-      return b.upvotes - a.upvotes;
-    } else if (sortOption === "rating") {
-      return parseFloat(b.averageRating) - parseFloat(a.averageRating);
-    } else if (sortOption === "costEffectiveness") {
-      return b.valueRating - a.valueRating;
-    } else if (sortOption === "bestValue") {
-      // Sort by best value flag first, then by value rating
-      return b.bestValue === a.bestValue ? b.valueRating - a.valueRating : b.bestValue ? -1 : 1;
-    } else {
-      return 0;
-    }
-  });
-  
-  // Generate star ratings
-  const renderStars = (score: string) => {
-    const stars = [];
-    const numericScore = parseFloat(score);
-    const fullStars = Math.floor(numericScore);
-    const halfStar = numericScore % 1 >= 0.5;
-    
-    for (let i = 0; i < 5; i++) {
-      if (i < fullStars) {
-        stars.push(<StarIcon key={i} className="w-4 h-4 fill-primary text-primary" />);
-      } else if (i === fullStars && halfStar) {
-        stars.push(<StarIcon key={i} className="w-4 h-4 fill-primary text-primary opacity-50" />);
-      } else {
-        stars.push(<StarIcon key={i} className="w-4 h-4 text-muted" />);
-      }
-    }
-    
-    return stars;
-  };
-
-  // Find the supplement details for the selected supplement
-  const selectedSupplementData = selectedSupplement ? 
-    processedSupplements.find(sup => sup.id === selectedSupplement) : null;
 
   return (
-    <div className="bg-background font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
-          <div className="container mx-auto px-4 py-6">
-            <h1 className="text-3xl font-bold mb-6">Supplement Recommendations</h1>
+    <PageContainer title="Science-Backed Supplements">
+      {/* Filter and search bar */}
+      <div className="bg-background sticky top-0 z-10 py-4 mb-6 border-b">
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-grow">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input 
+              placeholder="Search supplements..."
+              className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="cognitive">Cognitive</SelectItem>
+                <SelectItem value="fitness">Fitness</SelectItem>
+                <SelectItem value="general">General Health</SelectItem>
+                <SelectItem value="hormone">Hormonal</SelectItem>
+                <SelectItem value="longevity">Longevity</SelectItem>
+                <SelectItem value="sleep">Sleep</SelectItem>
+                <SelectItem value="stress">Stress</SelectItem>
+              </SelectContent>
+            </Select>
             
-            <div className="bg-gradient-to-r from-primary/80 to-primary rounded-xl p-6 text-primary-foreground mb-8">
-              <h2 className="text-2xl font-bold mb-2">Supplement Strategy</h2>
-              <p className="text-primary-foreground/90 max-w-3xl">
-                "Quality supplements are force multipliers for your health and performance, but they don't replace a solid foundation of nutrition, sleep, and exercise. Focus on these highest-impact options for the best return on investment." — Gary Brecka
-              </p>
+            <Select value={tierFilter} onValueChange={setTierFilter}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Tier" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tiers</SelectItem>
+                <SelectItem value="A">Tier A</SelectItem>
+                <SelectItem value="B">Tier B</SelectItem>
+                <SelectItem value="C">Tier C</SelectItem>
+                <SelectItem value="D">Tier D</SelectItem>
+                <SelectItem value="F">Tier F</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <div className="flex border rounded-md">
+              <Button 
+                variant={viewMode === "grid" ? "default" : "ghost"} 
+                size="icon" 
+                onClick={() => setViewMode("grid")}
+                className="h-9 w-9 rounded-r-none"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant={viewMode === "list" ? "default" : "ghost"} 
+                size="icon" 
+                onClick={() => setViewMode("list")}
+                className="h-9 w-9 rounded-l-none"
+              >
+                <List className="h-4 w-4" />
+              </Button>
             </div>
-            
-            <div className="bg-card shadow-sm border border-border rounded-xl p-6 mb-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <div>
-                  <h3 className="font-bold text-xl text-card-foreground">Supplement Rankings</h3>
-                  <p className="text-sm text-muted-foreground">Ranked by efficacy, user ratings, and scientific evidence</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Explanation section */}
+      <div className="mb-8 bg-muted/50 p-4 rounded-lg">
+        <h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
+          <Beaker className="h-5 w-5 text-primary" />
+          Evidence-Based Supplement Rankings
+        </h2>
+        <p className="text-muted-foreground mb-3">
+          Our supplement database is ranked based on scientific evidence, not hype. Each supplement receives an 
+          effectiveness tier from A (strongest evidence) to F (not recommended).
+        </p>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 text-sm">
+          <div className="flex items-center p-2 bg-green-50 rounded-md border border-green-100">
+            <span className="font-bold text-green-800 mr-2">A Tier:</span>
+            <span className="text-green-700">Strong scientific evidence, highly effective</span>
+          </div>
+          <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+            <span className="font-bold text-blue-800 mr-2">B Tier:</span>
+            <span className="text-blue-700">Good evidence, effective for most people</span>
+          </div>
+          <div className="flex items-center p-2 bg-yellow-50 rounded-md border border-yellow-100">
+            <span className="font-bold text-yellow-800 mr-2">C Tier:</span>
+            <span className="text-yellow-700">Mixed evidence, may work for some</span>
+          </div>
+          <div className="flex items-center p-2 bg-orange-50 rounded-md border border-orange-100">
+            <span className="font-bold text-orange-800 mr-2">D Tier:</span>
+            <span className="text-orange-700">Weak evidence, likely ineffective</span>
+          </div>
+          <div className="flex items-center p-2 bg-red-50 rounded-md border border-red-100">
+            <span className="font-bold text-red-800 mr-2">F Tier:</span>
+            <span className="text-red-700">Debunked or potentially harmful</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Results count */}
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium">
+          {filteredSupplements.length} {filteredSupplements.length === 1 ? 'supplement' : 'supplements'} found
+        </h3>
+        <Select defaultValue="effectiveness">
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="effectiveness">Sort by Effectiveness</SelectItem>
+            <SelectItem value="evidence">Sort by Evidence Quality</SelectItem>
+            <SelectItem value="upvotes">Sort by Community Votes</SelectItem>
+            <SelectItem value="alphabetical">Sort Alphabetically</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      {/* Grid View */}
+      {viewMode === "grid" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredSupplements.map(supplement => (
+            <Card key={supplement.id} className="h-full flex flex-col">
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-lg">{supplement.name}</CardTitle>
+                    <CardDescription className="italic">{supplement.scientificName}</CardDescription>
+                  </div>
+                  <Badge variant="outline" className={`${getTierColor(supplement.effectivenessTier)} ml-2`}>
+                    Tier {supplement.effectivenessTier}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="py-2 flex-grow">
+                <p className="text-sm mb-3">{supplement.description}</p>
+                
+                <div className="mb-3">
+                  <h4 className="text-sm font-semibold mb-1">Key Benefits:</h4>
+                  <ul className="text-sm list-disc pl-5 space-y-1">
+                    {supplement.benefits.slice(0, 3).map((benefit, i) => (
+                      <li key={i}>{benefit}</li>
+                    ))}
+                    {supplement.benefits.length > 3 && (
+                      <li className="text-muted-foreground">+ {supplement.benefits.length - 3} more</li>
+                    )}
+                  </ul>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <select 
-                    className="text-sm border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-input bg-background text-foreground"
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                  >
-                    <option value="All">All Categories</option>
-                    {allCategories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
+                <div className="text-sm">
+                  <h4 className="font-semibold mb-1">Recommended Dosage:</h4>
+                  <p>{supplement.dosage}</p>
+                </div>
+              </CardContent>
+              <CardFooter className="pt-2 border-t flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center text-sm">
+                    <ThumbsUp className="h-4 w-4 text-green-600 mr-1" />
+                    <span>{supplement.upvotes}</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <ThumbsDown className="h-4 w-4 text-red-600 mr-1" />
+                    <span>{supplement.downvotes}</span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-8">
+                    <FileText className="h-3.5 w-3.5 mr-1" />
+                    Studies
+                  </Button>
+                  {supplement.amazonLink && (
+                    <Button size="sm" className="text-xs h-8">
+                      <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                      Buy
+                    </Button>
+                  )}
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+      
+      {/* List View */}
+      {viewMode === "list" && (
+        <div className="space-y-3">
+          {filteredSupplements.map(supplement => (
+            <div key={supplement.id} className="border rounded-lg p-4 flex flex-col md:flex-row gap-4">
+              <div className="flex-grow">
+                <div className="flex flex-wrap items-start justify-between mb-2">
+                  <div>
+                    <h3 className="text-lg font-semibold flex items-center gap-1">
+                      {supplement.name}
+                      <Badge variant="outline" className={`${getTierColor(supplement.effectivenessTier)} ml-2`}>
+                        Tier {supplement.effectivenessTier}
+                      </Badge>
+                    </h3>
+                    <p className="text-sm text-muted-foreground italic">{supplement.scientificName}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <ThumbsUp className="h-4 w-4 text-green-600" />
+                      <span className="text-sm">{supplement.upvotes}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ThumbsDown className="h-4 w-4 text-red-600" />
+                      <span className="text-sm">{supplement.downvotes}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <p className="text-sm mb-2">{supplement.description}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 mb-2">
+                  <div>
+                    <h4 className="text-sm font-semibold">Benefits:</h4>
+                    <ul className="text-sm list-disc pl-5">
+                      {supplement.benefits.map((benefit, i) => (
+                        <li key={i}>{benefit}</li>
+                      ))}
+                    </ul>
+                  </div>
                   
-                  <select 
-                    className="text-sm border border-input rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring focus:border-input bg-background text-foreground"
-                    value={sortOption}
-                    onChange={(e) => setSortOption(e.target.value)}
-                  >
-                    <option value="upvotes">Sort by: Popularity</option>
-                    <option value="rating">Sort by: User Rating</option>
-                    <option value="costEffectiveness">Sort by: Cost-Effectiveness</option>
-                    <option value="bestValue">Sort by: Best Value</option>
-                  </select>
+                  <div>
+                    <h4 className="text-sm font-semibold">Dosage:</h4>
+                    <p className="text-sm">{supplement.dosage}</p>
+                    
+                    <h4 className="text-sm font-semibold mt-2">Warnings:</h4>
+                    <ul className="text-sm list-disc pl-5">
+                      {supplement.warnings.map((warning, i) => (
+                        <li key={i} className="text-red-600">{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
               
-              {isLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map(i => (
-                    <Card key={i} className="overflow-hidden">
-                      <div className="p-5">
-                        <Skeleton className="h-6 w-48 mb-2" />
-                        <Skeleton className="h-4 w-32 mb-4" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-full mb-2" />
-                        <Skeleton className="h-4 w-3/4" />
-                      </div>
-                    </Card>
-                  ))}
+              <div className="flex md:flex-col justify-between gap-2 md:min-w-[150px]">
+                <div className="rounded-md bg-muted p-3 flex-grow grid grid-cols-2 md:grid-cols-1 gap-1 text-sm">
+                  <div className="flex justify-between">
+                    <span>Efficacy:</span>
+                    <span className="font-semibold">{supplement.reviewScore.efficacy}/10</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Evidence:</span>
+                    <span className="font-semibold">{supplement.reviewScore.evidence}/10</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Safety:</span>
+                    <span className="font-semibold">{supplement.reviewScore.safety}/10</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Value:</span>
+                    <span className="font-semibold">{supplement.reviewScore.value}/10</span>
+                  </div>
+                  <div className="flex justify-between font-medium col-span-2 md:col-span-1 border-t pt-1 mt-1">
+                    <span>Overall:</span>
+                    <span className="font-bold">{supplement.reviewScore.overall}/10</span>
+                  </div>
                 </div>
-              ) : error ? (
-                <div className="p-8 text-center">
-                  <p className="text-red-500 mb-4">Failed to load supplements</p>
-                  <Button 
-                    onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/supplements'] })}
-                    variant="outline"
-                  >
-                    Try Again
+                
+                <div className="flex md:flex-col gap-2">
+                  <Button variant="outline" size="sm" className="text-xs h-8 w-full justify-center">
+                    <FileText className="h-3.5 w-3.5 mr-1" />
+                    Studies ({supplement.researchLinks.length})
                   </Button>
+                  {supplement.amazonLink && (
+                    <Button size="sm" className="text-xs h-8 w-full justify-center">
+                      <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                      Buy
+                    </Button>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {sortedSupplements.map((supplement) => (
-                    <Card key={supplement.id} className="overflow-hidden">
-                      <div className="flex flex-col md:flex-row">
-                        <div className="md:w-2/3 p-5">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h3 className="font-bold text-lg">{supplement.name}</h3>
-                              <div className="flex items-center space-x-2 mt-1 mb-2">
-                                <div className="flex">
-                                  {renderStars(supplement.averageRating)}
-                                </div>
-                                <span className="text-sm text-muted-foreground">({supplement.totalReviews} reviews)</span>
-                              </div>
-                            </div>
-                            <div className="flex gap-1">
-                              {supplement.parsedCategories.map(category => (
-                                <Badge key={category} variant="outline" className="text-xs px-2 py-1 bg-secondary/30 text-secondary-foreground">
-                                  {category}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                          
-                          <p className="text-sm text-muted-foreground mb-3">{supplement.description}</p>
-                          
-                          <div className="mb-3">
-                            <h4 className="text-sm font-medium mb-1">Benefits:</h4>
-                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                              {supplement.parsedBenefits.map((benefit, index) => (
-                                <li key={index} className="text-sm text-muted-foreground flex items-center">
-                                  <span className="mr-2 text-primary">•</span> {benefit}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Dosage:</span>
-                              <p>{supplement.dosage}</p>
-                            </div>
-                            {supplement.sideEffects && (
-                              <div>
-                                <span className="text-muted-foreground">Side Effects:</span>
-                                <p className="truncate">{supplement.sideEffects}</p>
-                              </div>
-                            )}
-                            {supplement.interactions && (
-                              <div>
-                                <span className="text-muted-foreground">Interactions:</span>
-                                <p className="truncate">{supplement.interactions}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="md:w-1/3 bg-secondary/10 p-5 flex flex-col justify-between">
-                          <div>
-                            <div className="mb-4">
-                              <h4 className="text-sm font-medium mb-1">Value Rating:</h4>
-                              <div className="flex items-center">
-                                <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                                  <div 
-                                    className={`h-2.5 rounded-full ${supplement.bestValue ? 'bg-green-500' : 'bg-primary'}`}
-                                    style={{ width: `${(typeof supplement.valueRating === 'number' ? supplement.valueRating : 5) * 10}%` }}
-                                  ></div>
-                                </div>
-                                <span className="text-sm font-medium">{typeof supplement.valueRating === 'number' ? supplement.valueRating.toFixed(1) : supplement.valueRating}/10</span>
-                              </div>
-                              {supplement.bestValue && (
-                                <div className="mt-1">
-                                  <Badge variant="default" className="bg-primary hover:bg-primary/90">Best Value</Badge>
-                                </div>
-                              )}
-                              <div className="mt-1">
-                                <span className="text-xs text-muted-foreground">Est. Monthly Cost: {supplement.monthlyCostEstimate}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="mb-6">
-                              <h4 className="text-sm font-medium mb-1">Community Rating:</h4>
-                              <div className="flex gap-3">
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  className="flex items-center gap-1"
-                                  onClick={() => handleVote(supplement.id, 'up')}
-                                  disabled={voteMutation.isPending}
-                                >
-                                  <ThumbsUp className="w-4 h-4" />
-                                  <span>{supplement.upvotes}</span>
-                                </Button>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  className="flex items-center gap-1"
-                                  onClick={() => handleVote(supplement.id, 'down')}
-                                  disabled={voteMutation.isPending}
-                                >
-                                  <ThumbsDown className="w-4 h-4" />
-                                  <span>{supplement.downvotes}</span>
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-3">
-                            {supplement.amazonUrl && (
-                              <div>
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <Button 
-                                        className="w-full flex items-center justify-center gap-2"
-                                        onClick={() => window.open(supplement.amazonUrl || '', '_blank')}
-                                      >
-                                        <ShieldCheck className="w-4 h-4" />
-                                        View on Amazon
-                                        <ExternalLink className="w-3 h-3 ml-1" />
-                                      </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      <p className="text-xs">Affiliate link - we earn a commission on qualified purchases</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                                
-                                <p className="text-xs text-center mt-2 text-gray-500">
-                                  Quality tested & verified
-                                </p>
-                              </div>
-                            )}
-                            
-                            <Button 
-                              variant="outline"
-                              className="w-full flex items-center justify-center gap-2"
-                              onClick={() => handleOpenReviews(supplement.id)}
-                            >
-                              <MessageSquare className="w-4 h-4" />
-                              Reviews & Experiences ({supplement.totalReviews})
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              )}
+              </div>
             </div>
-          </div>
-        </main>
-      </div>
-      
-      {/* Review Modal */}
-      {selectedSupplementData && (
-        <ReviewModal
-          supplementId={selectedSupplementData.id}
-          supplementName={selectedSupplementData.name}
-          isOpen={reviewModalOpen}
-          onClose={() => setReviewModalOpen(false)}
-        />
+          ))}
+        </div>
       )}
-    </div>
+    </PageContainer>
   );
 }

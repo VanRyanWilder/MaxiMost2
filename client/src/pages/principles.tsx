@@ -1,410 +1,438 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageContainer } from "@/components/layout/page-container";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, BookOpen, Clock, Calendar, Zap, Brain, Target, Users, BarChart } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { 
+  BookOpen, 
+  Quote, 
+  Star, 
+  Search, 
+  Filter, 
+  Calendar,
+  TrendingUp,
+  Compass,
+  Sword,
+  Shield,
+  Brain,
+  Heart,
+  Flame,
+  Clock
+} from "lucide-react";
 
-export default function Principles() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+// Types for principles
+interface Principle {
+  id: string;
+  title: string;
+  quote: string;
+  explanation: string;
+  source: string;
+  author: "jocko" | "goggins" | "marcus" | "seneca" | "epictetus" | "cato" | "other";
+  category: "discipline" | "resilience" | "perspective" | "courage" | "self-mastery" | "leadership" | "virtue";
+  dateAdded: string;
+  day?: number; // For daily principles
+}
 
-  const principles = [
-    {
-      id: "journaling",
-      title: "Brain Dumping & Journaling",
-      author: "Various Practitioners",
-      description: "Clear your mind through structured morning and evening journaling practices to gain clarity and track growth.",
-      icon: <BookOpen className="h-6 w-6 text-emerald-500" />,
-      key_principles: [
-        "Morning brain dump to clear mental clutter and set intentions",
-        "Evening reflection to process the day's events and lessons",
-        "Gratitude journaling to develop a positive mindset",
-        "Stream of consciousness writing to access deeper thoughts",
-        "Tracking patterns over time to identify growth and opportunities"
-      ],
-      application: "Begin each day with 15 minutes of unfiltered writing to empty your mind, and end with structured reflection on wins, lessons, and gratitude.",
-      color: "emerald"
-    },
-    {
-      id: "12-week-year",
-      title: "The 12 Week Year",
-      author: "Brian P. Moran",
-      description: "Accomplish more in 12 weeks than others do in 12 months by focusing on shorter execution cycles.",
-      icon: <Calendar className="h-6 w-6 text-amber-500" />,
-      key_principles: [
-        "Think of a year as 12 weeks instead of 12 months",
-        "Create a compelling vision of your future",
-        "Plan weekly, focusing only on activities that drive results",
-        "Measure your execution to maintain accountability",
-        "Work with a strong sense of urgency"
-      ],
-      application: "Break goals into 12-week sprints with clear weekly milestones. Measure your execution with weekly scorecards.",
-      color: "amber"
-    },
-    {
-      id: "5-second-rule",
-      title: "The 5 Second Rule",
-      author: "Mel Robbins",
-      description: "Use a simple 5-4-3-2-1 countdown to break procrastination and take immediate action.",
-      icon: <Clock className="h-6 w-6 text-purple-500" />,
-      key_principles: [
-        "Count 5-4-3-2-1, then take physical action",
-        "Activate your prefrontal cortex to override hesitation",
-        "Use the rule to interrupt destructive thought patterns",
-        "Convert intention into action immediately",
-        "Build momentum through consistent application"
-      ],
-      application: "Use the 5 Second Rule to start your most challenging tasks, especially morning workouts and difficult calls.",
-      color: "purple"
-    },
-    {
-      id: "atomic-habits",
-      title: "Atomic Habits",
-      author: "James Clear",
-      description: "Transform your life with tiny changes in behavior, starting with 1% improvements.",
-      icon: <Target className="h-6 w-6 text-blue-500" />,
-      key_principles: [
-        "Focus on identity-based habits (be the type of person who...)",
-        "Make habits obvious, attractive, easy, and satisfying",
-        "Use habit stacking to build routines",
-        "Create an environment that promotes good habits",
-        "Track habits visually to maintain accountability"
-      ],
-      application: "Design your environment for success by removing friction from good habits and adding friction to bad ones.",
-      color: "blue"
-    },
-    {
-      id: "eat-that-frog",
-      title: "Eat That Frog",
-      author: "Brian Tracy",
-      description: "Tackle your most challenging task first thing each day for maximum productivity.",
-      icon: <Zap className="h-6 w-6 text-green-500" />,
-      key_principles: [
-        "Identify your most important task (your 'frog')",
-        "Tackle it first thing in the morning",
-        "Prepare everything the night before",
-        "Apply the 80/20 rule to focus on high-impact tasks",
-        "Practice single-handling to complete tasks without interruption"
-      ],
-      application: "Identify your 'frog' the night before and complete it before checking email or social media.",
-      color: "green"
-    },
-    {
-      id: "how-to-win-friends",
-      title: "How to Win Friends and Influence People",
-      author: "Dale Carnegie",
-      description: "Build stronger relationships by focusing on others' interests and making them feel valued.",
-      icon: <Users className="h-6 w-6 text-cyan-500" />,
-      key_principles: [
-        "Don't criticize, condemn, or complain",
-        "Give honest and sincere appreciation",
-        "Become genuinely interested in other people",
-        "Remember and use people's names",
-        "Be a good listener and encourage others to talk about themselves"
-      ],
-      application: "Practice active listening during conversations and look for opportunities to give sincere compliments.",
-      color: "cyan"
-    },
-    {
-      id: "stoicism",
-      title: "Stoic Philosophy",
-      author: "Marcus Aurelius, Seneca, Epictetus, Ryan Holiday",
-      description: "Develop resilience and inner peace by focusing on what you can control and accepting what you cannot.",
-      icon: <Brain className="h-6 w-6 text-indigo-500" />,
-      key_principles: [
-        "Focus on what is within your control (Marcus Aurelius' dichotomy of control)",
-        "Practice negative visualization to appreciate what you have",
-        "Turn obstacles into opportunities ('The impediment to action advances action')",
-        "Practice voluntary discomfort to build resilience",
-        "Daily self-examination and reflection as taught in 'Meditations'"
-      ],
-      application: "Begin and end each day with a Stoic journal practice modeled after Marcus Aurelius' 'Meditations,' reflecting on your actions, thoughts, and potential for improvement.",
-      color: "indigo"
-    },
-    {
-      id: "as-a-man-thinketh",
-      title: "As a Man Thinketh",
-      author: "James Allen",
-      description: "Your thoughts determine your character, circumstances, and destiny—the mind is the master weaver of your life experience.",
-      icon: <Brain className="h-6 w-6 text-sky-500" />,
-      key_principles: [
-        "Thought is the source of all action, life, and manifestation",
-        "Mind is the master weaver of character and circumstance",
-        "Thoughts of doubt and fear produce failure",
-        "Thoughts of confidence and courage lead to success",
-        "Aim to achieve purity of thought for inner peace"
-      ],
-      application: "Practice conscious thought observation throughout the day, redirecting negative thought patterns toward constructive alternatives.",
-      color: "sky"
-    },
+export default function PrinciplesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [authorFilter, setAuthorFilter] = useState<string>("all");
+  
+  // Sample principles data
+  const principles: Principle[] = [
     {
       id: "discipline-equals-freedom",
       title: "Discipline Equals Freedom",
-      author: "Jocko Willink",
-      description: "Master your mind, conquer weakness, and develop unwavering discipline to attain true freedom in all aspects of life.",
-      icon: <Target className="h-6 w-6 text-slate-500" />,
-      key_principles: [
-        "Wake up early - own the morning to own your day",
-        "Physical training builds mental toughness",
-        "Focus on things you can control, detach from what you cannot",
-        "Prioritize and execute - handle problems one at a time",
-        "Develop balanced discipline across all life domains"
-      ],
-      application: "Begin with consistent 4:30am wake-ups, immediate physical training, and strategic prioritization of the day's tasks.",
-      color: "slate"
+      quote: "Discipline equals freedom.",
+      explanation: "This principle emphasizes that by imposing discipline on yourself, you actually create freedom. By waking up early, maintaining fitness, and developing good habits, you free yourself from the constraints of poor health, lack of time, and reduced capabilities. The more disciplined your mind and body are, the more freedom you have to achieve your goals and live life on your own terms.",
+      source: "Discipline Equals Freedom: Field Manual",
+      author: "jocko",
+      category: "discipline",
+      dateAdded: "2023-01-15",
+      day: 1
     },
     {
-      id: "field-manual",
-      title: "The Field Manual",
-      author: "Jocko Willink",
-      description: "A tactical guide to overcoming procrastination, pursuing excellence, and winning the war against weakness.",
-      icon: <Zap className="h-6 w-6 text-zinc-500" />,
-      key_principles: [
-        "No Bad Days - maintain unwavering standards regardless of circumstances",
-        "Extreme Ownership - take complete responsibility for your actions and results",
-        "Discipline = Freedom - structure creates true autonomy",
-        "Balanced approach to fitness and nutrition",
-        "Psychological warfare against your own weakness"
-      ],
-      application: "Apply 'default aggressive' mindset by moving toward challenges rather than avoiding them, starting with your most difficult tasks each day.",
-      color: "zinc"
+      id: "extreme-ownership",
+      title: "Extreme Ownership",
+      quote: "There are no bad teams, only bad leaders.",
+      explanation: "Extreme Ownership means taking complete responsibility for everything in your world. If a project fails, a relationship deteriorates, or goals aren't met, the principle demands you look inward first. Instead of blaming circumstances or others, ask: 'What could I have done differently?' This mindset eliminates excuses and empowers you to control outcomes by focusing on what you can change — yourself and your actions.",
+      source: "Extreme Ownership",
+      author: "jocko",
+      category: "leadership",
+      dateAdded: "2023-01-22",
+      day: 8
     },
     {
-      id: "cant-hurt-me",
-      title: "Can't Hurt Me",
-      author: "David Goggins",
-      description: "Master your mind and defy the odds through a journey of self-discovery, extreme discipline, and mental toughness.",
-      icon: <Brain className="h-6 w-6 text-rose-500" />,
-      key_principles: [
-        "The 40% Rule - when your mind says you're done, you're only 40% done",
-        "The accountability mirror - face your failures and weaknesses honestly",
-        "Take souls - outwork everyone around you",
-        "Remove the governor from your mind through callusing",
-        "Embrace suffering as the path to growth"
-      ],
-      application: "Apply the Cookie Jar method: collect and mentally catalog your achievements to draw strength during difficult challenges.",
-      color: "rose"
+      id: "good-cookie-jar",
+      title: "The Cookie Jar Method",
+      quote: "The Cookie Jar became a concept that I've used numerous times in my life. When I need a boost, I open it up mentally and draw strength from it.",
+      explanation: "The Cookie Jar is a mental reservoir of past accomplishments and obstacles overcome. During moments of doubt or pain, you can mentally reach into this jar to draw strength from previous victories. By remembering how you've overcome challenges in the past, you gain confidence in your ability to push through current difficulties. This mental tool converts past hardships into future strength.",
+      source: "Can't Hurt Me",
+      author: "goggins",
+      category: "resilience",
+      dateAdded: "2023-02-05",
+      day: 22
     },
     {
-      id: "never-finished",
-      title: "Never Finished",
-      author: "David Goggins",
-      description: "Continue the journey beyond physical limits into mental mastery, sustained excellence, and perpetual improvement.",
-      icon: <BarChart className="h-6 w-6 text-orange-500" />,
-      key_principles: [
-        "Uncommon among uncommon - constantly raise your standards",
-        "Visualization of success and obstacles in advance",
-        "Develop 'armor' through deliberate hardship",
-        "The true value of rest and recovery in sustained performance",
-        "Finding purpose beyond personal achievement"
-      ],
-      application: "Schedule regular 'forced discomfort' sessions weekly to strengthen mental resilience and prevent complacency.",
-      color: "orange"
+      id: "40-percent-rule",
+      title: "The 40% Rule",
+      quote: "When your mind is telling you you're done, you're really only 40 percent done.",
+      explanation: "The 40% Rule states that when you think you've reached your limit, you've actually only reached about 40% of your capacity. This principle challenges the idea of perceived limitations and suggests that the mind gives up long before the body actually needs to. By pushing beyond the initial signals of fatigue or discomfort, you can access untapped reserves of performance and endurance.",
+      source: "Living with a SEAL",
+      author: "goggins",
+      category: "self-mastery",
+      dateAdded: "2023-02-12",
+      day: 29
+    },
+    {
+      id: "dichotomy-of-control",
+      title: "The Dichotomy of Control",
+      quote: "Make the best use of what is in your power, and take the rest as it happens.",
+      explanation: "The Dichotomy of Control teaches us to focus our energy only on what we can control - our thoughts, judgments, and actions - while accepting what we cannot control with equanimity. This principle eliminates wasted emotional energy on external events beyond our influence. By concentrating solely on our response to events rather than the events themselves, we gain mental clarity, reduce anxiety, and make better decisions.",
+      source: "Enchiridion",
+      author: "epictetus",
+      category: "perspective",
+      dateAdded: "2023-03-01",
+      day: 46
+    },
+    {
+      id: "memento-mori",
+      title: "Memento Mori",
+      quote: "You could leave life right now. Let that determine what you do and say and think.",
+      explanation: "Memento Mori ('Remember that you will die') reminds us of our mortality to emphasize the urgency of living well today. This principle isn't morbid but clarifying - it strips away trivialities and focuses attention on what truly matters. By contemplating death regularly, you gain perspective on your priorities, reduce procrastination, and make more meaningful choices about how to spend your limited time.",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-03-15",
+      day: 60
     }
   ];
-
+  
+  // Filter principles based on search query and filters
+  const filteredPrinciples = principles.filter(principle => {
+    // Search filter
+    const matchesSearch = 
+      searchQuery === "" || 
+      principle.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      principle.quote.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      principle.explanation.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Category filter
+    const matchesCategory = 
+      categoryFilter === "all" || 
+      principle.category === categoryFilter;
+    
+    // Author filter
+    const matchesAuthor = 
+      authorFilter === "all" || 
+      principle.author === authorFilter;
+    
+    return matchesSearch && matchesCategory && matchesAuthor;
+  });
+  
+  // Get author display name
+  function getAuthorName(authorId: Principle["author"]) {
+    switch (authorId) {
+      case "jocko":
+        return "Jocko Willink";
+      case "goggins":
+        return "David Goggins";
+      case "marcus":
+        return "Marcus Aurelius";
+      case "seneca":
+        return "Seneca";
+      case "epictetus":
+        return "Epictetus";
+      case "cato":
+        return "Cato";
+      default:
+        return "Other";
+    }
+  }
+  
+  // Get category icon
+  function getCategoryIcon(category: Principle["category"]) {
+    switch (category) {
+      case "discipline":
+        return <Clock className="h-5 w-5 text-indigo-600" />;
+      case "resilience":
+        return <Shield className="h-5 w-5 text-blue-600" />;
+      case "perspective":
+        return <Compass className="h-5 w-5 text-green-600" />;
+      case "courage":
+        return <Sword className="h-5 w-5 text-red-600" />;
+      case "self-mastery":
+        return <Brain className="h-5 w-5 text-purple-600" />;
+      case "leadership":
+        return <TrendingUp className="h-5 w-5 text-amber-600" />;
+      case "virtue":
+        return <Heart className="h-5 w-5 text-pink-600" />;
+      default:
+        return <Star className="h-5 w-5 text-yellow-600" />;
+    }
+  }
+  
+  // Get category display name and color
+  function getCategoryInfo(category: Principle["category"]) {
+    switch (category) {
+      case "discipline":
+        return { name: "Discipline", color: "bg-indigo-100 text-indigo-800 border-indigo-200" };
+      case "resilience":
+        return { name: "Resilience", color: "bg-blue-100 text-blue-800 border-blue-200" };
+      case "perspective":
+        return { name: "Perspective", color: "bg-green-100 text-green-800 border-green-200" };
+      case "courage":
+        return { name: "Courage", color: "bg-red-100 text-red-800 border-red-200" };
+      case "self-mastery":
+        return { name: "Self-Mastery", color: "bg-purple-100 text-purple-800 border-purple-200" };
+      case "leadership":
+        return { name: "Leadership", color: "bg-amber-100 text-amber-800 border-amber-200" };
+      case "virtue":
+        return { name: "Virtue", color: "bg-pink-100 text-pink-800 border-pink-200" };
+      default:
+        return { name: "Other", color: "bg-gray-100 text-gray-800 border-gray-200" };
+    }
+  }
+  
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-3xl font-bold">High ROI Principles</h1>
-                <p className="text-gray-600 mt-1">Core wisdom with maximum impact for minimal effort</p>
-              </div>
-              <div className="inline-flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">11 Core Methodologies</span>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-6 text-white mb-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
-                <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 6.25278V19.2528M12 6.25278C10.8321 5.47686 9.24649 5 7.5 5C5.75351 5 4.16789 5.47686 3 6.25278V19.2528C4.16789 18.4769 5.75351 18 7.5 18C9.24649 18 10.8321 18.4769 12 19.2528M12 6.25278C13.1679 5.47686 14.7535 5 16.5 5C18.2465 5 19.8321 5.47686 21 6.25278V19.2528C19.8321 18.4769 18.2465 18 16.5 18C14.7535 18 13.1679 18.4769 12 19.2528" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
-              
-              <div className="relative z-10">
-                <h2 className="text-2xl font-bold mb-2">The Compound Effect</h2>
-                <p className="text-white text-opacity-90 max-w-3xl">
-                  "Tiny changes, remarkable results. Small habits don't add up, they compound." — James Clear, <span className="italic">Atomic Habits</span>
-                </p>
-                
-                <div className="mt-4 flex flex-wrap gap-3">
-                  <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> 1% Better Daily
-                  </div>
-                  <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> Highest ROI Actions
-                  </div>
-                  <div className="bg-white bg-opacity-10 px-3 py-1.5 rounded-full text-sm flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-1" /> Compound Growth
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <Tabs defaultValue="principles" className="mb-6">
-              <TabsList className="mb-6">
-                <TabsTrigger value="principles">High ROI Principles</TabsTrigger>
-                <TabsTrigger value="integration">Implementation System</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="principles">
-                <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-                  {principles.map((principle) => (
-                    <Card key={principle.id} className="overflow-hidden">
-                      <div className={`h-2 bg-${principle.color}-500 w-full`}></div>
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center gap-3">
-                          {principle.icon}
-                          <div>
-                            <CardTitle>{principle.title}</CardTitle>
-                            <CardDescription>{principle.author}</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-600 mb-4">{principle.description}</p>
-                        
-                        <h4 className="font-medium text-gray-900 mb-2">Key Principles:</h4>
-                        <ul className="space-y-2 mb-4">
-                          {principle.key_principles.map((item, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                              <CheckCircle className={`h-4 w-4 text-${principle.color}-500 mt-1 flex-shrink-0`} />
-                              <span className="text-sm text-gray-600">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        
-                        <h4 className="font-medium text-gray-900 mb-2">BeastMode Application:</h4>
-                        <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">{principle.application}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="integration">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>High ROI Implementation System</CardTitle>
-                    <CardDescription>Get 80% of results from 20% of effort with these keystone habits</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      <div className="p-4 border border-gray-200 rounded-lg">
-                        <h3 className="text-lg font-medium mb-2">Morning Routine</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <div className="bg-amber-100 p-2 rounded-full">
-                              <Calendar className="h-4 w-4 text-amber-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">12-Week Planning</h4>
-                              <p className="text-sm text-gray-600">Review your 12-week goals and identify the week's critical tasks</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="bg-green-100 p-2 rounded-full">
-                              <Zap className="h-4 w-4 text-green-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">Eat Your Frog</h4>
-                              <p className="text-sm text-gray-600">Identify your most challenging task and complete it first thing</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="bg-purple-100 p-2 rounded-full">
-                              <Clock className="h-4 w-4 text-purple-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">5-Second Rule</h4>
-                              <p className="text-sm text-gray-600">Use 5-4-3-2-1 countdown to start your morning workout without hesitation</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4 border border-gray-200 rounded-lg">
-                        <h3 className="text-lg font-medium mb-2">Daily Productivity</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <div className="bg-slate-100 p-2 rounded-full">
-                              <Target className="h-4 w-4 text-slate-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">Discipline Equals Freedom</h4>
-                              <p className="text-sm text-gray-600">Wake early, train consistently, and maintain unwavering standards across all domains</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="bg-blue-100 p-2 rounded-full">
-                              <Target className="h-4 w-4 text-blue-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">Atomic Habits</h4>
-                              <p className="text-sm text-gray-600">Stack new habits onto existing routines and track them visually</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="p-4 border border-gray-200 rounded-lg">
-                        <h3 className="text-lg font-medium mb-2">Mental & Social Development</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-start gap-3">
-                            <div className="bg-indigo-100 p-2 rounded-full">
-                              <Brain className="h-4 w-4 text-indigo-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">Stoic Practices</h4>
-                              <p className="text-sm text-gray-600">Morning and evening reflection on what's within your control and practicing negative visualization</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-start gap-3">
-                            <div className="bg-cyan-100 p-2 rounded-full">
-                              <Users className="h-4 w-4 text-cyan-500" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">Connection Principles</h4>
-                              <p className="text-sm text-gray-600">Practice active listening, use people's names, and find opportunities for genuine appreciation</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                        <h3 className="text-lg font-medium mb-3">Weekly Review Process</h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          End each week with a comprehensive review process that integrates all methodologies:
-                        </p>
-                        <ol className="space-y-2 list-decimal list-inside text-sm text-gray-600">
-                          <li>Review 12-week goal progress and adjust as needed</li>
-                          <li>Evaluate habit tracking data and optimize your environment</li>
-                          <li>Identify the biggest wins and areas for improvement</li>
-                          <li>Plan your "frogs" for each day of the upcoming week</li>
-                          <li>Clear inboxes and prepare your environment for a fresh start</li>
-                        </ol>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </main>
+    <PageContainer title="Core Stoic Principles">
+      {/* Introduction */}
+      <div className="mb-8 bg-muted/50 p-6 rounded-lg">
+        <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          High ROI Principles for Maximum Gains
+        </h2>
+        <p className="text-muted-foreground mb-4">
+          These core principles from stoic philosophy and modern "hard men" like Jocko Willink and David Goggins 
+          represent timeless wisdom that produces maximum results in life. Applying just a few of these principles 
+          consistently will transform your mental toughness, discipline, and ability to handle adversity.
+        </p>
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Badge variant="outline" className="bg-indigo-100 text-indigo-800 border-indigo-200">
+            Discipline
+          </Badge>
+          <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
+            Resilience
+          </Badge>
+          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">
+            Perspective
+          </Badge>
+          <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+            Courage
+          </Badge>
+          <Badge variant="outline" className="bg-purple-100 text-purple-800 border-purple-200">
+            Self-Mastery
+          </Badge>
+          <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200">
+            Leadership
+          </Badge>
+          <Badge variant="outline" className="bg-pink-100 text-pink-800 border-pink-200">
+            Virtue
+          </Badge>
+        </div>
       </div>
-    </div>
+      
+      {/* Daily Principle */}
+      <div className="mb-8">
+        <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          Daily Principle
+        </h3>
+        <Card className="border-2 border-primary/10">
+          <CardHeader className="pb-2">
+            <div className="flex justify-between">
+              <div>
+                <CardTitle className="text-xl">{principles[0].title}</CardTitle>
+                <CardDescription>Day 1 - {getAuthorName(principles[0].author)}</CardDescription>
+              </div>
+              {getCategoryIcon(principles[0].category)}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <blockquote className="border-l-4 border-primary pl-4 italic my-4">
+              "{principles[0].quote}"
+            </blockquote>
+            <p className="mb-4">{principles[0].explanation}</p>
+            <div className="flex justify-between items-center text-sm text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <BookOpen className="h-4 w-4" />
+                {principles[0].source}
+              </span>
+              <Badge variant="outline" className={getCategoryInfo(principles[0].category).color}>
+                {getCategoryInfo(principles[0].category).name}
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Search and Filter */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-grow">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search principles..."
+            className="pl-9"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant={categoryFilter === "all" ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setCategoryFilter("all")}
+          >
+            All Categories
+          </Button>
+          <Button 
+            variant={authorFilter === "all" ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setAuthorFilter("all")}
+          >
+            All Authors
+          </Button>
+        </div>
+      </div>
+      
+      {/* Principles List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        {filteredPrinciples.map(principle => (
+          <Card key={principle.id} className="h-full flex flex-col">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between">
+                <div>
+                  <CardTitle>{principle.title}</CardTitle>
+                  <CardDescription>{getAuthorName(principle.author)}</CardDescription>
+                </div>
+                {getCategoryIcon(principle.category)}
+              </div>
+            </CardHeader>
+            <CardContent className="flex-grow">
+              <blockquote className="border-l-4 border-primary pl-4 italic my-4">
+                "{principle.quote}"
+              </blockquote>
+              <p className="text-sm mb-4">{principle.explanation}</p>
+              <div className="flex justify-between items-center text-xs text-muted-foreground mt-auto">
+                <span className="flex items-center gap-1">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  {principle.source}
+                </span>
+                <Badge variant="outline" className={getCategoryInfo(principle.category).color}>
+                  {getCategoryInfo(principle.category).name}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      {/* Authors Section */}
+      <div className="mb-12">
+        <h3 className="text-lg font-bold mb-4">Featured Authors</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <Card className="bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+            <CardContent className="pt-6">
+              <h4 className="text-xl font-bold mb-1">Jocko Willink</h4>
+              <p className="text-slate-300 text-sm mb-4">
+                Former Navy SEAL commander, author, and leadership consultant known for "Extreme Ownership" 
+                and his no-excuses approach to discipline and responsibility.
+              </p>
+              <Button variant="outline" className="w-full border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700">
+                View Principles
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+            <CardContent className="pt-6">
+              <h4 className="text-xl font-bold mb-1">David Goggins</h4>
+              <p className="text-slate-300 text-sm mb-4">
+                Former Navy SEAL, ultramarathon runner, and author of "Can't Hurt Me" who transformed himself 
+                from an overweight exterminator to one of the world's toughest men.
+              </p>
+              <Button variant="outline" className="w-full border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700">
+                View Principles
+              </Button>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+            <CardContent className="pt-6">
+              <h4 className="text-xl font-bold mb-1">Marcus Aurelius</h4>
+              <p className="text-slate-300 text-sm mb-4">
+                Roman Emperor and philosopher whose personal journal "Meditations" contains timeless stoic wisdom 
+                on self-discipline, resilience, and maintaining perspective.
+              </p>
+              <Button variant="outline" className="w-full border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700">
+                View Principles
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Books Section */}
+      <h3 className="text-lg font-bold mb-4">Essential Reading</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-6">
+            <h4 className="font-bold">Discipline Equals Freedom</h4>
+            <p className="text-sm text-muted-foreground mb-2">Jocko Willink</p>
+            <p className="text-xs mb-4">
+              Field manual for developing mental toughness, overcoming weakness, and living a disciplined life.
+            </p>
+            <Button variant="outline" size="sm" className="w-full">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Learn More
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <h4 className="font-bold">Can't Hurt Me</h4>
+            <p className="text-sm text-muted-foreground mb-2">David Goggins</p>
+            <p className="text-xs mb-4">
+              The story of mastering your mind and defying the odds through self-discipline and hard work.
+            </p>
+            <Button variant="outline" size="sm" className="w-full">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Learn More
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <h4 className="font-bold">Meditations</h4>
+            <p className="text-sm text-muted-foreground mb-2">Marcus Aurelius</p>
+            <p className="text-xs mb-4">
+              Personal writings of the Roman Emperor on Stoic philosophy and self-improvement.
+            </p>
+            <Button variant="outline" size="sm" className="w-full">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Learn More
+            </Button>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="pt-6">
+            <h4 className="font-bold">The Obstacle Is the Way</h4>
+            <p className="text-sm text-muted-foreground mb-2">Ryan Holiday</p>
+            <p className="text-xs mb-4">
+              Modern guide to Stoic philosophy focused on turning trials into triumph.
+            </p>
+            <Button variant="outline" size="sm" className="w-full">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Learn More
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </PageContainer>
   );
 }

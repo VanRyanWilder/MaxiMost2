@@ -33,11 +33,37 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const navItems = [
     { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
-    { path: "/principles", name: "High ROI Principles", icon: <TrendingUp className="w-5 h-5" /> },
-    { path: "/sugar", name: "Sugar: The Hidden Poison", icon: <AlertTriangle className="w-5 h-5 text-red-500" /> },
-    { path: "/supplements", name: "Science-Backed Supplements", icon: <Pill className="w-5 h-5" /> },
-    { path: "/research", name: "Evidence-Based Research", icon: <BookOpenText className="w-5 h-5" /> },
-    { path: "/community", name: "Community Forum", icon: <MessageSquare className="w-5 h-5" /> }
+    { 
+      path: "/supplements", 
+      name: "Supplements", 
+      icon: <Pill className="w-5 h-5" />,
+      description: "Science-backed supplements ranked by effectiveness"
+    },
+    { 
+      path: "/research", 
+      name: "Research", 
+      icon: <BookOpenText className="w-5 h-5" />,
+      description: "Evidence-based health & fitness research"
+    },
+    { 
+      path: "/principles", 
+      name: "Core Principles", 
+      icon: <TrendingUp className="w-5 h-5" />,
+      description: "High ROI principles from top performers"
+    },
+    { 
+      path: "/sugar", 
+      name: "Sugar", 
+      icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
+      description: "Understanding sugar's health impacts" 
+    },
+    { 
+      path: "/progress", 
+      name: "Track Progress", 
+      icon: <BarChart3 className="w-5 h-5" />,
+      description: "Monitor your body stats and health metrics"
+    },
+    { path: "/community", name: "Community", icon: <MessageSquare className="w-5 h-5" /> }
   ];
 
   // Handle navigation
@@ -95,20 +121,27 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         <div className="overflow-y-auto flex-1 py-2">
-          <nav className="px-2">
+          <nav className="px-2 space-y-1">
             {navItems.map((item) => (
               <div
                 key={item.path}
                 onClick={() => navigateTo(item.path)}
                 className={cn(
-                  "flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer",
+                  "flex flex-col px-3 py-2 rounded-md transition-colors cursor-pointer",
                   location === item.path 
                     ? "bg-primary/10 text-primary"
                     : "text-foreground hover:bg-muted"
                 )}
               >
-                {item.icon}
-                <span>{item.name}</span>
+                <div className="flex items-center space-x-2">
+                  {item.icon}
+                  <span className="text-sm font-medium">{item.name}</span>
+                </div>
+                {item.description && (
+                  <p className="ml-7 mt-0.5 text-xs text-muted-foreground">
+                    {item.description}
+                  </p>
+                )}
               </div>
             ))}
           </nav>
