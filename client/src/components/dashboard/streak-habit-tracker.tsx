@@ -294,8 +294,32 @@ export function StreakHabitTracker() {
     return habit.category === filterCategory;
   });
   
+  // Function to handle pre-filled habits from other components
+  const addPrefilledHabit = (habitData: any) => {
+    setNewHabit({
+      title: habitData.title,
+      description: habitData.description,
+      icon: typeof habitData.icon === 'string' 
+        ? habitData.icon 
+        : habitData.icon.type?.name?.toLowerCase() || 'activity',
+      impact: habitData.impact,
+      effort: habitData.effort,
+      timeCommitment: habitData.timeCommitment,
+      frequency: habitData.frequency as Frequency,
+      isAbsolute: !!habitData.isAbsolute,
+      category: habitData.category || 'mind'
+    });
+    setShowAddHabitDialog(true);
+  };
+  
+  // Context value to share with other components
+  const habitTrackerValue = {
+    addHabit: addPrefilledHabit
+  };
+
   return (
-    <Card className="shadow-md">
+    <HabitTrackerContext.Provider value={habitTrackerValue}>
+      <Card className="shadow-md">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle className="text-xl flex items-center gap-2">
@@ -1012,5 +1036,6 @@ export function StreakHabitTracker() {
         </DialogContent>
       </Dialog>
     </Card>
+    </HabitTrackerContext.Provider>
   );
 }
