@@ -228,11 +228,14 @@ export const supplements = pgTable("supplements", {
   dosage: text("dosage").notNull(),
   sideEffects: text("side_effects"),
   interactions: text("interactions"),
-  categories: text("categories").notNull(), // Comma-separated categories like: "nootropic,amino-acid,vitamin,mineral"
+  categories: text("categories").notNull(), // Simplified to: "Essential,Performance,Daily,Foundational,Advanced,etc."
   upvotes: integer("upvotes").default(0),
   downvotes: integer("downvotes").default(0),
   totalReviews: integer("total_reviews").default(0),
   averageRating: numeric("average_rating").default("0"),
+  valueRating: numeric("value_rating").default("5.0"), // 1-10 scale, higher is better value
+  monthlyCostEstimate: text("monthly_cost_estimate").default("$15-30"),
+  bestValue: boolean("best_value").default(false), // Flag for best value supplements
   imageUrl: text("image_url"),
   amazonUrl: text("amazon_url"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -247,6 +250,9 @@ export const insertSupplementSchema = createInsertSchema(supplements).pick({
   sideEffects: true,
   interactions: true,
   categories: true,
+  valueRating: true,
+  monthlyCostEstimate: true,
+  bestValue: true,
   imageUrl: true,
   amazonUrl: true,
 });
