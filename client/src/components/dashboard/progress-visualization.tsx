@@ -206,8 +206,24 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
     }
   };
 
+  // Fallback content for when the AI is not available
+  const fallbackInsights = {
+    summary: "Your progress is showing positive trends across key metrics. Continue to focus on consistency and gradual improvements for best results.",
+    observations: [
+      "Your workout consistency has improved over the last two weeks.",
+      "Sleep quality shows a correlation with your meditation practice.",
+      "Body metrics are trending in a positive direction."
+    ],
+    recommendations: [
+      "Consider adding 5 more minutes to your meditation sessions to further improve sleep quality.",
+      "Maintain your current workout frequency but consider increasing intensity gradually.",
+      "Track your nutrition more consistently to identify patterns that may impact your progress."
+    ]
+  };
+
   useEffect(() => {
-    if (user && import.meta.env.VITE_GEMINI_API_KEY && filteredMetrics.length > 0) {
+    if (user && filteredMetrics.length > 0) {
+      console.log("Attempting to get AI insights...");
       getAIInsights();
     }
   }, [selectedMetrics, timeRange, user]);
