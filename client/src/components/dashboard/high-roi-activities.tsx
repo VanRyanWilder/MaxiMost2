@@ -219,6 +219,7 @@ export function HighRoiActivities() {
   
   // Initial activities data
   const defaultActivities: HighRoiActivity[] = [
+    // Core health and sleep habits
     {
       id: "sleep",
       title: "Prioritize Sleep",
@@ -258,6 +259,8 @@ export function HighRoiActivities() {
       streak: 5,
       type: "default"
     },
+    
+    // Fitness habits
     {
       id: "strength",
       title: "Strength Training",
@@ -271,6 +274,21 @@ export function HighRoiActivities() {
       streak: 2,
       type: "default"
     },
+    {
+      id: "cardio",
+      title: "Cardio Exercise",
+      description: "Moderate cardio 3-5 times per week for heart health and endurance.",
+      icon: <Activity className="h-8 w-8 text-red-500" />,
+      impact: 8,
+      effort: 4,
+      timeCommitment: "20-30 min/session",
+      frequency: "3x-week",
+      isAbsolute: false,
+      streak: 0,
+      type: "default"
+    },
+    
+    // Mindfulness and spiritual habits
     {
       id: "daily-principle",
       title: "Daily Principle",
@@ -300,7 +318,7 @@ export function HighRoiActivities() {
     },
     {
       id: "prayer",
-      title: "Christian Prayer",
+      title: "Prayer/Meditation",
       description: "Daily spiritual practice for mental clarity, gratitude and connection.",
       icon: <CheckCircle className="h-8 w-8 text-emerald-500" />,
       impact: 9,
@@ -310,6 +328,75 @@ export function HighRoiActivities() {
       isAbsolute: false,
       streak: 0,
       type: "custom"
+    },
+    
+    // Basic hygiene habits
+    {
+      id: "brush-teeth",
+      title: "Brush Teeth",
+      description: "Brush teeth at least twice daily for oral health and hygiene.",
+      icon: <CheckCircle className="h-8 w-8 text-blue-400" />,
+      impact: 7,
+      effort: 1,
+      timeCommitment: "5 min/day",
+      frequency: "daily",
+      isAbsolute: true,
+      streak: 0,
+      type: "default"
+    },
+    {
+      id: "wash-face",
+      title: "Wash Face",
+      description: "Morning and evening face washing for skin health and hygiene.",
+      icon: <CheckCircle className="h-8 w-8 text-cyan-500" />,
+      impact: 6,
+      effort: 1,
+      timeCommitment: "2 min/day",
+      frequency: "daily",
+      isAbsolute: false,
+      streak: 0,
+      type: "default"
+    },
+    {
+      id: "hydration",
+      title: "Proper Hydration",
+      description: "Drink 2-3 liters of water daily for optimal cellular function and energy.",
+      icon: <CheckCircle className="h-8 w-8 text-sky-500" />,
+      impact: 8,
+      effort: 2,
+      timeCommitment: "Throughout day",
+      frequency: "daily",
+      isAbsolute: true,
+      streak: 0,
+      type: "default"
+    },
+    
+    // Social and nature connection
+    {
+      id: "touch-grass",
+      title: "Touch Grass",
+      description: "Spend time in nature daily - barefoot when possible for grounding benefits.",
+      icon: <Sun className="h-8 w-8 text-green-600" />,
+      impact: 7,
+      effort: 2,
+      timeCommitment: "15-30 min/day",
+      frequency: "daily",
+      isAbsolute: false,
+      streak: 0,
+      type: "default"
+    },
+    {
+      id: "mentor-talk",
+      title: "Talk to Mentor",
+      description: "Weekly conversation with a mentor or coach for guidance and accountability.",
+      icon: <BookOpen className="h-8 w-8 text-indigo-600" />,
+      impact: 9,
+      effort: 3,
+      timeCommitment: "30-60 min/week",
+      frequency: "weekly",
+      isAbsolute: false,
+      streak: 0,
+      type: "default"
     }
   ];
   
@@ -351,6 +438,9 @@ export function HighRoiActivities() {
   const [addHabitDialogOpen, setAddHabitDialogOpen] = useState(false);
   const [morningRoutineDialogOpen, setMorningRoutineDialogOpen] = useState(false);
   const [selectedRoutine, setSelectedRoutine] = useState<typeof morningRoutines[0] | null>(null);
+  
+  // Sort option for activities
+  const [sortOption, setSortOption] = useState<"default" | "roi" | "time" | "impact">("default");
   
   // Load saved data from localStorage on component mount
   useEffect(() => {
@@ -544,15 +634,55 @@ export function HighRoiActivities() {
     setPlanDialogOpen(false);
   };
 
-  // Sort activities by ROI (impact divided by effort) and absolute status
+  // Sort activities by selected criteria
   const sortedActivities = [...activities].sort((a, b) => {
-    // First sort by absolute status
+    // Always sort absolute activities to the top in plan dialog
     if (a.isAbsolute && !b.isAbsolute) return -1;
     if (!a.isAbsolute && b.isAbsolute) return 1;
     
-    // Then sort by ROI
-    return (b.impact / b.effort) - (a.impact / a.effort);
+    // Then apply secondary sort criteria based on user selection
+    switch (sortOption) {
+      case "roi":
+        return (b.impact / b.effort) - (a.impact / a.effort);
+      case "time":
+        // Rough approximate for time sorting (shorter first)
+        const aTimeMinutes = parseTimeCommitment(a.timeCommitment);
+        const bTimeMinutes = parseTimeCommitment(b.timeCommitment);
+        return aTimeMinutes - bTimeMinutes;
+      case "impact":
+        return b.impact - a.impact;
+      default:
+        // For default, use ROI
+        return (b.impact / b.effort) - (a.impact / a.effort);
+    }
   });
+  
+  // Helper function to roughly parse time commitments for sorting
+  function parseTimeCommitment(timeStr: string): number {
+    // This is a rough estimation, improve as needed
+    if (timeStr.includes("min")) {
+      const match = timeStr.match(/(\d+)-?(\d+)?/);
+      if (match) {
+        if (match[2]) {
+          // If range (e.g. "10-15 min"), use average
+          return (parseInt(match[1]) + parseInt(match[2])) / 2;
+        } else {
+          return parseInt(match[1]);
+        }
+      }
+    } else if (timeStr.includes("hr")) {
+      const match = timeStr.match(/(\d+)-?(\d+)?/);
+      if (match) {
+        if (match[2]) {
+          // Convert hours to minutes and use average
+          return ((parseInt(match[1]) + parseInt(match[2])) / 2) * 60;
+        } else {
+          return parseInt(match[1]) * 60;
+        }
+      }
+    }
+    return 9999; // Default large value for items we can't parse
+  }
   
   // Get today's plan activities
   const todaysPlanActivities = activities.filter(activity => 
@@ -1234,35 +1364,167 @@ export function HighRoiActivities() {
                 </div>
               </div>
               
-              <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
-                {availableActivities.length === 0 ? (
-                  <div className="text-center py-3 border border-dashed rounded-md text-sm text-muted-foreground">
-                    All activities selected
-                  </div>
-                ) : (
-                  availableActivities.map(activity => (
-                    <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
-                      <div className="flex items-center gap-2">
-                        <div className="flex-shrink-0">
-                          {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+              {availableActivities.length === 0 ? (
+                <div className="text-center py-3 border border-dashed rounded-md text-sm text-muted-foreground">
+                  All activities selected
+                </div>
+              ) : (
+                <Tabs defaultValue="all" className="w-full">
+                  <TabsList className="grid grid-cols-5 mb-2 h-8">
+                    <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
+                    <TabsTrigger value="health" className="text-xs">Health</TabsTrigger>
+                    <TabsTrigger value="fitness" className="text-xs">Fitness</TabsTrigger>
+                    <TabsTrigger value="mindfulness" className="text-xs">Mindfulness</TabsTrigger>
+                    <TabsTrigger value="social" className="text-xs">Social</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="all" className="mt-0">
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                      {availableActivities.map(activity => (
+                        <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-shrink-0">
+                              {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium">{activity.title}</div>
+                              <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => toggleActivitySelection(activity.id)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
                         </div>
-                        <div>
-                          <div className="text-sm font-medium">{activity.title}</div>
-                          <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleActivitySelection(activity.id)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Plus className="h-4 w-4" />
-                      </Button>
+                      ))}
                     </div>
-                  ))
-                )}
-              </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="health" className="mt-0">
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                      {availableActivities
+                        .filter(a => 
+                          ['sleep', 'sugar', 'hydration', 'brush-teeth', 'wash-face'].includes(a.id)
+                        )
+                        .map(activity => (
+                          <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-shrink-0">
+                                {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">{activity.title}</div>
+                                <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleActivitySelection(activity.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="fitness" className="mt-0">
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                      {availableActivities
+                        .filter(a => 
+                          ['strength', 'cardio', 'sunlight'].includes(a.id)
+                        )
+                        .map(activity => (
+                          <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-shrink-0">
+                                {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">{activity.title}</div>
+                                <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleActivitySelection(activity.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="mindfulness" className="mt-0">
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                      {availableActivities
+                        .filter(a => 
+                          ['daily-principle', 'daily-dad', 'prayer'].includes(a.id)
+                        )
+                        .map(activity => (
+                          <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-shrink-0">
+                                {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">{activity.title}</div>
+                                <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleActivitySelection(activity.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="social" className="mt-0">
+                    <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
+                      {availableActivities
+                        .filter(a => 
+                          ['touch-grass', 'mentor-talk'].includes(a.id)
+                        )
+                        .map(activity => (
+                          <div key={activity.id} className="flex items-center justify-between gap-2 p-2 rounded-md border border-border">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-shrink-0">
+                                {React.cloneElement(activity.icon, { className: 'w-5 h-5' })}
+                              </div>
+                              <div>
+                                <div className="text-sm font-medium">{activity.title}</div>
+                                <div className="text-xs text-muted-foreground">{activity.timeCommitment}</div>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleActivitySelection(activity.id)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              )}
             </div>
             
             <DialogFooter>
