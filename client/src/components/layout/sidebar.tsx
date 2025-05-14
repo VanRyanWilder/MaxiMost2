@@ -13,7 +13,8 @@ import {
   TrendingUp,
   Bot,
   BarChart3,
-  Quote
+  Quote,
+  AlertTriangle
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 
@@ -81,6 +82,11 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       path: "/nutrition", 
       name: "Nutrition", 
       icon: <Apple className="w-5 h-5" /> 
+    },
+    { 
+      path: "/sugar", 
+      name: "Sugar: The Hidden Poison", 
+      icon: <AlertTriangle className="w-5 h-5 text-red-500" /> 
     },
     { 
       path: "/supplements", 
