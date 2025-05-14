@@ -1,7 +1,4 @@
 import { Switch, Route } from "wouter";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { ThemeProvider } from "@/components/ui/theme-provider";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Profile from "@/pages/profile";
@@ -14,7 +11,7 @@ import Tasks from "@/pages/tasks";
 import Supplements from "@/pages/supplements";
 import BodyStats from "@/pages/body-stats";
 
-function Router() {
+function App() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
@@ -29,17 +26,6 @@ function Router() {
       <Route path="/body-stats" component={BodyStats} />
       <Route component={NotFound} />
     </Switch>
-  );
-}
-
-function App() {
-  return (
-    <ThemeProvider defaultTheme="light" storageKey="beastmode-theme">
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </ThemeProvider>
   );
 }
 
