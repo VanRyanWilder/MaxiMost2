@@ -338,12 +338,12 @@ export default function Principles() {
                         <h3 className="text-lg font-medium mb-2">Daily Productivity</h3>
                         <div className="space-y-3">
                           <div className="flex items-start gap-3">
-                            <div className="bg-rose-100 p-2 rounded-full">
-                              <BarChart className="h-4 w-4 text-rose-500" />
+                            <div className="bg-slate-100 p-2 rounded-full">
+                              <Target className="h-4 w-4 text-slate-500" />
                             </div>
                             <div>
-                              <h4 className="font-medium text-gray-900">4-Hour Work Week Principles</h4>
-                              <p className="text-sm text-gray-600">Batch similar tasks, eliminate low-value activities, and focus on the 20% that produces 80% of results</p>
+                              <h4 className="font-medium text-gray-900">Discipline Equals Freedom</h4>
+                              <p className="text-sm text-gray-600">Wake early, train consistently, and maintain unwavering standards across all domains</p>
                             </div>
                           </div>
                           

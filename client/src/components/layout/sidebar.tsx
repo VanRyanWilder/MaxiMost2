@@ -33,10 +33,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
   const navItems = [
     { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
-    { path: "/principles", name: "Core Principles", icon: <BookOpen className="w-5 h-5" /> },
+    { path: "/principles", name: "High ROI Principles", icon: <TrendingUp className="w-5 h-5" /> },
     { path: "/sugar", name: "Sugar: The Hidden Poison", icon: <AlertTriangle className="w-5 h-5 text-red-500" /> },
-    { path: "/supplements", name: "Supplements", icon: <Pill className="w-5 h-5" /> },
-    { path: "/research", name: "Health Research", icon: <Bot className="w-5 h-5" /> },
+    { path: "/supplements", name: "Science-Backed Supplements", icon: <Pill className="w-5 h-5" /> },
+    { path: "/research", name: "Evidence-Based Research", icon: <BookOpenText className="w-5 h-5" /> },
     { path: "/community", name: "Community Forum", icon: <MessageSquare className="w-5 h-5" /> }
   ];
 
