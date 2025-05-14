@@ -12,6 +12,17 @@ export const users = pgTable("users", {
   currentProgramId: integer("current_program_id"),
   programStartDate: timestamp("program_start_date"),
   programProgress: integer("program_progress").default(0),
+  // Authentication
+  firebaseUid: text("firebase_uid"),
+  // Subscription information
+  subscriptionTier: text("subscription_tier").default("free"),
+  subscriptionStatus: text("subscription_status").default("active"),
+  subscriptionStartDate: timestamp("subscription_start_date"),
+  subscriptionEndDate: timestamp("subscription_end_date"),
+  trialEndsAt: timestamp("trial_ends_at"),
+  // Payment processing
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -20,6 +31,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   name: true,
   email: true,
   currentProgramId: true,
+  firebaseUid: true,
+  subscriptionTier: true,
+  subscriptionStatus: true,
 });
 
 // Programs model
@@ -116,6 +130,67 @@ export const insertMetricSchema = createInsertSchema(metrics).pick({
   nutrition: true,
 });
 
+// Forum posts model for community message board
+export const forumPosts = pgTable("forum_posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(), // Motivation, Nutrition, Workouts, Mindfulness, etc.
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  upvotes: integer("upvotes").default(0),
+  downvotes: integer("downvotes").default(0),
+  isPinned: boolean("is_pinned").default(false),
+});
+
+export const insertForumPostSchema = createInsertSchema(forumPosts).pick({
+  userId: true,
+  title: true,
+  content: true,
+  category: true,
+  isPinned: true,
+});
+
+// Forum comments model for replies to posts
+export const forumComments = pgTable("forum_comments", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  upvotes: integer("upvotes").default(0),
+  downvotes: integer("downvotes").default(0),
+  isAnswer: boolean("is_answer").default(false),
+});
+
+export const insertForumCommentSchema = createInsertSchema(forumComments).pick({
+  postId: true,
+  userId: true,
+  content: true,
+  isAnswer: true,
+});
+
+// Daily motivational content
+export const motivationalContent = pgTable("motivational_content", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  author: text("author"),
+  source: text("source"),
+  audioUrl: text("audio_url"),
+  type: text("type").notNull(), // daily, weekly, challenge
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertMotivationalContentSchema = createInsertSchema(motivationalContent).pick({
+  title: true,
+  content: true,
+  author: true,
+  source: true,
+  audioUrl: true,
+  type: true,
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -134,3 +209,12 @@ export type InsertResource = z.infer<typeof insertResourceSchema>;
 
 export type Metric = typeof metrics.$inferSelect;
 export type InsertMetric = z.infer<typeof insertMetricSchema>;
+
+export type ForumPost = typeof forumPosts.$inferSelect;
+export type InsertForumPost = z.infer<typeof insertForumPostSchema>;
+
+export type ForumComment = typeof forumComments.$inferSelect;
+export type InsertForumComment = z.infer<typeof insertForumCommentSchema>;
+
+export type MotivationalContent = typeof motivationalContent.$inferSelect;
+export type InsertMotivationalContent = z.infer<typeof insertMotivationalContentSchema>;

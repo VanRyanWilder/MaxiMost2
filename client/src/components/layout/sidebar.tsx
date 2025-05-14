@@ -30,8 +30,23 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     },
     { 
       path: "/tasks", 
-      name: "Daily Tasks", 
+      name: "BeastMode Toolbox", 
       icon: <CheckSquare className="w-5 h-5" /> 
+    },
+    { 
+      path: "/community", 
+      name: "Community Forum", 
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        <path d="M8 10h.01" />
+        <path d="M12 10h.01" />
+        <path d="M16 10h.01" />
+      </svg>
+    },
+    { 
+      path: "/principles", 
+      name: "Core Principles", 
+      icon: <BookOpen className="w-5 h-5" /> 
     },
     { 
       path: "/workouts", 
@@ -66,7 +81,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     { 
       path: "/resources", 
       name: "Resources", 
-      icon: <BookOpen className="w-5 h-5" /> 
+      icon: <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+      </svg> 
     },
     { 
       path: "/programs", 

@@ -1,11 +1,15 @@
 import { 
   users, tasks, programs, resources, userTasks, metrics,
+  forumPosts, forumComments, motivationalContent,
   type User, type InsertUser, 
   type Program, type InsertProgram,
   type Task, type InsertTask,
   type UserTask, type InsertUserTask,
   type Resource, type InsertResource,
-  type Metric, type InsertMetric
+  type Metric, type InsertMetric,
+  type ForumPost, type InsertForumPost,
+  type ForumComment, type InsertForumComment,
+  type MotivationalContent, type InsertMotivationalContent
 } from "@shared/schema";
 
 // Interface for all storage operations
@@ -43,6 +47,24 @@ export interface IStorage {
   getUserMetrics(userId: number): Promise<Metric[]>;
   createMetric(metric: InsertMetric): Promise<Metric>;
   updateMetric(id: number, metric: Partial<InsertMetric>): Promise<Metric | undefined>;
+  
+  // Forum Post methods
+  getForumPosts(): Promise<(ForumPost & { user: User })[]>;
+  getForumPostsByCategory(category: string): Promise<(ForumPost & { user: User })[]>;
+  getForumPost(id: number): Promise<(ForumPost & { user: User }) | undefined>;
+  createForumPost(post: InsertForumPost): Promise<ForumPost>;
+  updateForumPostVotes(id: number, upvotes: number, downvotes: number): Promise<ForumPost | undefined>;
+  
+  // Forum Comment methods
+  getForumComments(postId: number): Promise<(ForumComment & { user: User })[]>;
+  createForumComment(comment: InsertForumComment): Promise<ForumComment>;
+  markCommentAsAnswer(id: number): Promise<ForumComment | undefined>;
+  updateCommentVotes(id: number, upvotes: number, downvotes: number): Promise<ForumComment | undefined>;
+  
+  // Motivational Content methods
+  getMotivationalContent(): Promise<MotivationalContent[]>;
+  getDailyMotivationalContent(): Promise<MotivationalContent | undefined>;
+  createMotivationalContent(content: InsertMotivationalContent): Promise<MotivationalContent>;
 }
 
 // In-memory storage implementation
@@ -53,6 +75,9 @@ export class MemStorage implements IStorage {
   private userTasks: Map<number, UserTask>;
   private resources: Map<number, Resource>;
   private metrics: Map<number, Metric>;
+  private forumPosts: Map<number, ForumPost>;
+  private forumComments: Map<number, ForumComment>;
+  private motivationalContents: Map<number, MotivationalContent>;
   
   private userIdCounter: number;
   private programIdCounter: number;
@@ -60,6 +85,9 @@ export class MemStorage implements IStorage {
   private userTaskIdCounter: number;
   private resourceIdCounter: number;
   private metricIdCounter: number;
+  private forumPostIdCounter: number;
+  private forumCommentIdCounter: number;
+  private motivationalContentIdCounter: number;
   
   constructor() {
     this.users = new Map();
@@ -68,6 +96,9 @@ export class MemStorage implements IStorage {
     this.userTasks = new Map();
     this.resources = new Map();
     this.metrics = new Map();
+    this.forumPosts = new Map();
+    this.forumComments = new Map();
+    this.motivationalContents = new Map();
     
     this.userIdCounter = 1;
     this.programIdCounter = 1;
@@ -75,6 +106,9 @@ export class MemStorage implements IStorage {
     this.userTaskIdCounter = 1;
     this.resourceIdCounter = 1;
     this.metricIdCounter = 1;
+    this.forumPostIdCounter = 1;
+    this.forumCommentIdCounter = 1;
+    this.motivationalContentIdCounter = 1;
     
     // Initialize with sample data
     this.initializeData();
