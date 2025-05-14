@@ -187,8 +187,10 @@ export default function Supplements() {
     };
   };
   
-  // Use sample data during development, will be replaced by API data
-  const availableSupplements = supplements || sampleSupplements;
+  // Use sample data during development if API doesn't return data
+  const availableSupplements = (supplements && Array.isArray(supplements) && supplements.length > 0) 
+    ? supplements 
+    : sampleSupplements;
   
   // Process all supplements with parsed data
   const processedSupplements: SupplementWithParsedData[] = 
@@ -247,7 +249,7 @@ export default function Supplements() {
     processedSupplements.find(sup => sup.id === selectedSupplement) : null;
 
   return (
-    <div className="bg-gray-50 font-sans">
+    <div className="bg-background font-sans">
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
       
       <div className="flex min-h-screen">
