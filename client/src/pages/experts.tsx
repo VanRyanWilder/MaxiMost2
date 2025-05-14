@@ -1,21 +1,19 @@
-import { useState } from "react";
 import { PageContainer } from "@/components/layout/page-container";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Search, 
-  BookOpen, 
-  Brain, 
   Dumbbell, 
   Heart, 
-  Microscope,
-  Activity,
-  Flame,
-  SunMedium
+  Brain,
+  Users,
+  ExternalLink,
+  Award,
+  BookOpen
 } from "lucide-react";
 
+// Define expert types
 type ExpertCategory = 
   | "mobility" 
   | "endurance" 
@@ -33,274 +31,297 @@ interface Expert {
   specialty: string[];
   primaryAudience: string[];
   notableWorks?: string[];
+  imageUrl?: string;
+  websiteUrl?: string;
 }
 
 export default function ExpertsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Expert data
+  // Mobility and Physical Therapy experts
   const experts: Expert[] = [
     {
       id: "kelly-starrett",
       name: "Kelly Starrett",
-      title: "Physical Therapist, Founder of The Ready State",
+      title: "Physical Therapist & Mobility Expert",
       category: "mobility",
-      description: "Renowned for his work on mobility and injury prevention. His book Supple Leopard is a go-to resource for athletes, including CrossFit elites, looking to optimize movement and reduce injury risk through practical techniques.",
-      specialty: ["Mobility", "Injury Prevention", "Movement Optimization"],
-      primaryAudience: ["CrossFit Athletes", "Strength Athletes", "General Fitness"],
-      notableWorks: ["Becoming a Supple Leopard", "Ready to Run"]
+      description: "A physical therapist and founder of The Ready State (formerly MobilityWOD), Kelly is renowned for revolutionizing how athletes think about movement and mobility. He emphasizes a proactive approach to injury prevention and performance optimization through proper movement mechanics.",
+      specialty: [
+        "Movement optimization",
+        "Mobility techniques",
+        "Recovery protocols",
+        "Joint health maintenance"
+      ],
+      primaryAudience: [
+        "Athletes",
+        "CrossFit practitioners",
+        "Fitness professionals",
+        "Anyone experiencing movement limitations"
+      ],
+      notableWorks: [
+        "Becoming a Supple Leopard",
+        "Ready to Run",
+        "Deskbound: Standing Up to a Sitting World"
+      ],
+      websiteUrl: "https://thereadystate.com/"
     },
     {
-      id: "stuart-mcgill",
-      name: "Stuart McGill",
-      title: "Biomechanics Expert, Former Professor",
+      id: "aaron-horschig",
+      name: "Aaron Horschig",
+      title: "Physical Therapist & Weightlifting Coach",
       category: "mobility",
-      description: "A biomechanics expert and former professor, Dr. McGill focuses on spine health and injury prevention. His research and methods are widely used by elite athletes to strengthen their backs and avoid injuries during intense training like CrossFit or ultra-marathons.",
-      specialty: ["Spine Health", "Back Mechanics", "Injury Prevention"],
-      primaryAudience: ["Strength Athletes", "CrossFit Athletes", "Back Pain Sufferers"],
-      notableWorks: ["Back Mechanic", "Ultimate Back Fitness and Performance"]
+      description: "Creator of Squat University, Aaron combines his expertise in physical therapy with Olympic weightlifting coaching. He focuses on teaching proper movement patterns and addressing common limitations to improve performance and reduce injury risk in strength sports.",
+      specialty: [
+        "Squat and hip mechanics",
+        "Olympic weightlifting technique",
+        "Injury prevention strategies",
+        "Rehabilitation protocols"
+      ],
+      primaryAudience: [
+        "Weightlifters",
+        "Powerlifters",
+        "Strength athletes",
+        "CrossFit enthusiasts"
+      ],
+      notableWorks: [
+        "Squat Bible",
+        "Rebuilding Milo"
+      ],
+      websiteUrl: "https://squatuniversity.com/"
     },
     {
-      id: "chris-hinshaw",
-      name: "Chris Hinshaw",
-      title: "Endurance Coach",
-      category: "endurance",
-      description: "An endurance coach with a background in competitive athletics, Hinshaw works with CrossFit athletes and ultra-marathoners to enhance aerobic capacity and prevent overtraining injuries. His Aerobic Capacity program is popular among elites seeking sustained performance.",
-      specialty: ["Aerobic Capacity", "Endurance Training", "CrossFit Conditioning"],
-      primaryAudience: ["CrossFit Athletes", "Ultra-Marathoners", "Endurance Athletes"]
+      id: "jill-miller",
+      name: "Jill Miller",
+      title: "Connective Tissue Specialist",
+      category: "mobility",
+      description: "Creator of Yoga Tune Up® and The Roll Model® Method, Jill specializes in helping people overcome pain, improve performance, and enhance body awareness through self-care fitness. She pioneered innovative techniques using therapy balls to address fascial health.",
+      specialty: [
+        "Fascia and connective tissue health",
+        "Self-myofascial release techniques",
+        "Breath work",
+        "Pain management"
+      ],
+      primaryAudience: [
+        "Yoga practitioners",
+        "Athletes with chronic pain",
+        "Fitness professionals",
+        "Rehabilitation specialists"
+      ],
+      notableWorks: [
+        "The Roll Model: A Step-by-Step Guide to Erase Pain",
+        "Body by Breath"
+      ],
+      websiteUrl: "https://www.jillmiller.com/"
     },
     {
-      id: "phil-maffetone",
-      name: "Phil Maffetone",
-      title: "Coach and Author",
-      category: "endurance",
-      description: "A coach and author, Maffetone developed the MAF (Maximum Aerobic Function) method, emphasizing low-heart-rate training to build endurance and prevent burnout. His approach has been adopted by ultra-marathoners and other endurance athletes.",
-      specialty: ["Low Heart-Rate Training", "Aerobic Base Building", "Sustainable Endurance"],
-      primaryAudience: ["Endurance Athletes", "Ultra-Marathoners", "Triathletes"],
-      notableWorks: ["The Big Book of Endurance Training and Racing"]
+      id: "ido-portal",
+      name: "Ido Portal",
+      title: "Movement Specialist",
+      category: "mobility",
+      description: "As a movement teacher, Ido takes a philosophical and practical approach to human movement. He developed the 'Movement Culture' that transcends traditional exercise modalities and focuses on developing complete movement competency across multiple disciplines.",
+      specialty: [
+        "Movement literacy",
+        "Hand balancing",
+        "Locomotion patterns",
+        "Movement improvisation"
+      ],
+      primaryAudience: [
+        "Martial artists",
+        "Dancers",
+        "Athletes seeking movement mastery",
+        "Movement enthusiasts"
+      ],
+      websiteUrl: "https://www.idoportal.com/"
     },
     {
-      id: "rhonda-patrick",
-      name: "Rhonda Patrick, Ph.D.",
-      title: "Biomedical Scientist",
-      category: "nutrition",
-      description: "A Ph.D. in biomedical science, Dr. Patrick focuses on nutrition, supplementation, and lifestyle strategies to optimize athletic performance and recovery. Her research on micronutrients and sauna use appeals to athletes aiming for peak performance and injury resilience.",
-      specialty: ["Micronutrients", "Supplementation", "Heat Stress Adaptation"],
-      primaryAudience: ["Elite Athletes", "Biohackers", "Health Optimizers"]
+      id: "sue-falsone",
+      name: "Sue Falsone",
+      title: "Sports Physical Therapist",
+      category: "mobility",
+      description: "The first female head athletic trainer in major American professional sports (MLB), Sue specializes in integrating physical therapy and performance training. She focuses on bridging the gap between rehabilitation and high-level athletic performance.",
+      specialty: [
+        "Integration of rehabilitation and performance",
+        "Thoracic spine mobility",
+        "Shoulder mechanics",
+        "Sports-specific recovery protocols"
+      ],
+      primaryAudience: [
+        "Professional athletes",
+        "Sports physical therapists",
+        "Athletic trainers",
+        "Strength coaches"
+      ],
+      notableWorks: [
+        "Bridging the Gap from Rehab to Performance"
+      ],
+      websiteUrl: "https://suefalsone.com/"
     },
     {
-      id: "cate-shanahan",
-      name: "Cate Shanahan, M.D.",
-      title: "Physician and Nutrition Expert",
-      category: "nutrition",
-      description: "A physician and nutrition expert, Dr. Shanahan works with elite athletes (including NBA players) to optimize diet for performance and healing. Her book Deep Nutrition emphasizes nutrient-dense foods to support recovery and prevent injury.",
-      specialty: ["Nutrient-Dense Diets", "Metabolic Health", "Performance Nutrition"],
-      primaryAudience: ["Professional Athletes", "NBA Players", "General Population"],
-      notableWorks: ["Deep Nutrition", "The Fatburn Fix"]
-    },
-    {
-      id: "andy-galpin",
-      name: "Andy Galpin, Ph.D.",
-      title: "Sports Scientist",
-      category: "strength",
-      description: "A sports scientist with a Ph.D. in human bioenergetics, Dr. Galpin researches muscle physiology and performance optimization. He collaborates with elite athletes to design training programs that maximize strength and minimize injury risk.",
-      specialty: ["Muscle Physiology", "Energy Systems", "Strength Development"],
-      primaryAudience: ["Elite Athletes", "Strength Competitors", "Combat Athletes"],
-      notableWorks: ["Unplugged"]
-    },
-    {
-      id: "brad-schoenfeld",
-      name: "Brad Schoenfeld, Ph.D.",
-      title: "Muscle Hypertrophy Researcher",
-      category: "strength",
-      description: "A leading researcher in muscle hypertrophy and strength training, Dr. Schoenfeld's evidence-based approaches help athletes like CrossFit elites build resilience and power while avoiding overuse injuries.",
-      specialty: ["Hypertrophy", "Strength Development", "Periodization"],
-      primaryAudience: ["Bodybuilders", "Strength Athletes", "CrossFit Athletes"],
-      notableWorks: ["Science and Development of Muscle Hypertrophy", "The MAX Muscle Plan"]
-    },
-    {
-      id: "mike-israetel",
-      name: "Mike Israetel, Ph.D.",
-      title: "Sports Scientist, Co-founder of Renaissance Periodization",
-      category: "strength",
-      description: "A sports scientist and co-founder of Renaissance Periodization, Dr. Israetel specializes in hypertrophy and strength training. His programming balances intensity and recovery, making it ideal for elite athletes seeking peak performance without burnout.",
-      specialty: ["Volume Landmarks", "Periodization", "Recovery Optimization"],
-      primaryAudience: ["Bodybuilders", "Strength Athletes", "CrossFit Athletes"],
-      notableWorks: ["Scientific Principles of Strength Training", "The Renaissance Diet 2.0"]
-    },
-    {
-      id: "michael-gervais",
-      name: "Michael Gervais, Ph.D.",
-      title: "Sports Psychologist",
-      category: "mental",
-      description: "A sports psychologist, Dr. Gervais works with elite athletes (including Olympians) to enhance mental toughness and focus. His Finding Mastery podcast and coaching help athletes prevent mental fatigue and maintain peak performance.",
-      specialty: ["Mental Toughness", "Performance Psychology", "Flow States"],
-      primaryAudience: ["Olympic Athletes", "Professional Athletes", "Extreme Sports Athletes"]
-    },
-    {
-      id: "peter-attia",
-      name: "Peter Attia, M.D.",
-      title: "Physician focused on Longevity and Performance",
-      category: "longevity",
-      description: "A physician focused on longevity and performance, Dr. Attia combines medical expertise with practical strategies for athletes. His work on exercise physiology and recovery is valuable for CrossFit elites and ultra-marathoners aiming to sustain excellence.",
-      specialty: ["Exercise Physiology", "Recovery Optimization", "Metabolic Health"],
-      primaryAudience: ["Endurance Athletes", "Health Optimizers", "Aging Athletes"],
-      notableWorks: ["Outlive"]
-    },
-    {
-      id: "tim-noakes",
-      name: "Tim Noakes, M.D., Ph.D.",
-      title: "Sports Scientist, Emeritus Professor",
-      category: "endurance",
-      description: "A sports scientist and emeritus professor, Dr. Noakes is known for his research on endurance sports and hydration. His insights help ultra-marathoners optimize performance and avoid injuries related to fatigue or improper fueling.",
-      specialty: ["Hydration Science", "Central Governor Theory", "Endurance Performance"],
-      primaryAudience: ["Ultra-Marathoners", "Endurance Athletes", "Sports Scientists"],
-      notableWorks: ["Waterlogged", "The Lore of Running"]
-    },
-    {
-      id: "ben-greenfield",
-      name: "Ben Greenfield",
-      title: "Biohacker and Fitness Expert",
-      category: "longevity",
-      description: "A biohacker and fitness expert, Greenfield advises elite athletes on cutting-edge performance and recovery techniques, including nutrition, supplementation, and injury prevention strategies tailored to CrossFit and endurance sports.",
-      specialty: ["Biohacking", "Recovery Modalities", "Performance Optimization"],
-      primaryAudience: ["Endurance Athletes", "CrossFit Athletes", "Biohackers"],
-      notableWorks: ["Beyond Training", "Boundless"]
+      id: "brian-mackenzie",
+      name: "Brian MacKenzie",
+      title: "Human Performance Specialist",
+      category: "mobility",
+      description: "Founder of Power Speed ENDURANCE and XPT, Brian integrates breathing, movement, and recovery approaches for improved athletic performance. He developed innovative training methodologies that focus on functional fitness and stress adaptation.",
+      specialty: [
+        "Breath work optimization",
+        "Environmental training",
+        "Stress adaptation",
+        "Endurance performance"
+      ],
+      primaryAudience: [
+        "Endurance athletes",
+        "CrossFit practitioners",
+        "Performance-focused individuals",
+        "Coaches"
+      ],
+      notableWorks: [
+        "Unbreakable Runner",
+        "Power Speed ENDURANCE",
+        "Unplugged"
+      ],
+      websiteUrl: "https://powerspeedendurance.com/"
     }
   ];
 
-  // Category mapping for icons and labels
-  const categoryMap = {
-    mobility: {
-      icon: <Activity className="h-5 w-5" />,
-      label: "Mobility & PT",
-      color: "bg-blue-100 text-blue-800"
-    },
-    endurance: {
-      icon: <Activity className="h-5 w-5" />,
-      label: "Endurance",
-      color: "bg-green-100 text-green-800"
-    },
-    nutrition: {
-      icon: <Heart className="h-5 w-5" />,
-      label: "Nutrition",
-      color: "bg-red-100 text-red-800"
-    },
-    strength: {
-      icon: <Dumbbell className="h-5 w-5" />,
-      label: "Strength",
-      color: "bg-amber-100 text-amber-800"
-    },
-    mental: {
-      icon: <Brain className="h-5 w-5" />,
-      label: "Mental",
-      color: "bg-purple-100 text-purple-800"
-    },
-    longevity: {
-      icon: <SunMedium className="h-5 w-5" />,
-      label: "Longevity",
-      color: "bg-cyan-100 text-cyan-800"
+  // Helper function to get category icon
+  function getCategoryIcon(category: ExpertCategory) {
+    switch (category) {
+      case "mobility":
+        return <Dumbbell className="h-5 w-5" />;
+      case "endurance":
+        return <Heart className="h-5 w-5" />;
+      case "nutrition":
+        return <Heart className="h-5 w-5" />;
+      case "strength":
+        return <Dumbbell className="h-5 w-5" />;
+      case "mental":
+        return <Brain className="h-5 w-5" />;
+      case "longevity":
+        return <Heart className="h-5 w-5" />;
+      default:
+        return <Users className="h-5 w-5" />;
     }
-  };
-
-  // Filter experts based on category and search
-  const filteredExperts = experts.filter(expert => {
-    const matchesCategory = selectedCategory === "all" || expert.category === selectedCategory;
-    const matchesSearch = searchQuery === "" || 
-      expert.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      expert.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      expert.specialty.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesCategory && matchesSearch;
-  });
+  }
 
   return (
     <PageContainer title="Health & Performance Experts">
-      <div className="space-y-6">
-        {/* Search and filter bar */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-          <div className="relative w-full sm:w-auto flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input 
-              placeholder="Search experts, specialties..." 
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold mb-2">Top Health & Performance Experts</h1>
+        <p className="text-muted-foreground">
+          Learn from the world's leading experts in physical therapy, mobility, and movement optimization.
+          Following their teachings can help you prevent injuries and improve performance.
+        </p>
+      </div>
+
+      <div className="mb-6">
+        <Tabs defaultValue="mobility">
+          <TabsList className="mb-6">
+            <TabsTrigger value="mobility">Mobility & Physical Therapy</TabsTrigger>
+            <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
+            <TabsTrigger value="strength">Strength & Performance</TabsTrigger>
+            <TabsTrigger value="longevity">Longevity</TabsTrigger>
+          </TabsList>
           
-          <Tabs 
-            value={selectedCategory} 
-            onValueChange={setSelectedCategory}
-            className="w-full sm:w-auto"
-          >
-            <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:flex sm:flex-row">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="mobility">Mobility</TabsTrigger>
-              <TabsTrigger value="endurance">Endurance</TabsTrigger>
-              <TabsTrigger value="nutrition">Nutrition</TabsTrigger>
-              <TabsTrigger value="strength">Strength</TabsTrigger>
-              <TabsTrigger value="mental">Mental</TabsTrigger>
-              <TabsTrigger value="longevity">Longevity</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-        
-        {/* Experts grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredExperts.map(expert => (
-            <Card key={expert.id} className="overflow-hidden hover:shadow-md transition-shadow">
-              <CardHeader className="pb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-lg">{expert.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">{expert.title}</p>
-                  </div>
-                  <Badge className={categoryMap[expert.category].color + " flex items-center gap-1"}>
-                    {categoryMap[expert.category].icon}
-                    <span>{categoryMap[expert.category].label}</span>
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm">{expert.description}</p>
-                
-                <div>
-                  <h4 className="text-xs font-medium mb-1">Areas of Expertise:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {expert.specialty.map(spec => (
-                      <Badge key={spec} variant="outline" className="text-xs">
-                        {spec}
+          <TabsContent value="mobility">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {experts.map(expert => (
+                <Card key={expert.id} className="overflow-hidden">
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start mb-2">
+                      <Badge variant="outline" className="flex gap-1.5 items-center">
+                        {getCategoryIcon(expert.category)}
+                        <span>
+                          {expert.category.charAt(0).toUpperCase() + expert.category.slice(1)} Expert
+                        </span>
                       </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                {expert.notableWorks && (
-                  <div>
-                    <h4 className="text-xs font-medium mb-1 flex items-center gap-1">
-                      <BookOpen className="h-3 w-3" />
-                      <span>Notable Works:</span>
-                    </h4>
-                    <ul className="text-xs text-muted-foreground space-y-1">
-                      {expert.notableWorks.map(work => (
-                        <li key={work}>{work}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        
-        {filteredExperts.length === 0 && (
-          <div className="py-12 text-center text-muted-foreground">
-            <Microscope className="h-8 w-8 mx-auto mb-3 opacity-50" />
-            <p>No experts match your search criteria.</p>
-          </div>
-        )}
+                    </div>
+                    <CardTitle className="text-lg">{expert.name}</CardTitle>
+                    <CardDescription className="text-sm font-medium mt-1">
+                      {expert.title}
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="p-4 pt-2">
+                    <p className="text-sm mb-3">{expert.description}</p>
+                    
+                    <div className="grid grid-cols-1 gap-3">
+                      <div>
+                        <h4 className="text-sm font-semibold mb-1">Specialties:</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {expert.specialty.map((specialty, i) => (
+                            <Badge key={i} variant="secondary" className="font-normal">
+                              {specialty}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {expert.notableWorks && expert.notableWorks.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-semibold mb-1 flex items-center">
+                            <BookOpen className="h-4 w-4 mr-1" />
+                            Notable Works:
+                          </h4>
+                          <ul className="text-sm list-disc pl-5">
+                            {expert.notableWorks.map((work, i) => (
+                              <li key={i}>{work}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter className="p-4 pt-0 flex justify-between">
+                    <Button size="sm" variant="outline" className="text-xs h-8">
+                      <Award className="h-3.5 w-3.5 mr-1" />
+                      View Profile
+                    </Button>
+                    {expert.websiteUrl && (
+                      <Button size="sm" className="text-xs h-8" asChild>
+                        <a href={expert.websiteUrl} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                          Website
+                        </a>
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="nutrition">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-medium mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground max-w-md">
+                We're currently curating a collection of top nutrition experts for this section.
+                Check back soon for evidence-based nutrition specialists.
+              </p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="strength">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-medium mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground max-w-md">
+                We're currently curating a collection of top strength and performance experts for this section.
+                Check back soon for evidence-based strength training specialists.
+              </p>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="longevity">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-medium mb-2">Coming Soon</h3>
+              <p className="text-muted-foreground max-w-md">
+                We're currently curating a collection of top longevity experts for this section.
+                Check back soon for evidence-based longevity and healthspan specialists.
+              </p>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </PageContainer>
   );
