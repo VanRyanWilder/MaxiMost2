@@ -2,8 +2,14 @@ import { useUser } from "@/context/user-context";
 import { type Task } from "@shared/schema";
 import { categoryColors, frequencyColors } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ChevronUp, ChevronDown, Edit, Trash, GripVertical, PlusCircle, Save } from "lucide-react";
 
 interface UserTaskStatus {
   [taskId: number]: boolean;
@@ -16,6 +22,16 @@ export function DailyTasks() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({
+    title: '',
+    description: '',
+    category: 'Mind',
+    frequency: 'Must-Do',
+    programId: 1
+  });
   
   // Mock tasks data
   useEffect(() => {
@@ -106,6 +122,99 @@ export function DailyTasks() {
     ? flexibleTasks.filter(task => task.category === selectedCategory)
     : flexibleTasks;
   
+  // Move a task up or down in the list
+  const moveTask = (taskId: number, direction: 'up' | 'down') => {
+    if (!tasks) return;
+    
+    const tasksCopy = [...tasks];
+    const taskIndex = tasksCopy.findIndex(t => t.id === taskId);
+    
+    if (
+      (direction === 'up' && taskIndex === 0) || 
+      (direction === 'down' && taskIndex === tasksCopy.length - 1)
+    ) {
+      return; // Already at the limit
+    }
+    
+    const newIndex = direction === 'up' ? taskIndex - 1 : taskIndex + 1;
+    const taskToMove = tasksCopy[taskIndex];
+    
+    // Remove the task from its current position
+    tasksCopy.splice(taskIndex, 1);
+    // Insert it at the new position
+    tasksCopy.splice(newIndex, 0, taskToMove);
+    
+    setTasks(tasksCopy);
+    
+    toast({
+      title: "Task order updated",
+      description: `"${taskToMove.title}" moved ${direction}`,
+    });
+  };
+  
+  // Handle opening the edit dialog
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setShowEditTaskDialog(true);
+  };
+  
+  // Save edited task
+  const saveEditedTask = () => {
+    if (!editingTask || !tasks) return;
+    
+    const updatedTasks = tasks.map(task => 
+      task.id === editingTask.id ? editingTask : task
+    );
+    
+    setTasks(updatedTasks);
+    setShowEditTaskDialog(false);
+    
+    toast({
+      title: "Task updated",
+      description: "Your task has been successfully updated",
+    });
+  };
+  
+  // Handle adding a new task
+  const handleAddTask = () => {
+    if (!tasks) return;
+    
+    // Create a simple unique ID for the new task
+    const maxId = Math.max(...tasks.map(t => t.id), 0);
+    const newTaskWithId = { ...newTask, id: maxId + 1 };
+    
+    setTasks([...tasks, newTaskWithId]);
+    setShowAddTaskDialog(false);
+    
+    // Reset form
+    setNewTask({
+      title: '',
+      description: '',
+      category: 'Mind',
+      frequency: 'Must-Do',
+      programId: 1
+    });
+    
+    toast({
+      title: "Task added",
+      description: "Your new task has been added to your plan",
+    });
+  };
+  
+  // Handle deleting a task
+  const handleDeleteTask = (taskId: number) => {
+    if (!tasks) return;
+    
+    const updatedTasks = tasks.filter(task => task.id !== taskId);
+    setTasks(updatedTasks);
+    
+    toast({
+      title: "Task deleted",
+      description: "The task has been removed from your plan",
+      variant: "destructive"
+    });
+  };
+  
   const handleTaskStatusChange = async (taskId: number, checked: boolean) => {
     try {
       // In a real app, we would call an API to update the user task status
@@ -135,10 +244,20 @@ export function DailyTasks() {
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
         <div>
-          <h3 className="font-bold text-xl text-gray-900">BeastMode Daily Toolbox</h3>
+          <h3 className="font-bold text-xl text-gray-900">Maximus Gains Daily Plan</h3>
           <p className="text-sm text-gray-500 mt-1">Track your daily discipline to build momentum</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <Button 
+            size="sm" 
+            variant="outline" 
+            onClick={() => setShowAddTaskDialog(true)}
+            className="flex items-center gap-1"
+          >
+            <PlusCircle className="h-4 w-4" />
+            <span>Add Task</span>
+          </Button>
+          
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
             <span className="text-xs font-medium text-gray-600">Must-Do Daily</span>
@@ -148,18 +267,21 @@ export function DailyTasks() {
             <span className="text-xs font-medium text-gray-600">Multiple Weekly</span>
           </div>
           
-          <select 
-            className="ml-2 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+          <Select 
+            value={selectedCategory} 
+            onValueChange={setSelectedCategory}
           >
-            <option>All Categories</option>
-            <option>Mind</option>
-            <option>Body</option>
-            <option>Brain</option>
-            <option>Spirit</option>
-            <option>Health</option>
-          </select>
+            <SelectTrigger className="w-[150px] h-9">
+              <SelectValue placeholder="Filter by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All Categories">All Categories</SelectItem>
+              <SelectItem value="Mind">Mind</SelectItem>
+              <SelectItem value="Body">Body</SelectItem>
+              <SelectItem value="Spirit">Spirit</SelectItem>
+              <SelectItem value="Health">Health</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
