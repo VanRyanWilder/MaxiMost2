@@ -365,33 +365,100 @@ export default function BodyStats() {
                     <CardTitle>Import Data from External Services</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Card className="border border-gray-200">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <img src="https://i.imgur.com/z8w5JCi.png" alt="Renpho" className="h-12 mb-4" />
-                          <h3 className="font-semibold mb-2">Renpho</h3>
-                          <p className="text-xs text-gray-500 mb-4">Sync body composition data from your Renpho smart scale</p>
-                          <Button variant="outline" className="w-full">Connect</Button>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card className="border border-gray-200">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <img src="https://i.imgur.com/KdZKYo1.png" alt="Apple Health" className="h-12 mb-4" />
-                          <h3 className="font-semibold mb-2">Apple Health</h3>
-                          <p className="text-xs text-gray-500 mb-4">Import data from Apple Health including weight and body measurements</p>
-                          <Button variant="outline" className="w-full">Connect</Button>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card className="border border-gray-200">
-                        <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                          <img src="https://i.imgur.com/8ANNlde.png" alt="Fitbit" className="h-12 mb-4" />
-                          <h3 className="font-semibold mb-2">Fitbit</h3>
-                          <p className="text-xs text-gray-500 mb-4">Sync weight and body fat percentage from your Fitbit account</p>
-                          <Button variant="outline" className="w-full">Connect</Button>
-                        </CardContent>
-                      </Card>
+                    <div className="mb-6">
+                      <h3 className="text-lg font-medium mb-3">Fitness Apps & Smart Devices</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/z8w5JCi.png" alt="Renpho" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Renpho</h3>
+                            <p className="text-xs text-gray-500 mb-4">Sync body composition data from your Renpho smart scale</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/KdZKYo1.png" alt="Apple Health" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Apple Health</h3>
+                            <p className="text-xs text-gray-500 mb-4">Import data from Apple Health including weight and body measurements</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/8ANNlde.png" alt="Fitbit" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Fitbit</h3>
+                            <p className="text-xs text-gray-500 mb-4">Sync weight and body fat percentage from your Fitbit account</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <h3 className="text-lg font-medium mb-3">Wearable & Health Devices</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/rBFRxfN.png" alt="Oura Ring" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Oura Ring</h3>
+                            <p className="text-xs text-gray-500 mb-4">Import sleep quality, heart rate variability, and recovery metrics</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/bk5j5xZ.png" alt="Whoop" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Whoop</h3>
+                            <p className="text-xs text-gray-500 mb-4">Track strain, recovery, and sleep performance from your Whoop band</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/R2WxFdP.png" alt="Garmin" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Garmin</h3>
+                            <p className="text-xs text-gray-500 mb-4">Sync exercise, heart rate, and body metrics from Garmin Connect</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-lg font-medium mb-3">Nutrition & Activity Trackers</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/GwqYy6k.png" alt="MyFitnessPal" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">MyFitnessPal</h3>
+                            <p className="text-xs text-gray-500 mb-4">Import nutrition data, calories, and macronutrient tracking</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/8vfPk4e.png" alt="Strava" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Strava</h3>
+                            <p className="text-xs text-gray-500 mb-4">Sync running, cycling, and workout data from your Strava account</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border border-gray-200">
+                          <CardContent className="p-4 flex flex-col items-center justify-center text-center">
+                            <img src="https://i.imgur.com/7lxukT4.png" alt="Cronometer" className="h-12 mb-4" />
+                            <h3 className="font-semibold mb-2">Cronometer</h3>
+                            <p className="text-xs text-gray-500 mb-4">Track detailed nutrition including micronutrients and biometrics</p>
+                            <Button variant="outline" className="w-full">Connect</Button>
+                          </CardContent>
+                        </Card>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
