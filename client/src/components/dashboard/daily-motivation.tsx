@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, VolumeX, Volume2, Quote, ChevronDown, ChevronUp, Plus, BookOpen, Droplets, Brain, Dumbbell, Heart, Users, Sun } from "lucide-react";
+import { Play, Pause, VolumeX, Volume2, Quote, ChevronDown, ChevronUp, Plus, BookOpen, Droplets, Brain, Dumbbell, Heart, Users, Sun, Layers, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface MotivationalContent {
@@ -20,6 +20,7 @@ export function DailyMotivation() {
   const [content, setContent] = useState<MotivationalContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [showQuickAdd, setShowQuickAdd] = useState(true);
+  const [showHabitStacks, setShowHabitStacks] = useState(true);
 
   // Mock data - in a real app, this would come from your API
   const mockContent: MotivationalContent = {
@@ -71,6 +72,42 @@ export function DailyMotivation() {
 
   // Pre-filled quick-add habit templates
   const quickAddHabits = [
+    // Basic hygiene habits
+    {
+      title: "Brush Teeth",
+      description: "Brush teeth at least twice daily for dental health and fresh breath.",
+      icon: <Heart className="h-4 w-4" />,
+      impact: 7,
+      effort: 1,
+      timeCommitment: "2 min",
+      frequency: "daily",
+      category: "health",
+      isAbsolute: true
+    },
+    {
+      title: "Wash Face",
+      description: "Cleanse your face in the morning and evening for skin health and hygiene.",
+      icon: <Droplets className="h-4 w-4" />,
+      impact: 6,
+      effort: 1,
+      timeCommitment: "1 min",
+      frequency: "daily",
+      category: "health",
+      isAbsolute: true
+    },
+    {
+      title: "Make Bed",
+      description: "Start your day with a small accomplishment that sets the tone for productivity.",
+      icon: <Sun className="h-4 w-4" />,
+      impact: 5,
+      effort: 1,
+      timeCommitment: "1 min",
+      frequency: "daily",
+      category: "health",
+      isAbsolute: true
+    },
+    
+    // Other high-impact habits
     {
       title: "Cold Shower",
       description: "Take a cold shower for 2-5 minutes for improved circulation, mental resilience, and reduced inflammation.",
@@ -133,6 +170,125 @@ export function DailyMotivation() {
     },
   ];
 
+  // Habit stacks (morning routines from experts)
+  const habitStacks = [
+    {
+      name: "Huberman Morning Stack",
+      description: "Andrew Huberman's science-based morning routine",
+      icon: <Brain className="h-4 w-4" />,
+      habits: [
+        {
+          title: "Morning Sunlight",
+          description: "Get 2-10 minutes of morning sunlight exposure within 30-60 minutes of waking",
+          icon: <Sun className="h-4 w-4" />,
+          impact: 9,
+          effort: 1,
+          timeCommitment: "5 min",
+          frequency: "daily",
+          category: "health",
+          isAbsolute: true
+        },
+        {
+          title: "Delay Caffeine",
+          description: "Wait 90-120 minutes after waking before consuming caffeine",
+          icon: <CheckCircle className="h-4 w-4" />,
+          impact: 7,
+          effort: 3,
+          timeCommitment: "0 min",
+          frequency: "daily",
+          category: "health",
+          isAbsolute: true
+        },
+        {
+          title: "Cold Exposure",
+          description: "Brief cold exposure via shower or cold plunge",
+          icon: <Droplets className="h-4 w-4" />,
+          impact: 8,
+          effort: 6,
+          timeCommitment: "2 min",
+          frequency: "daily",
+          category: "health"
+        }
+      ]
+    },
+    {
+      name: "Goggins Morning Stack",
+      description: "David Goggins' discipline-focused morning routine",
+      icon: <Dumbbell className="h-4 w-4" />,
+      habits: [
+        {
+          title: "Early Wake-Up",
+          description: "Wake up at 4:30-5:00 AM",
+          icon: <Sun className="h-4 w-4" />,
+          impact: 8,
+          effort: 8,
+          timeCommitment: "0 min",
+          frequency: "daily",
+          category: "mind",
+          isAbsolute: true
+        },
+        {
+          title: "Running",
+          description: "Morning run (3-10 miles)",
+          icon: <Dumbbell className="h-4 w-4" />,
+          impact: 9,
+          effort: 9,
+          timeCommitment: "30-60 min",
+          frequency: "daily",
+          category: "fitness"
+        },
+        {
+          title: "Push-ups/Pull-ups",
+          description: "Complete morning calisthenics set",
+          icon: <Dumbbell className="h-4 w-4" />,
+          impact: 8,
+          effort: 7,
+          timeCommitment: "15 min",
+          frequency: "daily",
+          category: "fitness"
+        }
+      ]
+    },
+    {
+      name: "Jocko Morning Stack",
+      description: "Jocko Willink's discipline-equals-freedom routine",
+      icon: <CheckCircle className="h-4 w-4" />,
+      habits: [
+        {
+          title: "4:30 AM Wake-Up",
+          description: "Wake up at 4:30 AM for early start advantage",
+          icon: <Sun className="h-4 w-4" />,
+          impact: 8,
+          effort: 8,
+          timeCommitment: "0 min",
+          frequency: "daily",
+          category: "mind",
+          isAbsolute: true
+        },
+        {
+          title: "Workout",
+          description: "Intense morning workout (weight training or calisthenics)",
+          icon: <Dumbbell className="h-4 w-4" />,
+          impact: 9,
+          effort: 7,
+          timeCommitment: "45-60 min",
+          frequency: "daily",
+          category: "fitness"
+        },
+        {
+          title: "Strategic Planning",
+          description: "Plan your day with strategic priorities",
+          icon: <BookOpen className="h-4 w-4" />,
+          impact: 8,
+          effort: 3,
+          timeCommitment: "10 min",
+          frequency: "daily",
+          category: "mind"
+        }
+      ]
+    }
+  ];
+
   // Function to handle adding a pre-filled habit
   const addPrefilledHabit = (habit: any) => {
     console.log("Adding prefilled habit:", habit);
@@ -144,6 +300,22 @@ export function DailyMotivation() {
       bubbles: true 
     });
     document.dispatchEvent(event);
+  };
+  
+  // Function to add a whole habit stack
+  const addHabitStack = (stack: any) => {
+    console.log("Adding habit stack:", stack);
+    
+    // Add each habit in the stack one by one
+    stack.habits.forEach((habit: any) => {
+      setTimeout(() => {
+        const event = new CustomEvent('add-prefilled-habit', { 
+          detail: habit,
+          bubbles: true 
+        });
+        document.dispatchEvent(event);
+      }, 100); // Small delay to prevent overwhelming the system
+    });
   };
 
   return (
