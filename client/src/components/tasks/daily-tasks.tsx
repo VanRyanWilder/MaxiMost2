@@ -242,7 +242,7 @@ export function DailyTasks() {
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-4">
         <div>
           <h3 className="font-bold text-xl text-gray-900">Maximus Gains Daily Plan</h3>
           <p className="text-sm text-gray-500 mt-1">Track your daily discipline to build momentum</p>
@@ -282,6 +282,20 @@ export function DailyTasks() {
               <SelectItem value="Health">Health</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+      </div>
+      
+      <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/10 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900">Tracking Progress</h4>
+            <p className="text-sm text-gray-600 mt-1">Your completion rate impacts your recommendations and program advancement</p>
+          </div>
         </div>
       </div>
 
@@ -477,20 +491,6 @@ export function DailyTasks() {
           )}
         </div>
       )}
-      
-      <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <div className="flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-900">Tracking Progress</h4>
-            <p className="text-sm text-gray-600 mt-1">Your completion rate impacts your recommendations and program advancement</p>
-          </div>
-        </div>
-      </div>
       
       {/* Add Task Dialog */}
       <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
