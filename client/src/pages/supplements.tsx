@@ -2,7 +2,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StarIcon, ThumbsUp, ThumbsDown, ExternalLink, ShieldCheck } from "lucide-react";
+import { StarIcon, ThumbsUp, ThumbsDown, ExternalLink, ShieldCheck, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -15,6 +15,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/context/user-context";
+import { ReviewModal } from "@/components/supplements/review-modal";
 
 // Define the type based on our database schema
 interface Supplement {
