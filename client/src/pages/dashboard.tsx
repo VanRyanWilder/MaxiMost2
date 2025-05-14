@@ -4,7 +4,6 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
-import { AIMotivationalCompanion } from "@/components/dashboard/ai-motivational-companion";
 import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
 import { StreakHabitTracker } from "@/components/dashboard/streak-habit-tracker";
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
@@ -52,7 +51,6 @@ export default function Dashboard() {
               </div>
               <div className="space-y-6">
                 <DailyMotivation />
-                <AIMotivationalCompanion />
               </div>
             </div>
             
