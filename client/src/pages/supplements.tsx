@@ -395,7 +395,7 @@ export default function Supplements() {
                               </div>
                               {supplement.bestValue && (
                                 <div className="mt-1">
-                                  <Badge className="bg-green-500 hover:bg-green-600">Best Value</Badge>
+                                  <Badge variant="default" className="bg-primary hover:bg-primary/90">Best Value</Badge>
                                 </div>
                               )}
                               <div className="mt-1">
