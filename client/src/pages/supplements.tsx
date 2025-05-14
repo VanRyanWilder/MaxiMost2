@@ -233,11 +233,11 @@ export default function Supplements() {
     
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(<StarIcon key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />);
+        stars.push(<StarIcon key={i} className="w-4 h-4 fill-primary text-primary" />);
       } else if (i === fullStars && halfStar) {
-        stars.push(<StarIcon key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400 opacity-50" />);
+        stars.push(<StarIcon key={i} className="w-4 h-4 fill-primary text-primary opacity-50" />);
       } else {
-        stars.push(<StarIcon key={i} className="w-4 h-4 text-gray-300" />);
+        stars.push(<StarIcon key={i} className="w-4 h-4 text-muted" />);
       }
     }
     
@@ -347,13 +347,13 @@ export default function Supplements() {
                             </div>
                           </div>
                           
-                          <p className="text-sm text-gray-600 mb-3">{supplement.description}</p>
+                          <p className="text-sm text-muted-foreground mb-3">{supplement.description}</p>
                           
                           <div className="mb-3">
                             <h4 className="text-sm font-medium mb-1">Benefits:</h4>
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                               {supplement.parsedBenefits.map((benefit, index) => (
-                                <li key={index} className="text-sm text-gray-600 flex items-center">
+                                <li key={index} className="text-sm text-muted-foreground flex items-center">
                                   <span className="mr-2 text-primary">•</span> {benefit}
                                 </li>
                               ))}
@@ -362,25 +362,25 @@ export default function Supplements() {
                           
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                             <div>
-                              <span className="text-gray-500">Dosage:</span>
+                              <span className="text-muted-foreground">Dosage:</span>
                               <p>{supplement.dosage}</p>
                             </div>
                             {supplement.sideEffects && (
                               <div>
-                                <span className="text-gray-500">Side Effects:</span>
+                                <span className="text-muted-foreground">Side Effects:</span>
                                 <p className="truncate">{supplement.sideEffects}</p>
                               </div>
                             )}
                             {supplement.interactions && (
                               <div>
-                                <span className="text-gray-500">Interactions:</span>
+                                <span className="text-muted-foreground">Interactions:</span>
                                 <p className="truncate">{supplement.interactions}</p>
                               </div>
                             )}
                           </div>
                         </div>
                         
-                        <div className="md:w-1/3 bg-gray-50 p-5 flex flex-col justify-between">
+                        <div className="md:w-1/3 bg-secondary/10 p-5 flex flex-col justify-between">
                           <div>
                             <div className="mb-4">
                               <h4 className="text-sm font-medium mb-1">Value Rating:</h4>
@@ -399,7 +399,7 @@ export default function Supplements() {
                                 </div>
                               )}
                               <div className="mt-1">
-                                <span className="text-xs text-gray-500">Est. Monthly Cost: {supplement.monthlyCostEstimate}</span>
+                                <span className="text-xs text-muted-foreground">Est. Monthly Cost: {supplement.monthlyCostEstimate}</span>
                               </div>
                             </div>
                             
