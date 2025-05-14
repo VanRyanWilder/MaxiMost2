@@ -192,11 +192,11 @@ export default function Supplements() {
   
   // Process all supplements with parsed data
   const processedSupplements: SupplementWithParsedData[] = 
-    availableSupplements.map(s => parseSupplementData(s as Supplement));
+    Array.isArray(availableSupplements) ? availableSupplements.map(s => parseSupplementData(s as Supplement)) : [];
   
   // Get unique categories from all supplements
   const allCategories = Array.from(
-    new Set(processedSupplements.flatMap(s => s.parsedCategories))
+    new Set(processedSupplements.length > 0 ? processedSupplements.flatMap(s => s.parsedCategories || []) : [])
   ).sort();
   
   // Filter supplements by category
