@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
-import { AIMotivationalCompanion } from "@/components/dashboard/ai-motivational-companion";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -84,9 +84,7 @@ export default function Progress() {
                 </Card>
               </div>
               
-              <div className="lg:col-span-1">
-                <AIMotivationalCompanion />
-              </div>
+              {/* Removed AI Motivational Companion */}
             </div>
             
             <Tabs defaultValue="charts" className="mb-6">
