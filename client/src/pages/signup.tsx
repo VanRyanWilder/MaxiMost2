@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
 import { SiSamsung } from "react-icons/si";
 import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithSamsung } from "@/lib/firebase";
@@ -12,7 +12,7 @@ import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithSamsun
 export default function Signup() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -42,7 +42,7 @@ export default function Signup() {
       if (user) {
         // In a real application, you would register the user in your backend
         // For now, just navigate to onboarding
-        navigate("/dashboard");
+        setLocation("/dashboard");
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -69,7 +69,7 @@ export default function Signup() {
     
     // In a real application, you would register the user with email/password
     // For now, just navigate to onboarding
-    navigate("/dashboard");
+    setLocation("/dashboard");
   };
 
   return (
@@ -189,11 +189,11 @@ export default function Signup() {
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
           <div className="text-sm text-muted-foreground">
             <span>Already have an account? </span>
-            <Button variant="link" className="p-0 h-auto" onClick={() => navigate("/login")}>
+            <Button variant="link" className="p-0 h-auto" onClick={() => setLocation("/login")}>
               Log in
             </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
             Go back
           </Button>
         </CardFooter>

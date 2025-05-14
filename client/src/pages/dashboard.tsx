@@ -5,6 +5,7 @@ import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { ProgramCard } from "@/components/dashboard/program-card";
 import { MetricsCard } from "@/components/dashboard/metrics-card";
+import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
 import { DailySchedule } from "@/components/schedule/daily-schedule";
 import { ResourceLibrary } from "@/components/resources/resource-library";
@@ -26,9 +27,16 @@ export default function Dashboard() {
             <WelcomeBanner />
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-              <ProgressCard />
-              <ProgramCard />
-              <MetricsCard />
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <ProgressCard />
+                  <ProgramCard />
+                </div>
+              </div>
+              <div className="space-y-6">
+                <DailyMotivation />
+                <MetricsCard />
+              </div>
             </div>
             
             <Tabs defaultValue="tasks" className="mb-6">

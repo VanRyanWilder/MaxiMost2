@@ -133,11 +133,23 @@ export function DailyTasks() {
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="font-bold text-xl">Daily Must-Do Tasks</h3>
-        <div className="flex space-x-2">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+        <div>
+          <h3 className="font-bold text-xl text-gray-900">BeastMode Daily Toolbox</h3>
+          <p className="text-sm text-gray-500 mt-1">Track your daily discipline to build momentum</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <span className="text-xs font-medium text-gray-600">Must-Do Daily</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span className="text-xs font-medium text-gray-600">Multiple Weekly</span>
+          </div>
+          
           <select 
-            className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="ml-2 text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -169,36 +181,48 @@ export function DailyTasks() {
         </div>
       ) : (
         <div className="space-y-3 mb-8">
-          {filteredMustDoTasks.map((task) => (
-            <div 
-              key={task.id} 
-              className={`task-item border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'}`}
-            >
-              <Checkbox
-                checked={taskStatus[task.id] || false}
-                onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
-                className="mr-3 h-5 w-5"
-              />
-              <div className="flex-1">
-                <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
-                  {task.title}
-                </h4>
-                <p className="text-sm text-gray-500">{task.description}</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className={`${frequencyColors[task.frequency].bg} ${frequencyColors[task.frequency].text} text-xs px-2 py-1 rounded`}>
-                  {task.frequency}
-                </span>
-                <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2 py-1 rounded`}>
-                  {task.category}
-                </span>
-              </div>
+          {filteredMustDoTasks.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <p className="text-gray-500">No daily tasks found for this category</p>
             </div>
-          ))}
+          ) : (
+            filteredMustDoTasks.map((task) => (
+              <div 
+                key={task.id} 
+                className={`task-item border-l-4 border-l-emerald-500 border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'} hover:shadow-sm`}
+              >
+                <Checkbox
+                  checked={taskStatus[task.id] || false}
+                  onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
+                  className="mr-3 h-5 w-5"
+                />
+                <div className="flex-1">
+                  <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
+                    {task.title}
+                  </h4>
+                  <p className="text-sm text-gray-500">{task.description}</p>
+                </div>
+                <div className="flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <span className="inline-flex items-center bg-emerald-100 text-emerald-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                    Must-Do
+                  </span>
+                  <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
+                    {task.category}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
 
-      <h3 className="font-bold text-xl mb-4">Flexible Frequency Tasks</h3>
+      <div className="flex items-center mb-4">
+        <h3 className="font-bold text-xl">Multiple Times Per Week</h3>
+        <div className="ml-2 text-xs inline-flex items-center px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 font-medium">
+          Weekly Goals
+        </div>
+      </div>
+      
       {isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4].map((item) => (
@@ -217,34 +241,54 @@ export function DailyTasks() {
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredFlexibleTasks.map((task) => (
-            <div 
-              key={task.id} 
-              className={`task-item border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'}`}
-            >
-              <Checkbox
-                checked={taskStatus[task.id] || false}
-                onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
-                className="mr-3 h-5 w-5"
-              />
-              <div className="flex-1">
-                <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
-                  {task.title}
-                </h4>
-                <p className="text-sm text-gray-500">{task.description}</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className={`${frequencyColors[task.frequency]?.bg || 'bg-gray-200'} ${frequencyColors[task.frequency]?.text || 'text-gray-700'} text-xs px-2 py-1 rounded`}>
-                  {task.frequency}
-                </span>
-                <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2 py-1 rounded`}>
-                  {task.category}
-                </span>
-              </div>
+          {filteredFlexibleTasks.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <p className="text-gray-500">No weekly tasks found for this category</p>
             </div>
-          ))}
+          ) : (
+            filteredFlexibleTasks.map((task) => (
+              <div 
+                key={task.id} 
+                className={`task-item border-l-4 border-l-blue-500 border border-gray-200 rounded-lg p-4 flex items-center transition-all ${taskStatus[task.id] ? 'bg-green-50' : 'bg-white'} hover:shadow-sm`}
+              >
+                <Checkbox
+                  checked={taskStatus[task.id] || false}
+                  onCheckedChange={(checked) => handleTaskStatusChange(task.id, checked as boolean)}
+                  className="mr-3 h-5 w-5"
+                />
+                <div className="flex-1">
+                  <h4 className={`task-title font-medium ${taskStatus[task.id] ? 'line-through text-gray-400' : ''}`}>
+                    {task.title}
+                  </h4>
+                  <p className="text-sm text-gray-500">{task.description}</p>
+                </div>
+                <div className="flex flex-col items-end sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <span className="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded-full">
+                    {task.frequency}
+                  </span>
+                  <span className={`${categoryColors[task.category].bg} ${categoryColors[task.category].text} text-xs px-2.5 py-1 rounded-full`}>
+                    {task.category}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       )}
+      
+      <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/10 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900">Tracking Progress</h4>
+            <p className="text-sm text-gray-600 mt-1">Your completion rate impacts your recommendations and program advancement</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

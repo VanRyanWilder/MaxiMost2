@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
 import { SiSamsung } from "react-icons/si";
@@ -12,7 +12,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const { login } = useUser();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple' | 'samsung') => {
     setIsLoading(true);
@@ -39,7 +39,7 @@ export default function Login() {
       if (user) {
         // Use the existing login function from context to handle auth state
         await login(user.email || "user@example.com", "firebase-auth");
-        navigate("/dashboard");
+        setLocation("/dashboard");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -126,7 +126,7 @@ export default function Login() {
             onClick={() => {
               // For now, just use the mock user login
               login("demo@example.com", "password");
-              navigate("/dashboard");
+              setLocation("/dashboard");
             }}
           >
             Continue as Guest
@@ -135,11 +135,11 @@ export default function Login() {
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
           <div className="text-sm text-muted-foreground">
             <span>Need access? </span>
-            <Button variant="link" className="p-0 h-auto" onClick={() => navigate("/signup")}>
+            <Button variant="link" className="p-0 h-auto" onClick={() => setLocation("/signup")}>
               Create an account
             </Button>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
             Go back
           </Button>
         </CardFooter>

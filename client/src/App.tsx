@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect, useLocation } from "wouter";
+import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard";
 import Profile from "@/pages/profile";
@@ -10,20 +11,85 @@ import Programs from "@/pages/programs";
 import Tasks from "@/pages/tasks";
 import Supplements from "@/pages/supplements";
 import BodyStats from "@/pages/body-stats";
+import Login from "@/pages/login";
+import Signup from "@/pages/signup";
+import Home from "@/pages/home";
+import Principles from "@/pages/principles";
+import Community from "@/pages/community";
+import Pricing from "@/pages/pricing";
+
+// Route guard to protect pages that require authentication
+function PrivateRoute({ component: Component, ...rest }: any) {
+  const { user, userLoading } = useUser();
+  const [location] = useLocation();
+  
+  // Still loading - show nothing or a loading spinner
+  if (userLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+  
+  // If not logged in, redirect to login
+  if (!user) {
+    return <Redirect to={`/login?redirect=${encodeURIComponent(location)}`} />;
+  }
+  
+  // User is authenticated, render the component
+  return <Component {...rest} />;
+}
 
 function App() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/workouts" component={Workouts} />
-      <Route path="/mind-spirit" component={MindSpirit} />
-      <Route path="/nutrition" component={Nutrition} />
-      <Route path="/resources" component={Resources} />
-      <Route path="/programs" component={Programs} />
-      <Route path="/tasks" component={Tasks} />
-      <Route path="/supplements" component={Supplements} />
-      <Route path="/body-stats" component={BodyStats} />
+      {/* Public routes */}
+      <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
+      
+      {/* Protected routes */}
+      <Route path="/dashboard">
+        <PrivateRoute component={Dashboard} />
+      </Route>
+      <Route path="/profile">
+        <PrivateRoute component={Profile} />
+      </Route>
+      <Route path="/workouts">
+        <PrivateRoute component={Workouts} />
+      </Route>
+      <Route path="/mind-spirit">
+        <PrivateRoute component={MindSpirit} />
+      </Route>
+      <Route path="/nutrition">
+        <PrivateRoute component={Nutrition} />
+      </Route>
+      <Route path="/resources">
+        <PrivateRoute component={Resources} />
+      </Route>
+      <Route path="/programs">
+        <PrivateRoute component={Programs} />
+      </Route>
+      <Route path="/tasks">
+        <PrivateRoute component={Tasks} />
+      </Route>
+      <Route path="/supplements">
+        <PrivateRoute component={Supplements} />
+      </Route>
+      <Route path="/body-stats">
+        <PrivateRoute component={BodyStats} />
+      </Route>
+      
+      <Route path="/principles">
+        <PrivateRoute component={Principles} />
+      </Route>
+      
+      <Route path="/community">
+        <PrivateRoute component={Community} />
+      </Route>
+      
+      <Route path="/pricing">
+        <Route component={Pricing} />
+      </Route>
+      
+      {/* 404 Not Found route */}
       <Route component={NotFound} />
     </Switch>
   );

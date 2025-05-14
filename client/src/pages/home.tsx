@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
+import { CheckCircle, Clock, Users, Award, Brain, Heart, Activity } from "lucide-react";
 
 export default function Home() {
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
@@ -12,12 +13,12 @@ export default function Home() {
             BeastMode
           </div>
           <div className="space-x-4">
-            <Button variant="outline" onClick={() => navigate("/login")}>
+            <Button variant="outline" onClick={() => setLocation("/login")}>
               Log in
             </Button>
             <Button 
               className="bg-gradient-to-r from-indigo-500 to-purple-600"
-              onClick={() => navigate("/signup")}
+              onClick={() => setLocation("/signup")}
             >
               Sign up
             </Button>
@@ -41,14 +42,14 @@ export default function Home() {
                   <Button 
                     size="lg" 
                     className="bg-gradient-to-r from-indigo-500 to-purple-600"
-                    onClick={() => navigate("/signup")}
+                    onClick={() => setLocation("/signup")}
                   >
                     Start Your Journey
                   </Button>
                   <Button 
                     size="lg" 
                     variant="outline"
-                    onClick={() => navigate("/programs")}
+                    onClick={() => setLocation("/programs")}
                   >
                     Explore Programs
                   </Button>
@@ -59,28 +60,69 @@ export default function Home() {
               <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
                 <div className="px-6 py-8 sm:p-10 sm:pb-6">
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="bg-gray-700 rounded-lg p-4 h-36 flex flex-col justify-between">
-                      <div className="font-semibold text-lg">Mind & Spirit</div>
-                      <p className="text-sm text-gray-300">Daily meditation, stoic practices, and mental clarity exercises</p>
+                    <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg p-4 h-40 flex flex-col justify-between group hover:from-indigo-900 hover:to-indigo-950 transition-all duration-300">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center mr-3">
+                          <Brain className="h-5 w-5 text-indigo-400" />
+                        </div>
+                        <div className="font-semibold text-lg">Mind & Spirit</div>
+                      </div>
+                      <div className="mt-2 overflow-hidden rounded-md">
+                        <div className="w-full h-16 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 flex items-center justify-center">
+                          <span className="text-xs text-indigo-300 italic">Image: Meditation scene</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">Daily meditation, stoic practices, and mental clarity exercises</p>
                     </div>
-                    <div className="bg-gray-700 rounded-lg p-4 h-36 flex flex-col justify-between">
-                      <div className="font-semibold text-lg">Body & Health</div>
-                      <p className="text-sm text-gray-300">Workout programs, nutrition plans, and supplementation guidance</p>
+                    <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg p-4 h-40 flex flex-col justify-between group hover:from-purple-900 hover:to-purple-950 transition-all duration-300">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                          <Activity className="h-5 w-5 text-purple-400" />
+                        </div>
+                        <div className="font-semibold text-lg">Body & Health</div>
+                      </div>
+                      <div className="mt-2 overflow-hidden rounded-md">
+                        <div className="w-full h-16 bg-gradient-to-r from-purple-500/10 to-pink-500/10 flex items-center justify-center">
+                          <span className="text-xs text-purple-300 italic">Image: Workout training</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">Workout programs, nutrition plans, and supplementation guidance</p>
                     </div>
-                    <div className="bg-gray-700 rounded-lg p-4 h-36 flex flex-col justify-between">
-                      <div className="font-semibold text-lg">Personal Growth</div>
-                      <p className="text-sm text-gray-300">Skill development, habit tracking, and productivity systems</p>
+                    <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg p-4 h-40 flex flex-col justify-between group hover:from-blue-900 hover:to-blue-950 transition-all duration-300">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                          <Award className="h-5 w-5 text-blue-400" />
+                        </div>
+                        <div className="font-semibold text-lg">Personal Growth</div>
+                      </div>
+                      <div className="mt-2 overflow-hidden rounded-md">
+                        <div className="w-full h-16 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 flex items-center justify-center">
+                          <span className="text-xs text-blue-300 italic">Image: Achievement goals</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">Skill development, habit tracking, and productivity systems</p>
                     </div>
-                    <div className="bg-gray-700 rounded-lg p-4 h-36 flex flex-col justify-between">
-                      <div className="font-semibold text-lg">Community</div>
-                      <p className="text-sm text-gray-300">Connect with like-minded individuals on similar journeys</p>
+                    <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-lg p-4 h-40 flex flex-col justify-between group hover:from-emerald-900 hover:to-emerald-950 transition-all duration-300">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mr-3">
+                          <Users className="h-5 w-5 text-emerald-400" />
+                        </div>
+                        <div className="font-semibold text-lg">Community</div>
+                      </div>
+                      <div className="mt-2 overflow-hidden rounded-md">
+                        <div className="w-full h-16 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 flex items-center justify-center">
+                          <span className="text-xs text-emerald-300 italic">Image: Community support</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-300 mt-2">Connect with like-minded individuals on similar journeys</p>
                     </div>
                   </div>
                 </div>
-                <div className="px-6 pt-2 pb-8 bg-gray-700 sm:p-10 sm:pt-6">
+                <div className="px-6 pt-4 pb-8 bg-gradient-to-r from-gray-800 to-gray-900 sm:p-10 sm:pt-6">
                   <div className="flex items-center justify-center">
-                    <div className="text-sm text-gray-300 text-center">
-                      Join thousands of others who have transformed their lives with BeastMode
+                    <div className="flex items-center space-x-1">
+                      <CheckCircle className="h-5 w-5 text-green-400" />
+                      <span className="text-sm text-gray-300">Join thousands who've transformed their lives with BeastMode</span>
                     </div>
                   </div>
                 </div>
