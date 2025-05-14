@@ -302,32 +302,7 @@ export function StreakHabitTracker() {
     };
   }, []);
   
-  // Listen for the custom event to add prefilled habits
-  useEffect(() => {
-    const handlePrefilledHabit = (event: any) => {
-      const habitData = event.detail;
-      setNewHabit({
-        title: habitData.title,
-        description: habitData.description,
-        icon: typeof habitData.icon === 'string' 
-          ? habitData.icon 
-          : habitData.icon.type?.name?.toLowerCase() || 'activity',
-        impact: habitData.impact,
-        effort: habitData.effort,
-        timeCommitment: habitData.timeCommitment,
-        frequency: habitData.frequency as Frequency,
-        isAbsolute: !!habitData.isAbsolute,
-        category: habitData.category || 'mind'
-      });
-      setShowAddHabitDialog(true);
-    };
-    
-    document.addEventListener('add-prefilled-habit', handlePrefilledHabit);
-    
-    return () => {
-      document.removeEventListener('add-prefilled-habit', handlePrefilledHabit);
-    };
-  }, []);
+  // No second useEffect needed - removed duplicate
 
   return (
     <Card className="shadow-md">
