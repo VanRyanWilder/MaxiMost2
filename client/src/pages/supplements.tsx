@@ -204,7 +204,10 @@ export default function Supplements() {
     } else if (sortOption === "rating") {
       return parseFloat(b.averageRating) - parseFloat(a.averageRating);
     } else if (sortOption === "costEffectiveness") {
-      return (b.costEffectiveness || 0) - (a.costEffectiveness || 0);
+      return b.valueRating - a.valueRating;
+    } else if (sortOption === "bestValue") {
+      // Sort by best value flag first, then by value rating
+      return b.bestValue === a.bestValue ? b.valueRating - a.valueRating : b.bestValue ? -1 : 1;
     } else {
       return 0;
     }
@@ -279,6 +282,7 @@ export default function Supplements() {
                     <option value="upvotes">Sort by: Popularity</option>
                     <option value="rating">Sort by: User Rating</option>
                     <option value="costEffectiveness">Sort by: Cost-Effectiveness</option>
+                    <option value="bestValue">Sort by: Best Value</option>
                   </select>
                 </div>
               </div>
@@ -368,15 +372,23 @@ export default function Supplements() {
                         <div className="md:w-1/3 bg-gray-50 p-5 flex flex-col justify-between">
                           <div>
                             <div className="mb-4">
-                              <h4 className="text-sm font-medium mb-1">Cost-Effectiveness:</h4>
+                              <h4 className="text-sm font-medium mb-1">Value Rating:</h4>
                               <div className="flex items-center">
                                 <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
                                   <div 
-                                    className="bg-primary h-2.5 rounded-full" 
-                                    style={{ width: `${supplement.costEffectiveness || 0}0%` }}
+                                    className={`h-2.5 rounded-full ${supplement.bestValue ? 'bg-green-500' : 'bg-primary'}`}
+                                    style={{ width: `${supplement.valueRating * 10}%` }}
                                   ></div>
                                 </div>
-                                <span className="text-sm font-medium">{supplement.costEffectiveness}/10</span>
+                                <span className="text-sm font-medium">{supplement.valueRating.toFixed(1)}/10</span>
+                              </div>
+                              {supplement.bestValue && (
+                                <div className="mt-1">
+                                  <Badge className="bg-green-500 hover:bg-green-600">Best Value</Badge>
+                                </div>
+                              )}
+                              <div className="mt-1">
+                                <span className="text-xs text-gray-500">Est. Monthly Cost: {supplement.monthlyCostEstimate}</span>
                               </div>
                             </div>
                             
