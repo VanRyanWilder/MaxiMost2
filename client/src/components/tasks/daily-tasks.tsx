@@ -491,6 +491,150 @@ export function DailyTasks() {
           </div>
         </div>
       </div>
+      
+      {/* Add Task Dialog */}
+      <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New Task</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium">Task Title</label>
+              <Input 
+                id="title"
+                value={newTask.title} 
+                onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                placeholder="What do you need to accomplish?"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">Description (Optional)</label>
+              <Textarea 
+                id="description"
+                value={newTask.description || ''} 
+                onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                placeholder="Add more details about this task"
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="category" className="text-sm font-medium">Category</label>
+                <Select 
+                  value={newTask.category} 
+                  onValueChange={(value) => setNewTask({...newTask, category: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Mind">Mind</SelectItem>
+                    <SelectItem value="Body">Body</SelectItem>
+                    <SelectItem value="Spirit">Spirit</SelectItem>
+                    <SelectItem value="Health">Health</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="frequency" className="text-sm font-medium">Frequency</label>
+                <Select 
+                  value={newTask.frequency} 
+                  onValueChange={(value) => setNewTask({...newTask, frequency: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Must-Do">Must-Do Daily</SelectItem>
+                    <SelectItem value="3-4x Week">3-4 Times/Week</SelectItem>
+                    <SelectItem value="1-2x Week">1-2 Times/Week</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddTaskDialog(false)}>Cancel</Button>
+            <Button onClick={handleAddTask} disabled={!newTask.title}>Add Task</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Edit Task Dialog */}
+      <Dialog open={showEditTaskDialog} onOpenChange={setShowEditTaskDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Task</DialogTitle>
+          </DialogHeader>
+          {editingTask && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="edit-title" className="text-sm font-medium">Task Title</label>
+                <Input 
+                  id="edit-title"
+                  value={editingTask.title} 
+                  onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="edit-description" className="text-sm font-medium">Description (Optional)</label>
+                <Textarea 
+                  id="edit-description"
+                  value={editingTask.description || ''} 
+                  onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="edit-category" className="text-sm font-medium">Category</label>
+                  <Select 
+                    value={editingTask.category} 
+                    onValueChange={(value) => setEditingTask({...editingTask, category: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Mind">Mind</SelectItem>
+                      <SelectItem value="Body">Body</SelectItem>
+                      <SelectItem value="Spirit">Spirit</SelectItem>
+                      <SelectItem value="Health">Health</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <label htmlFor="edit-frequency" className="text-sm font-medium">Frequency</label>
+                  <Select 
+                    value={editingTask.frequency} 
+                    onValueChange={(value) => setEditingTask({...editingTask, frequency: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Must-Do">Must-Do Daily</SelectItem>
+                      <SelectItem value="3-4x Week">3-4 Times/Week</SelectItem>
+                      <SelectItem value="1-2x Week">1-2 Times/Week</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditTaskDialog(false)}>Cancel</Button>
+            <Button onClick={saveEditedTask} disabled={!editingTask?.title}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
