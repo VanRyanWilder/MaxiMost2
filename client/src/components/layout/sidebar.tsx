@@ -120,7 +120,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   return (
     <aside 
       className={cn(
-        "w-64 bg-dark text-white fixed h-full overflow-y-auto transition-transform duration-300 ease-in-out z-30",
+        "w-64 bg-muted text-foreground fixed h-full overflow-y-auto transition-transform duration-300 ease-in-out z-30",
         isOpen ? "transform-none" : "-translate-x-full lg:translate-x-0"
       )}
     >
@@ -137,22 +137,22 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         {!userLoading && user && (
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
                 <h3 className="font-semibold">{user.name}</h3>
-                <p className="text-xs text-gray-400">12-Week Program</p>
+                <p className="text-xs text-muted-foreground">12-Week Program</p>
               </div>
             </div>
-            <div className="bg-gray-800 rounded-lg p-3">
+            <div className="bg-accent rounded-lg p-3">
               <div className="flex justify-between mb-1.5">
-                <span className="text-sm text-gray-400">Program Progress</span>
+                <span className="text-sm text-accent-foreground">Program Progress</span>
                 <span className="text-sm font-medium">32%</span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div className="bg-primary h-2 rounded-full" style={{ width: "32%" }}></div>
               </div>
             </div>
@@ -169,7 +169,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                       "flex items-center space-x-3 p-3 rounded-lg", 
                       location === item.path 
                         ? "bg-primary bg-opacity-20 text-primary" 
-                        : "hover:bg-gray-800 text-white"
+                        : "hover:bg-accent text-foreground"
                     )}
                   >
                     {item.icon}
@@ -182,14 +182,14 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="p-6 border-t border-gray-700">
+      <div className="p-6 border-t border-border">
         <Link href="/settings">
-          <a className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800">
+          <a className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent text-foreground">
             <Settings className="w-5 h-5" />
             <span>Settings</span>
           </a>
         </Link>
-        <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-800 text-red-400 w-full text-left">
+        <button className="flex items-center space-x-3 p-3 rounded-lg hover:bg-accent text-destructive w-full text-left">
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
         </button>
