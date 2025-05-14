@@ -6,7 +6,7 @@ import { ProgressCard } from "@/components/dashboard/progress-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { AIMotivationalCompanion } from "@/components/dashboard/ai-motivational-companion";
 import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
-import { LoopHabitTracker } from "@/components/dashboard/loop-habit-tracker";
+import { StreakHabitTracker } from "@/components/dashboard/streak-habit-tracker";
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
 import { ResourceLibrary } from "@/components/resources/resource-library";
@@ -33,7 +33,7 @@ export default function Dashboard() {
                     <h2 className="text-xl font-bold">High-ROI Habits</h2>
                     <TabsList>
                       <TabsTrigger value="loop" className="text-xs">
-                        Loop Tracker
+                        Streak View
                       </TabsTrigger>
                       <TabsTrigger value="list" className="text-xs">
                         List View
@@ -42,7 +42,7 @@ export default function Dashboard() {
                   </div>
                   
                   <TabsContent value="loop" className="mt-0">
-                    <LoopHabitTracker />
+                    <StreakHabitTracker />
                   </TabsContent>
                   
                   <TabsContent value="list" className="mt-0">
