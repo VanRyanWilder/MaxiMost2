@@ -443,6 +443,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Get a specific vote
+  app.get("/api/supplements/reviews/helpful/:reviewId/:userId", async (req, res) => {
+    try {
+      const reviewId = parseInt(req.params.reviewId);
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(reviewId) || isNaN(userId)) {
+        return res.status(400).json({ message: "Invalid review ID or user ID" });
+      }
+      
+      const vote = await storage.getReviewHelpfulVote(reviewId, userId);
+      if (!vote) {
+        return res.status(404).json({ message: "Vote not found" });
+      }
+      
+      res.json(vote);
+    } catch (error) {
+      console.error("Get vote error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
   // Supplement Votes routes
   app.post("/api/supplements/votes", async (req, res) => {
     try {
