@@ -858,14 +858,14 @@ export function StreakHabitTracker() {
       {/* Edit Habit Dialog */}
       <Dialog open={showEditHabitDialog} onOpenChange={setShowEditHabitDialog}>
         <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col overflow-hidden">
-          <DialogHeader>
+          <DialogHeader className="pb-2">
             <DialogTitle>Edit Habit</DialogTitle>
             <DialogDescription>
               Update your habit details and tracking preferences
             </DialogDescription>
           </DialogHeader>
           
-          <div className="flex-1 overflow-y-auto pr-1 space-y-4 my-2">
+          <div className="flex-1 overflow-y-auto pr-1 space-y-4 my-2" style={{ maxHeight: 'calc(80vh - 180px)' }}>
             <div>
               <Label htmlFor="edit-habit-title">Habit Title*</Label>
               <Input 
