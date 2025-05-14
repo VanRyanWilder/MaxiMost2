@@ -51,8 +51,8 @@ export default function Dashboard() {
                 </Tabs>
               </div>
               <div className="space-y-6">
-                <AIMotivationalCompanion />
                 <DailyMotivation />
+                <AIMotivationalCompanion />
               </div>
             </div>
             
