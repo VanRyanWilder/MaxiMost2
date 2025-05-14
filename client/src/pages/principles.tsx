@@ -138,20 +138,68 @@ export default function Principles() {
       color: "sky"
     },
     {
-      id: "4-hour-work-week",
-      title: "The 4-Hour Work Week",
-      author: "Tim Ferriss",
-      description: "Escape the 9-5 by eliminating waste, automating systems, and focusing on effective actions.",
-      icon: <BarChart className="h-6 w-6 text-rose-500" />,
+      id: "discipline-equals-freedom",
+      title: "Discipline Equals Freedom",
+      author: "Jocko Willink",
+      description: "Master your mind, conquer weakness, and develop unwavering discipline to attain true freedom in all aspects of life.",
+      icon: <Target className="h-6 w-6 text-slate-500" />,
       key_principles: [
-        "Apply the Pareto Principle (80/20 rule) ruthlessly",
-        "Calculate the real value of your time with your effective hourly rate",
-        "Eliminate before you optimize",
-        "Batch similar tasks together",
-        "Practice selective ignorance to avoid information overload"
+        "Wake up early - own the morning to own your day",
+        "Physical training builds mental toughness",
+        "Focus on things you can control, detach from what you cannot",
+        "Prioritize and execute - handle problems one at a time",
+        "Develop balanced discipline across all life domains"
       ],
-      application: "Identify your highest-value activities and ruthlessly eliminate, automate, or delegate everything else.",
+      application: "Begin with consistent 4:30am wake-ups, immediate physical training, and strategic prioritization of the day's tasks.",
+      color: "slate"
+    },
+    {
+      id: "field-manual",
+      title: "The Field Manual",
+      author: "Jocko Willink",
+      description: "A tactical guide to overcoming procrastination, pursuing excellence, and winning the war against weakness.",
+      icon: <Zap className="h-6 w-6 text-zinc-500" />,
+      key_principles: [
+        "No Bad Days - maintain unwavering standards regardless of circumstances",
+        "Extreme Ownership - take complete responsibility for your actions and results",
+        "Discipline = Freedom - structure creates true autonomy",
+        "Balanced approach to fitness and nutrition",
+        "Psychological warfare against your own weakness"
+      ],
+      application: "Apply 'default aggressive' mindset by moving toward challenges rather than avoiding them, starting with your most difficult tasks each day.",
+      color: "zinc"
+    },
+    {
+      id: "cant-hurt-me",
+      title: "Can't Hurt Me",
+      author: "David Goggins",
+      description: "Master your mind and defy the odds through a journey of self-discovery, extreme discipline, and mental toughness.",
+      icon: <Brain className="h-6 w-6 text-rose-500" />,
+      key_principles: [
+        "The 40% Rule - when your mind says you're done, you're only 40% done",
+        "The accountability mirror - face your failures and weaknesses honestly",
+        "Take souls - outwork everyone around you",
+        "Remove the governor from your mind through callusing",
+        "Embrace suffering as the path to growth"
+      ],
+      application: "Apply the Cookie Jar method: collect and mentally catalog your achievements to draw strength during difficult challenges.",
       color: "rose"
+    },
+    {
+      id: "never-finished",
+      title: "Never Finished",
+      author: "David Goggins",
+      description: "Continue the journey beyond physical limits into mental mastery, sustained excellence, and perpetual improvement.",
+      icon: <BarChart className="h-6 w-6 text-orange-500" />,
+      key_principles: [
+        "Uncommon among uncommon - constantly raise your standards",
+        "Visualization of success and obstacles in advance",
+        "Develop 'armor' through deliberate hardship",
+        "The true value of rest and recovery in sustained performance",
+        "Finding purpose beyond personal achievement"
+      ],
+      application: "Schedule regular 'forced discomfort' sessions weekly to strengthen mental resilience and prevent complacency.",
+      color: "orange"
     }
   ];
 
@@ -171,7 +219,7 @@ export default function Principles() {
               </div>
               <div className="inline-flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
-                <span className="text-sm font-medium">7 Core Methodologies</span>
+                <span className="text-sm font-medium">11 Core Methodologies</span>
               </div>
             </div>
             
