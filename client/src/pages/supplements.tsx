@@ -32,6 +32,9 @@ interface Supplement {
   downvotes: number;
   totalReviews: number;
   averageRating: string;
+  valueRating: number;
+  monthlyCostEstimate: string;
+  bestValue: boolean;
   imageUrl: string | null;
   amazonUrl: string | null;
   createdAt: string;
