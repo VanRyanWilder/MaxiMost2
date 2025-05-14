@@ -12,6 +12,7 @@ import {
   insertSupplementSchema,
   insertSupplementReviewSchema,
   insertSupplementVoteSchema,
+  insertReviewHelpfulVoteSchema,
   insertBodyStatSchema,
   insertBloodworkSchema
 } from "@shared/schema";
