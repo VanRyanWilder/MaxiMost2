@@ -25,7 +25,9 @@ import {
   Pencil,
   Trash2,
   PlusCircle,
-  Filter
+  Filter,
+  BarChart, 
+  TrendingUp
 } from "lucide-react";
 import {
   Dialog,
@@ -130,7 +132,9 @@ export function HighRoiActivities() {
   // Get today's principle based on date
   const getTodaysPrinciple = () => {
     const today = new Date();
-    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    const startOfYear = new Date(today.getFullYear(), 0, 0);
+    const diff = today.getTime() - startOfYear.getTime();
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
     return principleSummaries[dayOfYear % principleSummaries.length];
   };
   
@@ -214,8 +218,32 @@ export function HighRoiActivities() {
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   
+  // State for today's principle
+  const [todaysPrinciple, setTodaysPrinciple] = useState<PrincipleContent>(getTodaysPrinciple());
+  const [showPrincipleDetails, setShowPrincipleDetails] = useState(false);
+  
+  // State for new custom habit
+  const [newHabit, setNewHabit] = useState<{
+    title: string;
+    description: string;
+    impact: number;
+    effort: number;
+    timeCommitment: string;
+    frequency: Frequency;
+    isAbsolute: boolean;
+  }>({
+    title: "",
+    description: "",
+    impact: 5,
+    effort: 3,
+    timeCommitment: "",
+    frequency: "daily",
+    isAbsolute: false
+  });
+  
   // Dialog states
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  const [addHabitDialogOpen, setAddHabitDialogOpen] = useState(false);
   
   // Load saved data from localStorage on component mount
   useEffect(() => {
@@ -425,6 +453,57 @@ export function HighRoiActivities() {
     );
   };
   
+  // Create a new custom habit
+  const createCustomHabit = () => {
+    if (!newHabit.title || !newHabit.timeCommitment) {
+      return; // Validate required fields
+    }
+    
+    const customHabitId = `custom-${Date.now()}`;
+    const iconOptions = [
+      <Brain className="h-8 w-8 text-purple-500" />,
+      <Activity className="h-8 w-8 text-emerald-500" />,
+      <BookOpen className="h-8 w-8 text-blue-500" />,
+      <Sun className="h-8 w-8 text-amber-500" />
+    ];
+    
+    const newCustomHabit: HighRoiActivity = {
+      id: customHabitId,
+      title: newHabit.title,
+      description: newHabit.description,
+      icon: iconOptions[Math.floor(Math.random() * iconOptions.length)],
+      impact: newHabit.impact,
+      effort: newHabit.effort,
+      timeCommitment: newHabit.timeCommitment,
+      frequency: newHabit.frequency,
+      isAbsolute: newHabit.isAbsolute,
+      streak: 0,
+      type: "custom"
+    };
+    
+    // Add to activities list
+    setActivities(prev => [...prev, newCustomHabit]);
+    
+    // If it's a must-do activity, add it to today's plan
+    if (newHabit.isAbsolute) {
+      setSelectedActivities(prev => [...prev, customHabitId]);
+      saveCurrentPlan();
+    }
+    
+    // Reset form
+    setNewHabit({
+      title: "",
+      description: "",
+      impact: 5,
+      effort: 3,
+      timeCommitment: "",
+      frequency: "daily",
+      isAbsolute: false
+    });
+    
+    setAddHabitDialogOpen(false);
+  };
+  
   // Get absolute and non-absolute activities
   const absoluteActivities = todaysPlanActivities.filter(a => a.isAbsolute);
   const optionalActivities = todaysPlanActivities.filter(a => !a.isAbsolute);
@@ -454,6 +533,15 @@ export function HighRoiActivities() {
             >
               <ListFilter className="h-4 w-4" />
               Customize Plan
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setAddHabitDialogOpen(true)}
+              className="flex items-center gap-1"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add Custom Habit
             </Button>
           </div>
         </div>
@@ -505,8 +593,23 @@ export function HighRoiActivities() {
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium text-base">{activity.title}</h3>
                           <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                          {activity.type === "principle" && (
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              onClick={() => setShowPrincipleDetails(true)}
+                              className="h-5 px-1.5 text-xs ml-auto text-primary"
+                            >
+                              Read Today's Principle
+                            </Button>
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {activity.type === "principle" 
+                            ? `Today: "${todaysPrinciple.title}" by ${todaysPrinciple.author}`
+                            : activity.description
+                          }
+                        </p>
                         <div className="flex items-center gap-3 mt-2">
                           <div className="bg-secondary/30 px-2 py-1 rounded text-xs flex items-center gap-1">
                             <Clock className="h-3 w-3" />
@@ -576,6 +679,176 @@ export function HighRoiActivities() {
           </div>
         )}
         
+        {/* Daily Principle Dialog */}
+        <Dialog open={showPrincipleDetails} onOpenChange={setShowPrincipleDetails}>
+          <DialogContent className="sm:max-w-[550px]">
+            <DialogHeader>
+              <DialogTitle className="text-xl">{todaysPrinciple.title}</DialogTitle>
+              <DialogDescription className="text-sm flex items-center mt-1">
+                <span className="font-medium">{todaysPrinciple.author}</span>
+                <span className="mx-2">•</span>
+                <span className="italic">{todaysPrinciple.source}</span>
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="my-4 p-4 bg-secondary/10 rounded-lg border border-secondary/20">
+              <p className="text-base leading-relaxed">{todaysPrinciple.content}</p>
+            </div>
+            
+            <div className="mt-2 bg-primary/10 rounded-lg p-3 border border-primary/20">
+              <h4 className="font-medium text-sm flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                Application
+              </h4>
+              <p className="text-sm mt-1">
+                Reflect on how you can apply this principle in your life today. 
+                Small, consistent actions based on these principles lead to exponential growth.
+              </p>
+            </div>
+            
+            <DialogFooter className="mt-4">
+              <Button onClick={() => setShowPrincipleDetails(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
+        {/* Add Custom Habit Dialog */}
+        <Dialog open={addHabitDialogOpen} onOpenChange={setAddHabitDialogOpen}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Create Custom Habit</DialogTitle>
+              <DialogDescription>
+                Add your own custom habits to track. High-ROI activities produce the most results with minimal effort.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 my-2">
+              <div>
+                <Label htmlFor="habit-title">Habit Title*</Label>
+                <input 
+                  id="habit-title"
+                  value={newHabit.title}
+                  onChange={(e) => setNewHabit({...newHabit, title: e.target.value})}
+                  placeholder="e.g. Cold Shower, Meditation, etc."
+                  className="w-full mt-1 rounded-md border border-border px-3 py-2"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="habit-description">Description</Label>
+                <textarea
+                  id="habit-description"
+                  value={newHabit.description}
+                  onChange={(e) => setNewHabit({...newHabit, description: e.target.value})}
+                  placeholder="What is this habit for? What are its benefits?"
+                  className="w-full mt-1 rounded-md border border-border px-3 py-2 h-20 resize-none"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="habit-time">Time Commitment*</Label>
+                  <input 
+                    id="habit-time"
+                    value={newHabit.timeCommitment}
+                    onChange={(e) => setNewHabit({...newHabit, timeCommitment: e.target.value})}
+                    placeholder="e.g. 10 min/day"
+                    className="w-full mt-1 rounded-md border border-border px-3 py-2"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="habit-frequency">Frequency</Label>
+                  <select
+                    id="habit-frequency"
+                    value={newHabit.frequency}
+                    onChange={(e) => setNewHabit({...newHabit, frequency: e.target.value as Frequency})}
+                    className="w-full mt-1 rounded-md border border-border px-3 py-2 bg-background"
+                  >
+                    <option value="daily">Daily</option>
+                    <option value="2x-week">2x per Week</option>
+                    <option value="3x-week">3x per Week</option>
+                    <option value="4x-week">4x per Week</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Impact (1-10)</Label>
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={newHabit.impact}
+                      onChange={(e) => setNewHabit({...newHabit, impact: parseInt(e.target.value)})}
+                      className="flex-1"
+                    />
+                    <span className="w-6 text-center font-medium">{newHabit.impact}</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label>Effort (1-10)</Label>
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="range"
+                      min="1"
+                      max="10"
+                      value={newHabit.effort}
+                      onChange={(e) => setNewHabit({...newHabit, effort: parseInt(e.target.value)})}
+                      className="flex-1"
+                    />
+                    <span className="w-6 text-center font-medium">{newHabit.effort}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="must-do"
+                    checked={newHabit.isAbsolute}
+                    onCheckedChange={(checked) => setNewHabit({...newHabit, isAbsolute: checked})}
+                  />
+                  <Label htmlFor="must-do">Mark as "Must-Do" activity</Label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 ml-7">
+                  Must-do activities are your non-negotiable daily habits
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-secondary/10 p-3 rounded-lg mt-2">
+              <h4 className="text-sm font-medium mb-1 flex items-center gap-1">
+                <BarChart className="h-4 w-4 text-primary" />
+                ROI Calculator
+              </h4>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Return on Investment:</span>
+                <span className="font-bold text-primary">{(newHabit.impact / newHabit.effort * 10).toFixed(1)}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Higher ROI = more results for less effort
+              </p>
+            </div>
+            
+            <DialogFooter className="mt-4">
+              <Button variant="outline" onClick={() => setAddHabitDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={createCustomHabit}>
+                Add Habit
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        
         {/* Activity Plan Dialog */}
         <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
           <DialogContent className="sm:max-w-[500px]">
@@ -638,8 +911,17 @@ export function HighRoiActivities() {
               
               <Separator className="my-4" />
               
-              <div className="mb-2">
+              <div className="flex justify-between items-center mb-2">
                 <h4 className="font-medium">Available Activities</h4>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setAddHabitDialogOpen(true)}
+                  className="h-7 px-2 text-xs flex items-center gap-1"
+                >
+                  <PlusCircle className="h-3.5 w-3.5" />
+                  Create New
+                </Button>
               </div>
               
               <div className="space-y-2 max-h-[150px] overflow-y-auto p-1">
