@@ -19,6 +19,7 @@ import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
 import Progress from "@/pages/progress";
 import Motivation from "@/pages/motivation";
+import Research from "@/pages/research";
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
@@ -93,6 +94,10 @@ function App() {
       
       <Route path="/motivation">
         <PrivateRoute component={Motivation} />
+      </Route>
+      
+      <Route path="/research">
+        <PrivateRoute component={Research} />
       </Route>
       
       <Route path="/pricing">
