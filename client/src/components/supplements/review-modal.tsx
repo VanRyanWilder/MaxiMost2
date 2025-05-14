@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -6,10 +6,29 @@ import { useUser } from "@/context/user-context";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { StarIcon } from "lucide-react";
+import { StarIcon, ThumbsUp, Trash2, Edit, AlertCircle, Filter, Calendar, SortAsc, SortDesc } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface ReviewModalProps {
   supplementId: number;
@@ -26,11 +45,22 @@ interface Review {
   content: string | null;
   createdAt: string;
   updatedAt: string;
+  helpfulVotes: number;
+  unhelpfulVotes: number;
+  isVerifiedPurchase?: boolean;
   user: {
     id: number;
     username: string;
     name: string;
+    reviewCount?: number;
+    expertLevel?: string;
   };
+}
+
+interface ReviewHelpfulVote {
+  reviewId: number;
+  userId: number;
+  isHelpful: boolean;
 }
 
 export function ReviewModal({ supplementId, supplementName, isOpen, onClose }: ReviewModalProps) {
@@ -40,11 +70,27 @@ export function ReviewModal({ supplementId, supplementName, isOpen, onClose }: R
   const [userRating, setUserRating] = useState(5);
   const [reviewContent, setReviewContent] = useState("");
   const [hoveredStar, setHoveredStar] = useState(0);
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingReviewId, setEditingReviewId] = useState<number | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<number | null>(null);
+  const [sortOption, setSortOption] = useState<'date-desc' | 'date-asc' | 'rating-high' | 'rating-low' | 'helpful'>('date-desc');
+  const [filterOption, setFilterOption] = useState<'all' | 'verified' | '5-star' | '1-star' | 'with-content'>('all');
+  
   // Fetch reviews
-  const { data: reviews = [], isLoading } = useQuery({
+  const { data: reviewsData = [], isLoading } = useQuery({
     queryKey: [`/api/supplements/${supplementId}/reviews`],
     enabled: isOpen,
+    staleTime: 60 * 1000, // 1 minute
+  });
+  
+  // Type assertion for reviews
+  const reviews = reviewsData as Review[];
+  
+  // Fetch user's helpful votes
+  const { data: userHelpfulVotes = [] } = useQuery({
+    queryKey: [`/api/supplements/reviews/helpful/${user?.id}`],
+    enabled: isOpen && !!user,
     staleTime: 60 * 1000, // 1 minute
   });
 
