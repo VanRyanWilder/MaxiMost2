@@ -1,7 +1,7 @@
 import { 
   users, tasks, programs, resources, userTasks, metrics,
   forumPosts, forumComments, motivationalContent,
-  supplements, supplementReviews, supplementVotes,
+  supplements, supplementReviews, supplementVotes, reviewHelpfulVotes,
   bodyStats, bloodwork, sleepData, heartRateData,
   type User, type InsertUser, 
   type Program, type InsertProgram,
@@ -15,6 +15,7 @@ import {
   type Supplement, type InsertSupplement,
   type SupplementReview, type InsertSupplementReview,
   type SupplementVote, type InsertSupplementVote,
+  type ReviewHelpfulVote, type InsertReviewHelpfulVote,
   type BodyStat, type InsertBodyStat,
   type Bloodwork, type InsertBloodwork,
   type SleepData, type InsertSleepData,
