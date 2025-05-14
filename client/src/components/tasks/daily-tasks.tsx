@@ -3,7 +3,7 @@ import { type Task } from "@shared/schema";
 import { categoryColors, frequencyColors } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -497,6 +497,9 @@ export function DailyTasks() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Add New Task</DialogTitle>
+            <DialogDescription>
+              Create a new task for your daily or weekly plan
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
@@ -569,6 +572,9 @@ export function DailyTasks() {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
+            <DialogDescription>
+              Update the details of your existing task
+            </DialogDescription>
           </DialogHeader>
           {editingTask && (
             <div className="space-y-4 py-4">
