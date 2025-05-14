@@ -2,284 +2,206 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StarIcon } from "lucide-react";
+import { StarIcon, ThumbsUp, ThumbsDown, ExternalLink, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { Skeleton } from "@/components/ui/skeleton"; 
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 
+// Define the type based on our database schema
 interface Supplement {
   id: number;
   name: string;
   description: string;
-  benefits: string[];
+  benefits: string;
   dosage: string;
-  timing: string;
-  cost: string;
-  costEffectiveness: number; // 1-10 rating
-  userScore: number; // Average user score 1-5
-  votes: number;
-  category: string;
-  affiliateLink: string;
+  sideEffects: string | null;
+  interactions: string | null;
+  categories: string;
+  upvotes: number;
+  downvotes: number;
+  totalReviews: number;
+  averageRating: string;
+  imageUrl: string | null;
+  amazonUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
+
+// Extend the type with calculated/parsed fields for the UI
+interface SupplementWithParsedData extends Supplement {
+  parsedBenefits: string[];
+  parsedCategories: string[];
+  costEffectiveness?: number;
+}
+
+// Sample supplements data for initial UI development
+// This will be replaced by API data
+const sampleSupplements: Supplement[] = [
+  {
+    id: 1,
+    name: "Vitamin D3 with K2",
+    description: "Essential vitamin highlighted by both Huberman and Brecka as critical for immune function, longevity, and hormonal regulation.",
+    benefits: JSON.stringify([
+      "Immune system optimization",
+      "Bone health and calcium utilization",
+      "Hormone production support",
+      "Cardiovascular health protection"
+    ]),
+    dosage: "5,000-10,000 IU daily",
+    sideEffects: "Rare at recommended doses. Excessive amounts may lead to hypercalcemia.",
+    interactions: "May interact with certain medications including statins and blood thinners.",
+    categories: "Essential,Vitamin,Hormone",
+    upvotes: 842,
+    downvotes: 21,
+    totalReviews: 156,
+    averageRating: "4.8",
+    imageUrl: null,
+    amazonUrl: "https://www.amazon.com/dp/B07XYQJR65?tag=beastmode-20",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 2,
+    name: "Magnesium Glycinate",
+    description: "Andrew Huberman's top recommendation for sleep, neural plasticity, and recovery.",
+    benefits: JSON.stringify([
+      "Enhanced sleep architecture",
+      "Muscle relaxation and recovery",
+      "Stress resilience",
+      "Cognitive function support"
+    ]),
+    dosage: "300-400mg daily",
+    sideEffects: "Generally well-tolerated. May cause loose stools at high doses.",
+    interactions: "May interact with certain antibiotics and medications.",
+    categories: "Essential,Mineral,Sleep",
+    upvotes: 756,
+    downvotes: 18,
+    totalReviews: 124,
+    averageRating: "4.7",
+    imageUrl: null,
+    amazonUrl: "https://www.amazon.com/dp/B07RM7VXFV?tag=beastmode-20",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
 
 export default function Supplements() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All Categories");
-  const [sortOption, setSortOption] = useState<string>("cost-effectiveness");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [sortOption, setSortOption] = useState<string>("upvotes");
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
-  const supplements: Supplement[] = [
-    {
-      id: 1,
-      name: "Vitamin D3 with K2",
-      description: "Essential vitamin highlighted by both Huberman and Brecka as critical for immune function, longevity, and hormonal regulation.",
-      benefits: [
-        "Immune system optimization",
-        "Bone health and calcium utilization",
-        "Hormone production support",
-        "Cardiovascular health protection"
-      ],
-      dosage: "5,000-10,000 IU daily",
-      timing: "Morning with fat-containing meal",
-      cost: "$0.10-0.30/day",
-      costEffectiveness: 10,
-      userScore: 4.8,
-      votes: 842,
-      category: "Essential",
-      affiliateLink: "#vitamin-d3-k2-link"
+  // Get logged in user (mock for now)
+  const userId = 1; // This would come from auth context in a real app
+  
+  // Fetch supplements from the API
+  const { data: supplements, isLoading, error } = useQuery({
+    queryKey: ['/api/supplements'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+  
+  // Vote mutation
+  const voteMutation = useMutation({
+    mutationFn: (data: { userId: number, supplementId: number, voteType: string }) => {
+      return apiRequest('POST', '/api/supplements/votes', data);
     },
-    {
-      id: 2,
-      name: "Magnesium Glycinate/Threonate",
-      description: "Andrew Huberman's top recommendation for sleep, neural plasticity, and recovery. Threonate form crosses the blood-brain barrier efficiently.",
-      benefits: [
-        "Enhanced sleep architecture",
-        "Muscle relaxation and recovery",
-        "Stress resilience",
-        "Cognitive function support"
-      ],
-      dosage: "300-400mg glycinate, 100-200mg threonate",
-      timing: "Glycinate before bed, threonate morning/afternoon",
-      cost: "$0.30-0.70/day",
-      costEffectiveness: 9,
-      userScore: 4.7,
-      votes: 756,
-      category: "Essential",
-      affiliateLink: "#magnesium-link"
+    onSuccess: () => {
+      // Invalidate supplements to refresh data
+      queryClient.invalidateQueries({ queryKey: ['/api/supplements'] });
+      toast({
+        title: "Vote recorded",
+        description: "Your vote has been recorded successfully",
+      });
     },
-    {
-      id: 3,
-      name: "Omega-3 (EPA/DHA)",
-      description: "Brecka calls this 'non-negotiable' - pure, molecularly distilled fish oil with at least 1g combined EPA/DHA for inflammation control.",
-      benefits: [
-        "Reduced systemic inflammation",
-        "Enhanced brain function and neuroplasticity",
-        "Improved cardiovascular markers",
-        "Joint health optimization"
-      ],
-      dosage: "1-3g EPA/DHA combined daily",
-      timing: "With meals (split dosage)",
-      cost: "$0.40-0.90/day",
-      costEffectiveness: 9,
-      userScore: 4.6,
-      votes: 801,
-      category: "Essential",
-      affiliateLink: "#omega3-link"
-    },
-    {
-      id: 4,
-      name: "Creatine Monohydrate",
-      description: "Huberman's top cognitive and physical performance enhancer with over 500 studies supporting safety and efficacy.",
-      benefits: [
-        "Increased power output and strength",
-        "Enhanced cognitive performance",
-        "Improved recovery between training",
-        "Neuroprotective properties"
-      ],
-      dosage: "5g daily (no loading phase needed)",
-      timing: "Any time (consistency matters most)",
-      cost: "$0.10-0.30/day",
-      costEffectiveness: 10,
-      userScore: 4.9,
-      votes: 936,
-      category: "Performance",
-      affiliateLink: "#creatine-link"
-    },
-    {
-      id: 5,
-      name: "Athletic Greens/AG1",
-      description: "Comprehensive micronutrient insurance policy recommended by both Huberman and Brecka for covering nutritional bases.",
-      benefits: [
-        "Comprehensive micronutrient support",
-        "Digestive enzyme optimization",
-        "Prebiotic and probiotic blend",
-        "Adaptogen and antioxidant complex"
-      ],
-      dosage: "1 serving daily",
-      timing: "Morning on empty stomach",
-      cost: "$2.50-3.30/day",
-      costEffectiveness: 7,
-      userScore: 4.5,
-      votes: 678,
-      category: "Essential",
-      affiliateLink: "#greens-link"
-    },
-    {
-      id: 6,
-      name: "Tongkat Ali (Longjack)",
-      description: "Huberman's go-to recommendation for hormonal support, particularly for testosterone optimization in both men and women.",
-      benefits: [
-        "Natural testosterone support",
-        "Libido enhancement",
-        "Energy and vitality improvement",
-        "Cortisol modulation"
-      ],
-      dosage: "400-600mg daily (with 2% eurycomanone)",
-      timing: "Morning with breakfast",
-      cost: "$0.50-1.00/day",
-      costEffectiveness: 8,
-      userScore: 4.4,
-      votes: 543,
-      category: "Hormonal",
-      affiliateLink: "#tongkat-link"
-    },
-    {
-      id: 7,
-      name: "Berberine",
-      description: "Gary Brecka's 'metformin alternative' for blood glucose regulation and metabolic health optimization.",
-      benefits: [
-        "Blood glucose management",
-        "AMPK activation pathway",
-        "Lipid profile improvement",
-        "Gut health and microbiome support"
-      ],
-      dosage: "500mg, 2-3x daily",
-      timing: "Before or with meals",
-      cost: "$0.60-1.00/day",
-      costEffectiveness: 8,
-      userScore: 4.3,
-      votes: 478,
-      category: "Metabolic",
-      affiliateLink: "#berberine-link"
-    },
-    {
-      id: 8,
-      name: "Protein Powder (Whey Isolate)",
-      description: "Complete protein source with all essential amino acids, recommended by Huberman for muscle protein synthesis and recovery.",
-      benefits: [
-        "Muscle recovery acceleration",
-        "Lean mass preservation",
-        "Appetite regulation",
-        "Immune system support"
-      ],
-      dosage: "20-40g per serving, 1-2 servings daily",
-      timing: "Post-workout and/or between meals",
-      cost: "$1.00-2.00/day",
-      costEffectiveness: 9,
-      userScore: 4.7,
-      votes: 865,
-      category: "Performance",
-      affiliateLink: "#protein-link"
-    },
-    {
-      id: 9,
-      name: "Apigenin",
-      description: "Huberman's recommendation for sleep enhancement and estrogen management, naturally found in chamomile and parsley.",
-      benefits: [
-        "Sleep quality enhancement",
-        "Estrogen modulation",
-        "Antioxidant properties",
-        "Cognitive support"
-      ],
-      dosage: "50mg daily",
-      timing: "30-60 minutes before bedtime",
-      cost: "$0.20-0.40/day",
-      costEffectiveness: 8,
-      userScore: 4.2,
-      votes: 342,
-      category: "Sleep",
-      affiliateLink: "#apigenin-link"
-    },
-    {
-      id: 10,
-      name: "L-Theanine",
-      description: "Amino acid that promotes relaxation without sedation, particularly effective when combined with caffeine.",
-      benefits: [
-        "Calm focus enhancement",
-        "Stress reduction",
-        "Alpha brain wave promotion",
-        "Sleep quality improvement"
-      ],
-      dosage: "100-200mg, 1-3x daily",
-      timing: "Morning with coffee, afternoon, and/or evening",
-      cost: "$0.10-0.25/day",
-      costEffectiveness: 10,
-      userScore: 4.6,
-      votes: 723,
-      category: "Cognitive",
-      affiliateLink: "#theanine-link"
-    },
-    {
-      id: 11,
-      name: "Fadogia Agrestis",
-      description: "Paired with Tongkat Ali in Huberman's hormone optimization protocol for enhanced testosterone support.",
-      benefits: [
-        "Luteinizing hormone support",
-        "Testosterone level optimization",
-        "Libido enhancement",
-        "Recovery acceleration"
-      ],
-      dosage: "600mg daily (10:1 extract)",
-      timing: "Morning with breakfast",
-      cost: "$0.70-1.20/day",
-      costEffectiveness: 7,
-      userScore: 4.1,
-      votes: 385,
-      category: "Hormonal",
-      affiliateLink: "#fadogia-link"
-    },
-    {
-      id: 12,
-      name: "NAC (N-Acetyl Cysteine)",
-      description: "Brecka's recommendation for glutathione production and detoxification support, especially important in modern environments.",
-      benefits: [
-        "Master antioxidant glutathione production",
-        "Liver detoxification enhancement",
-        "Respiratory pathway support",
-        "Mental clarity improvement"
-      ],
-      dosage: "600-1200mg daily",
-      timing: "Morning or evening",
-      cost: "$0.30-0.60/day",
-      costEffectiveness: 8,
-      userScore: 4.4,
-      votes: 503,
-      category: "Antioxidant",
-      affiliateLink: "#nac-link"
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: "Failed to record your vote. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Vote error:", error);
     }
-  ];
+  });
+  
+  // Handle voting
+  const handleVote = (supplementId: number, voteType: string) => {
+    voteMutation.mutate({ userId, supplementId, voteType });
+  };
+  
+  // Parse benefits and categories from string to arrays
+  const parseSupplementData = (supplement: Supplement): SupplementWithParsedData => {
+    // Parse benefits - either a JSON string or comma-separated list
+    let parsedBenefits: string[] = [];
+    try {
+      // Try parsing as JSON first
+      parsedBenefits = JSON.parse(supplement.benefits);
+    } catch (e) {
+      // Fall back to comma-separated parsing
+      parsedBenefits = supplement.benefits.split(',').map(b => b.trim());
+    }
+    
+    // Parse categories
+    const parsedCategories = supplement.categories.split(',').map(c => c.trim());
+    
+    // Calculate cost-effectiveness (mock for now, would be based on some algorithm)
+    const costEffectiveness = Math.round((supplement.upvotes / (supplement.upvotes + supplement.downvotes || 1)) * 10);
+    
+    return {
+      ...supplement,
+      parsedBenefits,
+      parsedCategories,
+      costEffectiveness
+    };
+  };
+  
+  // Use sample data during development, will be replaced by API data
+  const availableSupplements = supplements || sampleSupplements;
+  
+  // Process all supplements with parsed data
+  const processedSupplements: SupplementWithParsedData[] = 
+    availableSupplements.map(s => parseSupplementData(s as Supplement));
+  
+  // Get unique categories from all supplements
+  const allCategories = Array.from(
+    new Set(processedSupplements.flatMap(s => s.parsedCategories))
+  ).sort();
   
   // Filter supplements by category
-  const filteredSupplements = selectedCategory !== "All Categories" 
-    ? supplements.filter(supplement => supplement.category === selectedCategory)
-    : supplements;
-    
+  const filteredSupplements = selectedCategory === "All" 
+    ? processedSupplements
+    : processedSupplements.filter(supplement => 
+        supplement.parsedCategories.includes(selectedCategory)
+      );
+      
   // Sort supplements based on selected option
   const sortedSupplements = [...filteredSupplements].sort((a, b) => {
-    if (sortOption === "cost-effectiveness") {
-      return b.costEffectiveness - a.costEffectiveness;
-    } else if (sortOption === "user-score") {
-      return b.userScore - a.userScore;
-    } else if (sortOption === "popularity") {
-      return b.votes - a.votes;
+    if (sortOption === "upvotes") {
+      return b.upvotes - a.upvotes;
+    } else if (sortOption === "rating") {
+      return parseFloat(b.averageRating) - parseFloat(a.averageRating);
+    } else if (sortOption === "costEffectiveness") {
+      return (b.costEffectiveness || 0) - (a.costEffectiveness || 0);
     } else {
       return 0;
     }
   });
   
   // Generate star ratings
-  const renderStars = (score: number) => {
+  const renderStars = (score: string) => {
     const stars = [];
-    const fullStars = Math.floor(score);
-    const halfStar = score % 1 >= 0.5;
+    const numericScore = parseFloat(score);
+    const fullStars = Math.floor(numericScore);
+    const halfStar = numericScore % 1 >= 0.5;
     
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
@@ -316,7 +238,7 @@ export default function Supplements() {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
                   <h3 className="font-bold text-xl">Supplement Rankings</h3>
-                  <p className="text-sm text-gray-500">Ranked by effectiveness, cost, and user ratings</p>
+                  <p className="text-sm text-gray-500">Ranked by efficacy, user ratings, and scientific evidence</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -325,12 +247,10 @@ export default function Supplements() {
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                   >
-                    <option>All Categories</option>
-                    <option>Essential</option>
-                    <option>Performance</option>
-                    <option>Metabolic</option>
-                    <option>Antioxidant</option>
-                    <option>Adaptogen</option>
+                    <option value="All">All Categories</option>
+                    {allCategories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
                   </select>
                   
                   <select 
@@ -338,117 +258,168 @@ export default function Supplements() {
                     value={sortOption}
                     onChange={(e) => setSortOption(e.target.value)}
                   >
-                    <option value="cost-effectiveness">Sort by: Cost-Effectiveness</option>
-                    <option value="user-score">Sort by: User Rating</option>
-                    <option value="popularity">Sort by: Popularity</option>
+                    <option value="upvotes">Sort by: Popularity</option>
+                    <option value="rating">Sort by: User Rating</option>
+                    <option value="costEffectiveness">Sort by: Cost-Effectiveness</option>
                   </select>
                 </div>
               </div>
               
-              <div className="space-y-4">
-                {sortedSupplements.map((supplement) => (
-                  <Card key={supplement.id} className="overflow-hidden">
-                    <div className="flex flex-col md:flex-row">
-                      <div className="md:w-2/3 p-5">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-bold text-lg">{supplement.name}</h3>
-                            <div className="flex items-center space-x-2 mt-1 mb-2">
-                              <div className="flex">
-                                {renderStars(supplement.userScore)}
-                              </div>
-                              <span className="text-sm text-gray-500">({supplement.votes} votes)</span>
-                            </div>
-                          </div>
-                          <span className="text-xs px-2 py-1 bg-gray-100 rounded-full">
-                            {supplement.category}
-                          </span>
-                        </div>
-                        
-                        <p className="text-sm text-gray-600 mb-3">{supplement.description}</p>
-                        
-                        <div className="mb-3">
-                          <h4 className="text-sm font-medium mb-1">Benefits:</h4>
-                          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-                            {supplement.benefits.map((benefit, index) => (
-                              <li key={index} className="text-sm text-gray-600 flex items-center">
-                                <span className="mr-2 text-primary">•</span> {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                          <div>
-                            <span className="text-gray-500">Dosage:</span>
-                            <p>{supplement.dosage}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Timing:</span>
-                            <p>{supplement.timing}</p>
-                          </div>
-                          <div>
-                            <span className="text-gray-500">Cost:</span>
-                            <p>{supplement.cost}</p>
-                          </div>
-                        </div>
+              {isLoading ? (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <Card key={i} className="overflow-hidden">
+                      <div className="p-5">
+                        <Skeleton className="h-6 w-48 mb-2" />
+                        <Skeleton className="h-4 w-32 mb-4" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-4 w-3/4" />
                       </div>
-                      
-                      <div className="md:w-1/3 bg-gray-50 p-5 flex flex-col justify-between">
-                        <div>
-                          <div className="mb-4">
-                            <h4 className="text-sm font-medium mb-1">Cost-Effectiveness:</h4>
-                            <div className="flex items-center">
-                              <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                                <div 
-                                  className="bg-primary h-2.5 rounded-full" 
-                                  style={{ width: `${supplement.costEffectiveness * 10}%` }}
-                                ></div>
+                    </Card>
+                  ))}
+                </div>
+              ) : error ? (
+                <div className="p-8 text-center">
+                  <p className="text-red-500 mb-4">Failed to load supplements</p>
+                  <Button 
+                    onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/supplements'] })}
+                    variant="outline"
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {sortedSupplements.map((supplement) => (
+                    <Card key={supplement.id} className="overflow-hidden">
+                      <div className="flex flex-col md:flex-row">
+                        <div className="md:w-2/3 p-5">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h3 className="font-bold text-lg">{supplement.name}</h3>
+                              <div className="flex items-center space-x-2 mt-1 mb-2">
+                                <div className="flex">
+                                  {renderStars(supplement.averageRating)}
+                                </div>
+                                <span className="text-sm text-gray-500">({supplement.totalReviews} reviews)</span>
                               </div>
-                              <span className="text-sm font-medium">{supplement.costEffectiveness}/10</span>
+                            </div>
+                            <div className="flex gap-1">
+                              {supplement.parsedCategories.map(category => (
+                                <Badge key={category} variant="outline" className="text-xs px-2 py-1 bg-gray-100">
+                                  {category}
+                                </Badge>
+                              ))}
                             </div>
                           </div>
                           
-                          <div className="flex justify-between items-center mb-2 text-sm text-gray-500">
-                            <span>User Rating:</span>
-                            <span className="font-medium text-gray-700">{supplement.userScore}/5</span>
+                          <p className="text-sm text-gray-600 mb-3">{supplement.description}</p>
+                          
+                          <div className="mb-3">
+                            <h4 className="text-sm font-medium mb-1">Benefits:</h4>
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+                              {supplement.parsedBenefits.map((benefit, index) => (
+                                <li key={index} className="text-sm text-gray-600 flex items-center">
+                                  <span className="mr-2 text-primary">•</span> {benefit}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                            <div>
+                              <span className="text-gray-500">Dosage:</span>
+                              <p>{supplement.dosage}</p>
+                            </div>
+                            {supplement.sideEffects && (
+                              <div>
+                                <span className="text-gray-500">Side Effects:</span>
+                                <p className="truncate">{supplement.sideEffects}</p>
+                              </div>
+                            )}
+                            {supplement.interactions && (
+                              <div>
+                                <span className="text-gray-500">Interactions:</span>
+                                <p className="truncate">{supplement.interactions}</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                         
-                        <div className="mt-4">
-                          <Button className="w-full mb-2" variant="default">
-                            View Product
-                          </Button>
-                          <Button className="w-full" variant="outline">
-                            Upvote
-                          </Button>
+                        <div className="md:w-1/3 bg-gray-50 p-5 flex flex-col justify-between">
+                          <div>
+                            <div className="mb-4">
+                              <h4 className="text-sm font-medium mb-1">Cost-Effectiveness:</h4>
+                              <div className="flex items-center">
+                                <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
+                                  <div 
+                                    className="bg-primary h-2.5 rounded-full" 
+                                    style={{ width: `${supplement.costEffectiveness || 0}0%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-sm font-medium">{supplement.costEffectiveness}/10</span>
+                              </div>
+                            </div>
+                            
+                            <div className="mb-6">
+                              <h4 className="text-sm font-medium mb-1">Community Rating:</h4>
+                              <div className="flex gap-3">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-1"
+                                  onClick={() => handleVote(supplement.id, 'up')}
+                                  disabled={voteMutation.isPending}
+                                >
+                                  <ThumbsUp className="w-4 h-4" />
+                                  <span>{supplement.upvotes}</span>
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                  className="flex items-center gap-1"
+                                  onClick={() => handleVote(supplement.id, 'down')}
+                                  disabled={voteMutation.isPending}
+                                >
+                                  <ThumbsDown className="w-4 h-4" />
+                                  <span>{supplement.downvotes}</span>
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {supplement.amazonUrl && (
+                            <div>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button 
+                                      className="w-full flex items-center justify-center gap-2"
+                                      onClick={() => window.open(supplement.amazonUrl, '_blank')}
+                                    >
+                                      <ShieldCheck className="w-4 h-4" />
+                                      View on Amazon
+                                      <ExternalLink className="w-3 h-3 ml-1" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="text-xs">Affiliate link - we earn a commission on qualified purchases</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              
+                              <p className="text-xs text-center mt-2 text-gray-500">
+                                Quality tested & verified
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-bold text-xl mb-4">Blood Work Tracking</h3>
-              <p className="text-gray-600 mb-6">
-                Track your blood work results over time to monitor the effectiveness of your supplement protocol. 
-                Upload your lab reports to see how your biomarkers improve.
-              </p>
-              
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <div className="flex justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                  </svg>
+                    </Card>
+                  ))}
                 </div>
-                <h4 className="text-lg font-medium mb-2">Upload Blood Work Results</h4>
-                <p className="text-sm text-gray-500 mb-4">
-                  Drag and drop your PDF lab reports or click to upload
-                </p>
-                <Button>Upload Files</Button>
-              </div>
+              )}
             </div>
           </div>
         </main>
