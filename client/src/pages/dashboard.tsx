@@ -6,6 +6,8 @@ import { ProgressCard } from "@/components/dashboard/progress-card";
 import { ProgramCard } from "@/components/dashboard/program-card";
 import { MetricsCard } from "@/components/dashboard/metrics-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
+import { AIMotivationalCompanion } from "@/components/dashboard/ai-motivational-companion";
+import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
 import { DailySchedule } from "@/components/schedule/daily-schedule";
 import { ResourceLibrary } from "@/components/resources/resource-library";
@@ -34,8 +36,8 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="space-y-6">
+                <AIMotivationalCompanion />
                 <DailyMotivation />
-                <MetricsCard />
               </div>
             </div>
             
@@ -46,6 +48,9 @@ export default function Dashboard() {
                 </TabsTrigger>
                 <TabsTrigger value="schedule" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
                   Today's Schedule
+                </TabsTrigger>
+                <TabsTrigger value="progress" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
+                  Progress Analytics
                 </TabsTrigger>
                 <TabsTrigger value="resources" className="px-4 py-2 text-sm font-medium rounded-t-lg data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-700">
                   Resources
@@ -61,6 +66,10 @@ export default function Dashboard() {
               
               <TabsContent value="schedule">
                 <DailySchedule />
+              </TabsContent>
+              
+              <TabsContent value="progress">
+                <ProgressVisualization />
               </TabsContent>
               
               <TabsContent value="resources">
