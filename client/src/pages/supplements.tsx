@@ -227,6 +227,10 @@ export default function Supplements() {
     return stars;
   };
 
+  // Find the supplement details for the selected supplement
+  const selectedSupplementData = selectedSupplement ? 
+    processedSupplements.find(sup => sup.id === selectedSupplement) : null;
+
   return (
     <div className="bg-gray-50 font-sans">
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
@@ -400,31 +404,42 @@ export default function Supplements() {
                             </div>
                           </div>
                           
-                          {supplement.amazonUrl && (
-                            <div>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button 
-                                      className="w-full flex items-center justify-center gap-2"
-                                      onClick={() => window.open(supplement.amazonUrl, '_blank')}
-                                    >
-                                      <ShieldCheck className="w-4 h-4" />
-                                      View on Amazon
-                                      <ExternalLink className="w-3 h-3 ml-1" />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="text-xs">Affiliate link - we earn a commission on qualified purchases</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                              
-                              <p className="text-xs text-center mt-2 text-gray-500">
-                                Quality tested & verified
-                              </p>
-                            </div>
-                          )}
+                          <div className="space-y-3">
+                            {supplement.amazonUrl && (
+                              <div>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button 
+                                        className="w-full flex items-center justify-center gap-2"
+                                        onClick={() => window.open(supplement.amazonUrl || '', '_blank')}
+                                      >
+                                        <ShieldCheck className="w-4 h-4" />
+                                        View on Amazon
+                                        <ExternalLink className="w-3 h-3 ml-1" />
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="text-xs">Affiliate link - we earn a commission on qualified purchases</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                
+                                <p className="text-xs text-center mt-2 text-gray-500">
+                                  Quality tested & verified
+                                </p>
+                              </div>
+                            )}
+                            
+                            <Button 
+                              variant="outline"
+                              className="w-full flex items-center justify-center gap-2"
+                              onClick={() => handleOpenReviews(supplement.id)}
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              Reviews & Experiences ({supplement.totalReviews})
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </Card>
@@ -435,6 +450,16 @@ export default function Supplements() {
           </div>
         </main>
       </div>
+      
+      {/* Review Modal */}
+      {selectedSupplementData && (
+        <ReviewModal
+          supplementId={selectedSupplementData.id}
+          supplementName={selectedSupplementData.name}
+          isOpen={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
