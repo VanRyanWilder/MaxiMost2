@@ -104,11 +104,7 @@ export class DatabaseStorage implements IStorage {
     const userTasksList = await db.select()
       .from(userTasks)
       .where(
-        and(
-          eq(userTasks.userId, userId),
-          // Using date range comparison different syntax
-          userId > 0 // This is a placeholder; we're using the date string match below instead
-        )
+        eq(userTasks.userId, userId)
       )
       .execute();
     
