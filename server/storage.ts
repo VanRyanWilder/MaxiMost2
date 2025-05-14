@@ -1,6 +1,8 @@
 import { 
   users, tasks, programs, resources, userTasks, metrics,
   forumPosts, forumComments, motivationalContent,
+  supplements, supplementReviews, supplementVotes,
+  bodyStats, bloodwork, sleepData, heartRateData,
   type User, type InsertUser, 
   type Program, type InsertProgram,
   type Task, type InsertTask,
@@ -9,7 +11,14 @@ import {
   type Metric, type InsertMetric,
   type ForumPost, type InsertForumPost,
   type ForumComment, type InsertForumComment,
-  type MotivationalContent, type InsertMotivationalContent
+  type MotivationalContent, type InsertMotivationalContent,
+  type Supplement, type InsertSupplement,
+  type SupplementReview, type InsertSupplementReview,
+  type SupplementVote, type InsertSupplementVote,
+  type BodyStat, type InsertBodyStat,
+  type Bloodwork, type InsertBloodwork,
+  type SleepData, type InsertSleepData,
+  type HeartRateData, type InsertHeartRateData
 } from "@shared/schema";
 
 // Interface for all storage operations
@@ -65,6 +74,44 @@ export interface IStorage {
   getMotivationalContent(): Promise<MotivationalContent[]>;
   getDailyMotivationalContent(): Promise<MotivationalContent | undefined>;
   createMotivationalContent(content: InsertMotivationalContent): Promise<MotivationalContent>;
+  
+  // Supplement methods
+  getSupplements(): Promise<Supplement[]>;
+  getSupplementsByCategory(category: string): Promise<Supplement[]>;
+  getSupplement(id: number): Promise<Supplement | undefined>;
+  createSupplement(supplement: InsertSupplement): Promise<Supplement>;
+  updateSupplementVotes(id: number, upvotes: number, downvotes: number): Promise<Supplement | undefined>;
+  
+  // Supplement Review methods
+  getSupplementReviews(supplementId: number): Promise<(SupplementReview & { user: User })[]>;
+  getSupplementReview(id: number): Promise<SupplementReview | undefined>;
+  createSupplementReview(review: InsertSupplementReview): Promise<SupplementReview>;
+  updateSupplementReviewStatus(supplementId: number, totalReviews: number, averageRating: number): Promise<Supplement | undefined>;
+  
+  // Supplement Vote methods
+  getSupplementVote(userId: number, supplementId: number): Promise<SupplementVote | undefined>;
+  createSupplementVote(vote: InsertSupplementVote): Promise<SupplementVote>;
+  updateSupplementVote(userId: number, supplementId: number, voteType: string): Promise<SupplementVote | undefined>;
+  
+  // Body Stats methods
+  getUserBodyStats(userId: number): Promise<BodyStat[]>;
+  getLatestBodyStat(userId: number): Promise<BodyStat | undefined>;
+  createBodyStat(stat: InsertBodyStat): Promise<BodyStat>;
+  
+  // Bloodwork methods
+  getUserBloodworkResults(userId: number): Promise<Bloodwork[]>;
+  getBloodworkResult(id: number): Promise<Bloodwork | undefined>;
+  createBloodworkResult(bloodwork: InsertBloodwork): Promise<Bloodwork>;
+  
+  // Sleep Data methods
+  getUserSleepData(userId: number): Promise<SleepData[]>;
+  getLatestSleepData(userId: number): Promise<SleepData | undefined>;
+  createSleepData(data: InsertSleepData): Promise<SleepData>;
+  
+  // Heart Rate Data methods
+  getUserHeartRateData(userId: number): Promise<HeartRateData[]>;
+  getLatestHeartRateData(userId: number): Promise<HeartRateData | undefined>;
+  createHeartRateData(data: InsertHeartRateData): Promise<HeartRateData>;
 }
 
 // In-memory storage implementation
