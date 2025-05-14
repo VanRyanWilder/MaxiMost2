@@ -1036,7 +1036,7 @@ export function HighRoiActivities() {
         
         {/* Daily Principle Dialog */}
         <Dialog open={showPrincipleDetails} onOpenChange={setShowPrincipleDetails}>
-          <DialogContent className="sm:max-w-[550px]">
+          <DialogContent className="sm:max-w-[550px] max-h-[85vh] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle className="text-xl">{todaysPrinciple.title}</DialogTitle>
               <DialogDescription className="text-sm flex items-center mt-1">
@@ -1046,7 +1046,7 @@ export function HighRoiActivities() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="my-4 p-4 bg-secondary/10 rounded-lg border border-secondary/20">
+            <div className="my-4 p-4 bg-secondary/10 rounded-lg border border-secondary/20 flex-1 overflow-y-auto">
               <p className="text-base leading-relaxed">{todaysPrinciple.content}</p>
             </div>
             
@@ -1061,7 +1061,7 @@ export function HighRoiActivities() {
               </p>
             </div>
             
-            <DialogFooter className="mt-4">
+            <DialogFooter className="mt-2 border-t pt-4 sticky bottom-0 bg-background">
               <Button onClick={() => setShowPrincipleDetails(false)}>
                 Close
               </Button>
@@ -1071,7 +1071,7 @@ export function HighRoiActivities() {
         
         {/* Add Custom Habit Dialog */}
         <Dialog open={addHabitDialogOpen} onOpenChange={setAddHabitDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>Create Custom Habit</DialogTitle>
               <DialogDescription>
@@ -1079,7 +1079,7 @@ export function HighRoiActivities() {
               </DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-4 my-2">
+            <div className="space-y-4 my-2 flex-1 overflow-y-auto pr-1">
               <div>
                 <Label htmlFor="habit-title">Habit Title*</Label>
                 <input 
@@ -1193,7 +1193,7 @@ export function HighRoiActivities() {
               </p>
             </div>
             
-            <DialogFooter className="mt-4">
+            <DialogFooter className="mt-2 border-t pt-4 sticky bottom-0 bg-background">
               <Button variant="outline" onClick={() => setAddHabitDialogOpen(false)}>
                 Cancel
               </Button>
