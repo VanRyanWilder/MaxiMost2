@@ -29,13 +29,15 @@ interface WeeklyTableViewProps {
   habits: Habit[];
   weekDates: Date[];
   weekOffset: number;
+  dayOffset: number;
   filterCategory: string;
   isHabitCompletedOnDate: (habitId: string, date: Date) => boolean;
   countCompletedDaysInWeek: (habitId: string) => number;
   onToggleHabit: (habitId: string, date: Date) => void;
   onEditHabit: (habit: Habit) => void;
   onDeleteHabit: (habitId: string) => void;
-  setWeekOffset: (cb: (prev: number) => number) => void;
+  onChangeWeek: (change: number) => void;
+  onChangeDay: (change: number) => void;
   onReorderHabits: (reorderedHabits: Habit[]) => void;
 }
 
@@ -45,13 +47,15 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   habits,
   weekDates,
   weekOffset,
+  dayOffset,
   filterCategory,
   isHabitCompletedOnDate,
   countCompletedDaysInWeek,
   onToggleHabit,
   onEditHabit,
   onDeleteHabit,
-  setWeekOffset,
+  onChangeWeek,
+  onChangeDay,
   onReorderHabits
 }) => {
   // Current date for future date checking
@@ -126,12 +130,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-r-none border-r-0"
-                onClick={() => setWeekOffset((prev) => {
-                  // Ensure we're at a whole number before subtracting
-                  const wholePart = Math.floor(prev);
-                  const fractionPart = prev - wholePart;
-                  return wholePart - 1 + fractionPart;
-                })}
+                onClick={() => onChangeWeek(-1)}
                 title="Previous week"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -140,12 +139,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-l-none"
-                onClick={() => setWeekOffset((prev) => {
-                  // Ensure we're at a whole number before adding
-                  const wholePart = Math.floor(prev);
-                  const fractionPart = prev - wholePart;
-                  return wholePart + 1 + fractionPart;
-                })}
+                onClick={() => onChangeWeek(1)}
                 title="Next week"
                 disabled={weekOffset >= 0}
               >
@@ -161,9 +155,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-r-none border-r-0"
-                onClick={() => setWeekOffset((prev) => {
-                  return parseFloat((prev - 1/7).toFixed(6));
-                })}
+                onClick={() => onChangeDay(-1)}
                 title="Previous day"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -172,11 +164,9 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-l-none"
-                onClick={() => setWeekOffset((prev) => {
-                  return parseFloat((prev + 1/7).toFixed(6));
-                })}
+                onClick={() => onChangeDay(1)}
                 title="Next day"
-                disabled={weekOffset >= 0}
+                disabled={(weekOffset === 0 && dayOffset >= 0)}
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

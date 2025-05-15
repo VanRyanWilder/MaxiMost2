@@ -90,20 +90,27 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  // Separate offsets for cleaner implementation
   const [weekOffset, setWeekOffset] = useState(0);
+  const [dayOffset, setDayOffset] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
 
+  // Handle week navigation through the props
+  const handleWeekChange = (changeAmount: number) => {
+    // Reset day offset when changing weeks for clean transitions
+    setDayOffset(0);
+    setWeekOffset(prev => prev + changeAmount);
+  };
+
+  // Handle day navigation
+  const handleDayChange = (changeAmount: number) => {
+    // Increment or decrement the day offset
+    setDayOffset(prev => prev + changeAmount);
+  };
+
+  // Combined offset for date calculations
   const today = startOfToday();
-  // Calculate the exact day offset by converting weekOffset to days
-  // For whole numbers, this behaves like before
-  // For fractions like 1/7, it shifts by the fractional part of a week
-  const wholePart = Math.floor(weekOffset);
-  const fractionPart = weekOffset - wholePart;
-  // Calculate the number of days to shift (7 days per week)
-  const weekShift = wholePart * 7;
-  // Calculate the day shift within the week (fraction * 7 days)
-  const dayShift = Math.round(fractionPart * 7);
-  const totalDayOffset = weekShift + dayShift;
+  const totalDayOffset = (weekOffset * 7) + dayOffset;
   
   const startOfCurrentWeek = startOfWeek(addDays(today, totalDayOffset), { weekStartsOn: 1 });
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfCurrentWeek, i));
@@ -438,11 +445,13 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
             habits={filteredHabits}
             weekDates={weekDates}
             weekOffset={weekOffset}
+            dayOffset={dayOffset}
             filterCategory={filterCategory}
             isHabitCompletedOnDate={isHabitCompletedOnDate}
             countCompletedDaysInWeek={countCompletedDaysInWeek}
             onToggleHabit={onToggleHabit}
-            setWeekOffset={setWeekOffset}
+            onChangeWeek={handleWeekChange}
+            onChangeDay={handleDayChange}
             onReorderHabits={onReorderHabits}
             onEditHabit={handleEditHabit}
             onDeleteHabit={handleDeleteHabit}
