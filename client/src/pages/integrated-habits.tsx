@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   DndContext, 
   closestCenter,
@@ -875,12 +875,52 @@ export default function IntegratedHabits() {
     setAddHabitOpen(false);
   };
   
-  // Add a whole habit stack
+  // For tracking selected habits from a stack
+  const [selectedStackHabits, setSelectedStackHabits] = useState<Record<number, boolean>>({});
+  const [selectedStackHabitDetails, setSelectedStackHabitDetails] = useState<Record<number, any>>({});
+  
+  // Initialize selected habits when a stack is selected
+  useEffect(() => {
+    if (selectedStack) {
+      // Set all habits as initially selected
+      const initialSelection = selectedStack.habits.reduce((acc, habit, index) => {
+        acc[index] = true;
+        return acc;
+      }, {} as Record<number, boolean>);
+      
+      setSelectedStackHabits(initialSelection);
+      
+      // Initialize editable details for each habit
+      const initialDetails = selectedStack.habits.reduce((acc, habit, index) => {
+        acc[index] = { ...habit };
+        return acc;
+      }, {} as Record<number, any>);
+      
+      setSelectedStackHabitDetails(initialDetails);
+    }
+  }, [selectedStack]);
+  
+  // Add selected habits from a stack
   const addHabitStack = () => {
     if (!selectedStack) return;
     
-    // Add each habit in the stack
-    const newHabits = selectedStack.habits.map(habitTemplate => {
+    // Filter and add only the selected habits
+    const selectedIndices = Object.entries(selectedStackHabits)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([index]) => parseInt(index));
+    
+    if (selectedIndices.length === 0) {
+      toast({
+        title: "No habits selected",
+        description: "Please select at least one habit to add",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Add each selected habit with its edited details
+    const newHabits = selectedIndices.map(index => {
+      const habitTemplate = selectedStackHabitDetails[index];
       const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       
       return {
@@ -897,9 +937,28 @@ export default function IntegratedHabits() {
     
     // Show success toast
     toast({
-      title: "Habit stack added",
-      description: `${selectedStack.name} routines have been added to your habits`,
+      title: "Habits added from stack",
+      description: `${selectedIndices.length} habits from ${selectedStack.name} have been added`,
     });
+  };
+  
+  // Toggle selection of a habit in the stack
+  const toggleStackHabitSelection = (index: number) => {
+    setSelectedStackHabits(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+  
+  // Update details of a habit in the stack
+  const updateStackHabitDetail = (index: number, field: string, value: any) => {
+    setSelectedStackHabitDetails(prev => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        [field]: value
+      }
+    }));
   };
   
   // Format date for display

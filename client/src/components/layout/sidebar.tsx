@@ -34,10 +34,16 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const { user, userLoading } = useUser();
 
   const navItems = [
+    {
+      path: "/home",
+      name: "Home",
+      icon: <Home className="w-5 h-5" />,
+      description: "Welcome to Maximus Gains"
+    },
     { 
       path: "/habits", 
       name: "Habit Dashboard", 
-      icon: <Home className="w-5 h-5 text-green-500" />,
+      icon: <CheckSquare className="w-5 h-5 text-green-500" />,
       description: "Your all-in-one habit tracking center"
     },
     { 
