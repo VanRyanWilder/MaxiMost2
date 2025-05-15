@@ -771,7 +771,7 @@ export default function IntegratedDashboard() {
                           {absoluteHabits.length} habits
                         </Badge>
                       </CardTitle>
-                      <Button variant="ghost" size="sm" onClick={handleCreateHabit}>
+                      <Button variant="default" className="bg-blue-500 hover:bg-blue-600 text-white" size="sm" onClick={handleCreateHabit}>
                         <Plus className="h-4 w-4 mr-1" />
                         Add Habit
                       </Button>
@@ -826,7 +826,7 @@ export default function IntegratedDashboard() {
                           {additionalHabits.length} habits
                         </Badge>
                       </CardTitle>
-                      <Button variant="ghost" size="sm" onClick={handleCreateHabit}>
+                      <Button variant="default" className="bg-blue-500 hover:bg-blue-600 text-white" size="sm" onClick={handleCreateHabit}>
                         <Plus className="h-4 w-4 mr-1" />
                         Add Habit
                       </Button>
