@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { format, addDays, startOfWeek, subDays, parseISO, isAfter, isBefore, isToday, isSameDay, differenceInDays } from 'date-fns';
+import { getEmptyStateMessage } from './empty-state-fix';
 import { Link } from "wouter";
 import { useSort } from '@dnd-kit/sortable';
 import { 
