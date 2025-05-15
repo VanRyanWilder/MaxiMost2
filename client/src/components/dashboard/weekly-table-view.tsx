@@ -54,11 +54,19 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   setWeekOffset,
   onReorderHabits
 }) => {
+  // Current date for future date checking
+  const currentDate = new Date();
+  
   // Filter habits based on category
   const filteredHabits = 
     filterCategory === "all" 
       ? habits 
       : habits.filter(habit => habit.category === filterCategory);
+
+  // Function to check if a date is in the future
+  const isFutureDate = (date: Date) => {
+    return date > currentDate;
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
