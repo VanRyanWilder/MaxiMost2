@@ -494,79 +494,96 @@ export default function Dashboard() {
                       <div>
                         <h3 className="text-sm font-medium text-muted-foreground mb-2 px-3">Additional Habits</h3>
                         
-                        {additionalHabits.map(habit => (
-                          <div key={habit.id} className="grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2">
-                            <div className="flex items-center p-1.5">
-                              <div className="flex items-center gap-2 min-w-0">
-                                <div className="p-1.5 rounded-md bg-slate-100 text-slate-600">
-                                  {getIconComponent(habit.icon)}
-                                </div>
-                                <div className="min-w-0 flex flex-col">
-                                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
-                                    {habit.title}
-                                  </span>
-                                  <div className="flex items-center gap-1 mt-0.5">
-                                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
-                                      {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
-                                    </Badge>
-                                    <span className="text-[10px] text-muted-foreground">
-                                      {habit.frequency}
+                        {additionalHabits.map(habit => {
+                          // Calculate completion count for this habit
+                          const completedDays = countCompletedDaysInWeek(habit.id);
+                          const targetDays = habit.frequency === 'daily' ? 7 : 
+                                          habit.frequency === '2x-week' ? 2 :
+                                          habit.frequency === '3x-week' ? 3 :
+                                          habit.frequency === '4x-week' ? 4 : 1;
+                          const weeklyGoalMet = hasMetWeeklyFrequency(habit);
+                          
+                          return (
+                            <div 
+                              key={habit.id} 
+                              className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 ${weeklyGoalMet ? 'bg-gradient-to-r from-green-50 to-transparent rounded-lg shadow-sm border border-green-100' : ''}`}
+                            >
+                              <div className="flex items-center p-1.5 relative group">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className={`p-1.5 rounded-md ${weeklyGoalMet ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-600'}`}>
+                                    {getIconComponent(habit.icon)}
+                                  </div>
+                                  <div className="min-w-0 flex flex-col">
+                                    <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
+                                      {habit.title}
                                     </span>
+                                    <div className="flex items-center justify-between gap-1 mt-0.5">
+                                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
+                                        {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
+                                      </Badge>
+                                      <span className={`text-[10px] ${weeklyGoalMet ? 'text-green-600 font-medium' : 'text-muted-foreground'}`}>
+                                        {completedDays}/{targetDays} {habit.frequency} 
+                                        {weeklyGoalMet && " ✓"}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                                 
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 ml-auto opacity-70 hover:opacity-100">
-                                      <MoreHorizontal className="h-4 w-4" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                      <Pencil className="h-4 w-4 mr-2" />
-                                      Edit Habit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem 
-                                      onClick={() => deleteHabit(habit.id)}
-                                      className="text-red-600"
-                                    >
-                                      <Trash className="h-4 w-4 mr-2" />
-                                      Delete Habit
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </div>
-                            
-                            {weekDates.map((date, i) => {
-                              const completed = isHabitCompletedOnDate(habit.id, date);
-                              const isPast = isBefore(date, today) && !isSameDay(date, today);
-                              const isFuture = isAfter(date, today) && !isSameDay(date, today);
-                              
-                              return (
-                                <div key={i} className="flex justify-center">
-                                  <button 
-                                    onClick={() => toggleCompletion(habit.id, date)}
-                                    disabled={isFuture}
-                                    className={`flex items-center justify-center transition-all duration-200 ease-in-out
-                                      ${completed 
-                                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-md' 
-                                        : isPast 
-                                          ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
-                                          : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
-                                      } w-full h-10`}
-                                  >
-                                    {completed ? (
-                                      <Check className="h-5 w-5" />
-                                    ) : (
-                                      <div className="h-5 w-5 rounded-full border-2 border-current"></div>
-                                    )}
-                                  </button>
+                                {/* Move the edit buttons to appear only on hover */}
+                                <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+                                        <MoreHorizontal className="h-4 w-4" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                                        <Pencil className="h-4 w-4 mr-2" />
+                                        Edit Habit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem 
+                                        onClick={() => deleteHabit(habit.id)}
+                                        className="text-red-600"
+                                      >
+                                        <Trash className="h-4 w-4 mr-2" />
+                                        Delete Habit
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        ))}
+                              </div>
+                              
+                              {weekDates.map((date, i) => {
+                                const completed = isHabitCompletedOnDate(habit.id, date);
+                                const isPast = isBefore(date, today) && !isSameDay(date, today);
+                                const isFuture = isAfter(date, today) && !isSameDay(date, today);
+                                
+                                return (
+                                  <div key={i} className="flex justify-center">
+                                    <button 
+                                      onClick={() => toggleCompletion(habit.id, date)}
+                                      disabled={isFuture}
+                                      className={`flex items-center justify-center transition-all duration-200 ease-in-out
+                                        ${completed 
+                                          ? 'bg-blue-100 text-blue-600 hover:bg-blue-200 rounded-md' 
+                                          : isPast 
+                                            ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
+                                            : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
+                                        } w-full h-10`}
+                                    >
+                                      {completed ? (
+                                        <Check className="h-5 w-5" />
+                                      ) : (
+                                        <div className="h-5 w-5 rounded-full border-2 border-current"></div>
+                                      )}
+                                    </button>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </CardContent>
