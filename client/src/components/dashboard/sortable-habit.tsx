@@ -1,10 +1,16 @@
-import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { 
+  Check, 
+  GripVertical,
+  Pencil,
+  Star, 
+  X
+} from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { format, isSameDay, isBefore, isAfter, startOfToday, endOfToday } from 'date-fns';
 import { Habit, HabitCompletion } from '@/types/habit';
-import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
-import { GripVertical } from 'lucide-react';
-import { colorSchemes, iconMap as habitIconMap } from '@/components/dashboard/edit-habit-dialog';
+import { iconMap, colorSchemes } from './edit-habit-dialog';
 
 interface SortableHabitProps {
   habit: Habit;
@@ -21,164 +27,176 @@ export function SortableHabit({
   onEdit,
   currentDate
 }: SortableHabitProps) {
-  const { 
-    attributes, 
-    listeners, 
-    setNodeRef, 
-    transform, 
+  // Set up sortable functionality
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
     transition,
-    isDragging
   } = useSortable({ id: habit.id });
   
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 999 : 1,
   };
-
-  // Generate week days starting from current week
-  const startDate = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 7 }).map((_, i) => addDays(startDate, i));
   
-  // Check if habit is completed for a specific date
-  const isCompletedOnDate = (date: Date): boolean => {
-    return completions.some(
-      c => c.habitId === habit.id && isSameDay(new Date(c.date), date)
+  // Get appropriate color scheme for the habit icon
+  const colorScheme = habit.iconColor ? 
+    colorSchemes.find(c => c.id === habit.iconColor) || 
+    { primary: "text-blue-600", bg: "bg-blue-100" } : 
+    { primary: "text-slate-600", bg: "bg-slate-100" };
+
+  // Render appropriate icon based on the habit's icon property
+  const renderIcon = () => {
+    if (iconMap[habit.icon]) {
+      const IconComponent = iconMap[habit.icon].component;
+      return (
+        <div className={`p-1.5 rounded ${colorScheme?.bg || "bg-blue-100"}`}>
+          <IconComponent className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
+        </div>
+      );
+    }
+    
+    // Default icon if no match found
+    return (
+      <div className={`p-1.5 rounded ${colorScheme?.bg || "bg-blue-100"}`}>
+        <div className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
+      </div>
     );
   };
+
+  // Calculate statistics for the habit
+  const today = new Date();
+  const completedDays = completions.filter(
+    c => c.habitId === habit.id && c.completed
+  ).length;
   
-  // Determine if the habit has met its weekly frequency requirement
-  const weeklyCompletionCount = weekDays.filter(date => isCompletedOnDate(date)).length;
-  const requiredCompletions = (() => {
-    switch(habit.frequency) {
-      case 'daily': return 7;
-      case '2x-week': return 2;
-      case '3x-week': return 3;
-      case '4x-week': return 4;
-      case '5x-week': return 5;
-      case '6x-week': return 6;
-      case 'weekly': return 1;
-      default: return 1;
-    }
-  })();
+  const targetDays = habit.frequency === 'daily' ? 7 : 
+                   habit.frequency === '2x-week' ? 2 :
+                   habit.frequency === '3x-week' ? 3 :
+                   habit.frequency === '4x-week' ? 4 : 1;
+                   
+  const weeklyGoalMet = completedDays >= targetDays;
   
-  const hasMetWeeklyGoal = weeklyCompletionCount >= requiredCompletions;
-  
+  // Check if today's completion is done
+  const isTodayCompleted = completions.some(c => 
+    c.habitId === habit.id && 
+    isSameDay(new Date(c.date), today) && 
+    c.completed
+  );
+
+  // Generate dates for the week (7 days starting from the currentDate)
+  const weekDays = Array.from({ length: 7 }).map((_, i) => {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() + i);
+    return date;
+  });
+
   return (
     <div 
-      ref={setNodeRef}
+      ref={setNodeRef} 
       style={style}
-      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 ${
-        hasMetWeeklyGoal ? 'bg-gradient-to-r from-green-50 to-transparent rounded-lg shadow-sm border border-green-100' : ''
+      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-1 group ${
+        weeklyGoalMet ? 'bg-green-50 rounded-md' : ''
       }`}
     >
-      <div className="flex items-center p-1.5 relative group">
-        <div 
-          {...attributes} 
+      {/* Main habit info cell */}
+      <div className="px-2 py-2 flex items-center relative">
+        {/* Drag handle */}
+        <button
+          className="cursor-grab active:cursor-grabbing mr-2 touch-none"
+          {...attributes}
           {...listeners}
-          className="cursor-grab mr-2 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
         >
-          <GripVertical className="h-4 w-4" />
-        </div>
+          <GripVertical className="h-4 w-4 text-slate-400" />
+        </button>
         
         <div className="flex items-center gap-2 min-w-0">
-          <div className={`p-1.5 rounded-md ${
-            hasMetWeeklyGoal 
-              ? 'bg-green-100 text-green-600' 
-              : habit.iconColor 
-                ? colorSchemes.find(c => c.id === habit.iconColor)?.bg || 'bg-slate-100'
-                : 'bg-slate-100'
-          }`}>
-            {(() => {
-              // Render icon component
-              const colorScheme = habit.iconColor && !hasMetWeeklyGoal
-                ? colorSchemes.find(c => c.id === habit.iconColor)
-                : { primary: hasMetWeeklyGoal ? "text-green-600" : "text-slate-600" };
-                
-              if (habitIconMap[habit.icon]) {
-                const IconComponent = habitIconMap[habit.icon].component;
-                return <IconComponent className={`h-4 w-4 ${colorScheme?.primary || ""}`} />;
-              }
-              
-              return <div className={`h-4 w-4 ${colorScheme?.primary || ""}`}>•</div>;
-            })()}
-          </div>
+          {renderIcon()}
           
           <div className="min-w-0 flex flex-col">
             <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
               {habit.title}
             </span>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <span>{habit.timeCommitment}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <span className="text-amber-500">★</span> 
-                <span>{habit.impact}</span>
-              </span>
+            <div className="flex items-center justify-between gap-1 mt-0.5">
+              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
+                {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
+              </Badge>
+              <div className="flex items-center space-x-1">
+                <span className={`text-[10px] ${weeklyGoalMet ? 'text-green-600 font-medium' : 'text-muted-foreground'}`}>
+                  {completedDays}/{targetDays} {habit.frequency} 
+                  {weeklyGoalMet && " ✓"}
+                </span>
+                {habit.streak > 0 && (
+                  <span className="inline-flex items-center text-[10px] text-amber-500">
+                    <Star className="h-2.5 w-2.5 text-amber-500 mr-0.5" /> 
+                    {habit.streak}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
         
-        <button 
-          onClick={() => onEdit(habit)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-        >
-          <span className="sr-only">Edit</span>
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="14" 
-            height="14" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className="text-gray-500"
-          >
-            <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-            <path d="m15 5 4 4"/>
-          </svg>
-        </button>
-      </div>
-      
-      {/* Day checkboxes */}
-      {weekDays.map((date, idx) => (
-        <div 
-          key={idx} 
-          className="flex items-center justify-center p-2"
-          onClick={() => onToggleCompletion(habit.id, date)}
-        >
-          <div 
-            className={`
-              w-5 h-5 rounded-full border 
-              ${isCompletedOnDate(date) 
-                ? 'bg-green-500 border-green-500' 
-                : 'border-gray-300 hover:border-gray-400'
-              } 
-              cursor-pointer flex items-center justify-center transition-colors
-            `}
-          >
-            {isCompletedOnDate(date) && (
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="12" 
-                height="12" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="3" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="text-white"
-              >
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            )}
+        {/* Edit buttons (visible on hover) */}
+        <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onEdit(habit)}
+              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+            >
+              <span className="sr-only">Edit</span>
+              <Pencil className="h-3 w-3 text-gray-500" />
+            </button>
+            <button
+              onClick={() => {
+                // Handle delete here or pass a delete function through props
+                console.log('Delete habit:', habit.id);
+              }}
+              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+            >
+              <span className="sr-only">Delete</span>
+              <X className="h-3 w-3 text-gray-500" />
+            </button>
           </div>
         </div>
-      ))}
+      </div>
+      
+      {/* Render the weekday checkboxes */}
+      {weekDays.map((date, i) => {
+        const dayOfWeek = format(date, 'EEE');
+        const dayNumber = format(date, 'd');
+        const completed = completions.some(c => 
+          c.habitId === habit.id && 
+          isSameDay(new Date(c.date), date) && 
+          c.completed
+        );
+        const isPast = isBefore(date, startOfToday());
+        const isFuture = isAfter(date, endOfToday());
+        
+        return (
+          <div key={i} className="flex justify-center">
+            <button 
+              onClick={() => onToggleCompletion(habit.id, date)}
+              disabled={isFuture}
+              className={`flex items-center justify-center transition-all duration-200 ease-in-out
+                ${completed 
+                  ? 'bg-green-100 text-green-600 hover:bg-green-200 rounded-md' 
+                  : isPast 
+                    ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
+                    : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
+                } w-full h-10`}
+            >
+              {completed ? (
+                <Check className="h-5 w-5" />
+              ) : (
+                <div className="h-5 w-5 rounded-full border-2 border-current"></div>
+              )}
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

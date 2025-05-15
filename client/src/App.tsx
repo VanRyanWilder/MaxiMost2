@@ -1,7 +1,9 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
-import Dashboard from "@/pages/dashboard-new";
+// Temporarily using sortable dashboard for both routes
+// import Dashboard from "@/pages/dashboard-new";
+import Dashboard from "@/pages/sortable-dashboard";
 import SortableDashboard from "@/pages/sortable-dashboard";
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
@@ -60,6 +62,9 @@ function App() {
       {/* Protected routes */}
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
+      </Route>
+      <Route path="/sortable-dashboard">
+        <PrivateRoute component={SortableDashboard} />
       </Route>
       <Route path="/profile">
         <PrivateRoute component={Profile} />

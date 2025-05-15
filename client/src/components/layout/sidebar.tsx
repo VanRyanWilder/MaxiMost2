@@ -47,6 +47,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Your all-in-one habit tracking center"
     },
     { 
+      path: "/sortable-dashboard", 
+      name: "Sortable Dashboard", 
+      icon: <CheckSquare className="w-5 h-5 text-blue-500" />,
+      description: "Drag & drop habit dashboard"
+    },
+    { 
       path: "/habit-building", 
       name: "Habit Building", 
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
