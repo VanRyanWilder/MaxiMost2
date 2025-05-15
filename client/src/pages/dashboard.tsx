@@ -273,9 +273,27 @@ export default function Dashboard() {
                     <div className="space-y-6">
                       <WeeklyHabitView 
                         habits={habits.filter(h => h.isAbsolute)}
-                        dates={weekDates}
                         completions={completions}
-                        onToggleCompletion={toggleCompletion}
+                        onToggleHabit={toggleCompletion}
+                        onAddHabit={() => {
+                          const newHabit = {
+                            id: `h-${Date.now()}`,
+                            title: "New Habit",
+                            description: "Description of your new habit",
+                            icon: "activity",
+                            impact: 8,
+                            effort: 4,
+                            timeCommitment: '10 min',
+                            frequency: 'daily' as HabitFrequency,
+                            isAbsolute: true,
+                            category: "health" as HabitCategory,
+                            streak: 0,
+                            createdAt: new Date()
+                          };
+                          addHabit(newHabit);
+                        }}
+                        onUpdateHabit={editHabit}
+                        onDeleteHabit={deleteHabit}
                       />
                       
                       <div className="mt-8">

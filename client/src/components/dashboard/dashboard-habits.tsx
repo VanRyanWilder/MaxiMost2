@@ -8,30 +8,8 @@ import { format, startOfWeek, addDays, isSameDay, subDays } from 'date-fns';
 import { useToast } from "@/hooks/use-toast";
 import { Calendar } from "@/components/ui/calendar";
 
-// Types that mirror the ones in unified-habits.tsx
-type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
-type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
-
-interface Habit {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  impact: number;
-  effort: number;
-  timeCommitment: string;
-  frequency: HabitFrequency;
-  isAbsolute: boolean;
-  category: HabitCategory;
-  streak: number;
-  createdAt: Date;
-}
-
-interface HabitCompletion {
-  habitId: string;
-  date: Date;
-  completed: boolean;
-}
+// Import the shared types
+import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
 
 // Map icon strings to components
 const getIconComponent = (iconName: string) => {
