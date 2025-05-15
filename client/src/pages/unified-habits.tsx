@@ -37,7 +37,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 // Define types for habits
-type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
+type HabitFrequency = "daily" | "2x-week" | "3x-week" | "4x-week" | "5x-week" | "6x-week";
 type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
 
 interface Habit {

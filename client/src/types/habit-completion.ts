@@ -84,12 +84,10 @@ export function getCompletionPercentage(
     const dateKey = formatDateKey(currentDate);
     const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
     
-    const shouldCountDay = (
-      habit.frequency === 'daily' ||
-      (habit.frequency === 'weekdays' && dayOfWeek >= 1 && dayOfWeek <= 5) ||
-      (habit.frequency === 'weekends' && (dayOfWeek === 0 || dayOfWeek === 6)) ||
-      (habit.frequency === 'weekly' && dayOfWeek === 1) // Count Mondays for weekly habits
-    );
+    // For non-daily frequencies like 2x, 3x, etc per week, we just count the
+    // number of completed days in the week against the target number.
+    // This logic is handled in hasMetWeeklyFrequency functions elsewhere.
+    const shouldCountDay = habit.frequency === 'daily';
     
     if (shouldCountDay) {
       totalDays++;
