@@ -5,7 +5,7 @@ import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
-import { WeeklyHabitView } from "@/components/dashboard/weekly-habit-view";
+import { WeeklyHabitView } from "@/components/dashboard/weekly-habit-view-fixed";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
