@@ -48,6 +48,8 @@ import {
   ChevronDown,
   ChevronsUpDown,
   Check,
+  ChevronLeft,
+  ChevronRight,
   User,
   CircleOff,
 } from "lucide-react";
@@ -120,6 +122,7 @@ interface Habit {
   title: string;
   description: string;
   icon: string;
+  iconColor: string; // Color for the icon
   impact: number; // 1-10 scale
   effort: number; // 1-10 scale
   timeCommitment: string;
@@ -1723,17 +1726,18 @@ export default function IntegratedHabits() {
                             // Create a new habit with a unique ID
                             const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
                             
-                            const newHabit = {
+                            const newHabit: Habit = {
                               id,
                               title: template.title,
                               description: template.description,
                               icon: template.icon,
+                              iconColor: template.iconColor || '#4F46E5', // Add default iconColor if not present
                               impact: template.impact,
                               effort: template.effort,
                               timeCommitment: template.timeCommitment,
-                              frequency: template.frequency,
+                              frequency: template.frequency as HabitFrequency,
                               isAbsolute: template.isAbsolute,
-                              category: template.category,
+                              category: template.category as HabitCategory,
                               streak: 0,
                               createdAt: new Date()
                             };
