@@ -255,18 +255,6 @@ export const HabitViewModes: React.FC<HabitViewProps> = ({
               <DropdownMenuItem onClick={() => setFilterCategory("optional")}>
                 Frequency Habits
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("health")}>
-                Health
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("fitness")}>
-                Fitness
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("mind")}>
-                Mind
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("social")}>
-                Social
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           
