@@ -27,7 +27,7 @@ export default function WeeklyCalendarView({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // State for the currently viewed week's start date
+  // State for the currently viewed week's start date (Sunday)
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const date = new Date(today);
     // Start from Sunday of current week
@@ -35,7 +35,7 @@ export default function WeeklyCalendarView({
     return date;
   });
 
-  // Generate the dates for the current week view
+  // Generate the dates for the current week view (Sunday to Saturday)
   const weekDates = useMemo(() => {
     return getWeekDates(currentWeekStart, days);
   }, [currentWeekStart, days]);
@@ -88,13 +88,15 @@ export default function WeeklyCalendarView({
     return 'future';
   };
 
-  // Get the most recent 2-3 days leading up to the current week view
+  // Get the most recent 2-3 days leading up to the current week start (Sunday)
   const previousDays = useMemo(() => {
     if (showPreviousDays <= 0) return [];
     
     const prevDays = [];
-    const firstDayOfWeek = new Date(weekDates[0]);
+    // First day is Sunday (currentWeekStart)
+    const firstDayOfWeek = new Date(currentWeekStart);
     
+    // Add days before Sunday (going backwards)
     for (let i = showPreviousDays; i > 0; i--) {
       const prevDay = new Date(firstDayOfWeek);
       prevDay.setDate(prevDay.getDate() - i);
@@ -102,7 +104,7 @@ export default function WeeklyCalendarView({
     }
     
     return prevDays;
-  }, [weekDates, showPreviousDays]);
+  }, [currentWeekStart, showPreviousDays]);
 
   // All dates to display (previous days + week dates)
   const allDisplayDates = useMemo(() => {
