@@ -66,7 +66,7 @@ export default function Profile() {
                     <div className="space-y-4">
                       <div>
                         <p className="text-sm text-gray-500">Current Program</p>
-                        <p className="font-medium">12-Week Beast Mode</p>
+                        <p className="font-medium">12-Week MaxiMost</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Start Date</p>
