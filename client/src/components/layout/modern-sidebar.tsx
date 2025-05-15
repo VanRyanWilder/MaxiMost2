@@ -21,7 +21,8 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
   const [location] = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     main: true,
-    pillars: true
+    health: true,
+    resources: true
   });
   
   const toggleSection = (section: string) => {
@@ -32,7 +33,6 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
   };
   
   const mainLinks = sidebarLinks.filter(link => link.section === 'main');
-  const pillarLinks = sidebarLinks.filter(link => link.section === 'pillars');
   const healthLinks = sidebarLinks.filter(link => link.section === 'health');
   const resourceLinks = sidebarLinks.filter(link => link.section === 'resources');
   
@@ -180,7 +180,6 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
         <ScrollArea className="flex-1 pb-4">
           <div className="px-2 py-4">
             {renderSection("Main", mainLinks, "main")}
-            {renderSection("Four Pillars", pillarLinks, "pillars")}
             {renderSection("Health & Wellness", healthLinks, "health")}
             {renderSection("Resources", resourceLinks, "resources")}
           </div>

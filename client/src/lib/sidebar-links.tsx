@@ -58,32 +58,28 @@ export const sidebarLinks: SidebarLink[] = [
     section: "main"
   },
   {
-    title: "Four Pillars",
-    href: "/four-pillars",
-    icon: <Zap className="h-5 w-5" />,
-    section: "pillars",
-    submenu: [
-      {
-        title: "Supplements",
-        href: "/supplements",
-        icon: <Pill className="h-5 w-5" />
-      },
-      {
-        title: "Research",
-        href: "/research",
-        icon: <FlaskConical className="h-5 w-5" />
-      },
-      {
-        title: "Principles",
-        href: "/principles",
-        icon: <Scroll className="h-5 w-5" />
-      },
-      {
-        title: "Sugar Dangers",
-        href: "/sugar",
-        icon: <CandyCane className="h-5 w-5" />
-      }
-    ]
+    title: "Supplements",
+    href: "/supplements",
+    icon: <Pill className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Research",
+    href: "/research",
+    icon: <FlaskConical className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Principles",
+    href: "/principles",
+    icon: <Scroll className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Sugar Dangers",
+    href: "/sugar",
+    icon: <CandyCane className="h-5 w-5" />,
+    section: "main"
   },
   {
     title: "Workouts",
