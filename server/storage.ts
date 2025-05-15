@@ -366,6 +366,278 @@ export class MemStorage implements IStorage {
     return updatedMetric;
   }
   
+  // Supplement methods
+  async getSupplements(): Promise<Supplement[]> {
+    return Array.from(this.supplements.values());
+  }
+  
+  async getSupplementsByCategory(category: string): Promise<Supplement[]> {
+    return Array.from(this.supplements.values()).filter(
+      (supplement) => supplement.categories.includes(category)
+    );
+  }
+  
+  async getSupplement(id: number): Promise<Supplement | undefined> {
+    return this.supplements.get(id);
+  }
+  
+  async createSupplement(insertSupplement: InsertSupplement): Promise<Supplement> {
+    const id = this.supplementIdCounter++;
+    const now = new Date();
+    
+    const supplement: Supplement = {
+      ...insertSupplement,
+      id,
+      upvotes: 0,
+      downvotes: 0,
+      totalReviews: 0,
+      averageRating: 0,
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    this.supplements.set(id, supplement);
+    return supplement;
+  }
+  
+  async updateSupplementVotes(id: number, upvotes: number, downvotes: number): Promise<Supplement | undefined> {
+    const supplement = this.supplements.get(id);
+    if (!supplement) return undefined;
+    
+    const updatedSupplement: Supplement = {
+      ...supplement,
+      upvotes,
+      downvotes,
+      updatedAt: new Date()
+    };
+    
+    this.supplements.set(id, updatedSupplement);
+    return updatedSupplement;
+  }
+  
+  // Supplement review methods
+  async getSupplementReviews(supplementId: number): Promise<(SupplementReview & { user: User })[]> {
+    const reviews = Array.from(this.supplementReviews.values())
+      .filter(review => review.supplementId === supplementId);
+    
+    return reviews.map(review => {
+      const user = this.users.get(review.userId);
+      if (!user) throw new Error(`User with id ${review.userId} not found`);
+      return { ...review, user };
+    });
+  }
+  
+  async getSupplementReview(id: number): Promise<SupplementReview | undefined> {
+    return this.supplementReviews.get(id);
+  }
+  
+  async createSupplementReview(insertReview: InsertSupplementReview): Promise<SupplementReview> {
+    const id = this.supplementReviewIdCounter++;
+    const now = new Date();
+    
+    const review: SupplementReview = {
+      ...insertReview,
+      id,
+      helpfulVotes: 0,
+      unhelpfulVotes: 0,
+      createdAt: now,
+      updatedAt: now
+    };
+    
+    this.supplementReviews.set(id, review);
+    
+    // Update the supplement's review statistics
+    await this.updateSupplementReviewStatistics(insertReview.supplementId);
+    
+    return review;
+  }
+  
+  async updateSupplementReview(id: number, data: { rating: number, content: string | null }): Promise<SupplementReview | undefined> {
+    const review = this.supplementReviews.get(id);
+    if (!review) return undefined;
+    
+    const updatedReview: SupplementReview = {
+      ...review,
+      ...data,
+      updatedAt: new Date()
+    };
+    
+    this.supplementReviews.set(id, updatedReview);
+    
+    // Update supplement statistics
+    await this.updateSupplementReviewStatistics(review.supplementId);
+    
+    return updatedReview;
+  }
+  
+  async deleteSupplementReview(id: number): Promise<void> {
+    const review = this.supplementReviews.get(id);
+    if (!review) return;
+    
+    const supplementId = review.userId;
+    this.supplementReviews.delete(id);
+    
+    // Update supplement statistics
+    await this.updateSupplementReviewStatistics(supplementId);
+  }
+  
+  async updateSupplementReviewStatus(supplementId: number, totalReviews: number, averageRating: number): Promise<Supplement | undefined> {
+    const supplement = this.supplements.get(supplementId);
+    if (!supplement) return undefined;
+    
+    const updatedSupplement: Supplement = {
+      ...supplement,
+      totalReviews,
+      averageRating,
+      updatedAt: new Date()
+    };
+    
+    this.supplements.set(supplementId, updatedSupplement);
+    return updatedSupplement;
+  }
+  
+  async updateSupplementReviewStatistics(supplementId: number): Promise<void> {
+    const reviews = await this.getSupplementReviews(supplementId);
+    
+    if (reviews.length === 0) {
+      await this.updateSupplementReviewStatus(supplementId, 0, 0);
+      return;
+    }
+    
+    const totalReviews = reviews.length;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    const averageRating = parseFloat((sum / totalReviews).toFixed(1));
+    
+    await this.updateSupplementReviewStatus(supplementId, totalReviews, averageRating);
+  }
+  
+  // Review helpful votes methods
+  async getUserReviewHelpfulVotes(userId: number): Promise<ReviewHelpfulVote[]> {
+    return Array.from(this.reviewHelpfulVotes.values())
+      .filter(vote => vote.userId === userId);
+  }
+  
+  async getReviewHelpfulVote(reviewId: number, userId: number): Promise<ReviewHelpfulVote | undefined> {
+    const key = `${reviewId}-${userId}`;
+    return this.reviewHelpfulVotes.get(key);
+  }
+  
+  async createReviewHelpfulVote(vote: InsertReviewHelpfulVote): Promise<ReviewHelpfulVote> {
+    const key = `${vote.reviewId}-${vote.userId}`;
+    const now = new Date();
+    
+    const newVote: ReviewHelpfulVote = {
+      ...vote,
+      createdAt: now
+    };
+    
+    this.reviewHelpfulVotes.set(key, newVote);
+    
+    // Update helpful vote counts on the review
+    await this.updateReviewHelpfulCounts(vote.reviewId);
+    
+    return newVote;
+  }
+  
+  async updateReviewHelpfulVote(reviewId: number, userId: number, isHelpful: boolean): Promise<ReviewHelpfulVote | undefined> {
+    const key = `${reviewId}-${userId}`;
+    const vote = this.reviewHelpfulVotes.get(key);
+    
+    if (!vote) return undefined;
+    
+    const updatedVote: ReviewHelpfulVote = {
+      ...vote,
+      isHelpful,
+      createdAt: new Date() // Using createdAt as updatedAt
+    };
+    
+    this.reviewHelpfulVotes.set(key, updatedVote);
+    
+    // Update helpful vote counts on the review
+    await this.updateReviewHelpfulCounts(reviewId);
+    
+    return updatedVote;
+  }
+  
+  async updateReviewHelpfulCounts(reviewId: number): Promise<void> {
+    const review = this.supplementReviews.get(reviewId);
+    if (!review) return;
+    
+    const votes = Array.from(this.reviewHelpfulVotes.values())
+      .filter(vote => vote.reviewId === reviewId);
+    
+    const helpfulVotes = votes.filter(vote => vote.isHelpful).length;
+    const unhelpfulVotes = votes.filter(vote => !vote.isHelpful).length;
+    
+    const updatedReview: SupplementReview = {
+      ...review,
+      helpfulVotes,
+      unhelpfulVotes,
+      updatedAt: new Date()
+    };
+    
+    this.supplementReviews.set(reviewId, updatedReview);
+  }
+  
+  // Supplement votes methods
+  async getSupplementVote(userId: number, supplementId: number): Promise<SupplementVote | undefined> {
+    const key = `${userId}-${supplementId}`;
+    
+    return Array.from(this.supplementVotes.values())
+      .find(vote => vote.userId === userId && vote.supplementId === supplementId);
+  }
+  
+  async createSupplementVote(vote: InsertSupplementVote): Promise<SupplementVote> {
+    const id = `${vote.userId}-${vote.supplementId}`;
+    const now = new Date();
+    
+    const newVote: SupplementVote = {
+      ...vote,
+      createdAt: now
+    };
+    
+    this.supplementVotes.set(id, newVote);
+    
+    // Update vote counts on the supplement
+    await this.updateSupplementVoteCounts(vote.supplementId);
+    
+    return newVote;
+  }
+  
+  async updateSupplementVote(userId: number, supplementId: number, voteType: string): Promise<SupplementVote | undefined> {
+    const key = `${userId}-${supplementId}`;
+    const existingVote = Array.from(this.supplementVotes.values())
+      .find(vote => vote.userId === userId && vote.supplementId === supplementId);
+    
+    if (!existingVote) return undefined;
+    
+    const updatedVote: SupplementVote = {
+      ...existingVote,
+      voteType,
+      createdAt: new Date() // Using createdAt as updatedAt
+    };
+    
+    this.supplementVotes.set(key, updatedVote);
+    
+    // Update vote counts on the supplement
+    await this.updateSupplementVoteCounts(supplementId);
+    
+    return updatedVote;
+  }
+  
+  async updateSupplementVoteCounts(supplementId: number): Promise<void> {
+    const supplement = this.supplements.get(supplementId);
+    if (!supplement) return;
+    
+    const votes = Array.from(this.supplementVotes.values())
+      .filter(vote => vote.supplementId === supplementId);
+    
+    const upvotes = votes.filter(vote => vote.voteType === 'up').length;
+    const downvotes = votes.filter(vote => vote.voteType === 'down').length;
+    
+    await this.updateSupplementVotes(supplementId, upvotes, downvotes);
+  }
+  
   // Initialize with sample data
   private initializeData() {
     // Sample programs
