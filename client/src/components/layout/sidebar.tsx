@@ -41,7 +41,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Welcome to Maximus Gains"
     },
     { 
-      path: "/habits", 
+      path: "/dashboard", 
       name: "Habit Dashboard", 
       icon: <CheckSquare className="w-5 h-5 text-green-500" />,
       description: "Your all-in-one habit tracking center"

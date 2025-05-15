@@ -34,25 +34,26 @@ import {
 
 import { EditHabitDialog } from "./edit-habit-dialog";
 
-// Types for habits
-type HabitFrequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
+// Types for habits - match with dashboard.tsx
+type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
 type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
 
 interface Habit {
   id: string;
   title: string;
   description: string;
-  icon: string; // Changed from React.ReactNode | string to just string
+  icon: string;
   impact: number;
   effort: number;
   timeCommitment: string;
   frequency: HabitFrequency;
   isAbsolute: boolean;
+  category: HabitCategory;
   lastCompleted?: Date | null;
-  streak?: number;
+  streak: number;
+  createdAt: Date;
   type?: "principle" | "custom" | "default";
   principle?: string;
-  category: string;
 }
 
 interface HabitCompletion {
@@ -288,11 +289,11 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
         </div>
       )}
 
-      {/* Optional habits section */}
+      {/* Additional habits section */}
       {optionalHabits.length > 0 && (
         <div className="mb-4">
           <div className="flex items-center gap-2 mb-3">
-            <Badge variant="outline">Optional Habits</Badge>
+            <Badge variant="outline">Additional Habits</Badge>
             <div className="text-xs text-muted-foreground">Flexible habits to enhance your routine</div>
           </div>
           

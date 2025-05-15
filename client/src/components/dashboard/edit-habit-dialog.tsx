@@ -27,8 +27,8 @@ import {
   ScrollText
 } from "lucide-react";
 
-// Types that mirror the ones in weekly-habit-view-fixed.tsx
-type HabitFrequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
+// Types that mirror the ones in dashboard.tsx
+type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
 type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
 
 interface Habit {
@@ -41,9 +41,9 @@ interface Habit {
   timeCommitment: string;
   frequency: HabitFrequency;
   isAbsolute: boolean;
-  category: string;
-  streak?: number;
-  createdAt?: Date;
+  category: HabitCategory;
+  streak: number;
+  createdAt: Date;
   type?: "principle" | "custom" | "default";
   principle?: string;
   lastCompleted?: Date | null;
