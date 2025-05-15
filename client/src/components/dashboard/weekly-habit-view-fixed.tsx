@@ -104,7 +104,9 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
     const targetDays = habit.frequency === 'daily' ? 7 : 
                      habit.frequency === '2x-week' ? 2 :
                      habit.frequency === '3x-week' ? 3 :
-                     habit.frequency === '4x-week' ? 4 : 1;
+                     habit.frequency === '4x-week' ? 4 : 
+                     habit.frequency === '5x-week' ? 5 :
+                     habit.frequency === '6x-week' ? 6 : 1;
     
     return completedDays >= targetDays;
   };

@@ -154,9 +154,6 @@ function calculateCompletionRate(
     case 'daily':
       expectedCount = dayDiff;
       break;
-    case 'weekly':
-      expectedCount = Math.ceil(dayDiff / 7);
-      break;
     case '2x-week':
       expectedCount = Math.ceil(dayDiff / 3.5);
       break;
@@ -165,6 +162,12 @@ function calculateCompletionRate(
       break;
     case '4x-week':
       expectedCount = Math.ceil(dayDiff / 1.75);
+      break;
+    case '5x-week':
+      expectedCount = Math.ceil(dayDiff / 1.4);
+      break;
+    case '6x-week':
+      expectedCount = Math.ceil(dayDiff / 1.17);
       break;
     default:
       expectedCount = dayDiff;
