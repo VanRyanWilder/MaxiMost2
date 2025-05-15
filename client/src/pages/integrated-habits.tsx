@@ -1303,6 +1303,165 @@ export default function IntegratedHabits() {
         </CardContent>
       </Card>
       
+      {/* Habit Stacks Section */}
+      <div className="mt-6">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle>Expert Habit Stacks</CardTitle>
+            <CardDescription>
+              Combine multiple habits into powerful stacks for maximum effect
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {habitStacks.map(stack => (
+                <div 
+                  key={stack.id}
+                  className="border rounded-lg p-4 hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer"
+                  onClick={() => {
+                    // Open a dialog showing the stack details
+                    setSelectedStack(stack);
+                    setShowStackDetailsDialog(true);
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-primary/10 p-2 rounded-full">
+                      {getIconComponent(stack.icon)}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{stack.name}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {stack.habits.length} habits
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {stack.description}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-1.5">
+                    {stack.habits.map((habit, idx) => (
+                      <Badge 
+                        key={idx} 
+                        variant="outline" 
+                        className="text-[10px] font-normal flex items-center gap-1"
+                      >
+                        {getIconComponent(habit.icon)}
+                        {habit.title}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Habit Stack Details Dialog */}
+      <Dialog open={showStackDetailsDialog} onOpenChange={setShowStackDetailsDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{selectedStack?.name || "Habit Stack"}</DialogTitle>
+            <DialogDescription>
+              {selectedStack?.description || "Build multiple habits together"}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            {selectedStack && (
+              <>
+                <div className="mb-3 flex justify-between items-center">
+                  <p className="text-sm text-primary font-medium">
+                    {selectedStack.habits.length} habits in this stack
+                  </p>
+                  <Button 
+                    size="sm"
+                    className="flex items-center gap-1.5"
+                    onClick={() => {
+                      // Add all habits from the stack directly to habits list
+                      addHabitStackFromDialogPreview(selectedStack);
+                      setShowStackDetailsDialog(false);
+                    }}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Add All Habits
+                  </Button>
+                </div>
+                
+                <ScrollArea className="h-[300px] pr-4">
+                  <div className="grid grid-cols-1 gap-3">
+                    {selectedStack.habits.map((template, idx) => (
+                      <div 
+                        key={idx} 
+                        className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => {
+                          // Create a new habit with a unique ID
+                          const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                          
+                          const newHabit: Habit = {
+                            id,
+                            title: template.title,
+                            description: template.description,
+                            icon: template.icon,
+                            iconColor: template.iconColor || '#4F46E5', // Add default iconColor if not present
+                            impact: template.impact,
+                            effort: template.effort,
+                            timeCommitment: template.timeCommitment,
+                            frequency: template.frequency as HabitFrequency,
+                            isAbsolute: template.isAbsolute,
+                            category: template.category as HabitCategory,
+                            streak: 0,
+                            createdAt: new Date()
+                          };
+                          
+                          // Add to habits state
+                          setHabits(prevHabits => [...prevHabits, newHabit]);
+                          
+                          // Close the dialog
+                          setShowStackDetailsDialog(false);
+                          
+                          toast({
+                            title: "Habit added",
+                            description: `${template.title} has been added to your habits`,
+                          });
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="p-1.5 rounded-md bg-primary/10 text-primary">
+                            {getIconComponent(template.icon)}
+                          </span>
+                          <h3 className="font-medium">{template.title}</h3>
+                          <Badge className={`ml-auto text-xs ${getCategoryColor(template.category)}`}>
+                            {template.category}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {template.timeCommitment}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {getFrequencyLabel(template.frequency)}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Impact: {template.impact}/10
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      
       {/* Habit form dialog */}
       <Dialog open={!!editHabit} onOpenChange={(open) => !open && setEditHabit(null)}>
         <DialogContent className="max-w-md">
@@ -1712,154 +1871,7 @@ export default function IntegratedHabits() {
               </div>
             </TabsContent>
             
-            <TabsContent value="stacks" className="mt-0">
-              <div className="mb-3">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Expert habit stacks bundle multiple habits together for maximum effect.
-                  Select a stack to view its habits, then choose one to add:
-                </p>
-                
-                <Select
-                  onValueChange={(stackId) => {
-                    const selectedStack = habitStacks.find(s => s.id === stackId);
-                    setSelectedStack(selectedStack || null);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a habit stack" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {habitStacks.map(stack => (
-                      <SelectItem key={stack.id} value={stack.id}>
-                        {stack.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              {selectedStack && (
-                <>
-                  <div className="mb-3 flex justify-between items-center">
-                    <p className="text-sm text-primary font-medium">
-                      {selectedStack.habits.length} habits in this stack
-                    </p>
-                    <Button 
-                      size="sm"
-                      className="flex items-center gap-1.5"
-                      onClick={() => {
-                        // Add all habits from the stack directly to habits list
-                        const newHabits = selectedStack.habits.map(template => {
-                          // Generate a unique ID for each habit
-                          const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                          
-                          return {
-                            id,
-                            title: template.title,
-                            description: template.description,
-                            icon: template.icon,
-                            impact: template.impact,
-                            effort: template.effort,
-                            timeCommitment: template.timeCommitment,
-                            frequency: template.frequency,
-                            isAbsolute: template.isAbsolute,
-                            category: template.category,
-                            streak: 0,
-                            createdAt: new Date()
-                          };
-                        });
-                        
-                        // Add all habits at once to the habits state
-                        setHabits(prevHabits => [...prevHabits, ...newHabits]);
-                        
-                        // Close the dialog
-                        setAddHabitOpen(false);
-                        
-                        toast({
-                          title: "Habit stack added",
-                          description: `All ${selectedStack.habits.length} habits from ${selectedStack.name} have been added`,
-                        });
-                      }}
-                    >
-                      <Sparkles className="h-3.5 w-3.5" />
-                      Add All Habits
-                    </Button>
-                  </div>
-                  
-                  <ScrollArea className="h-[220px] pr-4">
-                    <div className="grid grid-cols-1 gap-3">
-                      {selectedStack.habits.map((template, idx) => (
-                        <div 
-                          key={idx} 
-                          className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
-                          onClick={() => {
-                            // Create a new habit with a unique ID
-                            const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                            
-                            const newHabit: Habit = {
-                              id,
-                              title: template.title,
-                              description: template.description,
-                              icon: template.icon,
-                              iconColor: template.iconColor || '#4F46E5', // Add default iconColor if not present
-                              impact: template.impact,
-                              effort: template.effort,
-                              timeCommitment: template.timeCommitment,
-                              frequency: template.frequency as HabitFrequency,
-                              isAbsolute: template.isAbsolute,
-                              category: template.category as HabitCategory,
-                              streak: 0,
-                              createdAt: new Date()
-                            };
-                            
-                            // Add to habits state
-                            setHabits(prevHabits => [...prevHabits, newHabit]);
-                            
-                            // Close the dialog
-                            setAddHabitOpen(false);
-                            
-                            toast({
-                              title: "Habit added",
-                              description: `${template.title} has been added to your habits`,
-                            });
-                          }}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="p-1.5 rounded-md bg-primary/10 text-primary">
-                              {getIconComponent(template.icon)}
-                            </span>
-                            <h3 className="font-medium">{template.title}</h3>
-                            <Badge className={`ml-auto text-xs ${getCategoryColor(template.category)}`}>
-                              {template.category}
-                            </Badge>
-                          </div>
-                          
-                          <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
-                          
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {template.timeCommitment}
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              {getFrequencyLabel(template.frequency)}
-                            </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              Impact: {template.impact}/10
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </>
-              )}
-              
-              {!selectedStack && (
-                <div className="text-center py-8 text-muted-foreground">
-                  Select a habit stack to view available habits
-                </div>
-              )}
-            </TabsContent>
+
           </Tabs>
           
           <DialogFooter>
