@@ -52,30 +52,30 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
     },
-    { 
-      path: "/supplements", 
-      name: "Top 10 Supplements", 
-      icon: <Trophy className="w-5 h-5 text-amber-500" />,
-      description: "Expert-recommended supplements with highest ROI"
-    },
-
-    { 
-      path: "/research", 
-      name: "Research", 
-      icon: <BookOpenText className="w-5 h-5" />,
-      description: "Evidence-based health & fitness research"
-    },
+    // Four Pillars of Maximum Performance
     { 
       path: "/principles", 
-      name: "Core Principles", 
-      icon: <TrendingUp className="w-5 h-5" />,
+      name: "Pillar 1: Core Principles", 
+      icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
       description: "High ROI principles from top performers"
     },
     { 
       path: "/sugar", 
-      name: "Sugar", 
+      name: "Pillar 2: Sugar Dangers", 
       icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
       description: "Understanding sugar's health impacts" 
+    },
+    { 
+      path: "/supplements", 
+      name: "Pillar 3: Top Supplements", 
+      icon: <Trophy className="w-5 h-5 text-amber-500" />,
+      description: "Expert-recommended supplements with highest ROI"
+    },
+    { 
+      path: "/research", 
+      name: "Pillar 4: Research", 
+      icon: <BookOpenText className="w-5 h-5 text-emerald-500" />,
+      description: "Evidence-based health & fitness research"
     },
     { 
       path: "/progress", 
