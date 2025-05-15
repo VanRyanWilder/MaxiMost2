@@ -208,6 +208,15 @@ export default function Dashboard() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
+  // Set up sensors for the drag and drop functionality
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   
   // Generate dates for the week
   const today = new Date();
@@ -250,6 +259,33 @@ export default function Dashboard() {
   // Function to edit an existing habit
   const editHabit = (updatedHabit: Habit) => {
     setHabits(habits.map(h => h.id === updatedHabit.id ? updatedHabit : h));
+  };
+  
+  // Handle drag end for sorting habits
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      // Find indices of dragged item and drop target
+      const oldIndex = habits.findIndex(h => h.id === active.id);
+      const newIndex = habits.findIndex(h => h.id === over.id);
+      
+      // Use arrayMove utility to get the new order of habits
+      const reorderedHabits = arrayMove(habits, oldIndex, newIndex);
+      
+      // Update state with new order
+      setHabits(reorderedHabits);
+      
+      // Persist the order in localStorage
+      localStorage.setItem('habits', JSON.stringify(reorderedHabits));
+      
+      // Show a confirmation toast
+      toast({
+        title: "Habit order updated",
+        description: "Your habits have been reordered successfully.",
+        variant: "default",
+      });
+    }
   };
 
   // Function to delete a habit
