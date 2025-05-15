@@ -63,6 +63,8 @@ import { Habit, HabitFrequency, HabitCategory } from "@/types/habit";
 type EditHabitDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  // Some components use setOpen instead of onOpenChange, so keep both for compatibility
+  setOpen?: (open: boolean) => void;
   habit: Habit | null;
   onSave: (habit: Habit) => void;
   onDelete?: (habitId: string) => void;
@@ -179,10 +181,13 @@ const iconCategories = Object.entries(iconMap).reduce<Record<string, string[]>>(
 export function EditHabitDialog({ 
   open, 
   onOpenChange, 
+  setOpen,
   habit, 
   onSave,
   onDelete
 }: EditHabitDialogProps) {
+  // For backward compatibility with components using setOpen
+  const handleOpenChange = setOpen || onOpenChange;
   const [editedHabit, setEditedHabit] = useState<Habit | null>(null);
   const [customCategory, setCustomCategory] = useState("");
   const [showCustomCategoryInput, setShowCustomCategoryInput] = useState(false);
@@ -231,7 +236,7 @@ export function EditHabitDialog({
       isCreatingNewHabit.current = true;
       setShowCustomCategoryInput(false);
       setCustomCategory("");
-      onOpenChange(true);
+      handleOpenChange(true);
     };
     
     document.addEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
@@ -239,7 +244,7 @@ export function EditHabitDialog({
     return () => {
       document.removeEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
     };
-  }, [onOpenChange]);
+  }, [handleOpenChange]);
   
   if (!editedHabit) {
     return null;
@@ -257,14 +262,14 @@ export function EditHabitDialog({
       } else {
         onSave(editedHabit);
       }
-      onOpenChange(false);
+      handleOpenChange(false);
     }
   };
   
   const handleDelete = () => {
     if (editedHabit && onDelete) {
       onDelete(editedHabit.id);
-      onOpenChange(false);
+      handleOpenChange(false);
     }
   };
   
@@ -289,8 +294,20 @@ export function EditHabitDialog({
     setEditedHabit({...editedHabit, category: value as HabitCategory, icon: icon});
   };
   
+  // Handle dialog close properly
+  const handleDialogChange = (newOpenState: boolean) => {
+    // If dialog is being closed, reset state properly
+    if (!newOpenState) {
+      // Call the parent's handler function to update its state
+      handleOpenChange(false);
+      // No need to reset editedHabit here as it will be handled by useEffect when dialog reopens
+    } else {
+      handleOpenChange(true);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
@@ -546,7 +563,7 @@ export function EditHabitDialog({
             </Button>
           )}
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => handleDialogChange(false)}>Cancel</Button>
             <Button onClick={handleSave}>Save Changes</Button>
           </div>
         </DialogFooter>
