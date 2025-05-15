@@ -338,7 +338,17 @@ const habitStacks: HabitStack[] = [
 ];
 
 // Habit Quick-Add Templates
-const quickAddHabits = [
+const quickAddHabits: Array<{
+  title: string;
+  description: string;
+  icon: string;
+  impact: number;
+  effort: number;
+  timeCommitment: string;
+  frequency: string;
+  category: string;
+  isAbsolute: boolean;
+}> = [
   {
     title: "Drink Water",
     description: "Drink 64oz of water throughout the day",
