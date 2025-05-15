@@ -284,9 +284,66 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
+                      {/* Quick Add Habits Section */}
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium mb-2">Quick Add Individual Habits</h4>
+                        
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                          {[
+                            { title: "Make Bed", icon: <CheckSquare className="h-4 w-4 text-blue-500" />, description: "Start the day right", category: "mind" },
+                            { title: "Lift Weights", icon: <Dumbbell className="h-4 w-4 text-blue-500" />, description: "Strength training", category: "fitness" },
+                            { title: "Brush Teeth", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Oral hygiene", category: "health" },
+                            { title: "Wash Face", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Skincare", category: "health" },
+                            { title: "Meditate", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Mental clarity", category: "mind" },
+                            { title: "Call Friend", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Social connection", category: "social" },
+                            { title: "Drink Water", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Stay hydrated", category: "health" },
+                            { title: "Journal", icon: <BookOpen className="h-4 w-4 text-blue-500" />, description: "Express thoughts", category: "mind" },
+                            { title: "Brain Dump", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Clear your mind", category: "mind" },
+                            { title: "Eat That Frog", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Do hardest task first", category: "mind" },
+                            { title: "Cardio", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Heart health", category: "fitness" },
+                            { title: "Supplements", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Daily vitamins", category: "health" }
+                          ].map((habit, index) => (
+                            <div key={index} className="border rounded-md bg-gray-50/50 p-2 transition-colors hover:border-blue-200 hover:bg-blue-50/30">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  {habit.icon}
+                                  <span className="text-sm font-medium">{habit.title}</span>
+                                </div>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => {
+                                    const newHabit = {
+                                      id: `h-${Date.now()}-q${index}`,
+                                      title: habit.title,
+                                      description: habit.description,
+                                      icon: habit.icon.type.name.toLowerCase(),
+                                      impact: 8,
+                                      effort: 3,
+                                      timeCommitment: '5 min',
+                                      frequency: 'daily',
+                                      isAbsolute: true,
+                                      category: habit.category,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    };
+                                    setHabits([...habits, newHabit]);
+                                    alert(`Added "${habit.title}" to your habits!`);
+                                  }}
+                                  className="h-6 w-6 p-0"
+                                >
+                                  <PlusCircle className="h-4 w-4 text-blue-500" />
+                                </Button>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">{habit.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
                       {/* Habit Stacks Section */}
                       <div className="mb-4">
-                        <h4 className="text-sm font-medium mb-2">Quick Add Habit Stacks</h4>
+                        <h4 className="text-sm font-medium mb-2">Expert Habit Stacks</h4>
                         
                         {/* Morning Routine Stack */}
                         <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
