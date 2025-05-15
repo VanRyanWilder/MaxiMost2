@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CalendarDays, ChevronLeft, ChevronRight, Info } from "lucide-react";
-import { Habit } from "../../types/habit";
-import { HabitCompletion } from "../../types/habit-completion";
-import { formatDate, getDayName, getWeekDates, formatDateShort } from "../../lib/utils";
+import { Habit } from "@/types/habit";
+import { HabitCompletion } from "@/types/habit-completion";
+import { formatDate, getDayName, getWeekDates, formatDateShort } from "@/lib/utils";
 
 interface WeeklyCalendarViewProps {
   habits: Habit[];
