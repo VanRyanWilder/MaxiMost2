@@ -255,6 +255,221 @@ const habitSuggestions = {
       timeCommitment: '16 hours',
       description: '16:8 intermittent fasting schedule'
     }
+  ],
+  stacks: [
+    {
+      id: 'stack-1',
+      title: 'Morning Power Stack',
+      category: 'stacks',
+      description: 'The perfect morning routine for optimal energy and focus',
+      icon: 'sun',
+      iconColor: 'yellow',
+      impact: 10,
+      habits: [
+        {
+          id: 'stack-1-1',
+          title: 'Morning sunlight',
+          icon: 'sun',
+          iconColor: 'orange',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 7,
+          effort: 2,
+          timeCommitment: '5 min',
+          description: 'Get morning sunlight for better circadian rhythm'
+        },
+        {
+          id: 'stack-1-2',
+          title: 'Morning stretch',
+          icon: 'activity',
+          iconColor: 'orange',
+          category: 'fitness',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 6,
+          effort: 3,
+          timeCommitment: '5 min',
+          description: 'Simple morning stretching routine'
+        },
+        {
+          id: 'stack-1-3',
+          title: 'Protein breakfast',
+          icon: 'apple',
+          iconColor: 'green',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 4,
+          timeCommitment: '15 min',
+          description: 'Start day with high protein breakfast'
+        }
+      ]
+    },
+    {
+      id: 'stack-2',
+      title: 'Evening Wind-Down Stack',
+      category: 'stacks',
+      description: 'Prepare your mind and body for optimal sleep',
+      icon: 'moon',
+      iconColor: 'indigo',
+      impact: 9,
+      habits: [
+        {
+          id: 'stack-2-1',
+          title: 'No phone 1hr before bed',
+          icon: 'smartphone',
+          iconColor: 'gray',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 6,
+          timeCommitment: '60 min',
+          description: 'Avoid screens before bedtime for better sleep'
+        },
+        {
+          id: 'stack-2-2',
+          title: 'Evening journal',
+          icon: 'scroll-text',
+          iconColor: 'yellow',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 7,
+          effort: 3,
+          timeCommitment: '10 min',
+          description: 'Reflect on your day and set priorities for tomorrow'
+        },
+        {
+          id: 'stack-2-3',
+          title: 'Read fiction',
+          icon: 'book-open',
+          iconColor: 'blue',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 6,
+          effort: 2,
+          timeCommitment: '15 min',
+          description: 'Read fiction to help calm the mind before sleep'
+        }
+      ]
+    },
+    {
+      id: 'stack-3',
+      title: 'Mind-Body Performance Stack',
+      category: 'stacks',
+      description: 'The ultimate weekly plan for physical and mental wellness',
+      icon: 'zap',
+      iconColor: 'green',
+      impact: 10,
+      habits: [
+        {
+          id: 'stack-3-1',
+          title: 'Weight training',
+          icon: 'dumbbell',
+          iconColor: 'red',
+          category: 'fitness',
+          frequency: '3x-week' as HabitFrequency,
+          isAbsolute: false,
+          impact: 9,
+          effort: 7,
+          timeCommitment: '45 min',
+          description: 'Strength training with weights'
+        },
+        {
+          id: 'stack-3-2',
+          title: 'Meditation',
+          icon: 'brain',
+          iconColor: 'purple',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 9,
+          effort: 4,
+          timeCommitment: '10 min',
+          description: 'Daily mindfulness meditation practice'
+        },
+        {
+          id: 'stack-3-3',
+          title: 'Take supplements',
+          icon: 'pill',
+          iconColor: 'yellow',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 7,
+          effort: 1,
+          timeCommitment: '1 min',
+          description: 'Take daily vitamins and supplements'
+        },
+        {
+          id: 'stack-3-4',
+          title: 'Intermittent fasting',
+          icon: 'timer',
+          iconColor: 'orange',
+          category: 'habits',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 8,
+          effort: 6,
+          timeCommitment: '16 hours',
+          description: '16:8 intermittent fasting schedule'
+        }
+      ]
+    },
+    {
+      id: 'stack-4',
+      title: 'Anti-Sugar Stack',
+      category: 'stacks',
+      description: 'Break the sugar addiction with these complementary habits',
+      icon: 'utensils',
+      iconColor: 'red',
+      impact: 9,
+      habits: [
+        {
+          id: 'stack-4-1',
+          title: 'No added sugar',
+          icon: 'utensils',
+          iconColor: 'red',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 9,
+          effort: 8,
+          timeCommitment: 'all day',
+          description: 'Avoid foods with added sugar'
+        },
+        {
+          id: 'stack-4-2',
+          title: 'Drink water instead of soda',
+          icon: 'droplets',
+          iconColor: 'blue',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 5,
+          timeCommitment: 'all day',
+          description: 'Replace all sugary drinks with water'
+        },
+        {
+          id: 'stack-4-3',
+          title: 'Sugar craving journal',
+          icon: 'scroll-text',
+          iconColor: 'purple',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 7,
+          effort: 3,
+          timeCommitment: '5 min',
+          description: 'Track and analyze your sugar cravings'
+        }
+      ]
+    }
   ]
 };
 
@@ -319,6 +534,16 @@ export function HabitLibrary({ onAddSuggestion, onCreateCustom }: HabitLibraryPr
     );
   };
 
+  // Function to handle adding all habits from a stack
+  const handleAddHabitStack = (stack: any) => {
+    // If a stack of habits is passed, add each habit in the stack
+    if (stack.habits && Array.isArray(stack.habits)) {
+      stack.habits.forEach((habit: any) => {
+        onAddSuggestion?.(habit);
+      });
+    }
+  };
+
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
@@ -332,11 +557,12 @@ export function HabitLibrary({ onAddSuggestion, onCreateCustom }: HabitLibraryPr
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="health" className="w-full">
-          <TabsList className="grid grid-cols-4 mb-3">
+          <TabsList className="grid grid-cols-5 mb-3">
             <TabsTrigger value="health">Health</TabsTrigger>
             <TabsTrigger value="fitness">Fitness</TabsTrigger>
             <TabsTrigger value="mind">Mind</TabsTrigger>
             <TabsTrigger value="habits">Routines</TabsTrigger>
+            <TabsTrigger value="stacks">Stacks</TabsTrigger>
           </TabsList>
           
           <TabsContent value="health" className="space-y-3">
@@ -482,6 +708,63 @@ export function HabitLibrary({ onAddSuggestion, onCreateCustom }: HabitLibraryPr
                     <Plus className="h-3.5 w-3.5 mr-1" />
                     Add
                   </Button>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          {/* New Stacks tab */}
+          <TabsContent value="stacks" className="space-y-3">
+            <div className="grid grid-cols-1 gap-3">
+              {habitSuggestions.stacks.map(stack => (
+                <div 
+                  key={stack.id}
+                  className={`p-3 rounded-md shadow-sm border border-${stack.iconColor}-100 bg-${stack.iconColor}-50 hover:bg-${stack.iconColor}-100 transition-colors`}
+                >
+                  <div className="flex items-center mb-2">
+                    <div className={`p-1.5 rounded-full bg-${stack.iconColor}-100 mr-2`}>
+                      {renderIcon(stack.icon, stack.iconColor)}
+                    </div>
+                    <div>
+                      <h4 className={`text-sm font-semibold text-${stack.iconColor}-700`}>{stack.title}</h4>
+                      <p className="text-xs text-muted-foreground">{stack.description}</p>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      className={`ml-auto bg-white border-${stack.iconColor}-200 text-${stack.iconColor}-600 hover:bg-${stack.iconColor}-50`}
+                      onClick={() => handleAddHabitStack(stack)}
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add All
+                    </Button>
+                  </div>
+                  
+                  <div className="pl-2 border-l-2 border-dashed border-gray-300 mt-3 space-y-2">
+                    {stack.habits.map((habit: any) => (
+                      <div 
+                        key={habit.id}
+                        className="flex items-center p-1.5 bg-white rounded-md shadow-sm"
+                      >
+                        <div className="flex-shrink-0 mr-2">
+                          {renderIcon(habit.icon, habit.iconColor)}
+                        </div>
+                        <span className="text-xs font-medium">{habit.title}</span>
+                        <Button 
+                          size="sm"
+                          variant="ghost"
+                          className="ml-auto h-6 w-6 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAddSuggestion?.(habit);
+                          }}
+                        >
+                          <Plus className="h-3 w-3" />
+                          <span className="sr-only">Add</span>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

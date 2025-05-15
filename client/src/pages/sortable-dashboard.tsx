@@ -282,22 +282,39 @@ export default function SortableDashboard() {
 
   // Handle adding a habit from the library
   const handleAddFromLibrary = (habitTemplate: any) => {
+    // Check if this is a habit stack with multiple habits
+    if (habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
+      // If it's a stack, add each habit from the stack
+      habitTemplate.habits.forEach((habitItem: any) => {
+        addHabitFromTemplate(habitItem);
+      });
+      
+      // Show success feedback for stack
+      console.log('Added habit stack:', habitTemplate.title);
+    } else {
+      // It's a single habit, add it
+      addHabitFromTemplate(habitTemplate);
+    }
+  };
+  
+  // Helper function to add a single habit from a template
+  const addHabitFromTemplate = (template: any) => {
     // Generate a new unique ID for the habit
     const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
     
     // Create a new habit from the template
     const newHabit: Habit = {
       id: newId,
-      title: habitTemplate.title,
-      description: habitTemplate.description,
-      icon: habitTemplate.icon,
-      iconColor: habitTemplate.iconColor,
-      impact: habitTemplate.impact,
-      effort: habitTemplate.effort,
-      timeCommitment: habitTemplate.timeCommitment,
-      frequency: habitTemplate.frequency,
-      isAbsolute: habitTemplate.isAbsolute,
-      category: habitTemplate.category,
+      title: template.title,
+      description: template.description,
+      icon: template.icon,
+      iconColor: template.iconColor,
+      impact: template.impact,
+      effort: template.effort,
+      timeCommitment: template.timeCommitment,
+      frequency: template.frequency,
+      isAbsolute: template.isAbsolute,
+      category: template.category,
       streak: 0,
       createdAt: new Date()
     };
