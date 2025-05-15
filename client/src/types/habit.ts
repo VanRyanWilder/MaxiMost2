@@ -53,6 +53,11 @@ export interface Habit {
   createdAt: Date;
 }
 
+// Add a helper type for creating new habits
+export type PartialHabit = Partial<Habit> & {
+  iconColor?: string;
+};
+
 export interface HabitStack {
   id: string;
   name: string;
