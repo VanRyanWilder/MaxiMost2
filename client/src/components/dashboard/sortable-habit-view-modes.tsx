@@ -297,13 +297,34 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
       {/* Daily view */}
       {viewMode === "daily" && (
         <div className="bg-white rounded-lg border p-4">
-          <div className="text-center mb-4">
-            <div className="text-xl font-bold">
-              {format(new Date(), 'EEEE, MMMM d, yyyy')}
+          <div className="flex justify-between items-center mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setSelectedDate(subDays(selectedDate, 1))}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="text-center">
+              <div className="text-xl font-bold">
+                {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {isSameDay(selectedDate, new Date()) 
+                  ? "Today's habits" 
+                  : isBefore(selectedDate, new Date())
+                    ? "Past habits"
+                    : "Future habits"
+                }
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              Today's habit tracker
-            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
           
           {/* Sortable habit list - daily view */}
@@ -325,15 +346,59 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                     </div>
                   )}
                   {filteredHabits.filter(h => h.isAbsolute).map(habit => (
-                    <div key={habit.id} className="p-3 rounded-lg border">
-                      <SortableHabit
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                        onEdit={handleEditHabit}
-                        onDelete={handleDeleteHabit}
-                        currentDate={new Date()}
-                      />
+                    <div key={habit.id} className="p-3 rounded-lg border hover:shadow-sm transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <span className="text-xl mr-2" style={{ color: habit.iconColor || '#4299e1' }}>
+                            {habitIcons[habit.icon] || '⚪'}
+                          </span>
+                          <span className="font-medium">{habit.title}</span>
+                        </div>
+                        
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleEditHabit(habit)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleDeleteHabit(habit.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {habit.description || `Daily habit - requires completion every day`}
+                      </div>
+                      
+                      <div className="flex items-center mt-2">
+                        <Button
+                          variant={isHabitCompletedOnDate(habit.id, selectedDate) ? "default" : "outline"}
+                          size="sm"
+                          className={`w-full ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'bg-blue-500 hover:bg-blue-600 text-white' : ''}`}
+                          onClick={() => onToggleHabit(habit.id, selectedDate)}
+                        >
+                          {isHabitCompletedOnDate(habit.id, selectedDate) ? (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <Circle className="h-4 w-4 mr-2" />
+                              Mark as Complete
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                   
@@ -344,15 +409,59 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                     </div>
                   )}
                   {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
-                    <div key={habit.id} className="p-3 rounded-lg border">
-                      <SortableHabit
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                        onEdit={handleEditHabit}
-                        onDelete={handleDeleteHabit}
-                        currentDate={new Date()}
-                      />
+                    <div key={habit.id} className="p-3 rounded-lg border hover:shadow-sm transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <span className="text-xl mr-2" style={{ color: habit.iconColor || '#4299e1' }}>
+                            {habitIcons[habit.icon] || '⚪'}
+                          </span>
+                          <span className="font-medium">{habit.title}</span>
+                        </div>
+                        
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleEditHabit(habit)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleDeleteHabit(habit.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {habit.description || `${getFrequencyLabel(habit.frequency)} frequency`}
+                      </div>
+                      
+                      <div className="flex items-center mt-2">
+                        <Button
+                          variant={isHabitCompletedOnDate(habit.id, selectedDate) ? "default" : "outline"}
+                          size="sm"
+                          className={`w-full ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'bg-blue-500 hover:bg-blue-600 text-white' : ''}`}
+                          onClick={() => onToggleHabit(habit.id, selectedDate)}
+                        >
+                          {isHabitCompletedOnDate(habit.id, selectedDate) ? (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <Circle className="h-4 w-4 mr-2" />
+                              Mark as Complete
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -360,15 +469,59 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 // For other filter categories, show normally
                 <div className="space-y-3">
                   {filteredHabits.map(habit => (
-                    <div key={habit.id} className="p-3 rounded-lg border">
-                      <SortableHabit
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                        onEdit={handleEditHabit}
-                        onDelete={handleDeleteHabit}
-                        currentDate={new Date()}
-                      />
+                    <div key={habit.id} className="p-3 rounded-lg border hover:shadow-sm transition-shadow">
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center">
+                          <span className="text-xl mr-2" style={{ color: habit.iconColor || '#4299e1' }}>
+                            {habitIcons[habit.icon] || '⚪'}
+                          </span>
+                          <span className="font-medium">{habit.title}</span>
+                        </div>
+                        
+                        <div className="flex space-x-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleEditHabit(habit)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleDeleteHabit(habit.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="text-sm text-muted-foreground mb-2">
+                        {habit.description || (habit.isAbsolute ? 'Daily habit' : `${getFrequencyLabel(habit.frequency)} frequency`)}
+                      </div>
+                      
+                      <div className="flex items-center mt-2">
+                        <Button
+                          variant={isHabitCompletedOnDate(habit.id, selectedDate) ? "default" : "outline"}
+                          size="sm"
+                          className={`w-full ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'bg-blue-500 hover:bg-blue-600 text-white' : ''}`}
+                          onClick={() => onToggleHabit(habit.id, selectedDate)}
+                        >
+                          {isHabitCompletedOnDate(habit.id, selectedDate) ? (
+                            <>
+                              <CheckCircle className="h-4 w-4 mr-2" />
+                              Completed
+                            </>
+                          ) : (
+                            <>
+                              <Circle className="h-4 w-4 mr-2" />
+                              Mark as Complete
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
