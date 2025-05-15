@@ -13,7 +13,14 @@ export type HabitFrequency =
 export type HabitTimeCommitment = 
   | "minimal" 
   | "moderate" 
-  | "high";
+  | "high"
+  | "5 min"
+  | "10 min"
+  | "15 min"
+  | "20 min" 
+  | "30 min"
+  | "45 min"
+  | "60 min";
 
 export type HabitCategory = 
   | "health" 
@@ -34,10 +41,19 @@ export interface Habit {
   iconColor: string;
   impact: number; // 1-10 scale
   effort: number; // 1-10 scale
-  timeCommitment: HabitTimeCommitment;
-  frequency: HabitFrequency;
+  timeCommitment: HabitTimeCommitment | string;
+  frequency: HabitFrequency | string;
   isAbsolute: boolean; // Is this a "must-do" habit?
-  category: HabitCategory;
+  category: HabitCategory | string;
   streak: number; // Current streak
   createdAt: Date;
+}
+
+export interface HabitStack {
+  id: string;
+  name: string;
+  description: string;
+  habits: string[]; // Array of habit IDs
+  createdAt: Date;
+  icon?: string;
 }

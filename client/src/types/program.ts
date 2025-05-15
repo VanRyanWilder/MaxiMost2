@@ -1,6 +1,7 @@
 export interface Program {
   id: string;
   title: string;
+  name: string;
   description: string;
   durationWeeks: number;
   category: ProgramCategory;
@@ -10,8 +11,15 @@ export interface Program {
   image?: string;
   color: string;
   habits: string[]; // Habit IDs
+  habitIds?: string[]; // For backward compatibility
   tasks: ProgramTask[];
   resources: ProgramResource[];
+  // Added fields for program recommendations
+  primaryGoal?: string;
+  supportedGoals?: string[];
+  timeCommitment?: string;
+  fitnessLevel?: string;
+  matchScore?: number;
 }
 
 export type ProgramCategory = 
@@ -52,11 +60,27 @@ export type ResourceType =
   | "workout" 
   | "recipe";
 
+export type ProgramGoalCategory = 
+  | "health-optimization"
+  | "morning-routine"
+  | "sugar-free"
+  | "strength" 
+  | "mental-clarity"
+  | "sleep"
+  | "nutrition"
+  | "weight-loss"
+  | "stress-reduction"
+  | "productivity"
+  | "focus"
+  | "energy"
+  | "recovery";
+
+export type TimeCommitment = "minimal" | "moderate" | "high";
+export type FitnessLevel = "beginner" | "intermediate" | "advanced";
+
 export interface RecommendationCriteria {
-  goalType: string; // Primary goal
-  secondaryGoals: string[];
-  timeCommitment: string; // How much time per day/week
-  difficulty: ProgramDifficulty;
-  healthConditions: string[];
-  preferences: string[];
+  primaryGoal: ProgramGoalCategory; 
+  secondaryGoal?: ProgramGoalCategory;
+  timeCommitment: TimeCommitment;
+  fitnessLevel: FitnessLevel;
 }
