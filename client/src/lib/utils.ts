@@ -67,3 +67,10 @@ export function getProgramColorClasses(color: string): { bg: string, gradientFro
       return { bg: 'bg-primary', gradientFrom: 'from-primary', gradientTo: 'to-primary' };
   }
 }
+
+// Get the icon component for habit icons with color support
+export function getIconComponent(iconName: string, iconColor?: string, className: string = "h-4 w-4") {
+  // This function will be implemented in a React component instead
+  // since JSX cannot be used directly in utility functions
+  return null;
+}
