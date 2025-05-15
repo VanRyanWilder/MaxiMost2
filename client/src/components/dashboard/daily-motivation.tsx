@@ -389,56 +389,6 @@ export function DailyMotivation() {
 
   return (
     <Card className="overflow-hidden">
-      
-      {/* Habit Stacks Section */}
-      <div className="border-b">
-        <div className="px-4 py-3 bg-muted/40 flex justify-between items-center">
-          <h3 className="font-medium text-sm flex items-center gap-1.5">
-            <Layers className="h-4 w-4 text-primary" />
-            Morning Routine Stacks
-          </h3>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-6 w-6 p-0" 
-            onClick={() => setShowHabitStacks(!showHabitStacks)}
-          >
-            {showHabitStacks ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
-        </div>
-        
-        {showHabitStacks && (
-          <div className="p-3 grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto">
-            {habitStacks.map((stack, index) => (
-              <div 
-                key={index}
-                className="flex items-start p-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group border border-border/40"
-                onClick={() => addHabitStack(stack)}
-              >
-                <div className="mr-3 mt-1 bg-primary/10 p-1.5 rounded-md text-primary flex-shrink-0">
-                  {stack.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium truncate">{stack.name}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5 mb-1 line-clamp-1">
-                    {stack.description}
-                  </p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {stack.habits.map((habit, idx) => (
-                      <Badge key={idx} variant="outline" className="text-[10px] px-1 py-0 h-4 bg-muted/30">
-                        {habit.title}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 h-7 w-7 p-0 flex-shrink-0 mt-1">
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     
       {/* Daily Motivation Section */}
       <CardHeader className="pb-2 bg-gradient-to-br from-gray-900 to-gray-800 text-white">

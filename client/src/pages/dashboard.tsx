@@ -22,7 +22,10 @@ import {
   Brain,
   Dumbbell,
   Droplets,
-  Trash
+  Trash,
+  Sun,
+  Clock,
+  CheckSquare
 } from 'lucide-react';
 
 // Import shared types
@@ -98,886 +101,580 @@ const initialHabits: Habit[] = [
     isAbsolute: false,
     category: 'social',
     streak: 1,
-    createdAt: new Date(Date.now() - 86400000 * 7) // 7 days ago
+    createdAt: new Date(Date.now() - 86400000 * 5) // 5 days ago
   }
 ];
 
+// Sample completions data
 const initialCompletions: HabitCompletion[] = [
-  { habitId: 'h1', date: new Date(), completed: true },
-  { habitId: 'h2', date: new Date(), completed: true },
-  { habitId: 'h1', date: subDays(new Date(), 1), completed: true },
-  { habitId: 'h2', date: subDays(new Date(), 1), completed: true },
-  { habitId: 'h3', date: subDays(new Date(), 1), completed: true },
-  { habitId: 'h1', date: subDays(new Date(), 2), completed: true },
-  { habitId: 'h2', date: subDays(new Date(), 2), completed: true },
-  { habitId: 'h4', date: subDays(new Date(), 2), completed: true },
+  // Today
+  { id: 'c1', habitId: 'h1', date: new Date(), completed: true },
+  { id: 'c2', habitId: 'h2', date: new Date(), completed: true },
+  
+  // Yesterday
+  { id: 'c3', habitId: 'h1', date: subDays(new Date(), 1), completed: true },
+  { id: 'c4', habitId: 'h2', date: subDays(new Date(), 1), completed: true },
+  { id: 'c5', habitId: 'h3', date: subDays(new Date(), 1), completed: true },
+  
+  // 2 days ago
+  { id: 'c6', habitId: 'h1', date: subDays(new Date(), 2), completed: true },
+  { id: 'c7', habitId: 'h2', date: subDays(new Date(), 2), completed: false },
+  { id: 'c8', habitId: 'h4', date: subDays(new Date(), 2), completed: true },
+  { id: 'c9', habitId: 'h5', date: subDays(new Date(), 2), completed: true },
 ];
 
 export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { user, userLoading } = useUser();
-  
-  // Unified state for habit tracking
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
+  const { user } = useUser();
   
-  // Check if a habit was completed on a specific date
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(
-      completion => completion.habitId === habitId && 
-                 isSameDay(completion.date, date) && 
-                 completion.completed
-    );
-  };
+  // Get selected date range for Weekly View - starts on Monday of current week
+  const startOfCurrentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfCurrentWeek, i));
   
-  // Toggle habit completion for a specific date
-  const toggleHabitCompletion = (habitId: string, date: Date) => {
-    const isCompleted = isHabitCompletedOnDate(habitId, date);
+  // Function to handle habit completion toggle
+  const toggleCompletion = (habitId: string, date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
     
-    if (isCompleted) {
-      // Remove completion
-      setCompletions(completions.filter(
-        c => !(c.habitId === habitId && isSameDay(c.date, date))
-      ));
+    // Only allow toggling if date is today or earlier
+    if (date > today) return;
+    
+    const existingCompletionIndex = completions.findIndex(
+      c => c.habitId === habitId && isSameDay(c.date, date)
+    );
+    
+    if (existingCompletionIndex >= 0) {
+      const newCompletions = [...completions];
+      newCompletions[existingCompletionIndex].completed = !newCompletions[existingCompletionIndex].completed;
+      setCompletions(newCompletions);
     } else {
-      // Add completion
-      setCompletions([...completions, { habitId, date, completed: true }]);
+      setCompletions([
+        ...completions,
+        { 
+          id: `c-${Date.now()}`, 
+          habitId, 
+          date: new Date(date), 
+          completed: true 
+        }
+      ]);
     }
   };
   
-  // Navigate to the current habits page for adding new habits
-  const handleAddHabit = () => {
-    window.location.href = "/dashboard";
-    
-    // Show the add-habit dialog
-    setTimeout(() => {
-      const event = new CustomEvent('open-add-habit-dialog', { bubbles: true });
-      document.dispatchEvent(event);
-    }, 100);
+  // Function to add a new habit
+  const addHabit = (habit: Habit) => {
+    setHabits([...habits, habit]);
   };
   
-  // Listen for habit stack events
-  useEffect(() => {
-    // Handle the standard event format with full habit data
-    const handleHabitStackEvent = (event: any) => {
-      const { stackName, habits: stackHabits } = event.detail;
-      console.log(`Adding habit stack: ${stackName} with ${stackHabits.length} habits`, stackHabits);
-      
-      // Ensure we have valid habit objects with all required properties
-      const validHabits = stackHabits.filter((h: any) => h && h.id && h.title);
-      
-      if (validHabits.length > 0) {
-        setHabits(prev => {
-          // Filter out any existing habits with the same IDs to avoid duplicates
-          const uniqueIds = new Set(validHabits.map((h: any) => h.id));
-          const filteredPrev = prev.filter(h => !uniqueIds.has(h.id));
-          return [...filteredPrev, ...validHabits];
-        });
-        console.log(`Successfully added ${validHabits.length} habits from ${stackName}`);
-      } else {
-        console.error("No valid habits in stack:", stackName);
-      }
-    };
-    
-    // Handle the manual event format that uses window.addStackHabits
-    const handleManualHabitStackEvent = (event: any) => {
-      const stackName = event.detail;
-      console.log(`Manual adding habit stack: ${stackName}`);
-      
-      // Get the habits from the window object
-      const stackHabits = (window as any).addStackHabits || [];
-      
-      if (stackHabits.length > 0) {
-        console.log(`Adding ${stackHabits.length} habits from ${stackName} stack via window object`);
-        
-        // Ensure we have valid habit objects with all required properties
-        const validHabits = stackHabits.filter((h: any) => h && h.id && h.title);
-        
-        if (validHabits.length > 0) {
-          setHabits(prev => {
-            // Filter out any existing habits with the same IDs to avoid duplicates
-            const uniqueIds = new Set(validHabits.map((h: any) => h.id));
-            const filteredPrev = prev.filter(h => !uniqueIds.has(h.id));
-            return [...filteredPrev, ...validHabits];
-          });
-          console.log(`Successfully added ${validHabits.length} habits from ${stackName}`);
-        } else {
-          console.error("No valid habits in window.addStackHabits for:", stackName);
-        }
-        
-        // Clear the window object
-        (window as any).addStackHabits = null;
-      } else {
-        console.error("No habits found in window.addStackHabits for stack:", stackName);
-      }
-    };
-    
-    // Listen for both event types
-    document.addEventListener('add-habit-stack', handleHabitStackEvent);
-    document.addEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
-    
-    // Handle individual prefilled habits
-    const handlePrefilledHabit = (event: any) => {
-      const habit = event.detail;
-      console.log("Adding prefilled habit:", habit);
-      
-      if (habit && habit.title) {
-        const newHabit = {
-          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-          title: habit.title,
-          description: habit.description || "",
-          icon: typeof habit.icon === 'object' ? habit.icon.type.name.toLowerCase() : 'zap',
-          impact: habit.impact || 8,
-          effort: habit.effort || 3,
-          timeCommitment: habit.timeCommitment || '10 min',
-          frequency: habit.frequency || 'daily',
-          isAbsolute: habit.isAbsolute || false,
-          category: habit.category || 'health',
-          streak: 0,
-          createdAt: new Date()
-        };
-        
-        setHabits(prev => [...prev, newHabit]);
-        console.log("Successfully added prefilled habit:", newHabit);
-      }
-    };
-    
-    document.addEventListener('add-prefilled-habit', handlePrefilledHabit);
-    
-    // Clean up all event listeners
-    return () => {
-      document.removeEventListener('add-habit-stack', handleHabitStackEvent);
-      document.removeEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
-      document.removeEventListener('add-prefilled-habit', handlePrefilledHabit);
-    };
-  }, []);
+  // Function to edit an existing habit
+  const editHabit = (updatedHabit: Habit) => {
+    setHabits(habits.map(habit => 
+      habit.id === updatedHabit.id ? updatedHabit : habit
+    ));
+  };
   
-  // Calculate metrics for the habit completion stats
-  const totalHabits = habits.length;
-  const completedToday = habits.filter(h => isHabitCompletedOnDate(h.id, new Date())).length;
-  const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const weekDates = Array.from({ length: 7 }).map((_, i) => addDays(weekStart, i));
-  
-  // Weekly metrics
-  const weeklyCompletionRate = habits.reduce((total, habit) => {
-    const completed = weekDates.filter(date => isHabitCompletedOnDate(habit.id, date)).length;
-    const target = habit.frequency === 'daily' ? 7 : 
-                  habit.frequency === '2x-week' ? 2 :
-                  habit.frequency === '3x-week' ? 3 :
-                  habit.frequency === '4x-week' ? 4 : 1;
-    return total + (completed / (target * habits.length) * 100);
-  }, 0);
+  // Function to delete a habit
+  const deleteHabit = (habitId: string) => {
+    setHabits(habits.filter(habit => habit.id !== habitId));
+    setCompletions(completions.filter(completion => completion.habitId !== habitId));
+  };
   
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+    <>
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
       
-      <div className="flex-1 flex flex-col">
-        <MobileHeader onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+      <div className="flex flex-col min-h-screen">
+        <MobileHeader 
+          isSidebarOpen={isSidebarOpen} 
+          setIsSidebarOpen={setIsSidebarOpen}
+          pageTitle="Habit Dashboard"
+        />
         
-        <PageContainer title="Habit Dashboard">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-2">
-            <div className="lg:col-span-2 space-y-6">
-              {/* Main habit tracker component */}
-              <Card>
-                <CardContent className="pt-6">
-                  <WeeklyHabitView 
-                    habits={habits}
-                    completions={completions}
-                    onToggleHabit={toggleHabitCompletion}
-                    onAddHabit={handleAddHabit}
-                    onUpdateHabit={(updatedHabit) => {
-                      // Ensure updatedHabit has all required properties
-                      const completeHabit = {
-                        ...updatedHabit,
-                        createdAt: updatedHabit.createdAt || new Date()
-                      };
-                      
-                      setHabits(habits.map(h => 
-                        h.id === updatedHabit.id ? completeHabit : h
-                      ));
-                    }}
-                    onDeleteHabit={(habitId) => {
-                      setHabits(habits.filter(h => h.id !== habitId));
-                      setCompletions(completions.filter(c => c.habitId !== habitId));
-                    }}
-                  />
-                </CardContent>
-              </Card>
-              
-              {/* Habit performance metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <ProgressCard 
-                  title="Today's Habits" 
-                  value={`${completedToday}/${totalHabits}`} 
-                  trend={completedToday > 0 ? `${Math.round((completedToday / totalHabits) * 100)}%` : "0%"}
-                  description="completed" 
-                />
-                <ProgressCard 
-                  title="Weekly Streak" 
-                  value={habits.reduce((max, h) => Math.max(max, h.streak || 0), 0) + " days"}
-                  description="longest active streak"
-                />
-                <ProgressCard 
-                  title="Weekly Completion" 
-                  value={`${Math.round(weeklyCompletionRate)}%`}
-                  description="this week" 
-                />
-              </div>
-              
-              {/* Habit Performance Metrics */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Habit Performance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">Your top performing habits and areas for improvement.</p>
-                  <div className="space-y-4">
-                    {habits.map(habit => {
-                      // Calculate completion rate for this habit
-                      const completedDays = weekDates.filter(date => 
-                        isHabitCompletedOnDate(habit.id, date)
-                      ).length;
-                      
-                      const target = habit.frequency === 'daily' ? 7 : 
-                                    habit.frequency === '2x-week' ? 2 :
-                                    habit.frequency === '3x-week' ? 3 :
-                                    habit.frequency === '4x-week' ? 4 : 1;
-                                    
-                      const completionRate = Math.min(100, Math.round((completedDays / target) * 100));
-                      
-                      return (
-                        <div key={habit.id}>
-                          <div className="flex justify-between mb-1">
-                            <span className="text-sm font-medium">{habit.title}</span>
-                            <span className="text-sm font-medium">{completionRate}%</span>
-                          </div>
-                          <div className="w-full bg-primary/20 rounded-full h-2.5">
-                            <div 
-                              className="bg-primary h-2.5 rounded-full" 
-                              style={{ width: `${completionRate}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
+        <PageContainer>
+          <div className="pt-4 pb-8">
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold">
+                Your Habit Dashboard
+              </h1>
+              <p className="text-muted-foreground">
+                Track, measure, and optimize your daily habits for maximum ROI on your time.
+              </p>
             </div>
             
-            {/* Right column with habit library and other elements */}
-            <div className="space-y-6">
-              {/* Habit Library Card */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-1.5">
-                    <Zap className="w-4 h-4" /> Habit Library
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Habit Stacks Section */}
-                    <div className="mb-4">
-                      <h4 className="text-sm font-medium mb-2">Quick Add Habit Stacks</h4>
-                      
-                      {/* Morning Routine Stack */}
-                      <div className="border p-3 rounded-md mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <h5 className="font-medium">Morning Routine Stack</h5>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-7 px-3 text-xs"
-                            onClick={() => {
-                              const morningHabits = [
-                                {
-                                  id: `h-${Date.now()}-1`,
-                                  title: "Morning Meditation",
-                                  description: "10 minutes of focused breathing",
-                                  icon: "brain",
-                                  impact: 9,
-                                  effort: 2,
-                                  timeCommitment: '10 min',
-                                  frequency: 'daily' as HabitFrequency,
-                                  isAbsolute: true,
-                                  category: "mind" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                },
-                                {
-                                  id: `h-${Date.now()}-2`,
-                                  title: "Morning Hydration",
-                                  description: "Drink 16oz of water immediately after waking",
-                                  icon: "droplets",
-                                  impact: 9,
-                                  effort: 1,
-                                  timeCommitment: '2 min',
-                                  frequency: 'daily' as HabitFrequency,
-                                  isAbsolute: true,
-                                  category: "health" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                },
-                                {
-                                  id: `h-${Date.now()}-3`,
-                                  title: "Gratitude Journaling",
-                                  description: "Write down 3 things you're grateful for",
-                                  icon: "bookopen",
-                                  impact: 9,
-                                  effort: 3,
-                                  timeCommitment: '10 min',
-                                  frequency: 'daily' as HabitFrequency,
-                                  isAbsolute: true,
-                                  category: "mind" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                }
-                              ];
-                              
-                              setHabits([...habits, ...morningHabits]);
-                              alert("Added 3 morning routine habits successfully!");
-                            }}
-                          >
-                            Add All 3 Habits
-                          </Button>
+            {/* Progress Cards Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <ProgressCard 
+                title="Completion Rate" 
+                value={78} 
+                description="Last 7 days"
+                icon={<CheckSquare className="text-blue-500" />}
+              />
+              
+              <ProgressCard 
+                title="Current Streak" 
+                value={12} 
+                description="Days in a row"
+                icon={<Activity className="text-green-500" />}
+              />
+              
+              <ProgressCard 
+                title="Active Habits" 
+                value={habits.length} 
+                description="Total habits"
+                icon={<Zap className="text-blue-500" />}
+              />
+              
+              <ProgressCard 
+                title="Consistency Score" 
+                value={85} 
+                description="Based on activity"
+                icon={<Activity className="text-blue-500" />}
+              />
+            </div>
+            
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Weekly habit view & streaks (left column) */}
+              <div className="lg:col-span-2 space-y-6">
+                <Card>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-1.5">
+                      <Activity className="w-4 h-4 text-blue-500" /> Weekly Habit Tracker
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pb-6">
+                    <WeeklyHabitView 
+                      habits={habits.filter(h => h.isAbsolute)}
+                      dates={weekDates}
+                      completions={completions}
+                      onToggleCompletion={toggleCompletion}
+                    />
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-1.5">
+                      <CheckSquare className="w-4 h-4 text-blue-500" /> Habit List
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <DashboardHabits 
+                      habits={habits}
+                      completions={completions.filter(c => isSameDay(c.date, new Date()))}
+                      onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
+                      onAddHabit={addHabit}
+                      onEditHabit={editHabit}
+                      onDeleteHabit={deleteHabit}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Right column with habit library and other elements */}
+              <div className="space-y-6">
+                {/* Habit Library Card */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-blue-500" /> Habit Library
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {/* Habit Stacks Section */}
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium mb-2">Quick Add Habit Stacks</h4>
+                        
+                        {/* Morning Routine Stack */}
+                        <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                          <div className="p-3 border-b bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <h5 className="font-medium flex items-center gap-2">
+                                <Sun className="h-4 w-4 text-blue-500" />
+                                Morning Routine Stack
+                              </h5>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                onClick={() => {
+                                  const morningHabits = [
+                                    {
+                                      id: `h-${Date.now()}-1`,
+                                      title: "Morning Meditation",
+                                      description: "10 minutes of focused breathing",
+                                      icon: "brain",
+                                      impact: 9,
+                                      effort: 2,
+                                      timeCommitment: '10 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "mind" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-2`,
+                                      title: "Morning Hydration",
+                                      description: "Drink 16oz of water immediately after waking",
+                                      icon: "droplets",
+                                      impact: 9,
+                                      effort: 1,
+                                      timeCommitment: '2 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-3`,
+                                      title: "Gratitude Journaling",
+                                      description: "Write down 3 things you're grateful for",
+                                      icon: "bookopen",
+                                      impact: 9,
+                                      effort: 3,
+                                      timeCommitment: '10 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "mind" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    }
+                                  ];
+                                  
+                                  setHabits([...habits, ...morningHabits]);
+                                  alert("Added 3 morning routine habits successfully!");
+                                }}
+                              >
+                                Add All 3 Habits
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Brain className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Morning Meditation</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">10 minutes of focused breathing</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Droplets className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Morning Hydration</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Drink 16oz water</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Gratitude Journal</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Write 3 things you're grateful for</p>
+                            </div>
+                          </div>
                         </div>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <Brain className="h-4 w-4 text-purple-500" />
-                              <span className="text-sm font-medium">Morning Meditation</span>
+                        {/* Huberman Lab Stack */}
+                        <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                          <div className="p-3 border-b bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <h5 className="font-medium flex items-center gap-2">
+                                <Brain className="h-4 w-4 text-blue-500" />
+                                Huberman Lab Stack
+                              </h5>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                onClick={() => {
+                                  const hubermanHabits = [
+                                    {
+                                      id: `h-${Date.now()}-h1`,
+                                      title: "Morning Sunlight",
+                                      description: "Get 2-10 minutes of morning sunlight exposure within 30-60 minutes of waking",
+                                      icon: "sun",
+                                      impact: 9,
+                                      effort: 1,
+                                      timeCommitment: '5 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-h2`,
+                                      title: "Delay Caffeine",
+                                      description: "Wait 90-120 minutes after waking before consuming caffeine",
+                                      icon: "clock",
+                                      impact: 7,
+                                      effort: 3,
+                                      timeCommitment: '0 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-h3`,
+                                      title: "Cold Exposure",
+                                      description: "Brief cold exposure via shower or cold plunge",
+                                      icon: "droplets",
+                                      impact: 8,
+                                      effort: 6,
+                                      timeCommitment: '2 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: false,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    }
+                                  ];
+                                  
+                                  setHabits([...habits, ...hubermanHabits]);
+                                  alert("Added Huberman Lab stack successfully!");
+                                }}
+                              >
+                                Add All 3 Habits
+                              </Button>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">10 minutes of focused breathing</p>
                           </div>
                           
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <Droplets className="h-4 w-4 text-blue-500" />
-                              <span className="text-sm font-medium">Morning Hydration</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Sun className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Morning Sunlight</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">5 min daily</p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">Drink 16oz water</p>
-                          </div>
-                          
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <BookOpen className="h-4 w-4 text-amber-500" />
-                              <span className="text-sm font-medium">Gratitude Journal</span>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Delay Caffeine</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">90+ min after waking</p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">Write 3 things you're grateful for</p>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Droplets className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Cold Exposure</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">2 min cold shower</p>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      
-                      {/* Fitness Stack */}
-                      <div className="border p-3 rounded-md mb-4">
-                        <div className="flex justify-between items-center mb-2">
-                          <h5 className="font-medium">Fitness Stack</h5>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-7 px-3 text-xs"
-                            onClick={() => {
-                              const fitnessHabits = [
-                                {
-                                  id: `h-${Date.now()}-str`,
-                                  title: "Strength Training",
-                                  description: "Build muscle with resistance exercises",
-                                  icon: "dumbbell",
-                                  impact: 9,
-                                  effort: 7,
-                                  timeCommitment: '45 min',
-                                  frequency: '3x-week' as HabitFrequency,
-                                  isAbsolute: false,
-                                  category: "fitness" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                },
-                                {
-                                  id: `h-${Date.now()}-prot`,
-                                  title: "Protein Intake",
-                                  description: "Consume enough protein daily",
-                                  icon: "activity",
-                                  impact: 8,
-                                  effort: 4,
-                                  timeCommitment: 'All day',
-                                  frequency: 'daily' as HabitFrequency,
-                                  isAbsolute: true,
-                                  category: "health" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                },
-                                {
-                                  id: `h-${Date.now()}-str`,
-                                  title: "Post-workout Stretch",
-                                  description: "Increase flexibility and recovery",
-                                  icon: "activity",
-                                  impact: 7,
-                                  effort: 3,
-                                  timeCommitment: '15 min',
-                                  frequency: '3x-week' as HabitFrequency,
-                                  isAbsolute: false,
-                                  category: "fitness" as HabitCategory,
-                                  streak: 0,
-                                  createdAt: new Date()
-                                }
-                              ];
-                              
-                              setHabits([...habits, ...fitnessHabits]);
-                              alert("Added 3 fitness habits successfully!");
-                            }}
-                          >
-                            Add All 3 Habits
-                          </Button>
                         </div>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <Dumbbell className="h-4 w-4 text-green-500" />
-                              <span className="text-sm font-medium">Strength Training</span>
+                        {/* Jocko Stack */}
+                        <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                          <div className="p-3 border-b bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <h5 className="font-medium flex items-center gap-2">
+                                <CheckSquare className="h-4 w-4 text-blue-500" />
+                                Jocko Willink Stack
+                              </h5>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                onClick={() => {
+                                  const jockoHabits = [
+                                    {
+                                      id: `h-${Date.now()}-j1`,
+                                      title: "4:30 AM Wake-Up",
+                                      description: "Wake up at 4:30 AM for early start advantage",
+                                      icon: "sun",
+                                      impact: 8,
+                                      effort: 8,
+                                      timeCommitment: '0 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "mind" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-j2`,
+                                      title: "Morning Workout",
+                                      description: "Intense workout (weight training or calisthenics)",
+                                      icon: "dumbbell",
+                                      impact: 9,
+                                      effort: 7,
+                                      timeCommitment: '45 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: false,
+                                      category: "fitness" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-j3`,
+                                      title: "Strategic Planning",
+                                      description: "Plan your day with strategic priorities",
+                                      icon: "bookopen",
+                                      impact: 8,
+                                      effort: 3,
+                                      timeCommitment: '10 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "mind" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    }
+                                  ];
+                                  
+                                  setHabits([...habits, ...jockoHabits]);
+                                  alert("Added Jocko Willink stack successfully!");
+                                }}
+                              >
+                                Add All 3 Habits
+                              </Button>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">3× per week</p>
                           </div>
                           
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <Activity className="h-4 w-4 text-blue-500" />
-                              <span className="text-sm font-medium">Protein Intake</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Sun className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">4:30 AM Wake-Up</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Daily discipline</p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">Daily nutrition</p>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Dumbbell className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Morning Workout</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">45-60 min daily</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Strategic Planning</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">10 min daily</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Fitness Stack */}
+                        <div className="border rounded-md hover:border-blue-200 transition-colors">
+                          <div className="p-3 border-b bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <h5 className="font-medium flex items-center gap-2">
+                                <Dumbbell className="h-4 w-4 text-blue-500" />
+                                Fitness Stack
+                              </h5>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                onClick={() => {
+                                  const fitnessHabits = [
+                                    {
+                                      id: `h-${Date.now()}-f1`,
+                                      title: "Strength Training",
+                                      description: "Resistance training for muscle growth and strength",
+                                      icon: "dumbbell",
+                                      impact: 9,
+                                      effort: 7,
+                                      timeCommitment: '45 min',
+                                      frequency: '3x-week' as HabitFrequency,
+                                      isAbsolute: false,
+                                      category: "fitness" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-f2`,
+                                      title: "Protein Intake",
+                                      description: "Consume adequate protein (1g per lb of bodyweight)",
+                                      icon: "apple",
+                                      impact: 8,
+                                      effort: 5,
+                                      timeCommitment: 'All day',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-f3`,
+                                      title: "Post-workout Stretch",
+                                      description: "5-10 minutes of stretching after workout",
+                                      icon: "activity",
+                                      impact: 7,
+                                      effort: 3,
+                                      timeCommitment: '15 min',
+                                      frequency: '3x-week' as HabitFrequency,
+                                      isAbsolute: false,
+                                      category: "fitness" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    }
+                                  ];
+                                  
+                                  setHabits([...habits, ...fitnessHabits]);
+                                  alert("Added 3 fitness habits successfully!");
+                                }}
+                              >
+                                Add All 3 Habits
+                              </Button>
+                            </div>
                           </div>
                           
-                          <div className="p-2 border rounded-md">
-                            <div className="flex items-center gap-2">
-                              <Activity className="h-4 w-4 text-pink-500" />
-                              <span className="text-sm font-medium">Post-workout Stretch</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Dumbbell className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Strength Training</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">3× per week</p>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">Improve recovery</p>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Activity className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Protein Intake</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Daily nutrition</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Activity className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Post-workout Stretch</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Improve recovery</p>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              {/* Core Principles Habits */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-1.5">
-                    <BookOpen className="w-4 h-4 text-blue-500" /> Principle-Based Habits
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2 mb-4">
-                    <Button 
-                      variant="outline" 
-                      className="w-full flex justify-between items-center"
-                      onClick={() => {
-                        // Toggle visibility of principles
-                        const principlesSection = document.getElementById('principles-list');
-                        if (principlesSection) {
-                          principlesSection.classList.toggle('hidden');
-                        }
-                      }}
-                    >
-                      <span className="font-medium">Core Stoic Principles</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    
-                    <div id="principles-list" className="space-y-2 hidden pl-2 pr-2 pt-2">
-                      {[
-                        { title: "Practice Negative Visualization", description: "Contemplate what you'd do if you lost what you value", icon: "brain" },
-                        { title: "Focus on What You Can Control", description: "Distinguish between what is and isn't in your power", icon: "activity" },
-                        { title: "Take the View From Above", description: "Consider problems from a broader perspective", icon: "brain" },
-                        { title: "Practice Voluntary Discomfort", description: "Deliberately forgo comfort occasionally", icon: "zap" },
-                        { title: "Apply the Dichotomy of Control", description: "Accept what you cannot change, focus on your responses", icon: "activity" }
-                      ].map((principle, i) => (
-                        <div key={i} className="flex flex-col p-3 border rounded-md">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">{principle.title}</span>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-6 px-2"
-                              onClick={() => {
-                                const newHabit: Habit = {
-                                  id: `h-${Date.now()}-principle-${i}`,
-                                  title: principle.title,
-                                  description: principle.description,
-                                  icon: principle.icon,
-                                  impact: 10,
-                                  effort: 5,
-                                  timeCommitment: '15 min',
-                                  frequency: 'daily',
-                                  isAbsolute: true,
-                                  category: 'mind',
-                                  streak: 0,
-                                  createdAt: new Date(),
-                                  type: "principle"
-                                };
-                                setHabits([...habits, newHabit]);
-                              }}
-                            >
-                              <PlusCircle className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          <span className="text-xs text-muted-foreground">{principle.description}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2 mb-4">
-                    <Button 
-                      variant="outline" 
-                      className="w-full flex justify-between items-center"
-                      onClick={() => {
-                        // Toggle visibility 
-                        const sugarSection = document.getElementById('sugar-principles');
-                        if (sugarSection) {
-                          sugarSection.classList.toggle('hidden');
-                        }
-                      }}
-                    >
-                      <span className="font-medium">Sugar Avoidance</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    
-                    <div id="sugar-principles" className="space-y-2 hidden pl-2 pr-2 pt-2">
-                      {[
-                        { title: "Read Food Labels", description: "Check for hidden sugars in packaged foods", icon: "activity" },
-                        { title: "No Liquid Calories", description: "Avoid sugar-sweetened beverages completely", icon: "droplets" },
-                        { title: "Eat Whole Foods", description: "Focus on unprocessed foods without added sugar", icon: "apple" },
-                        { title: "Sugar-Free Breakfast", description: "Start your day without any added sugar", icon: "activity" }
-                      ].map((principle, i) => (
-                        <div key={i} className="flex flex-col p-3 border rounded-md">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-sm">{principle.title}</span>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-6 px-2"
-                              onClick={() => {
-                                const newHabit: Habit = {
-                                  id: `h-${Date.now()}-sugar-${i}`,
-                                  title: principle.title,
-                                  description: principle.description,
-                                  icon: principle.icon,
-                                  impact: 9,
-                                  effort: 6,
-                                  timeCommitment: 'All day',
-                                  frequency: 'daily',
-                                  isAbsolute: true,
-                                  category: 'health',
-                                  streak: 0,
-                                  createdAt: new Date()
-                                };
-                                setHabits([...habits, newHabit]);
-                              }}
-                            >
-                              <PlusCircle className="w-4 h-4" />
-                            </Button>
-                          </div>
-                          <span className="text-xs text-muted-foreground">{principle.description}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Create Custom Habit */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center gap-1.5">
-                    <Pencil className="w-4 h-4" /> Create Custom Habit
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <label className="text-sm font-medium">Habit Name</label>
-                      <input
-                        id="custom-habit-title"
-                        className="w-full p-2 mt-1 border rounded-md"
-                        placeholder="E.g., Daily Meditation"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="text-sm font-medium">Description</label>
-                      <input
-                        id="custom-habit-description"
-                        className="w-full p-2 mt-1 border rounded-md"
-                        placeholder="Brief description of your habit"
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-sm font-medium">Category</label>
-                        <div className="relative">
-                          <select 
-                            id="custom-habit-category"
-                            className="w-full p-2 mt-1 border rounded-md appearance-none"
-                            onChange={(e) => {
-                              const customOption = document.getElementById('custom-category-option');
-                              const customInput = document.getElementById('custom-category-input');
-                              
-                              if (e.target.value === 'new-category' && customInput) {
-                                customInput.classList.remove('hidden');
-                                customInput.focus();
-                              } else if (customInput) {
-                                customInput.classList.add('hidden');
-                              }
-                            }}
-                          >
-                            <option value="health">Health</option>
-                            <option value="fitness">Fitness</option>
-                            <option value="mind">Mind</option>
-                            <option value="social">Social</option>
-                            <option value="work">Work</option>
-                            <option value="study">Study</option>
-                            <option value="hobby">Hobby</option>
-                            <option value="finance">Finance</option>
-                            <option value="spiritual">Spiritual</option>
-                            <option id="custom-category-option" value="new-category">+ Create New Category</option>
-                          </select>
-                          <input 
-                            id="custom-category-input"
-                            className="w-full p-2 mt-1 border rounded-md hidden absolute top-0 left-0"
-                            placeholder="Enter custom category name"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="text-sm font-medium">Frequency</label>
-                        <select 
-                          id="custom-habit-frequency"
-                          className="w-full p-2 mt-1 border rounded-md"
-                        >
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="2x-week">2x per week</option>
-                          <option value="3x-week">3x per week</option>
-                          <option value="4x-week">4x per week</option>
-                          <option value="5x-week">5x per week</option>
-                          <option value="6x-week">6x per week</option>
-                          <option value="custom">Custom</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-sm font-medium">Icon</label>
-                        <select 
-                          id="custom-habit-icon"
-                          className="w-full p-2 mt-1 border rounded-md"
-                        >
-                          <option value="activity">Activity</option>
-                          <option value="brain">Brain</option>
-                          <option value="droplets">Droplets</option>
-                          <option value="dumbbell">Dumbbell</option>
-                          <option value="apple">Apple</option>
-                          <option value="bookopen">Book</option>
-                          <option value="users">Social</option>
-                          <option value="zap">Energy</option>
-                          <option value="pill">Pill</option>
-                          <option value="heart">Heart</option>
-                        </select>
-                      </div>
-                      
-                      <div>
-                        <label className="text-sm font-medium">Time Commitment</label>
-                        <input
-                          id="custom-habit-time"
-                          className="w-full p-2 mt-1 border rounded-md"
-                          placeholder="E.g., 10 min, 1 hour"
-                          defaultValue="15 min"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-medium">Impact (1-10)</label>
-                        <input
-                          id="custom-habit-impact"
-                          type="number"
-                          min="1"
-                          max="10"
-                          className="w-full p-2 mt-1 border rounded-md"
-                          defaultValue="8"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="text-sm font-medium">Effort (1-10)</label>
-                        <input
-                          id="custom-habit-effort"
-                          type="number"
-                          min="1"
-                          max="10"
-                          className="w-full p-2 mt-1 border rounded-md"
-                          defaultValue="5"
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <input 
-                        type="checkbox" 
-                        id="is-absolute" 
-                        className="rounded border-gray-300"
-                      />
-                      <label htmlFor="is-absolute" className="text-sm font-medium">
-                        Mark as Daily Absolute
-                      </label>
-                    </div>
-                    
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        const titleInput = document.getElementById('custom-habit-title') as HTMLInputElement;
-                        const descriptionInput = document.getElementById('custom-habit-description') as HTMLInputElement;
-                        const categorySelect = document.getElementById('custom-habit-category') as HTMLSelectElement;
-                        const customCategoryInput = document.getElementById('custom-category-input') as HTMLInputElement;
-                        const frequencySelect = document.getElementById('custom-habit-frequency') as HTMLSelectElement;
-                        const iconSelect = document.getElementById('custom-habit-icon') as HTMLSelectElement;
-                        const timeInput = document.getElementById('custom-habit-time') as HTMLInputElement;
-                        const impactInput = document.getElementById('custom-habit-impact') as HTMLInputElement;
-                        const effortInput = document.getElementById('custom-habit-effort') as HTMLInputElement;
-                        const isAbsoluteCheck = document.getElementById('is-absolute') as HTMLInputElement;
-                        
-                        if (titleInput && titleInput.value.trim()) {
-                          // Determine actual category - either selected or custom input
-                          let category: HabitCategory = categorySelect.value as HabitCategory;
-                          
-                          if (category === 'new-category' && customCategoryInput && customCategoryInput.value.trim()) {
-                            // Use the custom category name directly - type system will see this as a valid category
-                            // since we'll have validated it by this point
-                            category = customCategoryInput.value.trim() as HabitCategory;
-                          }
-                          
-                          const newHabit: Habit = {
-                            id: `h-${Date.now()}-custom`,
-                            title: titleInput.value.trim(),
-                            description: descriptionInput?.value?.trim() || `Custom habit: ${titleInput.value.trim()}`,
-                            icon: iconSelect?.value || "activity",
-                            impact: parseInt(impactInput?.value || "8"),
-                            effort: parseInt(effortInput?.value || "5"),
-                            timeCommitment: timeInput?.value?.trim() || '15 min',
-                            frequency: frequencySelect.value as HabitFrequency,
-                            isAbsolute: isAbsoluteCheck.checked,
-                            category: category,
-                            streak: 0,
-                            createdAt: new Date(),
-                            type: "custom"
-                          };
-                          
-                          setHabits([...habits, newHabit]);
-                          
-                          // Reset form
-                          titleInput.value = '';
-                          if (descriptionInput) descriptionInput.value = '';
-                          if (customCategoryInput) customCategoryInput.value = '';
-                          if (timeInput) timeInput.value = '15 min';
-                          isAbsoluteCheck.checked = false;
-                          
-                          // Show confirmation
-                          alert(`Custom habit "${newHabit.title}" added successfully!`);
-                        }
-                      }}
-                    >
-                      Add Custom Habit
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Break Bad Habits Card */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-1.5">
-                    <AlertTriangle className="w-4 h-4 text-red-500" /> Break Bad Habits
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['No alcohol', 'No smoking', 'No porn', 'No junk food', 'No social media', 'No sugar', 'No procrastination', 'No late nights'].map((item, i) => (
-                      <Button 
-                        key={i} 
-                        variant="outline" 
-                        className="flex justify-start items-center text-sm h-10 border-red-200 hover:border-red-300 hover:bg-red-50/10 px-2" 
-                        onClick={() => {
-                          const newHabit: Habit = {
-                            id: `h-${Date.now()}-${i}`,
-                            title: item,
-                            description: `Break this harmful habit for health and wellbeing`,
-                            icon: "activity",
-                            impact: 9,
-                            effort: 7,
-                            timeCommitment: 'All day',
-                            frequency: 'daily',
-                            isAbsolute: true,
-                            category: 'health',
-                            streak: 0,
-                            createdAt: new Date()
-                          };
-                          setHabits([...habits, newHabit]);
-                        }}
-                      >
-                        <PlusCircle className="w-3 h-3 mr-1 flex-shrink-0" />
-                        <span className="truncate">{item}</span>
-                      </Button>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* High ROI message */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle>High ROI Activities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-3">Focus on these activities for maximum gains:</p>
-                  <ul className="space-y-3">
-                    {habits
-                      .filter(h => h.isAbsolute)
-                      .sort((a, b) => b.impact - a.impact)
-                      .slice(0, 3)
-                      .map(habit => (
-                        <li key={habit.id} className="flex items-center gap-3 p-2 rounded-md bg-muted/30">
-                          <div className="bg-primary/10 p-2 rounded-md text-primary">
-                            {habit.icon === 'brain' && '🧠'}
-                            {habit.icon === 'droplets' && '💧'}
-                            {habit.icon === 'dumbbell' && '💪'}
-                            {habit.icon === 'bookopen' && '📚'}
-                            {habit.icon === 'users' && '👥'}
-                          </div>
-                          <div>
-                            <div className="font-medium">{habit.title}</div>
-                            <div className="text-xs text-muted-foreground">{habit.timeCommitment} • Impact: {habit.impact}/10</div>
-                          </div>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </CardContent>
-              </Card>
-              
-              {/* Daily Motivation - moved to bottom of sidebar for better UX */}
-              <DailyMotivation />
+                {/* Daily Motivation */}
+                <DailyMotivation />
+              </div>
             </div>
           </div>
         </PageContainer>
       </div>
-    </div>
+    </>
   );
 }
