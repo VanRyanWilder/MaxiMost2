@@ -304,7 +304,15 @@ export default function SupplementsPage() {
                   </CardContent>
                 </Card>
                 
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                  <a 
+                    href={`/supplement-detail/${supplement.id}`} 
+                    className="text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors"
+                  >
+                    <span>View Details & Reviews</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </a>
+                  
                   <a 
                     href={supplement.amazonLink} 
                     target="_blank"
