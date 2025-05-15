@@ -44,15 +44,15 @@ export function SortableHabit({
   // Get appropriate color scheme for the habit icon
   const colorScheme = habit.iconColor ? 
     colorSchemes.find(c => c.id === habit.iconColor) || 
-    { primary: "text-blue-600", bg: "bg-blue-100" } : 
-    { primary: "text-slate-600", bg: "bg-slate-100" };
+    { primary: "text-blue-600", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200" } : 
+    { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200" };
 
   // Render appropriate icon based on the habit's icon property
   const renderIcon = () => {
     if (iconMap[habit.icon]) {
       const IconComponent = iconMap[habit.icon].component;
       return (
-        <div className={`p-1.5 rounded ${colorScheme?.bg || "bg-blue-100"}`}>
+        <div className={`p-1.5 rounded-full ${colorScheme?.bg || "bg-blue-100"} shadow-sm`}>
           <IconComponent className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
         </div>
       );
@@ -60,7 +60,7 @@ export function SortableHabit({
     
     // Default icon if no match found
     return (
-      <div className={`p-1.5 rounded ${colorScheme?.bg || "bg-blue-100"}`}>
+      <div className={`p-1.5 rounded-full ${colorScheme?.bg || "bg-blue-100"} shadow-sm`}>
         <div className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
       </div>
     );
@@ -116,11 +116,14 @@ export function SortableHabit({
           {renderIcon()}
           
           <div className="min-w-0 flex flex-col">
-            <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
+            <span className={`font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block ${colorScheme?.primary || ""}`}>
               {habit.title}
             </span>
             <div className="flex items-center justify-between gap-1 mt-0.5">
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
+              <Badge 
+                variant="outline" 
+                className={`text-[10px] px-1.5 py-0 h-4 ${colorScheme?.lightBg || "bg-blue-50/50"} ${colorScheme?.border || "border-blue-200"} ${colorScheme?.primary || ""}`}
+              >
                 {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
               </Badge>
               <div className="flex items-center space-x-1">
@@ -185,7 +188,7 @@ export function SortableHabit({
                   ? 'bg-green-100 text-green-600 hover:bg-green-200 rounded-md' 
                   : isPast 
                     ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
-                    : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
+                    : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
                 } w-full h-10`}
             >
               {completed ? (

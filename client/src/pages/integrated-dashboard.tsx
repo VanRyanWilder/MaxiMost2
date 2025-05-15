@@ -62,6 +62,8 @@ import {
   Plus,
   PlusCircle, 
   Star,
+  Sun,
+  Sunrise,
   User,
   Users,
   Utensils,
@@ -871,105 +873,397 @@ export default function IntegratedDashboard() {
               </div>
               
               {/* Right side - Templates and Quick Actions */}
-              <div className="w-full lg:w-1/3">
+              <div className="w-full lg:w-1/3 space-y-6">
                 {/* Daily Motivation Quote */}
-                <Card className="mb-6">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold">Daily Motivation</CardTitle>
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-blue-500" /> Daily Motivation
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <DailyMotivation />
                   </CardContent>
                 </Card>
                 
-                {/* Quick Add Habit Templates */}
-                <Card className="mb-6">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold">Quick Add Habits</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 gap-3">
-                      {habitTemplates.slice(0, 6).map((template, index) => {
-                        // Get icon component based on template.icon
-                        let IconComponent = CheckSquare;
-                        switch(template.icon) {
-                          case 'droplets': IconComponent = Droplets; break;
-                          case 'book-open': IconComponent = BookOpen; break;
-                          case 'dumbbell': IconComponent = Dumbbell; break;
-                          case 'brain': IconComponent = Brain; break;
-                          case 'pill': IconComponent = Pill; break;
-                          case 'moon': IconComponent = Moon; break;
-                          case 'activity': IconComponent = Activity; break;
-                          case 'leaf': IconComponent = Leaf; break;
-                          default: IconComponent = CheckSquare;
-                        }
-                        
-                        // Get color based on iconColor
-                        let colorClass = "text-blue-500";
-                        switch(template.iconColor) {
-                          case 'blue': colorClass = "text-blue-500"; break;
-                          case 'purple': colorClass = "text-purple-500"; break;
-                          case 'green': colorClass = "text-green-500"; break;
-                          case 'indigo': colorClass = "text-indigo-500"; break;
-                          case 'amber': colorClass = "text-amber-500"; break;
-                          case 'slate': colorClass = "text-slate-500"; break;
-                          case 'red': colorClass = "text-red-500"; break;
-                          case 'emerald': colorClass = "text-emerald-500"; break;
-                          default: colorClass = "text-blue-500";
-                        }
-                        
-                        return (
-                          <Button 
-                            key={index}
-                            variant="outline" 
-                            className="h-auto py-2 px-3 flex justify-start items-center text-left whitespace-normal"
-                            onClick={() => addHabitFromTemplate(template)}
-                          >
-                            <IconComponent className={`h-4 w-4 mr-2 ${colorClass}`} />
-                            <span className="text-sm font-medium">{template.title}</span>
-                          </Button>
-                        );
-                      })}
-                    </div>
-                    
-                    <Button variant="ghost" className="w-full mt-3" onClick={handleCreateHabit}>
-                      <PlusCircle className="h-4 w-4 mr-2" />
-                      <span>Create Custom Habit</span>
-                    </Button>
-                  </CardContent>
-                </Card>
-                
-                {/* Habit Stacks */}
+                {/* Habit Library Card */}
                 <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold">Habit Stacks</CardTitle>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-1.5">
+                      <Zap className="w-4 h-4 text-blue-500" /> Habit Library
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
-                      {habitStacks.map((stack, index) => (
-                        <Card key={index} className="border-0 shadow-sm">
-                          <CardContent className="p-3">
-                            <div className="flex justify-between items-center mb-1">
-                              <h3 className="font-medium text-base">{stack.title}</h3>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-6 px-2"
-                                onClick={() => addHabitStack(stack)}
-                              >
-                                <Plus className="h-3.5 w-3.5 mr-1" />
-                                <span className="text-xs">Add</span>
-                              </Button>
+                    <div className="space-y-4">
+                      {/* Quick Add Habits Section */}
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium mb-2">Quick Add Individual Habits</h4>
+                        
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+                          {[
+                            { title: "Make Bed", icon: <CheckSquare className="h-4 w-4 text-blue-500" />, description: "Start the day right", category: "mind" },
+                            { title: "Lift Weights", icon: <Dumbbell className="h-4 w-4 text-blue-500" />, description: "Strength training", category: "fitness" },
+                            { title: "Brush Teeth", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Oral hygiene", category: "health" },
+                            { title: "Wash Face", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Skincare", category: "health" },
+                            { title: "Meditate", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Mental clarity", category: "mind" },
+                            { title: "Call Friend", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Social connection", category: "social" },
+                            { title: "Drink Water", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Stay hydrated", category: "health" },
+                            { title: "Journal", icon: <BookOpen className="h-4 w-4 text-blue-500" />, description: "Express thoughts", category: "mind" },
+                            { title: "Brain Dump", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Clear your mind", category: "mind" },
+                            { title: "Eat That Frog", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Do hardest task first", category: "mind" },
+                            { title: "Cardio", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Heart health", category: "fitness" },
+                            { title: "Supplements", icon: <Pill className="h-4 w-4 text-blue-500" />, description: "Daily vitamins", category: "health" }
+                          ].map((habit, index) => (
+                            <div key={index} className="border rounded-md bg-gray-50/50 p-2 transition-colors hover:border-blue-200 hover:bg-blue-50/30">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  {habit.icon}
+                                  <span className="text-sm font-medium">{habit.title}</span>
+                                </div>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  onClick={() => {
+                                    const newHabit = {
+                                      id: `h-${Date.now()}-q${index}`,
+                                      title: habit.title,
+                                      description: habit.description,
+                                      icon: habit.icon.type.name.toLowerCase(),
+                                      impact: 8,
+                                      effort: 3,
+                                      timeCommitment: '5 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: habit.category as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    };
+                                    addHabit(newHabit);
+                                  }}
+                                  className="h-6 w-6 p-0 rounded-full"
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
                             </div>
-                            <p className="text-xs text-muted-foreground mb-2">{stack.description}</p>
-                            <div className="text-xs text-muted-foreground">
-                              {stack.habits.length} habits • Approx. {stack.habits.reduce(
-                                (total, h) => total + parseInt(h.timeCommitment.split(" ")[0] || "0"), 0
-                              )} min
+                          ))}
+                        </div>
+                        
+                        <div className="flex justify-end">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                            onClick={handleCreateHabit}
+                          >
+                            <PlusCircle className="h-3.5 w-3.5 mr-1.5" />
+                            Create Custom Habit
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {/* Morning Routine Stack */}
+                      <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                        <div className="p-3 border-b bg-gray-50">
+                          <div className="flex justify-between items-center">
+                            <h5 className="font-medium flex items-center gap-2">
+                              <Sunrise className="h-4 w-4 text-blue-500" />
+                              Morning Routine Stack
+                            </h5>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                              onClick={() => {
+                                const morningHabits = [
+                                  {
+                                    id: `h-${Date.now()}-1`,
+                                    title: "Morning Meditation",
+                                    description: "10 minutes of focused breathing",
+                                    icon: "brain",
+                                    iconColor: "indigo",
+                                    impact: 9,
+                                    effort: 2,
+                                    timeCommitment: '10 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "mind" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-2`,
+                                    title: "Morning Hydration",
+                                    description: "Drink 16oz of water immediately after waking",
+                                    icon: "droplets",
+                                    iconColor: "blue",
+                                    impact: 9,
+                                    effort: 1,
+                                    timeCommitment: '2 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "health" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-3`,
+                                    title: "Gratitude Journaling",
+                                    description: "Write down 3 things you're grateful for",
+                                    icon: "book-open",
+                                    iconColor: "purple",
+                                    impact: 9,
+                                    effort: 3,
+                                    timeCommitment: '10 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "mind" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  }
+                                ];
+                                
+                                setHabits([...habits, ...morningHabits]);
+                                toast({
+                                  title: "Added Morning Routine Stack",
+                                  description: "3 habits have been added to your dashboard",
+                                  duration: 3000
+                                });
+                              }}
+                            >
+                              Add All 3 Habits
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Brain className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm font-medium">Morning Meditation</span>
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
+                            <p className="text-xs text-muted-foreground mt-1">10 minutes of focused breathing</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Droplets className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm font-medium">Morning Hydration</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">Drink 16oz water</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <BookOpen className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm font-medium">Gratitude Journal</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">Write 3 things you're grateful for</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Huberman Lab Stack */}
+                      <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                        <div className="p-3 border-b bg-gray-50">
+                          <div className="flex justify-between items-center">
+                            <h5 className="font-medium flex items-center gap-2">
+                              <Brain className="h-4 w-4 text-blue-500" />
+                              Huberman Lab Stack
+                            </h5>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                              onClick={() => {
+                                const hubermanHabits = [
+                                  {
+                                    id: `h-${Date.now()}-h1`,
+                                    title: "Morning Sunlight",
+                                    description: "Get 2-10 minutes of morning sunlight exposure within 30-60 minutes of waking",
+                                    icon: "sun",
+                                    iconColor: "amber",
+                                    impact: 9,
+                                    effort: 1,
+                                    timeCommitment: '5 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "health" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-h2`,
+                                    title: "Delay Caffeine",
+                                    description: "Wait 90-120 minutes after waking before consuming caffeine",
+                                    icon: "clock",
+                                    iconColor: "slate",
+                                    impact: 7,
+                                    effort: 3,
+                                    timeCommitment: '0 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "health" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-h3`,
+                                    title: "Cold Exposure",
+                                    description: "Brief cold exposure via shower or cold plunge",
+                                    icon: "droplets",
+                                    iconColor: "blue",
+                                    impact: 8,
+                                    effort: 6,
+                                    timeCommitment: '2 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: false,
+                                    category: "health" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  }
+                                ];
+                                
+                                setHabits([...habits, ...hubermanHabits]);
+                                toast({
+                                  title: "Added Huberman Lab Stack",
+                                  description: "3 habits have been added to your dashboard",
+                                  duration: 3000
+                                });
+                              }}
+                            >
+                              Add All 3 Habits
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Sun className="h-4 w-4 text-amber-500" />
+                              <span className="text-sm font-medium">Morning Sunlight</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">5 min daily</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-slate-500" />
+                              <span className="text-sm font-medium">Delay Caffeine</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">90+ min after waking</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Droplets className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm font-medium">Cold Exposure</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">2 min cold shower</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Jocko Stack */}
+                      <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                        <div className="p-3 border-b bg-gray-50">
+                          <div className="flex justify-between items-center">
+                            <h5 className="font-medium flex items-center gap-2">
+                              <CheckSquare className="h-4 w-4 text-blue-500" />
+                              Jocko Willink Stack
+                            </h5>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                              onClick={() => {
+                                const jockoHabits = [
+                                  {
+                                    id: `h-${Date.now()}-j1`,
+                                    title: "4:30 AM Wake-Up",
+                                    description: "Wake up at 4:30 AM for early start advantage",
+                                    icon: "alarm-clock",
+                                    iconColor: "red",
+                                    impact: 8,
+                                    effort: 8,
+                                    timeCommitment: '0 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "mind" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-j2`,
+                                    title: "Discipline Workout",
+                                    description: "Intense exercise training regardless of circumstances",
+                                    icon: "dumbbell",
+                                    iconColor: "green",
+                                    impact: 9,
+                                    effort: 7,
+                                    timeCommitment: '60 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "fitness" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  },
+                                  {
+                                    id: `h-${Date.now()}-j3`,
+                                    title: "Ownership Mindset",
+                                    description: "Take extreme ownership of all areas of your life",
+                                    icon: "check-square",
+                                    iconColor: "blue",
+                                    impact: 10,
+                                    effort: 6,
+                                    timeCommitment: '0 min',
+                                    frequency: 'daily' as HabitFrequency,
+                                    isAbsolute: true,
+                                    category: "mind" as HabitCategory,
+                                    streak: 0,
+                                    createdAt: new Date()
+                                  }
+                                ];
+                                
+                                setHabits([...habits, ...jockoHabits]);
+                                toast({
+                                  title: "Added Jocko Willink Stack",
+                                  description: "3 habits have been added to your dashboard",
+                                  duration: 3000
+                                });
+                              }}
+                            >
+                              Add All 3 Habits
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-red-500" />
+                              <span className="text-sm font-medium">4:30 AM Wake-Up</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">Early morning discipline</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <Dumbbell className="h-4 w-4 text-green-500" />
+                              <span className="text-sm font-medium">Discipline Workout</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">Daily physical training</p>
+                          </div>
+                          
+                          <div className="p-2 border rounded-md bg-gray-50/50">
+                            <div className="flex items-center gap-2">
+                              <CheckSquare className="h-4 w-4 text-blue-500" />
+                              <span className="text-sm font-medium">Ownership Mindset</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1">No excuses, take control</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
