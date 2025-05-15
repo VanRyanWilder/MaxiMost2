@@ -26,6 +26,7 @@ import {
 } from '@dnd-kit/sortable';
 import { format, addDays, startOfWeek, subDays, isSameDay, isBefore, isAfter } from 'date-fns';
 import { iconMap as habitIconMap, colorSchemes } from "@/components/dashboard/edit-habit-dialog";
+import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { 
   Activity, 
   AlertTriangle,
@@ -417,7 +418,7 @@ export default function Dashboard() {
         <main className="flex-1">
           <PageContainer>
             {/* Mobile Header */}
-            <MobileHeader pageTitle="Dashboard" />
+            <MobileHeader pageTitle="MaxiMost Habit AI" />
             
             {/* Profile and Stats Summary */}
             <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
@@ -459,7 +460,7 @@ export default function Dashboard() {
                   <CardHeader className="pb-4">
                     <div className="flex justify-between items-center">
                       <CardTitle className="flex items-center gap-1.5">
-                        <Activity className="w-4 h-4 text-blue-500" /> Habit Tracker
+                        <Activity className="w-4 h-4 text-blue-500" /> MaxiMost Habit Tracker
                       </CardTitle>
                       <div className="flex items-center gap-2">
                         <div className="flex items-center">
