@@ -52,12 +52,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <Trophy className="w-5 h-5 text-amber-500" />,
       description: "Expert-recommended supplements with highest ROI"
     },
-    { 
-      path: "/experts", 
-      name: "Health Experts", 
-      icon: <Users className="w-5 h-5" />,
-      description: "Top health & performance experts to follow"
-    },
+
     { 
       path: "/research", 
       name: "Research", 
