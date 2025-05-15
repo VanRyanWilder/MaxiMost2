@@ -185,7 +185,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                           <span className="text-lg" style={{ color: habit.iconColor || '#4299e1' }}>
                             {habitIcons[habit.icon] || '⚪'}
                           </span>
-                          <div>
+                          <div className="flex-1">
                             <div className="font-medium">{habit.title}</div>
                             <div className="text-xs text-muted-foreground">
                               {habit.category && (
@@ -196,6 +196,23 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                               <span>{countCompletedDaysInWeek(habit.id)}/7 daily</span>
                             </div>
                           </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => onEditHabit(habit)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onDeleteHabit(habit.id)}>
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                         
                         {/* Weekday cells */}
@@ -261,7 +278,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                           <span className="text-lg" style={{ color: habit.iconColor || '#4299e1' }}>
                             {habitIcons[habit.icon] || '⚪'}
                           </span>
-                          <div>
+                          <div className="flex-1">
                             <div className="font-medium">{habit.title}</div>
                             <div className="text-xs text-muted-foreground">
                               {habit.category && (
@@ -272,6 +289,23 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                               <span>{countCompletedDaysInWeek(habit.id)}/{habit.frequency.split('x')[0]} {habit.frequency.split('-')[1]}</span>
                             </div>
                           </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => onEditHabit(habit)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => onDeleteHabit(habit.id)}>
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                         
                         {/* Weekday cells */}
