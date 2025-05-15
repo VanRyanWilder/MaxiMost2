@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { format, startOfWeek, addDays, isSameDay, isBefore, isAfter, startOfToday, endOfToday } from 'date-fns';
+import { 
+  format, 
+  startOfWeek, 
+  addDays, 
+  isSameDay, 
+  isBefore, 
+  isAfter, 
+  startOfToday, 
+  endOfToday, 
+  startOfMonth, 
+  endOfMonth, 
+  eachDayOfInterval, 
+  getDay 
+} from 'date-fns';
 import { 
   DndContext, 
   closestCenter,
@@ -83,6 +96,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   onEditHabit
 }) => {
   const [weekOffset, setWeekOffset] = useState(0);
+  const [monthOffset, setMonthOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("weekly");
@@ -99,13 +113,32 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
     })
   );
   
-  // Generate dates for the week
+  // Generate dates for the week and month
   const today = new Date();
   const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Monday as start of week
   
   const weekDates = Array.from({ length: 7 }).map((_, i) => {
     return addDays(startOfCurrentWeek, i + (weekOffset * 7));
   });
+
+  // Get current month for the monthly view
+  const currentMonth = new Date(today.getFullYear(), today.getMonth() + monthOffset, 1);
+  const monthStart = startOfMonth(currentMonth);
+  const monthEnd = endOfMonth(currentMonth);
+  
+  // Get all days in the current month
+  const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  
+  // Create calendar grid (with empty cells for proper grid alignment)
+  const calendarDays = () => {
+    const firstDayOfMonth = getDay(monthStart);
+    
+    // Add empty cells before the first day (Sunday is 0)
+    const emptyDaysBefore = Array(firstDayOfMonth).fill(null);
+    
+    // Create the full calendar grid
+    return [...emptyDaysBefore, ...monthDays];
+  };
 
   // Function to check if a habit is completed on a specific date
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
