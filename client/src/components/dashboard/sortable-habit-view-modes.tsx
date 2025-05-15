@@ -445,6 +445,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
             onToggleHabit={onToggleHabit}
             setWeekOffset={setWeekOffset}
             onReorderHabits={onReorderHabits}
+            onEditHabit={handleEditHabit}
+            onDeleteHabit={handleDeleteHabit}
           />
         )}
       
