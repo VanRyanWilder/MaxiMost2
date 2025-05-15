@@ -1,4 +1,95 @@
 import { Program, ProgramDifficulty } from "../types/program";
+import { Activity, Brain, Heart, Coffee, Dumbbell, Utensils, Moon, Clock, Timer, Hourglass } from "lucide-react";
+
+// Helper constants for UI
+export const goalLabels: Record<string, string> = {
+  "morning-routine": "Morning Routine",
+  "sugar-free": "Sugar-Free Diet",
+  "strength": "Strength Training",
+  "mental-clarity": "Mental Clarity",
+  "sleep": "Sleep Optimization",
+  "nutrition": "Performance Nutrition",
+  "weight-loss": "Weight Management",
+  "stress-reduction": "Stress Reduction",
+  "productivity": "Productivity",
+  "focus": "Focus & Concentration",
+  "energy": "Energy Levels",
+  "recovery": "Recovery"
+};
+
+export const goalIcons: Record<string, any> = {
+  "morning-routine": Coffee,
+  "sugar-free": Utensils,
+  "strength": Dumbbell,
+  "mental-clarity": Brain,
+  "sleep": Moon,
+  "nutrition": Utensils,
+  "weight-loss": Activity,
+  "stress-reduction": Brain,
+  "productivity": Activity,
+  "focus": Brain,
+  "energy": Activity,
+  "recovery": Heart
+};
+
+export const timeCommitmentLabels: Record<string, string> = {
+  "minimal": "5-15 min/day",
+  "moderate": "15-30 min/day",
+  "high": "30+ min/day"
+};
+
+export const fitnessLevelLabels: Record<string, string> = {
+  "beginner": "Beginner",
+  "intermediate": "Intermediate",
+  "advanced": "Advanced"
+};
+
+export const timeCommitmentIcons: Record<string, any> = {
+  "minimal": Clock,
+  "moderate": Timer,
+  "high": Hourglass
+};
+
+// Function to get program recommendations based on user criteria
+export function getRecommendedPrograms(criteria: any): Program[] {
+  const { primaryGoal, secondaryGoal, fitnessLevel, timeCommitment } = criteria;
+  
+  // Filter programs based on the user's criteria
+  return programs.filter(program => {
+    // Check if program supports the primary goal
+    const primaryGoalMatch = program.supportedGoals?.includes(primaryGoal) || false;
+    
+    // Check fitness level compatibility - don't recommend advanced programs to beginners
+    const fitnessLevelMatch = 
+      fitnessLevel === "advanced" ? true : // Advanced users can handle any program
+      fitnessLevel === "intermediate" ? program.fitnessLevel !== "advanced" : // Intermediate users can handle beginner and intermediate
+      program.fitnessLevel === "beginner"; // Beginners should only get beginner programs
+      
+    // Check time commitment compatibility
+    const timeCommitmentMatch = 
+      timeCommitment === "high" ? true : // Users with high time commitment can handle any program
+      timeCommitment === "moderate" ? program.timeCommitment !== "high" : // Moderate users can handle minimal and moderate
+      program.timeCommitment === "minimal"; // Minimal time users should only get minimal programs
+    
+    // Calculate match score (primary goal is most important, then fitness level, then time)
+    let matchScore = 0;
+    if (primaryGoalMatch) matchScore += 10;
+    if (fitnessLevelMatch) matchScore += 5;
+    if (timeCommitmentMatch) matchScore += 3;
+    
+    // Bonus points if the program's primary goal exactly matches the user's primary goal
+    if (program.primaryGoal === primaryGoal) matchScore += 5;
+    
+    // Bonus points if the program supports the user's secondary goal
+    if (secondaryGoal && program.supportedGoals?.includes(secondaryGoal)) matchScore += 3;
+    
+    // Store the match score on the program object for sorting and display
+    program.matchScore = matchScore;
+    
+    // Filter out programs with very low match scores
+    return matchScore > 5;
+  }).sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+}
 
 export const programs: Program[] = [
   {
