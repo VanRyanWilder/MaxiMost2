@@ -158,6 +158,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
     filteredHabits = habits.filter(h => !h.isAbsolute);
   } else if (filterCategory !== "all") {
     filteredHabits = habits.filter(h => h.category === filterCategory);
+  } else {
+    // For "All Categories", sort so absolute habits appear first
+    filteredHabits = [
+      ...habits.filter(h => h.isAbsolute),
+      ...habits.filter(h => !h.isAbsolute)
+    ];
   }
 
   // Count completed habits for today
@@ -393,17 +399,59 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
             >
               {filteredHabits.length > 0 ? (
                 <div className="space-y-1">
-                  {filteredHabits.map(habit => (
-                    <SortableHabit
-                      key={habit.id}
-                      habit={habit}
-                      completions={completions}
-                      onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                      onEdit={handleEditHabit}
-                      onDelete={handleDeleteHabit}
-                      currentDate={weekDates[0]}
-                    />
-                  ))}
+                  {filterCategory === "all" ? (
+                    // When "All Categories" is selected, we show a separator between absolute and frequency habits
+                    <>
+                      {/* Absolute habits section */}
+                      {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
+                        <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
+                          Absolute Daily Habits
+                        </div>
+                      )}
+                      {filteredHabits.filter(h => h.isAbsolute).map(habit => (
+                        <SortableHabit
+                          key={habit.id}
+                          habit={habit}
+                          completions={completions}
+                          onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
+                          onEdit={handleEditHabit}
+                          onDelete={handleDeleteHabit}
+                          currentDate={weekDates[0]}
+                        />
+                      ))}
+                      
+                      {/* Frequency habits section */}
+                      {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+                        <div className="font-medium text-sm mt-4 mb-2 px-2 py-1 bg-sky-50 rounded-md text-sky-700">
+                          Frequency-Based Habits
+                        </div>
+                      )}
+                      {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
+                        <SortableHabit
+                          key={habit.id}
+                          habit={habit}
+                          completions={completions}
+                          onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
+                          onEdit={handleEditHabit}
+                          onDelete={handleDeleteHabit}
+                          currentDate={weekDates[0]}
+                        />
+                      ))}
+                    </>
+                  ) : (
+                    // For other filter categories, show normally
+                    filteredHabits.map(habit => (
+                      <SortableHabit
+                        key={habit.id}
+                        habit={habit}
+                        completions={completions}
+                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
+                        onEdit={handleEditHabit}
+                        onDelete={handleDeleteHabit}
+                        currentDate={weekDates[0]}
+                      />
+                    ))
+                  )}
                 </div>
               ) : (
                 <div className="py-10 text-center">
