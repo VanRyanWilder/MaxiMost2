@@ -11,7 +11,35 @@ const mockUser: User = {
   email: "john@example.com",
   currentProgramId: 3,
   programStartDate: new Date("2023-04-15"),
-  programProgress: 32
+  programProgress: 32,
+  firebaseUid: null,
+  subscriptionTier: "premium",
+  subscriptionStatus: "active",
+  subscriptionStartDate: new Date("2023-03-15"),
+  subscriptionEndDate: new Date("2024-03-15"),
+  trialEndsAt: null,
+  stripeCustomerId: "cus_123456",
+  stripeSubscriptionId: "sub_123456"
+};
+
+// Create a guest user
+const guestUser: User = {
+  id: 999,
+  username: "guest",
+  password: "",
+  name: "Guest User",
+  email: "guest@example.com",
+  currentProgramId: null,
+  programStartDate: null,
+  programProgress: null,
+  firebaseUid: null,
+  subscriptionTier: "free",
+  subscriptionStatus: "active",
+  subscriptionStartDate: null,
+  subscriptionEndDate: null,
+  trialEndsAt: null,
+  stripeCustomerId: null,
+  stripeSubscriptionId: null
 };
 
 interface UserContextType {
@@ -47,11 +75,22 @@ export function UserProvider({ children }: UserProviderProps) {
   const login = async (username: string, password: string) => {
     try {
       setUserLoading(true);
-      // In a real app, we would call an API to login
-      // For now, just simulate a successful login
-      setUser(mockUser);
+      
+      // Check if this is a guest login
+      if (username === "guest@example.com" && password === "guest-password") {
+        console.log("Logging in as guest");
+        setUser(guestUser);
+        localStorage.setItem('userType', 'guest');
+      } else {
+        // For regular logins, use the mock user
+        console.log("Logging in as regular user");
+        setUser(mockUser);
+        localStorage.setItem('userType', 'regular');
+      }
+      
       setUserLoading(false);
     } catch (error) {
+      console.error("Login error:", error);
       setUserLoading(false);
       setUserError(new Error("Login failed"));
       throw new Error("Login failed");
