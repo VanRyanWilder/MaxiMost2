@@ -1,4 +1,21 @@
 import { useState } from "react";
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { PageContainer } from "@/components/layout/page-container";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -417,6 +434,137 @@ const quickAddHabits: Array<{
   }
 ];
 
+// Sortable Habit Item Component
+interface SortableHabitItemProps {
+  habit: Habit;
+  isCompleted: boolean;
+  completionRate: number;
+  onToggle: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function SortableHabitItem({ 
+  habit, 
+  isCompleted, 
+  completionRate, 
+  onToggle, 
+  onEdit, 
+  onDelete 
+}: SortableHabitItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: habit.id });
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1 : 0,
+  };
+  
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`border rounded-lg transition-all ${
+        isCompleted 
+          ? 'bg-green-50 border-green-200' 
+          : 'bg-white border-gray-200'
+      }`}
+    >
+      <div className="p-3 flex items-start gap-3">
+        <div className="flex items-center h-full mt-1">
+          <Checkbox 
+            checked={isCompleted}
+            onCheckedChange={onToggle}
+            className="h-5 w-5"
+          />
+        </div>
+        
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="p-1.5 rounded-md bg-primary/10 text-primary">
+              {getIconComponent(habit.icon)}
+            </span>
+            <h3 className={`font-medium ${
+              isCompleted ? 'line-through text-gray-500' : ''
+            }`}>
+              {habit.title}
+            </h3>
+            
+            {habit.streak > 0 && (
+              <Badge variant="outline" className="ml-auto">
+                <Award className="h-3 w-3 mr-1" /> {habit.streak} {habit.frequency === 'daily' ? 'day streak' : 'completions'}
+              </Badge>
+            )}
+          </div>
+          
+          <p className="text-sm text-muted-foreground">{habit.description}</p>
+          
+          <div className="flex flex-wrap gap-2 mt-2">
+            <Badge variant="secondary" className="text-xs">
+              {habit.timeCommitment}
+            </Badge>
+            <Badge className={getCategoryColor(habit.category)}>
+              {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
+            </Badge>
+            {habit.frequency !== 'daily' && (
+              <Badge variant="outline" className="text-xs">
+                {getFrequencyLabel(habit.frequency)}
+              </Badge>
+            )}
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-1">
+          <Button 
+            {...attributes} 
+            {...listeners}
+            variant="ghost" 
+            size="icon"
+            className="cursor-grab active:cursor-grabbing"
+          >
+            <GripVertical className="h-4 w-4 text-gray-400" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onEdit}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onDelete}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+      
+      <div className="px-4 pb-3">
+        <div className="flex justify-between mb-1 text-xs">
+          <span>Completion rate (30 days)</span>
+          <span>{completionRate}%</span>
+        </div>
+        <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-primary rounded-full" 
+            style={{ width: `${completionRate}%` }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function IntegratedHabits() {
   const { toast } = useToast();
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
@@ -591,6 +739,42 @@ export default function IntegratedHabits() {
       h.id === habitId ? { ...h, streak } : h
     ));
   };
+  
+  // Handle drag and drop reordering
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (!over) return;
+    
+    if (active.id !== over.id) {
+      setHabits((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        
+        const reordered = arrayMove(items, oldIndex, newIndex);
+        
+        // Show toast
+        toast({
+          title: "Habits reordered",
+          description: "Your habits have been reordered by priority",
+        });
+        
+        return reordered;
+      });
+    }
+  };
+  
+  // Setup drag-and-drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
   
   // Add new habit
   const addHabit = () => {
@@ -845,89 +1029,39 @@ export default function IntegratedHabits() {
                     <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                       <Zap className="h-5 w-5 text-amber-500" />
                       Daily Must-Do Habits
+                      <Badge className="ml-2 bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200">
+                        <GripVertical className="h-3 w-3 mr-1" />
+                        Drag to reorder
+                      </Badge>
                     </h3>
-                    <div className="space-y-3">
-                      {dailyHabits.map((habit) => (
-                        <div key={habit.id} className={`border rounded-lg transition-all ${
-                          isHabitCompletedOnDate(habit.id, new Date()) 
-                            ? 'bg-green-50 border-green-200' 
-                            : 'bg-white border-gray-200'
-                        }`}>
-                          <div className="p-3 flex items-start gap-3">
-                            <div className="flex items-center h-full mt-1">
-                              <Checkbox 
-                                checked={isHabitCompletedOnDate(habit.id, new Date())}
-                                onCheckedChange={() => toggleHabitCompletion(habit.id, new Date())}
-                                className="h-5 w-5"
-                              />
-                            </div>
-                            
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="p-1.5 rounded-md bg-primary/10 text-primary">
-                                  {getIconComponent(habit.icon)}
-                                </span>
-                                <h3 className={`font-medium ${
-                                  isHabitCompletedOnDate(habit.id, new Date()) ? 'line-through text-gray-500' : ''
-                                }`}>
-                                  {habit.title}
-                                </h3>
-                                
-                                {habit.streak > 0 && (
-                                  <Badge variant="outline" className="ml-auto">
-                                    <Award className="h-3 w-3 mr-1" /> {habit.streak} day streak
-                                  </Badge>
-                                )}
-                              </div>
-                              
-                              <p className="text-sm text-muted-foreground">{habit.description}</p>
-                              
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                <Badge variant="secondary" className="text-xs">
-                                  {habit.timeCommitment}
-                                </Badge>
-                                <Badge className={getCategoryColor(habit.category)}>
-                                  {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
-                                </Badge>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-1">
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedHabit(habit);
-                                  setEditHabitOpen(true);
-                                }}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => deleteHabit(habit.id)}
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="px-4 pb-3">
-                            <div className="flex justify-between mb-1 text-xs">
-                              <span>Completion rate (30 days)</span>
-                              <span>{getCompletionRate(habit.id)}%</span>
-                            </div>
-                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-primary rounded-full" 
-                                style={{ width: `${getCompletionRate(habit.id)}%` }}
-                              ></div>
-                            </div>
-                          </div>
+                    
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={dailyHabits.map(h => h.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {dailyHabits.map((habit) => (
+                            <SortableHabitItem 
+                              key={habit.id}
+                              habit={habit} 
+                              isCompleted={isHabitCompletedOnDate(habit.id, new Date())} 
+                              completionRate={getCompletionRate(habit.id)}
+                              onToggle={() => toggleHabitCompletion(habit.id, new Date())}
+                              onEdit={() => {
+                                setSelectedHabit(habit);
+                                setEditHabitOpen(true);
+                              }}
+                              onDelete={() => deleteHabit(habit.id)}
+                            />
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 )}
                 
@@ -937,92 +1071,39 @@ export default function IntegratedHabits() {
                     <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-blue-500" />
                       Weekly Flexible Habits
+                      <Badge className="ml-2 bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200">
+                        <GripVertical className="h-3 w-3 mr-1" />
+                        Drag to reorder
+                      </Badge>
                     </h3>
-                    <div className="space-y-3">
-                      {weeklyHabits.map((habit) => (
-                        <div key={habit.id} className={`border rounded-lg transition-all ${
-                          isHabitCompletedOnDate(habit.id, new Date()) 
-                            ? 'bg-green-50 border-green-200' 
-                            : 'bg-white border-gray-200'
-                        }`}>
-                          <div className="p-3 flex items-start gap-3">
-                            <div className="flex items-center h-full mt-1">
-                              <Checkbox 
-                                checked={isHabitCompletedOnDate(habit.id, new Date())}
-                                onCheckedChange={() => toggleHabitCompletion(habit.id, new Date())}
-                                className="h-5 w-5"
-                              />
-                            </div>
-                            
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="p-1.5 rounded-md bg-primary/10 text-primary">
-                                  {getIconComponent(habit.icon)}
-                                </span>
-                                <h3 className={`font-medium ${
-                                  isHabitCompletedOnDate(habit.id, new Date()) ? 'line-through text-gray-500' : ''
-                                }`}>
-                                  {habit.title}
-                                </h3>
-                                
-                                {habit.streak > 0 && (
-                                  <Badge variant="outline" className="ml-auto">
-                                    <Award className="h-3 w-3 mr-1" /> {habit.streak} completions
-                                  </Badge>
-                                )}
-                              </div>
-                              
-                              <p className="text-sm text-muted-foreground">{habit.description}</p>
-                              
-                              <div className="flex flex-wrap gap-2 mt-2">
-                                <Badge variant="secondary" className="text-xs">
-                                  {habit.timeCommitment}
-                                </Badge>
-                                <Badge className={getCategoryColor(habit.category)}>
-                                  {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
-                                </Badge>
-                                <Badge variant="outline" className="text-xs">
-                                  {getFrequencyLabel(habit.frequency)}
-                                </Badge>
-                              </div>
-                            </div>
-                            
-                            <div className="flex items-center space-x-1">
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => {
-                                  setSelectedHabit(habit);
-                                  setEditHabitOpen(true);
-                                }}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => deleteHabit(habit.id)}
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="px-4 pb-3">
-                            <div className="flex justify-between mb-1 text-xs">
-                              <span>Completion rate (30 days)</span>
-                              <span>{getCompletionRate(habit.id)}%</span>
-                            </div>
-                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div 
-                                className="h-full bg-primary rounded-full" 
-                                style={{ width: `${getCompletionRate(habit.id)}%` }}
-                              ></div>
-                            </div>
-                          </div>
+                    
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext
+                        items={weeklyHabits.map(h => h.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        <div className="space-y-3">
+                          {weeklyHabits.map((habit) => (
+                            <SortableHabitItem 
+                              key={habit.id}
+                              habit={habit} 
+                              isCompleted={isHabitCompletedOnDate(habit.id, new Date())} 
+                              completionRate={getCompletionRate(habit.id)}
+                              onToggle={() => toggleHabitCompletion(habit.id, new Date())}
+                              onEdit={() => {
+                                setSelectedHabit(habit);
+                                setEditHabitOpen(true);
+                              }}
+                              onDelete={() => deleteHabit(habit.id)}
+                            />
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
                 )}
                 
@@ -1466,163 +1547,309 @@ export default function IntegratedHabits() {
       
       {/* Add Habit Dialog */}
       <Dialog open={addHabitOpen} onOpenChange={setAddHabitOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[550px]">
           <DialogHeader>
             <DialogTitle>Add New Habit</DialogTitle>
             <DialogDescription>
-              Add a new habit to track. Fill out the details below.
+              Add a new habit to track or select from pre-defined templates.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div>
-              <Label htmlFor="title" className="mb-1.5 block">Habit Title</Label>
-              <Input
-                id="title"
-                placeholder="E.g., Morning Meditation"
-                value={newHabit.title}
-                onChange={(e) => setNewHabit({ ...newHabit, title: e.target.value })}
-              />
-            </div>
+          <Tabs defaultValue="manual" className="mt-2">
+            <TabsList className="grid grid-cols-3 mb-4">
+              <TabsTrigger value="manual">Custom Habit</TabsTrigger>
+              <TabsTrigger value="quick">Quick Add Templates</TabsTrigger>
+              <TabsTrigger value="stacks">Expert Stacks</TabsTrigger>
+            </TabsList>
             
-            <div>
-              <Label htmlFor="description" className="mb-1.5 block">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="What does this habit involve?"
-                value={newHabit.description}
-                onChange={(e) => setNewHabit({ ...newHabit, description: e.target.value })}
-                className="resize-none"
-                rows={2}
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="time" className="mb-1.5 block">Time Commitment</Label>
-                <Input
-                  id="time"
-                  placeholder="E.g., 10 min"
-                  value={newHabit.timeCommitment}
-                  onChange={(e) => setNewHabit({ ...newHabit, timeCommitment: e.target.value })}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="frequency" className="mb-1.5 block">Frequency</Label>
-                <Select
-                  value={newHabit.frequency}
-                  onValueChange={(value) => setNewHabit({ ...newHabit, frequency: value as HabitFrequency })}
-                >
-                  <SelectTrigger id="frequency">
-                    <SelectValue placeholder="Select frequency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="daily">Daily</SelectItem>
-                    <SelectItem value="weekly">Once a Week</SelectItem>
-                    <SelectItem value="2x-week">Twice a Week</SelectItem>
-                    <SelectItem value="3x-week">3 Times a Week</SelectItem>
-                    <SelectItem value="4x-week">4 Times a Week</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="icon" className="mb-1.5 block">Icon</Label>
-                <Select
-                  value={newHabit.icon}
-                  onValueChange={(value) => setNewHabit({ ...newHabit, icon: value })}
-                >
-                  <SelectTrigger id="icon">
-                    <SelectValue placeholder="Select icon" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="activity">Activity</SelectItem>
-                    <SelectItem value="brain">Brain</SelectItem>
-                    <SelectItem value="dumbbell">Dumbbell</SelectItem>
-                    <SelectItem value="bookopen">Book</SelectItem>
-                    <SelectItem value="heart">Heart</SelectItem>
-                    <SelectItem value="droplets">Droplets</SelectItem>
-                    <SelectItem value="sun">Sun</SelectItem>
-                    <SelectItem value="users">Users</SelectItem>
-                    <SelectItem value="checkcircle">Check</SelectItem>
-                    <SelectItem value="zap">Zap</SelectItem>
-                    <SelectItem value="alarmclock">Alarm</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label htmlFor="category" className="mb-1.5 block">Category</Label>
-                <Select
-                  value={newHabit.category}
-                  onValueChange={(value) => setNewHabit({ ...newHabit, category: value as HabitCategory })}
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="health">Health</SelectItem>
-                    <SelectItem value="fitness">Fitness</SelectItem>
-                    <SelectItem value="mind">Mind</SelectItem>
-                    <SelectItem value="social">Social</SelectItem>
-                    <SelectItem value="custom">Custom</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="impact" className="mb-1.5 block">
-                  Impact (1-10)
-                </Label>
-                <div className="flex items-center">
+            {/* Manual Entry Tab */}
+            <TabsContent value="manual" className="mt-0">
+              <div className="grid gap-4 py-2">
+                <div>
+                  <Label htmlFor="title" className="mb-1.5 block">Habit Title</Label>
                   <Input
-                    id="impact"
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={newHabit.impact}
-                    onChange={(e) => setNewHabit({ ...newHabit, impact: parseInt(e.target.value) })}
-                    className="w-full"
+                    id="title"
+                    placeholder="E.g., Morning Meditation"
+                    value={newHabit.title}
+                    onChange={(e) => setNewHabit({ ...newHabit, title: e.target.value })}
                   />
-                  <span className="ml-2 text-sm font-medium">{newHabit.impact}</span>
+                </div>
+                
+                <div>
+                  <Label htmlFor="description" className="mb-1.5 block">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="What does this habit involve?"
+                    value={newHabit.description}
+                    onChange={(e) => setNewHabit({ ...newHabit, description: e.target.value })}
+                    className="resize-none"
+                    rows={2}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="time" className="mb-1.5 block">Time Commitment</Label>
+                    <Input
+                      id="time"
+                      placeholder="E.g., 10 min"
+                      value={newHabit.timeCommitment}
+                      onChange={(e) => setNewHabit({ ...newHabit, timeCommitment: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="frequency" className="mb-1.5 block">Frequency</Label>
+                    <Select
+                      value={newHabit.frequency}
+                      onValueChange={(value) => setNewHabit({ ...newHabit, frequency: value as HabitFrequency })}
+                    >
+                      <SelectTrigger id="frequency">
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="weekly">Once a Week</SelectItem>
+                        <SelectItem value="2x-week">Twice a Week</SelectItem>
+                        <SelectItem value="3x-week">3 Times a Week</SelectItem>
+                        <SelectItem value="4x-week">4 Times a Week</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="icon" className="mb-1.5 block">Icon</Label>
+                    <Select
+                      value={newHabit.icon}
+                      onValueChange={(value) => setNewHabit({ ...newHabit, icon: value })}
+                    >
+                      <SelectTrigger id="icon">
+                        <SelectValue placeholder="Select icon" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="activity">Activity</SelectItem>
+                        <SelectItem value="brain">Brain</SelectItem>
+                        <SelectItem value="dumbbell">Dumbbell</SelectItem>
+                        <SelectItem value="bookopen">Book</SelectItem>
+                        <SelectItem value="heart">Heart</SelectItem>
+                        <SelectItem value="droplets">Droplets</SelectItem>
+                        <SelectItem value="sun">Sun</SelectItem>
+                        <SelectItem value="users">Users</SelectItem>
+                        <SelectItem value="checkcircle">Check</SelectItem>
+                        <SelectItem value="zap">Zap</SelectItem>
+                        <SelectItem value="alarmclock">Alarm</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="category" className="mb-1.5 block">Category</Label>
+                    <Select
+                      value={newHabit.category}
+                      onValueChange={(value) => setNewHabit({ ...newHabit, category: value as HabitCategory })}
+                    >
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="health">Health</SelectItem>
+                        <SelectItem value="fitness">Fitness</SelectItem>
+                        <SelectItem value="mind">Mind</SelectItem>
+                        <SelectItem value="social">Social</SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="impact" className="mb-1.5 block">
+                      Impact (1-10)
+                    </Label>
+                    <div className="flex items-center">
+                      <Input
+                        id="impact"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={newHabit.impact}
+                        onChange={(e) => setNewHabit({ ...newHabit, impact: parseInt(e.target.value) })}
+                        className="w-full"
+                      />
+                      <span className="ml-2 text-sm font-medium">{newHabit.impact}</span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="effort" className="mb-1.5 block">
+                      Effort (1-10)
+                    </Label>
+                    <div className="flex items-center">
+                      <Input
+                        id="effort"
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={newHabit.effort}
+                        onChange={(e) => setNewHabit({ ...newHabit, effort: parseInt(e.target.value) })}
+                        className="w-full"
+                      />
+                      <span className="ml-2 text-sm font-medium">{newHabit.effort}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isAbsolute"
+                    checked={newHabit.isAbsolute}
+                    onCheckedChange={(checked) => setNewHabit({ ...newHabit, isAbsolute: checked })}
+                  />
+                  <Label htmlFor="isAbsolute" className="text-sm font-medium">
+                    This is a must-do habit (highest priority)
+                  </Label>
                 </div>
               </div>
-              
-              <div>
-                <Label htmlFor="effort" className="mb-1.5 block">
-                  Effort (1-10)
-                </Label>
-                <div className="flex items-center">
-                  <Input
-                    id="effort"
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={newHabit.effort}
-                    onChange={(e) => setNewHabit({ ...newHabit, effort: parseInt(e.target.value) })}
-                    className="w-full"
-                  />
-                  <span className="ml-2 text-sm font-medium">{newHabit.effort}</span>
-                </div>
-              </div>
-            </div>
+            </TabsContent>
             
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isAbsolute"
-                checked={newHabit.isAbsolute}
-                onCheckedChange={(checked) => setNewHabit({ ...newHabit, isAbsolute: checked })}
-              />
-              <Label htmlFor="isAbsolute" className="text-sm font-medium">
-                This is a must-do habit (highest priority)
-              </Label>
-            </div>
-          </div>
+            {/* Quick Add Templates Tab */}
+            <TabsContent value="quick" className="mt-0">
+              <ScrollArea className="h-[350px] pr-4">
+                <div className="grid grid-cols-1 gap-3">
+                  {quickAddHabits.map((template, idx) => (
+                    <div 
+                      key={idx} 
+                      className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => {
+                        setNewHabit({
+                          title: template.title,
+                          description: template.description,
+                          icon: template.icon,
+                          impact: template.impact,
+                          effort: template.effort,
+                          timeCommitment: template.timeCommitment,
+                          frequency: template.frequency as HabitFrequency,
+                          isAbsolute: template.isAbsolute,
+                          category: template.category as HabitCategory,
+                        });
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="p-1.5 rounded-md bg-primary/10 text-primary">
+                          {getIconComponent(template.icon)}
+                        </span>
+                        <h3 className="font-medium">{template.title}</h3>
+                        <Badge className={`ml-auto text-xs ${getCategoryColor(template.category as HabitCategory)}`}>
+                          {template.category}
+                        </Badge>
+                      </div>
+                      
+                      <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {template.timeCommitment}
+                        </Badge>
+                        <Badge variant="secondary" className="text-xs">
+                          {getFrequencyLabel(template.frequency as HabitFrequency)}
+                        </Badge>
+                        <Badge variant="outline" className="text-xs">
+                          Impact: {template.impact}/10
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </TabsContent>
+            
+            {/* Habit Stacks Tab */}
+            <TabsContent value="stacks" className="mt-0">
+              <div className="mb-3">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Expert habit stacks bundle multiple habits together for maximum effect.
+                  Select a stack to view its habits, then choose one to add:
+                </p>
+                
+                <Select
+                  onValueChange={(stackId) => {
+                    const selectedStack = habitStacks.find(s => s.id === stackId);
+                    setSelectedStack(selectedStack || null);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a habit stack" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {habitStacks.map(stack => (
+                      <SelectItem key={stack.id} value={stack.id}>
+                        {stack.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              {selectedStack && (
+                <ScrollArea className="h-[250px] pr-4">
+                  <div className="grid grid-cols-1 gap-3">
+                    {selectedStack.habits.map((template, idx) => (
+                      <div 
+                        key={idx} 
+                        className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => {
+                          setNewHabit({
+                            title: template.title,
+                            description: template.description,
+                            icon: template.icon,
+                            impact: template.impact,
+                            effort: template.effort,
+                            timeCommitment: template.timeCommitment,
+                            frequency: template.frequency,
+                            isAbsolute: template.isAbsolute,
+                            category: template.category,
+                          });
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="p-1.5 rounded-md bg-primary/10 text-primary">
+                            {getIconComponent(template.icon)}
+                          </span>
+                          <h3 className="font-medium">{template.title}</h3>
+                          <Badge className={`ml-auto text-xs ${getCategoryColor(template.category)}`}>
+                            {template.category}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {template.timeCommitment}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {getFrequencyLabel(template.frequency)}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Impact: {template.impact}/10
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+              
+              {!selectedStack && (
+                <div className="text-center py-8 text-muted-foreground">
+                  Select a habit stack to view available habits
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setAddHabitOpen(false)}>
