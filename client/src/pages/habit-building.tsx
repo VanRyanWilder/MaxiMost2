@@ -63,6 +63,19 @@ export default function HabitBuilding() {
       color: "bg-blue-100 border-blue-300"
     },
     {
+      id: "compound-effect",
+      title: "The Compound Effect",
+      author: "Darren Hardy",
+      description: "Reveals how small, daily choices compound over time to create significant life changes, emphasizing consistency and tracking.",
+      keyPrinciples: [
+        "Small, smart choices + consistency + time = radical difference",
+        "Track all actions and habits",
+        "Activate the momentum multiplier by building routines",
+        "Identify and change your core influences"
+      ],
+      color: "bg-indigo-100 border-indigo-300"
+    },
+    {
       id: "power-of-habit",
       title: "The Power of Habit",
       author: "Charles Duhigg",
@@ -320,6 +333,102 @@ export default function HabitBuilding() {
                         <p><span className="font-medium">Environment over willpower:</span> Design your environment to make good habits easier</p>
                       </li>
                     </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* The Compound Effect and 1% Improvements */}
+            <Card className="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  <BarChart2 className="h-6 w-6 text-blue-600" />
+                  The Compound Effect: The Power of 1% Improvements
+                </CardTitle>
+                <CardDescription>
+                  How tiny improvements lead to extraordinary results over time
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col lg:flex-row gap-6">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold mb-3 text-blue-700">The Mathematics of Tiny Gains</h3>
+                    <p className="text-gray-700 mb-4">
+                      If you improve by just 1% each day for one year, you'll end up 37 times better than when you started. 
+                      Conversely, if you get 1% worse each day, you'll decline nearly to zero. This isn't just inspiring philosophy—it's mathematics.
+                    </p>
+                    
+                    <div className="bg-white p-4 rounded-lg border border-blue-100 mb-4">
+                      <h4 className="font-medium text-blue-800 mb-2">The Formula:</h4>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-mono bg-blue-50 px-2 py-1 rounded">1.01<sup>365</sup> = 37.78</span> (Getting 1% better every day for a year)
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        <span className="font-mono bg-red-50 px-2 py-1 rounded">0.99<sup>365</sup> = 0.03</span> (Getting 1% worse every day for a year)
+                      </p>
+                    </div>
+                    
+                    <p className="text-gray-700">
+                      This mathematical reality demonstrates why small habits make a big difference. Success is the product of daily habits—not once-in-a-lifetime transformations. 
+                      What matters is whether your habits are putting you on the path toward success.
+                    </p>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold mb-3 text-blue-700">How to Apply the Compound Effect</h3>
+                    <ul className="space-y-3">
+                      <li className="bg-white p-3 rounded-lg border-l-4 border-l-blue-500 shadow-sm">
+                        <h4 className="font-medium">Focus on Systems, Not Goals</h4>
+                        <p className="text-sm text-gray-600">
+                          Don't focus on losing 30 pounds. Focus on showing up at the gym every day and eating well consistently.
+                        </p>
+                      </li>
+                      <li className="bg-white p-3 rounded-lg border-l-4 border-l-blue-500 shadow-sm">
+                        <h4 className="font-medium">Embrace "Atomic" Habits</h4>
+                        <p className="text-sm text-gray-600">
+                          Break big habits into tiny ones that take less than two minutes to start. Make them so easy you can't say no.
+                        </p>
+                      </li>
+                      <li className="bg-white p-3 rounded-lg border-l-4 border-l-blue-500 shadow-sm">
+                        <h4 className="font-medium">Value the Long Game</h4>
+                        <p className="text-sm text-gray-600">
+                          Habits often appear to make no difference until you cross a critical threshold and unlock a new level of performance.
+                        </p>
+                      </li>
+                      <li className="bg-white p-3 rounded-lg border-l-4 border-l-blue-500 shadow-sm">
+                        <h4 className="font-medium">Track and Measure</h4>
+                        <p className="text-sm text-gray-600">
+                          You can't improve what you don't measure. Track your habits to make the invisible progress visible.
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <h3 className="text-lg font-semibold mb-2 text-blue-700 flex items-center gap-2">
+                    <Sparkles className="h-5 w-5" />
+                    Real-World Examples of The Compound Effect
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <h4 className="font-medium text-gray-900">British Cycling Team</h4>
+                      <p className="text-sm text-gray-600">
+                        By making 1% improvements in everything from nutrition to bike seats to massage gel, the team went from mediocrity to winning 178 world championships in 5 years.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Warren Buffett</h4>
+                      <p className="text-sm text-gray-600">
+                        Started investing at age 11 but accumulated 99% of his wealth after age 50, showing the power of long-term compound growth.
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900">Daily Writing</h4>
+                      <p className="text-sm text-gray-600">
+                        Writing just 500 words daily (two pages) would result in 182,500 words in a year—the equivalent of 2-3 books.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
