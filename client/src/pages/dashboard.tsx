@@ -133,6 +133,7 @@ export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
+  const [showCustomHabitDialog, setShowCustomHabitDialog] = useState(false);
   const { user } = useUser();
   
   // Get selected date range for Weekly View - starts on Monday of current week
