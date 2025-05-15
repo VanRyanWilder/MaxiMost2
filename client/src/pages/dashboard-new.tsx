@@ -889,10 +889,10 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Exercise", "dumbbell", "fitness", "Move your body for health and energy", 10, 6)}
+                        onClick={() => addQuickHabit("Cardio", "activity", "fitness", "Heart-healthy aerobic activity", 10, 6)}
                       >
-                        <Dumbbell className="h-4 w-4 text-red-500" />
-                        Exercise <Badge className="ml-auto bg-red-100 text-red-700 hover:bg-red-200">695</Badge>
+                        <Activity className="h-4 w-4 text-red-500" />
+                        Cardio <Badge className="ml-auto bg-red-100 text-red-700 hover:bg-red-200">695</Badge>
                       </Button>
                       
                       <Button 
