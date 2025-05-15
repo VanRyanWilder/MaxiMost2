@@ -8,6 +8,7 @@ import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitViewModes } from "@/components/dashboard/habit-view-modes";
 import { ProgressCard } from "@/components/dashboard/progress-card";
+import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
 import { 
@@ -38,6 +39,7 @@ const initialHabits: Habit[] = [
     title: 'Drink 64oz Water',
     description: 'Stay hydrated for optimal performance and health',
     icon: 'droplets',
+    iconColor: '#3b82f6',
     impact: 8,
     effort: 2,
     timeCommitment: '5 min',
@@ -52,6 +54,7 @@ const initialHabits: Habit[] = [
     title: 'Morning Meditation',
     description: 'Start the day with a clear, focused mind',
     icon: 'brain',
+    iconColor: '#8b5cf6',
     impact: 9,
     effort: 4,
     timeCommitment: '10 min',
@@ -66,6 +69,7 @@ const initialHabits: Habit[] = [
     title: 'Strength Training',
     description: 'Build strength and muscle mass',
     icon: 'dumbbell',
+    iconColor: '#ef4444',
     impact: 9,
     effort: 7,
     timeCommitment: '45 min',
@@ -80,6 +84,7 @@ const initialHabits: Habit[] = [
     title: 'Read Books',
     description: 'Feed your mind with quality information',
     icon: 'bookopen',
+    iconColor: '#f59e0b',
     impact: 8,
     effort: 4,
     timeCommitment: '30 min',
@@ -94,6 +99,7 @@ const initialHabits: Habit[] = [
     title: 'Social Connection',
     description: 'Connect with friends or family',
     icon: 'users',
+    iconColor: '#10b981',
     impact: 7,
     effort: 3,
     timeCommitment: '30 min',
@@ -251,6 +257,7 @@ export default function Dashboard() {
                             title: "New Habit",
                             description: "Description of your new habit",
                             icon: "activity",
+                            iconColor: "#3b82f6",
                             impact: 8,
                             effort: 4,
                             timeCommitment: '10 min',
@@ -271,8 +278,8 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent className="pb-6">
                     <div className="space-y-6">
-                      <WeeklyHabitView 
-                        habits={habits.filter(h => h.isAbsolute)}
+                      <SortableHabitViewModes 
+                        habits={habits}
                         completions={completions}
                         onToggleHabit={toggleCompletion}
                         onAddHabit={() => {
@@ -281,6 +288,7 @@ export default function Dashboard() {
                             title: "New Habit",
                             description: "Description of your new habit",
                             icon: "activity",
+                            iconColor: "#3b82f6", // Add this field
                             impact: 8,
                             effort: 4,
                             timeCommitment: '10 min',
@@ -294,6 +302,8 @@ export default function Dashboard() {
                         }}
                         onUpdateHabit={editHabit}
                         onDeleteHabit={deleteHabit}
+                        onReorderHabits={(reorderedHabits) => setHabits(reorderedHabits)}
+                        onEditHabit={(habit) => editHabit(habit)}
                       />
                       
                       <div className="mt-8">
@@ -356,6 +366,7 @@ export default function Dashboard() {
                                       title: habit.title,
                                       description: habit.description,
                                       icon: habit.icon.type.name.toLowerCase(),
+                                      iconColor: '#3b82f6',
                                       impact: 8,
                                       effort: 3,
                                       timeCommitment: '5 min',
