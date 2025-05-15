@@ -23,6 +23,7 @@ import {
   Trophy
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
+import { Logo } from "@/components/ui/logo";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -103,9 +104,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       <div className="flex flex-col h-full">
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              Maximus Gains
-            </h1>
+            <Logo size="medium" />
             <button 
               className="p-1 rounded-md text-muted-foreground hover:bg-muted lg:hidden" 
               onClick={() => setIsOpen(false)}

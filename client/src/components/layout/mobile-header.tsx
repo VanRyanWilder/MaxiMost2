@@ -1,4 +1,5 @@
 import { Menu, User } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
@@ -13,9 +14,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
       >
         <Menu className="h-5 w-5" />
       </button>
-      <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-        BeastMode
-      </h1>
+      <Logo size="small" />
       <button className="p-2 rounded-md hover:bg-muted focus:outline-none">
         <User className="h-5 w-5" />
       </button>
