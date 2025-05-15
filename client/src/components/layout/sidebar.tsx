@@ -30,16 +30,15 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { user, userLoading } = useUser();
 
   const navItems = [
-    { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
     { 
       path: "/habits", 
-      name: "Daily Habits", 
-      icon: <CheckSquare className="w-5 h-5 text-green-500" />,
-      description: "Track your daily and weekly habit streaks"
+      name: "Habit Dashboard", 
+      icon: <Home className="w-5 h-5 text-green-500" />,
+      description: "Your all-in-one habit tracking center"
     },
     { 
       path: "/supplements", 
@@ -80,9 +79,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     { path: "/community", name: "Community", icon: <MessageSquare className="w-5 h-5" /> }
   ];
 
-  // Handle navigation
+  // Handle navigation using wouter (location/setLocation already defined above)
   const navigateTo = (path: string) => {
-    window.location.href = path;
+    setLocation(path);
+    setIsOpen(false); // Close sidebar on mobile after navigation
   };
 
   return (
