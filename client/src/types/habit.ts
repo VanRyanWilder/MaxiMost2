@@ -31,7 +31,11 @@ export type HabitCategory =
   | "productivity"
   | "creativity"
   | "finance"
-  | "custom";
+  | "custom"
+  | "supplements"
+  | "research"
+  | "stoic"
+  | "sugar";
 
 export interface Habit {
   id: string;

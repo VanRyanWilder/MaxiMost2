@@ -605,11 +605,330 @@ const habitStacks: HabitStack[] = [
   }
 ];
 
+// Scientific Research habits
+const researchHabits: Habit[] = [
+  {
+    id: "sci1",
+    title: "Read research papers",
+    description: "Read at least one scientific paper on health or fitness",
+    icon: "FileText",
+    iconColor: "blue",
+    impact: 7,
+    effort: 6,
+    timeCommitment: "moderate",
+    frequency: "weekly",
+    isAbsolute: false,
+    category: "research",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sci2",
+    title: "Listen to expert podcast",
+    description: "Listen to a health/fitness podcast with scientific backing",
+    icon: "Headphones",
+    iconColor: "purple",
+    impact: 6,
+    effort: 3,
+    timeCommitment: "moderate",
+    frequency: "weekly",
+    isAbsolute: false,
+    category: "research",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sci3",
+    title: "Watch scientific video",
+    description: "Watch an educational video on health research",
+    icon: "Youtube",
+    iconColor: "red",
+    impact: 5,
+    effort: 2,
+    timeCommitment: "moderate",
+    frequency: "weekly",
+    isAbsolute: false,
+    category: "research",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sci4",
+    title: "Track biometrics",
+    description: "Measure and record key health metrics",
+    icon: "Activity",
+    iconColor: "green",
+    impact: 8,
+    effort: 4,
+    timeCommitment: "minimal",
+    frequency: "weekly",
+    isAbsolute: false,
+    category: "research",
+    streak: 0,
+    createdAt: new Date()
+  }
+];
+
+// Supplements habits
+const supplementHabits: Habit[] = [
+  {
+    id: "sup1",
+    title: "Take omega-3",
+    description: "Take daily omega-3 supplement",
+    icon: "Droplets",
+    iconColor: "orange",
+    impact: 8,
+    effort: 2,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: true,
+    category: "supplements",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sup2",
+    title: "Take vitamin D",
+    description: "Take vitamin D supplement",
+    icon: "Sun",
+    iconColor: "yellow",
+    impact: 8,
+    effort: 1,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: true,
+    category: "supplements",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sup3",
+    title: "Take magnesium",
+    description: "Take magnesium supplement before bed",
+    icon: "Moon",
+    iconColor: "blue",
+    impact: 7,
+    effort: 1,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: false,
+    category: "supplements",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sup4",
+    title: "Take protein",
+    description: "Consume protein supplement post-workout",
+    icon: "Package",
+    iconColor: "blue",
+    impact: 7,
+    effort: 3,
+    timeCommitment: "minimal",
+    frequency: "workout-days",
+    isAbsolute: false,
+    category: "supplements",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sup5",
+    title: "Take creatine",
+    description: "Take 5g of creatine daily",
+    icon: "Pill",
+    iconColor: "red",
+    impact: 7,
+    effort: 1,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: false,
+    category: "supplements",
+    streak: 0,
+    createdAt: new Date()
+  }
+];
+
+// Stoic Principles habits
+const stoicHabits: Habit[] = [
+  {
+    id: "st1",
+    title: "Morning reflection",
+    description: "Reflect on the day ahead and prepare for challenges",
+    icon: "Sunrise",
+    iconColor: "orange",
+    impact: 7,
+    effort: 4,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: true,
+    category: "stoic",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "st2",
+    title: "Negative visualization",
+    description: "Mentally prepare for potential difficulties",
+    icon: "CloudLightning",
+    iconColor: "gray",
+    impact: 6,
+    effort: 5,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: false,
+    category: "stoic",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "st3",
+    title: "Evening review",
+    description: "Review the day and reflect on your actions",
+    icon: "CheckCircle",
+    iconColor: "green",
+    impact: 7,
+    effort: 3,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: false,
+    category: "stoic",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "st4",
+    title: "Read stoic philosophy",
+    description: "Read works from Seneca, Marcus Aurelius, or Epictetus",
+    icon: "Book",
+    iconColor: "blue",
+    impact: 6,
+    effort: 4,
+    timeCommitment: "moderate",
+    frequency: "3x-week",
+    isAbsolute: false,
+    category: "stoic",
+    streak: 0,
+    createdAt: new Date()
+  }
+];
+
+// Anti-Sugar habits
+const sugarHabits: Habit[] = [
+  {
+    id: "sug1",
+    title: "No added sugar",
+    description: "Avoid all foods with added sugar",
+    icon: "XCircle",
+    iconColor: "red",
+    impact: 9,
+    effort: 8,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: true,
+    category: "sugar",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sug2",
+    title: "No sugary drinks",
+    description: "Avoid all sugar-sweetened beverages",
+    icon: "Coffee",
+    iconColor: "brown",
+    impact: 8,
+    effort: 6,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: true,
+    category: "sugar",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sug3",
+    title: "Check food labels",
+    description: "Check sugar content in all packaged foods",
+    icon: "Search",
+    iconColor: "purple",
+    impact: 7,
+    effort: 4,
+    timeCommitment: "minimal",
+    frequency: "daily",
+    isAbsolute: false,
+    category: "sugar",
+    streak: 0,
+    createdAt: new Date()
+  },
+  {
+    id: "sug4",
+    title: "Sugar-free day",
+    description: "Complete a day with absolutely no sugar",
+    icon: "Award",
+    iconColor: "green",
+    impact: 8,
+    effort: 9,
+    timeCommitment: "high",
+    frequency: "weekly",
+    isAbsolute: false,
+    category: "sugar",
+    streak: 0,
+    createdAt: new Date()
+  }
+];
+
+// Adding new habit stacks based on the four pillars
+const newHabitStacks: HabitStack[] = [
+  {
+    id: "stack-5",
+    title: "Four Pillars Stack",
+    description: "Cover all four pillars of maximum performance daily",
+    icon: "LayoutGrid",
+    iconColor: "blue",
+    habits: [
+      supplementHabits[0], // Omega-3
+      researchHabits[3], // Track biometrics
+      stoicHabits[0], // Morning reflection
+      sugarHabits[0], // No added sugar
+    ]
+  },
+  {
+    id: "stack-6",
+    title: "Anti-Sugar Warrior Stack",
+    description: "Comprehensive approach to eliminate sugar addiction",
+    icon: "Shield",
+    iconColor: "red",
+    habits: [
+      sugarHabits[0], // No added sugar
+      sugarHabits[1], // No sugary drinks
+      sugarHabits[2], // Check food labels
+      {
+        id: "asw-1",
+        title: "Eat protein first",
+        description: "Start each meal with protein to stabilize blood sugar",
+        icon: "Utensils",
+        iconColor: "green",
+        impact: 8,
+        effort: 4,
+        timeCommitment: "minimal",
+        frequency: "daily",
+        isAbsolute: false,
+        category: "health",
+        streak: 0,
+        createdAt: new Date()
+      }
+    ]
+  }
+];
+
 // Export all habit suggestions
 export const habitSuggestions = {
   health: healthHabits,
   fitness: fitnessHabits,
   mind: mindHabits,
-  habits: routineHabits,
-  stacks: habitStacks
+  routine: routineHabits,
+  research: researchHabits,
+  supplements: supplementHabits,
+  stoic: stoicHabits,
+  sugar: sugarHabits,
+  stacks: [...habitStacks, ...newHabitStacks]
 };
