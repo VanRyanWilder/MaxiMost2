@@ -405,7 +405,7 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
           variant="default" 
           size="sm" 
           className="w-full flex items-center justify-center gap-1.5 h-10"
-          onClick={onAddHabit}
+          onClick={handleCreateHabit}
         >
           <PlusCircle className="h-4 w-4" />
           <span className="font-medium">Add New Habit</span>
