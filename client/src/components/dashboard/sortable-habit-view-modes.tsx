@@ -127,7 +127,11 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
 
   const filteredHabits = filterCategory === 'all' 
     ? habits 
-    : habits.filter(h => h.category === filterCategory);
+    : filterCategory === 'absolute'
+      ? habits.filter(h => h.isAbsolute)
+      : filterCategory === 'frequency'
+        ? habits.filter(h => !h.isAbsolute)
+        : habits;
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -261,37 +265,21 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center">
                   <Filter className="h-4 w-4 mr-2" />
-                  {filterCategory === 'all' ? 'All Categories' : filterCategory}
+                  {filterCategory === 'all' ? 'All' : 
+                   filterCategory === 'absolute' ? 'Absolute' : 
+                   filterCategory === 'frequency' ? 'Frequency' : filterCategory}
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setFilterCategory('all')}>
-                  All Categories
+                  All
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('health')}>
-                  Health
+                <DropdownMenuItem onClick={() => setFilterCategory('absolute')}>
+                  Absolute
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('fitness')}>
-                  Fitness
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('productivity')}>
-                  Productivity
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('mindfulness')}>
-                  Mindfulness
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('learning')}>
-                  Learning
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('social')}>
-                  Social
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('finance')}>
-                  Finance
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('other')}>
-                  Other
+                <DropdownMenuItem onClick={() => setFilterCategory('frequency')}>
+                  Frequency
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
