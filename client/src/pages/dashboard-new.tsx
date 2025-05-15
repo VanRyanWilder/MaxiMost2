@@ -1005,7 +1005,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Morning Sunlight", "sun", "health", "Get sun exposure for circadian rhythm")}
+                              onClick={() => addQuickHabit("Morning Sunlight", "sun", "health", "Get sun exposure for circadian rhythm", 10, 3)}
                             >
                               Add
                             </Button>
@@ -1017,7 +1017,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Consistent Sleep", "clock", "health", "Go to bed and wake up at consistent times")}
+                              onClick={() => addQuickHabit("Consistent Sleep", "clock", "health", "Go to bed and wake up at consistent times", 10, 6)}
                             >
                               Add
                             </Button>
@@ -1029,7 +1029,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes")}
+                              onClick={() => addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes", 9, 5)}
                             >
                               Add
                             </Button>
@@ -1047,9 +1047,9 @@ export default function Dashboard() {
                             variant="outline" 
                             className="h-8 text-xs" 
                             onClick={() => {
-                              addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention");
-                              addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons");
-                              addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges");
+                              addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2);
+                              addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3);
+                              addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4);
                             }}
                           >
                             Add All 3 Habits
@@ -1065,7 +1065,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention")}
+                              onClick={() => addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2)}
                             >
                               Add
                             </Button>
@@ -1077,7 +1077,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons")}
+                              onClick={() => addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3)}
                             >
                               Add
                             </Button>
@@ -1089,7 +1089,7 @@ export default function Dashboard() {
                               size="sm" 
                               variant="ghost" 
                               className="ml-auto h-6 px-2 text-xs"
-                              onClick={() => addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges")}
+                              onClick={() => addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4)}
                             >
                               Add
                             </Button>
