@@ -22,15 +22,53 @@ export function DailyMotivation() {
   const [showQuickAdd, setShowQuickAdd] = useState(true);
   const [showHabitStacks, setShowHabitStacks] = useState(true);
 
-  // Mock data - in a real app, this would come from your API
-  const mockContent: MotivationalContent = {
-    id: 1,
-    title: "The Obstacle Is The Way",
-    content: "The impediment to action advances action. What stands in the way becomes the way. Our actions may be impeded, but there can be no impeding our intentions or dispositions. Because we can accommodate and adapt. The mind adapts and converts to its own purposes the obstacle to our acting.",
-    author: "Marcus Aurelius",
-    source: "Meditations",
-    audioUrl: undefined, // In a real app, this would be the URL to the audio file
-  };
+  // Mock motivational content rotation - in a real app, this would come from your API
+  const motivationalContents: MotivationalContent[] = [
+    {
+      id: 1,
+      title: "The Obstacle Is The Way",
+      content: "The impediment to action advances action. What stands in the way becomes the way. Our actions may be impeded, but there can be no impeding our intentions or dispositions. Because we can accommodate and adapt. The mind adapts and converts to its own purposes the obstacle to our acting.",
+      author: "Marcus Aurelius",
+      source: "Meditations",
+      audioUrl: undefined,
+    },
+    {
+      id: 2,
+      title: "Discipline Equals Freedom",
+      content: "The more you sweat in training, the less you bleed in combat. The more disciplined your daily habits, the more freedom you'll have to pursue your goals without constraint. Your discipline today creates your freedom tomorrow.",
+      author: "Jocko Willink",
+      source: "Discipline Equals Freedom",
+      audioUrl: undefined,
+    },
+    {
+      id: 3,
+      title: "The 1% Rule",
+      content: "Improvement isn't about radical change. It's about small improvements consistently applied. Getting 1% better each day compounds to remarkable results over time. Today's action, however small, determines tomorrow's outcome.",
+      author: "James Clear",
+      source: "Atomic Habits",
+      audioUrl: undefined,
+    },
+    {
+      id: 4,
+      title: "Memento Mori",
+      content: "Remember that you will die. Let this truth be a constant reminder to focus on what truly matters. Don't postpone the meaningful life you could live today for a tomorrow that isn't guaranteed. Use your finite time with wisdom and purpose.",
+      author: "Marcus Aurelius",
+      source: "Meditations",
+      audioUrl: undefined,
+    },
+    {
+      id: 5,
+      title: "The Cookie Jar Method",
+      content: "When facing your greatest challenges, remember and draw strength from your past victories. Pull out those tough moments you've already conquered from your mental cookie jar. You've overcome difficulty before, and you will do it again.",
+      author: "David Goggins",
+      source: "Can't Hurt Me",
+      audioUrl: undefined,
+    }
+  ];
+  
+  // Select a random piece of content based on the day
+  const todayIndex = new Date().getDate() % motivationalContents.length;
+  const mockContent = motivationalContents[todayIndex];
 
   useEffect(() => {
     // Simulate API call
