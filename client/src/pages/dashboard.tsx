@@ -145,9 +145,15 @@ export default function Dashboard() {
     }
   };
   
-  // Navigate to the habits page for adding new habits
+  // Navigate to the current habits page for adding new habits
   const handleAddHabit = () => {
-    window.location.href = "/habits";
+    window.location.href = "/dashboard";
+    
+    // Show the add-habit dialog
+    setTimeout(() => {
+      const event = new CustomEvent('open-add-habit-dialog', { bubbles: true });
+      document.dispatchEvent(event);
+    }, 100);
   };
   
   // Listen for habit stack events

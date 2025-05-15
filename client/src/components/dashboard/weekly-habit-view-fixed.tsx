@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format, startOfWeek, addDays, isSameDay, isBefore, isAfter } from 'date-fns';
@@ -130,12 +130,31 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
     setEditDialogOpen(true);
   };
   
-  // Function to save updated habit
+  // Function to handle creating a new habit
+  const handleCreateHabit = () => {
+    setSelectedHabit(null); // This will trigger the dialog to create a new habit
+    setEditDialogOpen(true);
+  };
+  
+  // Function to save updated or new habit
   const handleSaveHabit = (updatedHabit: Habit) => {
     if (onUpdateHabit) {
       onUpdateHabit(updatedHabit);
     }
   };
+  
+  // Listen for open-add-habit-dialog events
+  useEffect(() => {
+    const handleOpenAddHabitDialog = () => {
+      handleCreateHabit();
+    };
+    
+    document.addEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
+    
+    return () => {
+      document.removeEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
+    };
+  }, []);
 
   // Filter habits based on category
   const filteredHabits = habits.filter(habit => 
