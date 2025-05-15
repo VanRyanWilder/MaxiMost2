@@ -663,6 +663,7 @@ export default function IntegratedHabits() {
   ]);
   
   const [selectedStack, setSelectedStack] = useState<HabitStack | null>(null);
+  const [showStackDetailsDialog, setShowStackDetailsDialog] = useState(false);
   
   // Helper functions
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
@@ -1909,54 +1910,7 @@ export default function IntegratedHabits() {
               </CardContent>
             </Card>
             
-            {/* Habit Stacks */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle>Expert Habit Stacks</CardTitle>
-                <CardDescription>
-                  Combine multiple habits into powerful stacks for maximum effect
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {habitStacks.map(stack => (
-                  <div 
-                    key={stack.id}
-                    className="border rounded-lg p-4 hover:border-primary/50 hover:shadow-sm transition-all cursor-pointer"
-                    onClick={() => addHabitStackFromDialogPreview(stack)}
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="bg-primary/10 p-2 rounded-full">
-                        {getIconComponent(stack.icon)}
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-sm">{stack.name}</h3>
-                        <p className="text-xs text-muted-foreground">
-                          {stack.habits.length} habits
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground mb-3">
-                      {stack.description}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-1.5">
-                      {stack.habits.map((habit, idx) => (
-                        <Badge 
-                          key={idx} 
-                          variant="outline" 
-                          className="text-[10px] font-normal flex items-center gap-1"
-                        >
-                          {getIconComponent(habit.icon)}
-                          {habit.title}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+
           </div>
         </div>
         
