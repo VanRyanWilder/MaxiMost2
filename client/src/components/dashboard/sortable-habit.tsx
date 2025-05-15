@@ -97,8 +97,8 @@ export function SortableHabit({
     <div 
       ref={setNodeRef} 
       style={style}
-      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-1 group ${
-        weeklyGoalMet ? 'bg-green-50 rounded-md' : ''
+      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
+        weeklyGoalMet ? 'bg-green-50' : `${colorScheme?.lightBg || "bg-transparent"}`
       }`}
     >
       {/* Main habit info cell */}
@@ -194,7 +194,7 @@ export function SortableHabit({
               {completed ? (
                 <Check className="h-5 w-5" />
               ) : (
-                <div className="h-5 w-5 rounded-full border-2 border-current"></div>
+                <div className={`h-5 w-5 rounded-full border-2 ${colorScheme?.border || "border-current"}`}></div>
               )}
             </button>
           </div>

@@ -130,14 +130,14 @@ export const iconMap: Record<string, IconMapItem> = {
 
 // Predefined color schemes for habits
 export const colorSchemes = [
-  {id: "blue", primary: "text-blue-500", bg: "bg-blue-100", border: "border-blue-200"},
-  {id: "green", primary: "text-green-500", bg: "bg-green-100", border: "border-green-200"},
-  {id: "red", primary: "text-red-500", bg: "bg-red-100", border: "border-red-200"},
-  {id: "amber", primary: "text-amber-500", bg: "bg-amber-100", border: "border-amber-200"},
-  {id: "purple", primary: "text-purple-500", bg: "bg-purple-100", border: "border-purple-200"},
-  {id: "indigo", primary: "text-indigo-500", bg: "bg-indigo-100", border: "border-indigo-200"},
-  {id: "pink", primary: "text-pink-500", bg: "bg-pink-100", border: "border-pink-200"},
-  {id: "teal", primary: "text-teal-500", bg: "bg-teal-100", border: "border-teal-200"},
+  {id: "blue", primary: "text-blue-500", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200"},
+  {id: "green", primary: "text-green-500", bg: "bg-green-100", lightBg: "bg-green-50/50", border: "border-green-200"},
+  {id: "red", primary: "text-red-500", bg: "bg-red-100", lightBg: "bg-red-50/50", border: "border-red-200"},
+  {id: "amber", primary: "text-amber-500", bg: "bg-amber-100", lightBg: "bg-amber-50/50", border: "border-amber-200"},
+  {id: "purple", primary: "text-purple-500", bg: "bg-purple-100", lightBg: "bg-purple-50/50", border: "border-purple-200"},
+  {id: "indigo", primary: "text-indigo-500", bg: "bg-indigo-100", lightBg: "bg-indigo-50/50", border: "border-indigo-200"},
+  {id: "pink", primary: "text-pink-500", bg: "bg-pink-100", lightBg: "bg-pink-50/50", border: "border-pink-200"},
+  {id: "teal", primary: "text-teal-500", bg: "bg-teal-100", lightBg: "bg-teal-50/50", border: "border-teal-200"},
 ];
 
 // Default habit template for creating new habits
