@@ -70,7 +70,7 @@ export default function Community() {
     {
       id: 2,
       title: "Best supplements for recovery after intense workouts?",
-      content: "I've been following the BeastMode strength program and experiencing some muscle soreness. What supplements do you recommend for better recovery?",
+      content: "I've been following the MaxiMost strength program and experiencing some muscle soreness. What supplements do you recommend for better recovery?",
       author: {
         id: 2,
         name: "Seneca",
@@ -188,7 +188,7 @@ export default function Community() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-3xl font-bold">Community Forum</h1>
-                <p className="text-gray-600 mt-1">Connect, share, and learn with the BeastMode community</p>
+                <p className="text-gray-600 mt-1">Connect, share, and learn with the MaxiMost community</p>
               </div>
               
               <Dialog open={newPostOpen} onOpenChange={setNewPostOpen}>

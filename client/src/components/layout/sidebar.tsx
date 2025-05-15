@@ -124,7 +124,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-sm">{user.name || "Beast Mode User"}</h3>
+                  <h3 className="font-medium text-sm">{user.name || "MaxiMost User"}</h3>
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
