@@ -150,6 +150,21 @@ export default function Dashboard() {
     window.location.href = "/habits";
   };
   
+  // Listen for habit stack events
+  useEffect(() => {
+    const handleHabitStackEvent = (event: any) => {
+      const { stackName, habits: stackHabits } = event.detail;
+      console.log(`Adding habit stack: ${stackName} with ${stackHabits.length} habits`);
+      setHabits(prev => [...prev, ...stackHabits]);
+    };
+    
+    document.addEventListener('add-habit-stack', handleHabitStackEvent);
+    
+    return () => {
+      document.removeEventListener('add-habit-stack', handleHabitStackEvent);
+    };
+  }, []);
+  
   // Calculate metrics for the habit completion stats
   const totalHabits = habits.length;
   const completedToday = habits.filter(h => isHabitCompletedOnDate(h.id, new Date())).length;
