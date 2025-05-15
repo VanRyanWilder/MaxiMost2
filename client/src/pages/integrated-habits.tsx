@@ -791,19 +791,29 @@ export default function IntegratedHabits() {
     });
   };
   
+  // State for delete confirmation dialog
+  const [habitToDelete, setHabitToDelete] = useState<string | null>(null);
+
   const deleteHabit = (id: string) => {
-    // Use a confirmation dialog before deleting
-    if (confirm("Are you sure you want to delete this habit?")) {
+    // Open the confirmation dialog
+    setHabitToDelete(id);
+  };
+  
+  const confirmDeleteHabit = () => {
+    if (habitToDelete) {
       // Properly update the habits state using a callback to ensure we're working with the most recent state
-      setHabits(prevHabits => prevHabits.filter(h => h.id !== id));
+      setHabits(prevHabits => prevHabits.filter(h => h.id !== habitToDelete));
       
       // Also remove any completions for this habit
-      setCompletions(prevCompletions => prevCompletions.filter(c => c.habitId !== id));
+      setCompletions(prevCompletions => prevCompletions.filter(c => c.habitId !== habitToDelete));
       
       toast({
         title: "Habit deleted",
         description: "Your habit has been deleted",
       });
+      
+      // Close the confirmation dialog
+      setHabitToDelete(null);
     }
   };
   
