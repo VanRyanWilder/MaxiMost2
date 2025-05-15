@@ -328,6 +328,7 @@ export default function IntegratedHabits() {
     title: "",
     description: "",
     icon: "sparkle",
+    iconColor: "#4F46E5",
     impact: 5,
     effort: 3,
     timeCommitment: "5 min",
@@ -704,6 +705,7 @@ export default function IntegratedHabits() {
       title: newHabit.title || "",
       description: newHabit.description || "",
       icon: newHabit.icon || "sparkle",
+      iconColor: newHabit.iconColor || '#4F46E5', // Add default iconColor
       impact: newHabit.impact || 5,
       effort: newHabit.effort || 3,
       timeCommitment: newHabit.timeCommitment || "5 min",
@@ -714,7 +716,8 @@ export default function IntegratedHabits() {
       createdAt: new Date(),
     };
     
-    setHabits([...habits, habit]);
+    // Use the callback form of setState to ensure we're working with the most recent state
+    setHabits(prevHabits => [...prevHabits, habit]);
     
     // Also add to custom quick add templates if not already added
     const quickAddHabitExists = customQuickAddHabits.some(h => h.title === habit.title);
@@ -724,6 +727,7 @@ export default function IntegratedHabits() {
         title: habit.title,
         description: habit.description,
         icon: habit.icon,
+        iconColor: habit.iconColor,
         impact: habit.impact,
         effort: habit.effort,
         timeCommitment: habit.timeCommitment,
@@ -740,6 +744,7 @@ export default function IntegratedHabits() {
       title: "",
       description: "",
       icon: "sparkle",
+      iconColor: "#4F46E5",
       impact: 5,
       effort: 3,
       timeCommitment: "5 min",
@@ -993,31 +998,29 @@ export default function IntegratedHabits() {
   
   // Add items for a habit stack in the Add New Habit dialog
   const addHabitStackFromDialogPreview = (stack: HabitStack) => {
-    let addedHabits = 0;
+    // Create all habits first
+    const newHabits = stack.habits.map(template => ({
+      id: `h${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      title: template.title,
+      description: template.description,
+      icon: template.icon,
+      iconColor: template.iconColor || '#4F46E5', // Add default iconColor if not present
+      impact: template.impact,
+      effort: template.effort,
+      timeCommitment: template.timeCommitment,
+      frequency: template.frequency as HabitFrequency,
+      isAbsolute: template.isAbsolute,
+      category: template.category as HabitCategory,
+      streak: 0,
+      createdAt: new Date(),
+    }));
     
-    stack.habits.forEach(template => {
-      const habit: Habit = {
-        id: `h${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-        title: template.title,
-        description: template.description,
-        icon: template.icon,
-        impact: template.impact,
-        effort: template.effort,
-        timeCommitment: template.timeCommitment,
-        frequency: template.frequency as HabitFrequency,
-        isAbsolute: template.isAbsolute,
-        category: template.category as HabitCategory,
-        streak: 0,
-        createdAt: new Date(),
-      };
-      
-      setHabits(prevHabits => [...prevHabits, habit]);
-      addedHabits++;
-    });
+    // Then update the state once with all the new habits
+    setHabits(prevHabits => [...prevHabits, ...newHabits]);
     
     toast({
       title: "Habit stack added",
-      description: `Added ${addedHabits} habits from ${stack.name}`
+      description: `Added ${newHabits.length} habits from ${stack.name}`
     });
     
     setAddHabitOpen(false);
