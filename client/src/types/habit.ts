@@ -7,6 +7,7 @@ export interface Habit {
   title: string;
   description: string;
   icon: string;
+  iconColor?: string; // Color scheme for the habit (blue, green, red, etc.)
   impact: number;
   effort: number;
   timeCommitment: string;
