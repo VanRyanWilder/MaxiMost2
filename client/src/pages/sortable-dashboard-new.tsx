@@ -282,20 +282,29 @@ export default function SortableDashboard() {
 
   // Handle adding a habit from the library
   const handleAddFromLibrary = (habitTemplate: any) => {
+    console.log('handleAddFromLibrary received:', habitTemplate);
+    console.log('isStack flag:', habitTemplate.isStack);
+    console.log('Has habits array:', !!habitTemplate.habits && Array.isArray(habitTemplate.habits));
+    console.log('Habits length:', habitTemplate.habits?.length || 0);
+
     // Check if this is a habit stack with multiple habits
     if (habitTemplate.isStack && habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
+      console.log('Processing as stack with multiple habits');
       // If it's a stack, add each habit from the stack
       habitTemplate.habits.forEach((habitItem: any) => {
+        console.log('Adding habit from stack:', habitItem.title);
         addHabitFromTemplate(habitItem);
       });
       
       // Show success feedback for stack
-      console.log('Added habit stack:', habitTemplate.title);
+      console.log('Added all habits from stack:', habitTemplate.title);
     } else if (habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
       // It's a stack but called from an individual habit in the stack
+      console.log('Got a stack without isStack flag, processing as single habit');
       addHabitFromTemplate(habitTemplate);
     } else {
       // It's a single habit, add it
+      console.log('Processing as single habit:', habitTemplate.title);
       addHabitFromTemplate(habitTemplate);
     }
   };
