@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { SortableHabitViewModes } from '@/components/dashboard/sortable-habit-view-modes';
 import { Card, CardContent } from '@/components/ui/card';
 import { Habit } from '@/types/habit';
-import { HabitCompletion } from '@/types/habit-completion';
+import { HabitCompletion, isSameDay } from '@/types/habit-completion';
 
 export default function SortableViewTest() {
   // Sample habits data
@@ -109,15 +109,6 @@ export default function SortableViewTest() {
       c.habitId === habitId && 
       isSameDay(new Date(c.date), date)
     );
-
-    // Helper function to check if two dates are the same day
-    function isSameDay(d1: Date, d2: Date): boolean {
-      return (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-      );
-    }
 
     let updatedCompletions = [...completions];
 
