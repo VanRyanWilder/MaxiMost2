@@ -658,9 +658,8 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                     className="h-8 flex-shrink-0 text-xs"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent parent click
-                      stack.habits.forEach((habit: any) => {
-                        onAddHabit?.(habit);
-                      });
+                      // Send the entire stack object to be handled by the parent component
+                      onAddHabit?.({...stack, isStack: true});
                     }}
                   >
                     <Plus className="h-3.5 w-3.5 mr-1" />
