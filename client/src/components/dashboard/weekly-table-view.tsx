@@ -1,5 +1,5 @@
 import React from "react";
-import { format } from "date-fns";
+import { format, isFuture } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Circle, CheckCircle, Pencil, Trash2, MoreVertical, Star, StarHalf } from "lucide-react";
@@ -24,6 +24,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableHabit } from './table-sortable-item';
+import { HabitButton } from "./habit-button";
 
 interface WeeklyTableViewProps {
   habits: Habit[];
