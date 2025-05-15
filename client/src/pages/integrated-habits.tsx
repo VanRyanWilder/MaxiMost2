@@ -884,6 +884,7 @@ export default function IntegratedHabits() {
       title: "Prayer",
       description: "Daily communication with God",
       icon: "heart",
+      iconColor: "#ec4899",
       impact: 10,
       effort: 2,
       timeCommitment: "5-15 min",
@@ -895,6 +896,7 @@ export default function IntegratedHabits() {
       title: "Bible reading",
       description: "Study God's word daily",
       icon: "book",
+      iconColor: "#8b5cf6",
       impact: 10,
       effort: 3,
       timeCommitment: "10-15 min",
@@ -903,9 +905,22 @@ export default function IntegratedHabits() {
       category: "mind"
     },
     {
+      title: "Cold shower",
+      description: "Build resilience with cold exposure",
+      icon: "shower",
+      iconColor: "#0ea5e9",
+      impact: 7,
+      effort: 6,
+      timeCommitment: "5 min",
+      frequency: "daily",
+      isAbsolute: false,
+      category: "health"
+    },
+    {
       title: "Drink water",
       description: "Stay hydrated throughout the day",
       icon: "water",
+      iconColor: "#3b82f6",
       impact: 8,
       effort: 2,
       timeCommitment: "All day",
@@ -914,9 +929,22 @@ export default function IntegratedHabits() {
       category: "health"
     },
     {
+      title: "Take supplements",
+      description: "Daily supplements for optimal health",
+      icon: "pill",
+      iconColor: "#f59e0b",
+      impact: 8,
+      effort: 1,
+      timeCommitment: "1 min",
+      frequency: "daily",
+      isAbsolute: true,
+      category: "health"
+    },
+    {
       title: "Strength training",
       description: "Resistance training for muscle and health",
       icon: "dumbbell",
+      iconColor: "#ef4444",
       impact: 9,
       effort: 7,
       timeCommitment: "45-60 min",
@@ -928,9 +956,34 @@ export default function IntegratedHabits() {
       title: "Limit sugar intake",
       description: "Stay under daily sugar target",
       icon: "food",
+      iconColor: "#f43f5e",
       impact: 8,
       effort: 6,
       timeCommitment: "All day",
+      frequency: "daily",
+      isAbsolute: true,
+      category: "health"
+    },
+    {
+      title: "Intermittent fasting",
+      description: "Fast for 16 hours, eat during 8-hour window",
+      icon: "hourglass",
+      iconColor: "#9333ea",
+      impact: 9,
+      effort: 7,
+      timeCommitment: "16 hours",
+      frequency: "daily",
+      isAbsolute: false,
+      category: "health"
+    },
+    {
+      title: "Journal writing",
+      description: "Record thoughts, ideas, and reflections",
+      icon: "pencil",
+      iconColor: "#64748b",
+      impact: 7,
+      effort: 4,
+      timeCommitment: "10 min",
       frequency: "daily",
       isAbsolute: true,
       category: "health"
@@ -1123,6 +1176,11 @@ export default function IntegratedHabits() {
             </TabsContent>
             
             <TabsContent value="calendar" className="m-0">
+              <div className="flex items-center justify-center gap-2 mb-3 text-sm text-muted-foreground bg-blue-50 py-2 rounded-lg">
+                <ChevronLeft className="h-4 w-4" />
+                <span>Use arrows to navigate between days</span>
+                <ChevronRight className="h-4 w-4" />
+              </div>
               <div className="mb-4">
                 <Calendar
                   mode="single"
