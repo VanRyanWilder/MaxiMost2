@@ -283,7 +283,7 @@ export default function SortableDashboard() {
   // Handle adding a habit from the library
   const handleAddFromLibrary = (habitTemplate: any) => {
     // Check if this is a habit stack with multiple habits
-    if (habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
+    if (habitTemplate.isStack && habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
       // If it's a stack, add each habit from the stack
       habitTemplate.habits.forEach((habitItem: any) => {
         addHabitFromTemplate(habitItem);
@@ -291,6 +291,9 @@ export default function SortableDashboard() {
       
       // Show success feedback for stack
       console.log('Added habit stack:', habitTemplate.title);
+    } else if (habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
+      // It's a stack but called from an individual habit in the stack
+      addHabitFromTemplate(habitTemplate);
     } else {
       // It's a single habit, add it
       addHabitFromTemplate(habitTemplate);
