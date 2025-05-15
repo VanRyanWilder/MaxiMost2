@@ -3,14 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  CheckSquare,
-  Award,
-  Plus
-} from "lucide-react";
+import { Calendar as CalendarIcon, CheckSquare, Award, Plus, Check, Clock } from "lucide-react";
 import { format, startOfWeek, addDays, isSameDay, subDays } from 'date-fns';
 import { useToast } from "@/hooks/use-toast";
+import { Calendar } from "@/components/ui/calendar";
 
 // Types that mirror the ones in unified-habits.tsx
 type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
@@ -143,6 +139,7 @@ export function DashboardHabits() {
   const [habits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
   const [activeView, setActiveView] = useState<'list' | 'calendar'>('list');
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   // Filter to show only top 5 habits
   const sortedHabits = [...habits]
@@ -155,7 +152,7 @@ export function DashboardHabits() {
     })
     .slice(0, 5); // Only show top 5 habits
   
-  // Generate dates for this week
+  // Generate dates for this week (used in weekly view)
   const today = new Date();
   const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Start with Monday
   const weekDates = Array.from({ length: 7 }).map((_, i) => addDays(startOfCurrentWeek, i));
@@ -254,81 +251,56 @@ export function DashboardHabits() {
         {/* Calendar View */}
         {activeView === 'calendar' && (
           <div>
-            <div className="mb-4 flex justify-center">
-              <div className="inline-grid grid-cols-7 gap-1 bg-muted/50 rounded-lg p-2">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
-                  <div key={i} className="text-center text-xs font-medium text-muted-foreground p-1">
-                    {day}
-                  </div>
-                ))}
-                
-                {weekDates.map((date, i) => (
-                  <button
-                    key={i}
-                    className={`
-                      h-8 w-8 p-0 rounded-md text-center text-xs font-medium
-                      ${isSameDay(date, new Date()) 
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
-                        : 'hover:bg-muted text-foreground'}
-                    `}
-                    onClick={() => {}}
-                  >
-                    {format(date, 'd')}
-                  </button>
-                ))}
-              </div>
+            <div className="mb-4">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                className="rounded-md border mx-auto"
+              />
             </div>
             
-            <div className="space-y-2 mt-4">
+            <div className="py-4">
               <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                {format(new Date(), 'EEEE, MMMM d, yyyy')}
+                {format(selectedDate, 'EEEE, MMMM d, yyyy')}
               </h3>
               
               {sortedHabits.map((habit) => (
                 <div 
                   key={habit.id} 
-                  className="p-3 mb-2 rounded-lg border bg-background hover:shadow-sm transition-all flex items-center gap-3"
+                  className="p-4 mb-2.5 rounded-lg border bg-background hover:shadow-sm transition-all flex items-center gap-3"
                 >
                   <button 
-                    onClick={() => toggleHabitCompletion(habit.id, new Date())}
+                    onClick={() => toggleHabitCompletion(habit.id, selectedDate)}
                     className={`rounded-full h-6 w-6 min-w-6 flex items-center justify-center 
-                      ${isHabitCompletedOnDate(habit.id, new Date()) 
+                      ${isHabitCompletedOnDate(habit.id, selectedDate) 
                         ? 'text-white bg-primary hover:bg-primary/90' 
                         : 'text-muted-foreground border hover:border-primary/50'}`}
                   >
-                    {isHabitCompletedOnDate(habit.id, new Date()) && (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check">
-                        <path d="M20 6 9 17l-5-5"/>
-                      </svg>
-                    )}
+                    {isHabitCompletedOnDate(habit.id, selectedDate) && <Check className="h-3.5 w-3.5" />}
                   </button>
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center">
-                      <span className="mr-2">
+                      <span className="text-muted-foreground mr-2">
                         {getIconComponent(habit.icon)}
                       </span>
                       
-                      <h3 className={`font-medium text-sm ${isHabitCompletedOnDate(habit.id, new Date()) ? 'line-through text-muted-foreground' : ''}`}>
+                      <h3 className={`font-medium text-sm ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'line-through text-muted-foreground' : ''}`}>
                         {habit.title}
                       </h3>
                       
                       <div className="ml-auto flex items-center gap-1.5">
-                        <div className="text-xs text-muted-foreground px-1.5 py-0.5 bg-muted rounded-sm flex gap-1 items-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                          </svg>
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 flex gap-1 items-center">
+                          <Clock className="h-2.5 w-2.5" />
                           {habit.timeCommitment}
-                        </div>
+                        </Badge>
                         
                         {habit.streak > 0 && (
-                          <div className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-sm flex gap-1 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-flame">
-                              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
-                            </svg>
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 flex gap-1 items-center">
+                            <Award className="h-2.5 w-2.5" />
                             {habit.streak}
-                          </div>
+                          </Badge>
                         )}
                       </div>
                     </div>
