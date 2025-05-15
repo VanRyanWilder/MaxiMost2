@@ -17,6 +17,7 @@ interface SortableHabitProps {
   completions: HabitCompletion[];
   onToggleCompletion: (habitId: string, date: Date) => void;
   onEdit: (habit: Habit) => void;
+  onDelete: (habitId: string) => void;
   currentDate: Date;
 }
 
@@ -25,6 +26,7 @@ export function SortableHabit({
   completions, 
   onToggleCompletion, 
   onEdit,
+  onDelete,
   currentDate
 }: SortableHabitProps) {
   // Set up sortable functionality
@@ -153,10 +155,7 @@ export function SortableHabit({
               <Pencil className="h-3 w-3 text-gray-500" />
             </button>
             <button
-              onClick={() => {
-                // Handle delete here or pass a delete function through props
-                console.log('Delete habit:', habit.id);
-              }}
+              onClick={() => onDelete(habit.id)}
               className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
             >
               <span className="sr-only">Delete</span>
