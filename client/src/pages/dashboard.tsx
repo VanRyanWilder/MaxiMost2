@@ -152,14 +152,28 @@ export default function Dashboard() {
   
   // Listen for habit stack events
   useEffect(() => {
-    // Handle original event format
+    // Handle the standard event format with full habit data
     const handleHabitStackEvent = (event: any) => {
       const { stackName, habits: stackHabits } = event.detail;
-      console.log(`Adding habit stack: ${stackName} with ${stackHabits.length} habits`);
-      setHabits(prev => [...prev, ...stackHabits]);
+      console.log(`Adding habit stack: ${stackName} with ${stackHabits.length} habits`, stackHabits);
+      
+      // Ensure we have valid habit objects with all required properties
+      const validHabits = stackHabits.filter((h: any) => h && h.id && h.title);
+      
+      if (validHabits.length > 0) {
+        setHabits(prev => {
+          // Filter out any existing habits with the same IDs to avoid duplicates
+          const uniqueIds = new Set(validHabits.map((h: any) => h.id));
+          const filteredPrev = prev.filter(h => !uniqueIds.has(h.id));
+          return [...filteredPrev, ...validHabits];
+        });
+        console.log(`Successfully added ${validHabits.length} habits from ${stackName}`);
+      } else {
+        console.error("No valid habits in stack:", stackName);
+      }
     };
     
-    // Handle manual event format
+    // Handle the manual event format that uses window.addStackHabits
     const handleManualHabitStackEvent = (event: any) => {
       const stackName = event.detail;
       console.log(`Manual adding habit stack: ${stackName}`);
@@ -168,22 +182,67 @@ export default function Dashboard() {
       const stackHabits = (window as any).addStackHabits || [];
       
       if (stackHabits.length > 0) {
-        console.log(`Adding ${stackHabits.length} habits from ${stackName} stack`);
-        setHabits(prev => [...prev, ...stackHabits]);
+        console.log(`Adding ${stackHabits.length} habits from ${stackName} stack via window object`);
+        
+        // Ensure we have valid habit objects with all required properties
+        const validHabits = stackHabits.filter((h: any) => h && h.id && h.title);
+        
+        if (validHabits.length > 0) {
+          setHabits(prev => {
+            // Filter out any existing habits with the same IDs to avoid duplicates
+            const uniqueIds = new Set(validHabits.map((h: any) => h.id));
+            const filteredPrev = prev.filter(h => !uniqueIds.has(h.id));
+            return [...filteredPrev, ...validHabits];
+          });
+          console.log(`Successfully added ${validHabits.length} habits from ${stackName}`);
+        } else {
+          console.error("No valid habits in window.addStackHabits for:", stackName);
+        }
         
         // Clear the window object
         (window as any).addStackHabits = null;
       } else {
-        console.error("No habits found for stack:", stackName);
+        console.error("No habits found in window.addStackHabits for stack:", stackName);
       }
     };
     
+    // Listen for both event types
     document.addEventListener('add-habit-stack', handleHabitStackEvent);
     document.addEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
     
+    // Handle individual prefilled habits
+    const handlePrefilledHabit = (event: any) => {
+      const habit = event.detail;
+      console.log("Adding prefilled habit:", habit);
+      
+      if (habit && habit.title) {
+        const newHabit = {
+          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
+          title: habit.title,
+          description: habit.description || "",
+          icon: typeof habit.icon === 'object' ? habit.icon.type.name.toLowerCase() : 'zap',
+          impact: habit.impact || 8,
+          effort: habit.effort || 3,
+          timeCommitment: habit.timeCommitment || '10 min',
+          frequency: habit.frequency || 'daily',
+          isAbsolute: habit.isAbsolute || false,
+          category: habit.category || 'health',
+          streak: 0,
+          createdAt: new Date()
+        };
+        
+        setHabits(prev => [...prev, newHabit]);
+        console.log("Successfully added prefilled habit:", newHabit);
+      }
+    };
+    
+    document.addEventListener('add-prefilled-habit', handlePrefilledHabit);
+    
+    // Clean up all event listeners
     return () => {
       document.removeEventListener('add-habit-stack', handleHabitStackEvent);
       document.removeEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
+      document.removeEventListener('add-prefilled-habit', handlePrefilledHabit);
     };
   }, []);
   
