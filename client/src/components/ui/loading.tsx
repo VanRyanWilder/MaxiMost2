@@ -27,7 +27,7 @@ export function Loading({
     <div className="flex flex-col items-center justify-center p-6">
       {withLogo && (
         <img 
-          src="images/maximost-logo-0.png"
+          src="/maximost-logo-0.png"
           alt="MaxiMost Loading"
           className={`${sizeClasses[size]} mb-4 object-contain animate-pulse`}
         />
