@@ -9,6 +9,7 @@ import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
+import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { 
   DndContext, 
   closestCenter,
@@ -449,122 +450,32 @@ export default function SortableDashboard() {
                   </Button>
                 </div>
                 
-                {/* Daily Habits Section */}
+                {/* Habits Section with View Modes (Daily, Weekly, Monthly) */}
                 <Card className="mb-8">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg font-semibold">
-                      Daily Absolute Habits
+                      Habit Tracker
                       <Badge variant="outline" className="ml-2 font-normal">
-                        {absoluteHabits.length} habits
+                        {habits.length} habits
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
-                      <div className="px-3">Habit</div>
-                      {Array.from({ length: 7 }).map((_, i) => {
-                        const date = new Date(currentDate);
-                        date.setDate(date.getDate() + i);
-                        return (
-                          <div key={i} className="text-center">
-                            {format(date, 'EEE')}
-                            <span className="block">{format(date, 'd')}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <SortableHabitViewModes
+                      habits={habits}
+                      completions={completions}
+                      onToggleHabit={toggleCompletion}
+                      onEditHabit={handleEditHabit}
+                      onDeleteHabit={deleteHabit}
+                      onChangeHabitOrder={(newOrderedHabits) => setHabits(newOrderedHabits)}
+                    />
                     
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <SortableContext 
-                        items={absoluteHabits.map(h => h.id)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        {absoluteHabits.map(habit => (
-                          <SortableHabit
-                            key={habit.id}
-                            habit={habit}
-                            completions={completions}
-                            onToggleCompletion={toggleCompletion}
-                            onEdit={handleEditHabit}
-                            onDelete={deleteHabit}
-                            currentDate={currentDate}
-                          />
-                        ))}
-                      </SortableContext>
-                    </DndContext>
-                    
-                    {absoluteHabits.length === 0 && (
+                    {habits.length === 0 && (
                       <div className="text-center py-8 text-muted-foreground">
-                        <p>No daily absolute habits added yet.</p>
-                        <p className="text-sm">These are your non-negotiable habits that you commit to doing every day.</p>
+                        <p>No habits added yet.</p>
                         <Button onClick={handleCreateHabit} variant="outline" size="sm" className="mt-2">
                           <Plus className="h-4 w-4 mr-1" />
-                          Add Your First Absolute Habit
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                
-                {/* Additional Habits Section */}
-                <Card className="mb-6">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold">
-                      Additional Habits
-                      <Badge variant="outline" className="ml-2 font-normal">
-                        {additionalHabits.length} habits
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
-                      <div className="px-3">Habit</div>
-                      {Array.from({ length: 7 }).map((_, i) => {
-                        const date = new Date(currentDate);
-                        date.setDate(date.getDate() + i);
-                        return (
-                          <div key={i} className="text-center">
-                            {format(date, 'EEE')}
-                            <span className="block">{format(date, 'd')}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <SortableContext 
-                        items={additionalHabits.map(h => h.id)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        {additionalHabits.map(habit => (
-                          <SortableHabit
-                            key={habit.id}
-                            habit={habit}
-                            completions={completions}
-                            onToggleCompletion={toggleCompletion}
-                            onEdit={handleEditHabit}
-                            onDelete={deleteHabit}
-                            currentDate={currentDate}
-                          />
-                        ))}
-                      </SortableContext>
-                    </DndContext>
-                    
-                    {additionalHabits.length === 0 && (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <p>No additional habits added yet.</p>
-                        <p className="text-sm">These are habits you're working on implementing but aren't daily necessities.</p>
-                        <Button onClick={handleCreateHabit} variant="outline" size="sm" className="mt-2">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Your First Additional Habit
+                          Add Your First Habit
                         </Button>
                       </div>
                     )}
