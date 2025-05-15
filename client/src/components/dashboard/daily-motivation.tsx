@@ -358,51 +358,6 @@ export function DailyMotivation() {
 
   return (
     <Card className="overflow-hidden">
-      {/* Quick Add Habits Section */}
-      <div className="border-b">
-        <div className="px-4 py-3 bg-muted/40 flex justify-between items-center">
-          <h3 className="font-medium text-sm flex items-center gap-1.5">
-            <Plus className="h-4 w-4 text-primary" />
-            Quick Add Habits
-          </h3>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-6 w-6 p-0" 
-            onClick={() => setShowQuickAdd(!showQuickAdd)}
-          >
-            {showQuickAdd ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </Button>
-        </div>
-        
-        {showQuickAdd && (
-          <div className="p-3 grid grid-cols-1 gap-2 max-h-[280px] overflow-y-auto">
-            {quickAddHabits.map((habit, index) => (
-              <div 
-                key={index}
-                className="flex items-center p-2 rounded-md hover:bg-muted/50 transition-colors cursor-pointer group border border-border/40"
-                onClick={() => addPrefilledHabit(habit)}
-              >
-                <div className="mr-3 bg-primary/10 p-1.5 rounded-md text-primary">
-                  {habit.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium truncate">{habit.title}</h4>
-                  <div className="flex gap-2 text-xs text-muted-foreground mt-0.5 items-center">
-                    <span>{habit.timeCommitment}</span>
-                    <Badge variant="outline" className="text-[10px] py-0 h-4 px-1.5 border-primary/20 bg-primary/5">
-                      ROI: {(habit.impact / habit.effort * 10).toFixed(1)}
-                    </Badge>
-                  </div>
-                </div>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 h-7 w-7 p-0">
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
       
       {/* Habit Stacks Section */}
       <div className="border-b">
