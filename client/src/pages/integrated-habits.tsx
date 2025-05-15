@@ -29,6 +29,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { format, startOfWeek, addDays, subDays, isSameDay, isSameMonth, addMonths, startOfMonth, endOfMonth, getDay } from 'date-fns';
 import { 
   CheckSquare, 
@@ -2094,11 +2095,11 @@ export default function IntegratedHabits() {
       
       {/* Habit Stack Dialog */}
       <Dialog open={stackDialogOpen} onOpenChange={setStackDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Add Habit Stack</DialogTitle>
             <DialogDescription>
-              {selectedStack?.description || "Add a complete set of habits at once."}
+              {selectedStack?.description || "Select which habits to add from this stack."}
             </DialogDescription>
           </DialogHeader>
           
@@ -2109,29 +2110,178 @@ export default function IntegratedHabits() {
                 <span>{selectedStack.name}</span>
               </h3>
               
+              <div className="flex justify-between items-center mb-3">
+                <button
+                  type="button"
+                  className="text-sm text-primary hover:underline"
+                  onClick={() => {
+                    // Select or deselect all habits
+                    const allSelected = Object.values(selectedStackHabits).every(Boolean);
+                    const newSelection = selectedStack.habits.reduce((acc, _, index) => {
+                      acc[index] = !allSelected;
+                      return acc;
+                    }, {} as Record<number, boolean>);
+                    setSelectedStackHabits(newSelection);
+                  }}
+                >
+                  {Object.values(selectedStackHabits).every(Boolean) ? 'Deselect All' : 'Select All'}
+                </button>
+                
+                <span className="text-sm text-muted-foreground">
+                  {Object.values(selectedStackHabits).filter(Boolean).length} of {selectedStack.habits.length} selected
+                </span>
+              </div>
+              
               <div className="space-y-3 mt-4">
-                {selectedStack.habits.map((habit, index) => (
-                  <div key={index} className="bg-gray-50 p-3 rounded-md border">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="p-1 rounded bg-white text-primary">
-                        {getIconComponent(habit.icon)}
-                      </span>
-                      <span className="font-medium text-sm">{habit.title}</span>
+                {selectedStack.habits.map((habit, index) => {
+                  const isSelected = selectedStackHabits[index];
+                  const habitDetails = selectedStackHabitDetails[index] || habit;
+                  
+                  return (
+                    <div key={index} className={`p-3 rounded-md border transition-colors ${isSelected ? 'bg-primary/5 border-primary/20' : 'bg-gray-50'}`}>
+                      <div className="flex items-start">
+                        <div className="mr-2 mt-1">
+                          <input 
+                            type="checkbox" 
+                            id={`select-habit-${index}`}
+                            checked={isSelected}
+                            onChange={() => toggleStackHabitSelection(index)}
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          />
+                        </div>
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="p-1 rounded bg-white text-primary">
+                              {getIconComponent(habitDetails.icon)}
+                            </span>
+                            <label 
+                              htmlFor={`select-habit-${index}`} 
+                              className="font-medium text-sm cursor-pointer"
+                            >
+                              {habitDetails.title}
+                            </label>
+                          </div>
+                          
+                          <p className="text-xs text-muted-foreground">{habitDetails.description}</p>
+                          
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {habitDetails.timeCommitment}
+                            </Badge>
+                            <Badge className={getCategoryColor(habitDetails.category)}>
+                              {habitDetails.category}
+                            </Badge>
+                            <Badge variant="outline" className="text-xs">
+                              {getFrequencyLabel(habitDetails.frequency)}
+                            </Badge>
+                          </div>
+                          
+                          {isSelected && (
+                            <div className="mt-3 pt-3 border-t border-dashed border-gray-200">
+                              <Accordion type="single" collapsible className="w-full">
+                                <AccordionItem value="edit" className="border-none">
+                                  <AccordionTrigger className="py-1 text-xs font-normal text-primary hover:no-underline">
+                                    Customize habit
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <div className="space-y-3 pt-2">
+                                      <div>
+                                        <Label htmlFor={`habit-title-${index}`} className="text-xs">Title</Label>
+                                        <Input
+                                          id={`habit-title-${index}`}
+                                          value={habitDetails.title}
+                                          onChange={(e) => updateStackHabitDetail(index, 'title', e.target.value)}
+                                          className="h-8 text-sm mt-1"
+                                        />
+                                      </div>
+                                      
+                                      <div>
+                                        <Label htmlFor={`habit-desc-${index}`} className="text-xs">Description</Label>
+                                        <Textarea
+                                          id={`habit-desc-${index}`}
+                                          value={habitDetails.description}
+                                          onChange={(e) => updateStackHabitDetail(index, 'description', e.target.value)}
+                                          className="text-sm mt-1"
+                                          rows={2}
+                                        />
+                                      </div>
+                                      
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <Label htmlFor={`habit-time-${index}`} className="text-xs">Time</Label>
+                                          <Input
+                                            id={`habit-time-${index}`}
+                                            value={habitDetails.timeCommitment}
+                                            onChange={(e) => updateStackHabitDetail(index, 'timeCommitment', e.target.value)}
+                                            className="h-8 text-sm mt-1"
+                                          />
+                                        </div>
+                                        
+                                        <div>
+                                          <Label htmlFor={`habit-freq-${index}`} className="text-xs">Frequency</Label>
+                                          <Select 
+                                            value={habitDetails.frequency}
+                                            onValueChange={(value) => updateStackHabitDetail(index, 'frequency', value)}
+                                          >
+                                            <SelectTrigger id={`habit-freq-${index}`} className="h-8 text-sm mt-1">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="daily">Daily</SelectItem>
+                                              <SelectItem value="weekly">Once a Week</SelectItem>
+                                              <SelectItem value="2x-week">Twice a Week</SelectItem>
+                                              <SelectItem value="3x-week">3 Times a Week</SelectItem>
+                                              <SelectItem value="4x-week">4 Times a Week</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                      </div>
+                                      
+                                      <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                          <Label htmlFor={`habit-impact-${index}`} className="text-xs">Impact (1-10)</Label>
+                                          <div className="flex items-center mt-1">
+                                            <Input
+                                              id={`habit-impact-${index}`}
+                                              type="range"
+                                              min="1"
+                                              max="10"
+                                              value={habitDetails.impact}
+                                              onChange={(e) => updateStackHabitDetail(index, 'impact', parseInt(e.target.value))}
+                                              className="h-6"
+                                            />
+                                            <span className="ml-2 text-xs font-medium">{habitDetails.impact}</span>
+                                          </div>
+                                        </div>
+                                        
+                                        <div>
+                                          <Label htmlFor={`habit-effort-${index}`} className="text-xs">Effort (1-10)</Label>
+                                          <div className="flex items-center mt-1">
+                                            <Input
+                                              id={`habit-effort-${index}`}
+                                              type="range"
+                                              min="1"
+                                              max="10"
+                                              value={habitDetails.effort}
+                                              onChange={(e) => updateStackHabitDetail(index, 'effort', parseInt(e.target.value))}
+                                              className="h-6"
+                                            />
+                                            <span className="ml-2 text-xs font-medium">{habitDetails.effort}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">{habit.description}</p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      <Badge variant="secondary" className="text-xs">
-                        {habit.timeCommitment}
-                      </Badge>
-                      <Badge className={getCategoryColor(habit.category)}>
-                        {habit.category}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs">
-                        {getFrequencyLabel(habit.frequency)}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -2140,8 +2290,11 @@ export default function IntegratedHabits() {
             <Button variant="outline" onClick={() => setStackDialogOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={addHabitStack} disabled={!selectedStack}>
-              Add All Habits
+            <Button 
+              onClick={addHabitStack} 
+              disabled={!selectedStack || Object.values(selectedStackHabits).filter(Boolean).length === 0}
+            >
+              Add Selected Habits
             </Button>
           </DialogFooter>
         </DialogContent>
