@@ -75,6 +75,7 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("weekly");
   
   // Generate dates for the week
   const today = new Date();
