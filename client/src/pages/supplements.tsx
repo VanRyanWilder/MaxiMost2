@@ -286,13 +286,13 @@ export default function SupplementsPage() {
                       <User className="h-5 w-5 text-purple-600" />
                       <h4 className="font-semibold text-purple-800">Expert Insights</h4>
                     </div>
-                    <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
                       {supplement.expertInsights.map((insight, index) => (
-                        <div key={index} className="pl-4 border-l-2 border-purple-300 group relative">
-                          <div className="flex items-center gap-2">
-                            <Quote className="h-4 w-4 text-purple-500" />
-                            <span className="font-semibold text-purple-700 cursor-help">{insight.expert}</span>
-                          </div>
+                        <div key={index} className="group relative">
+                          <Badge variant="outline" className="cursor-help bg-purple-50 border-purple-200 text-purple-700 flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {insight.expert}
+                          </Badge>
                           <div className="absolute left-0 top-full z-10 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                             <div className="bg-white p-3 rounded-md shadow-lg border border-purple-100 max-w-md">
                               <p className="text-sm text-purple-700">{insight.insight}</p>
