@@ -254,43 +254,85 @@ export function DashboardHabits() {
         {/* Calendar View */}
         {activeView === 'calendar' && (
           <div>
-            <div className="grid grid-cols-8 gap-2 mb-2">
-              <div className=""></div>
-              {weekDates.map((date, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-xs font-medium">
-                    {format(date, 'EEE')}
+            <div className="mb-4 flex justify-center">
+              <div className="inline-grid grid-cols-7 gap-1 bg-muted/50 rounded-lg p-2">
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
+                  <div key={i} className="text-center text-xs font-medium text-muted-foreground p-1">
+                    {day}
                   </div>
-                  <div className={`text-xs rounded-full w-5 h-5 flex items-center justify-center mx-auto ${
-                    isSameDay(date, new Date()) ? 'bg-primary text-white' : 'text-gray-500'
-                  }`}>
+                ))}
+                
+                {weekDates.map((date, i) => (
+                  <button
+                    key={i}
+                    className={`
+                      h-8 w-8 p-0 rounded-md text-center text-xs font-medium
+                      ${isSameDay(date, new Date()) 
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                        : 'hover:bg-muted text-foreground'}
+                    `}
+                    onClick={() => {}}
+                  >
                     {format(date, 'd')}
-                  </div>
-                </div>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-2 mt-4">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3">
+                {format(new Date(), 'EEEE, MMMM d, yyyy')}
+              </h3>
+              
               {sortedHabits.map((habit) => (
-                <div key={habit.id} className="grid grid-cols-8 gap-2 items-center">
-                  <div className="flex items-center gap-1 max-w-[100px]">
-                    {getIconComponent(habit.icon)}
-                    <span className="text-xs font-medium truncate">{habit.title}</span>
-                  </div>
+                <div 
+                  key={habit.id} 
+                  className="p-3 mb-2 rounded-lg border bg-background hover:shadow-sm transition-all flex items-center gap-3"
+                >
+                  <button 
+                    onClick={() => toggleHabitCompletion(habit.id, new Date())}
+                    className={`rounded-full h-6 w-6 min-w-6 flex items-center justify-center 
+                      ${isHabitCompletedOnDate(habit.id, new Date()) 
+                        ? 'text-white bg-primary hover:bg-primary/90' 
+                        : 'text-muted-foreground border hover:border-primary/50'}`}
+                  >
+                    {isHabitCompletedOnDate(habit.id, new Date()) && (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check">
+                        <path d="M20 6 9 17l-5-5"/>
+                      </svg>
+                    )}
+                  </button>
                   
-                  {weekDates.map((date, index) => (
-                    <div key={index} className="flex justify-center">
-                      <Checkbox
-                        checked={isHabitCompletedOnDate(habit.id, date)}
-                        onCheckedChange={() => toggleHabitCompletion(habit.id, date)}
-                        className={`h-4 w-4 ${
-                          isHabitCompletedOnDate(habit.id, date) 
-                            ? 'data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600' 
-                            : ''
-                        }`}
-                      />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center">
+                      <span className="mr-2">
+                        {getIconComponent(habit.icon)}
+                      </span>
+                      
+                      <h3 className={`font-medium text-sm ${isHabitCompletedOnDate(habit.id, new Date()) ? 'line-through text-muted-foreground' : ''}`}>
+                        {habit.title}
+                      </h3>
+                      
+                      <div className="ml-auto flex items-center gap-1.5">
+                        <div className="text-xs text-muted-foreground px-1.5 py-0.5 bg-muted rounded-sm flex gap-1 items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                          </svg>
+                          {habit.timeCommitment}
+                        </div>
+                        
+                        {habit.streak > 0 && (
+                          <div className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-600 rounded-sm flex gap-1 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-flame">
+                              <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                            </svg>
+                            {habit.streak}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               ))}
             </div>
