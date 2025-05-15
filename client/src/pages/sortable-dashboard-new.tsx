@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
-import { HabitLibrary } from "@/components/dashboard/habit-library";
+import { HabitLibrary } from "@/components/dashboard/habit-library-new";
 import { 
   DndContext, 
   closestCenter,
