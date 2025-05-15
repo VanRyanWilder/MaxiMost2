@@ -31,7 +31,7 @@ export function Logo({
     >
       <div className="flex items-center">
         <img 
-          src="/images/maximost-logo-1.png" 
+          src="images/maximost-logo-1.png" 
           alt="MaxiMost Logo" 
           className={`${sizeClasses[size]} object-contain`}
         />
