@@ -849,12 +849,18 @@ export default function IntegratedHabits() {
     const id = `h${Date.now()}`;
     
     const habit: Habit = {
-      ...template,
       id,
-      streak: 0,
-      createdAt: new Date(),
+      title: template.title,
+      description: template.description,
+      icon: template.icon,
+      impact: template.impact,
+      effort: template.effort,
+      timeCommitment: template.timeCommitment,
       frequency: template.frequency as HabitFrequency,
-      category: template.category as HabitCategory
+      isAbsolute: template.isAbsolute,
+      category: template.category as HabitCategory,
+      streak: 0,
+      createdAt: new Date()
     };
     
     setHabits([...habits, habit]);
@@ -864,6 +870,9 @@ export default function IntegratedHabits() {
       title: "Quick habit added",
       description: `"${template.title}" has been added to your habits`,
     });
+    
+    // Close any open dialogs
+    setAddHabitOpen(false);
   };
   
   // Add a whole habit stack
@@ -1724,17 +1733,8 @@ export default function IntegratedHabits() {
                       key={idx} 
                       className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                       onClick={() => {
-                        setNewHabit({
-                          title: template.title,
-                          description: template.description,
-                          icon: template.icon,
-                          impact: template.impact,
-                          effort: template.effort,
-                          timeCommitment: template.timeCommitment,
-                          frequency: template.frequency as HabitFrequency,
-                          isAbsolute: template.isAbsolute,
-                          category: template.category as HabitCategory,
-                        });
+                        // Directly add the habit instead of just setting form values
+                        addQuickHabit(template);
                       }}
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -1801,16 +1801,17 @@ export default function IntegratedHabits() {
                         key={idx} 
                         className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                         onClick={() => {
-                          setNewHabit({
+                          // Directly add the habit from the stack
+                          addQuickHabit({
                             title: template.title,
                             description: template.description,
                             icon: template.icon,
                             impact: template.impact,
                             effort: template.effort,
                             timeCommitment: template.timeCommitment,
-                            frequency: template.frequency,
+                            frequency: template.frequency as string,
                             isAbsolute: template.isAbsolute,
-                            category: template.category,
+                            category: template.category as string,
                           });
                         }}
                       >
