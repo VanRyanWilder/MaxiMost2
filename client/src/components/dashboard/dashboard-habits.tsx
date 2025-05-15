@@ -252,61 +252,93 @@ export function DashboardHabits() {
         {activeView === 'calendar' && (
           <div>
             <div className="mb-4">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                className="rounded-md border mx-auto"
-              />
-            </div>
-            
-            <div className="py-4">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+              <h3 className="text-sm font-medium mb-3 flex justify-between items-center">
+                <span>Weekly Habit Tracker</span>
+                <span className="text-sm text-muted-foreground">
+                  {format(startOfCurrentWeek, 'MMM d')} - {format(addDays(startOfCurrentWeek, 6), 'MMM d, yyyy')}
+                </span>
               </h3>
-              
-              {sortedHabits.map((habit) => (
-                <div 
-                  key={habit.id} 
-                  className="p-4 mb-2.5 rounded-lg border bg-background hover:shadow-sm transition-all flex items-center gap-3"
-                >
-                  <button 
-                    onClick={() => toggleHabitCompletion(habit.id, selectedDate)}
-                    className={`rounded-full h-6 w-6 min-w-6 flex items-center justify-center 
-                      ${isHabitCompletedOnDate(habit.id, selectedDate) 
-                        ? 'text-white bg-primary hover:bg-primary/90' 
-                        : 'text-muted-foreground border hover:border-primary/50'}`}
-                  >
-                    {isHabitCompletedOnDate(habit.id, selectedDate) && <Check className="h-3.5 w-3.5" />}
-                  </button>
-                  
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center">
-                      <span className="text-muted-foreground mr-2">
+            
+              <div className="grid grid-cols-8 gap-2 mb-4 bg-muted/20 rounded-lg p-3">
+                <div className="text-xs font-medium text-muted-foreground flex items-center">Habit</div>
+                {weekDates.map((date, i) => (
+                  <div key={i} className="text-center">
+                    <div className="text-xs font-medium text-muted-foreground">
+                      {format(date, 'EEE')}
+                    </div>
+                    <div 
+                      className={`text-xs rounded-full w-6 h-6 flex items-center justify-center mx-auto
+                        ${isSameDay(date, new Date()) ? 'bg-primary text-primary-foreground' : 'text-foreground'}
+                      `}
+                    >
+                      {format(date, 'd')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            
+              <div className="space-y-3">
+                {sortedHabits.map((habit) => (
+                  <div key={habit.id} className="grid grid-cols-8 gap-2 items-center bg-muted/10 rounded-lg p-3">
+                    <div className="flex items-center gap-1.5 text-sm overflow-hidden">
+                      <span className="flex-shrink-0">
                         {getIconComponent(habit.icon)}
                       </span>
-                      
-                      <h3 className={`font-medium text-sm ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'line-through text-muted-foreground' : ''}`}>
-                        {habit.title}
-                      </h3>
-                      
-                      <div className="ml-auto flex items-center gap-1.5">
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 flex gap-1 items-center">
-                          <Clock className="h-2.5 w-2.5" />
-                          {habit.timeCommitment}
+                      <span className="font-medium truncate">{habit.title}</span>
+                    </div>
+                    
+                    {weekDates.map((date, i) => (
+                      <div key={i} className="flex justify-center">
+                        <button 
+                          onClick={() => toggleHabitCompletion(habit.id, date)}
+                          className={`rounded-full h-7 w-7 min-w-7 flex items-center justify-center transition-colors
+                            ${isHabitCompletedOnDate(habit.id, date) 
+                              ? 'text-white bg-primary hover:bg-primary/90' 
+                              : 'text-muted-foreground border hover:border-primary/50'}`}
+                        >
+                          {isHabitCompletedOnDate(habit.id, date) && (
+                            <Check className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    ))}
+                    
+                    {/* Frequency indicator */}
+                    {habit.frequency !== 'daily' && (
+                      <div className="col-span-8 mt-1 text-xs text-muted-foreground flex items-center">
+                        <Badge variant="outline" className="mr-2">
+                          {habit.frequency === '2x-week' ? '2x/week' : 
+                           habit.frequency === '3x-week' ? '3x/week' : 
+                           habit.frequency === '4x-week' ? '4x/week' : 
+                           habit.frequency}
                         </Badge>
-                        
+                        <span>
+                          {habit.isAbsolute ? 'Must-do' : 'Flexible'}
+                        </span>
                         {habit.streak > 0 && (
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 flex gap-1 items-center">
-                            <Award className="h-2.5 w-2.5" />
-                            {habit.streak}
+                          <Badge variant="secondary" className="ml-auto flex items-center gap-1">
+                            <Award className="h-3 w-3" />
+                            {habit.streak} streak
                           </Badge>
                         )}
                       </div>
-                    </div>
+                    )}
+                    
+                    {/* Daily stats for absolute habits */}
+                    {habit.isAbsolute && habit.frequency === 'daily' && (
+                      <div className="col-span-8 mt-1 text-xs text-muted-foreground flex justify-between items-center">
+                        <Badge variant="secondary">Daily Absolute</Badge>
+                        {habit.streak > 0 && (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Award className="h-3 w-3" />
+                            {habit.streak} day streak
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}
