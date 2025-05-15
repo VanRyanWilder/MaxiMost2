@@ -21,6 +21,7 @@ interface TopSupplement {
   benefits: string;
   expertInsights: ExpertInsight[];
   dosage: string;
+  amazonLink: string;
 }
 
 export default function SupplementsPage() {
@@ -44,7 +45,8 @@ export default function SupplementsPage() {
           insight: "Suggests omega-3s to reduce joint inflammation and enhance performance in high-intensity sports."
         }
       ],
-      dosage: "2-4g daily, with ~2g EPA for optimal anti-inflammatory effects."
+      dosage: "2-4g daily, with ~2g EPA for optimal anti-inflammatory effects.",
+      amazonLink: "https://www.amazon.com/dp/B01GV4O37E?tag=maximusgains-20"
     },
     {
       id: 2,
@@ -64,7 +66,8 @@ export default function SupplementsPage() {
           insight: "Notes its importance for calcium absorption and preventing stress fractures."
         }
       ],
-      dosage: "4,000-5,000 IU/day, adjusted based on blood levels."
+      dosage: "4,000-5,000 IU/day, adjusted based on blood levels.",
+      amazonLink: "https://www.amazon.com/dp/B0032BH76O?tag=maximusgains-20"
     },
     {
       id: 3,
@@ -84,7 +87,8 @@ export default function SupplementsPage() {
           insight: "Emphasizes its role in muscle relaxation and spine health for injury prevention."
         }
       ],
-      dosage: "1g daily, preferably as magnesium glycinate or citrate."
+      dosage: "1g daily, preferably as magnesium glycinate or citrate.",
+      amazonLink: "https://www.amazon.com/dp/B07RM7VXFV?tag=maximusgains-20"
     },
     {
       id: 4,
@@ -104,7 +108,8 @@ export default function SupplementsPage() {
           insight: "Supports its use for muscle growth and resilience against injuries."
         }
       ],
-      dosage: "5-10g daily."
+      dosage: "5-10g daily.",
+      amazonLink: "https://www.amazon.com/dp/B00E9M4XEE?tag=maximusgains-20"
     },
     {
       id: 5,
@@ -124,7 +129,8 @@ export default function SupplementsPage() {
           insight: "Suggests probiotics to optimize nutrient absorption and prevent GI issues in endurance events."
         }
       ],
-      dosage: "10-50 billion CFU daily, depending on the product."
+      dosage: "10-50 billion CFU daily, depending on the product.",
+      amazonLink: "https://www.amazon.com/dp/B079HVWH31?tag=maximusgains-20"
     },
     {
       id: 6,
@@ -144,7 +150,8 @@ export default function SupplementsPage() {
           insight: "Highlights its role in reducing systemic inflammation and aiding tissue repair."
         }
       ],
-      dosage: "500-1,000mg daily in bioavailable forms."
+      dosage: "500-1,000mg daily in bioavailable forms.",
+      amazonLink: "https://www.amazon.com/dp/B01DBTFO98?tag=maximusgains-20"
     },
     {
       id: 7,
@@ -164,7 +171,8 @@ export default function SupplementsPage() {
           insight: "Recommends them for endurance athletes to enhance aerobic metabolism."
         }
       ],
-      dosage: "Low-dose methylated forms, tailored to individual needs."
+      dosage: "Low-dose methylated forms, tailored to individual needs.",
+      amazonLink: "https://www.amazon.com/dp/B01769WCUU?tag=maximusgains-20"
     },
     {
       id: 8,
@@ -180,7 +188,8 @@ export default function SupplementsPage() {
           insight: "Recommends it for detoxification, especially for athletes facing environmental stressors."
         }
       ],
-      dosage: "20-40mg daily, from broccoli sprouts or supplements."
+      dosage: "20-40mg daily, from broccoli sprouts or supplements.",
+      amazonLink: "https://www.amazon.com/dp/B01D15LMCK?tag=maximusgains-20"
     },
     {
       id: 9,
@@ -200,7 +209,8 @@ export default function SupplementsPage() {
           insight: "Pioneers its use for cellular resilience and longevity."
         }
       ],
-      dosage: "250-500mg daily."
+      dosage: "250-500mg daily.",
+      amazonLink: "https://www.amazon.com/dp/B07PBG6KLN?tag=maximusgains-20"
     },
     {
       id: 10,
@@ -220,7 +230,8 @@ export default function SupplementsPage() {
           insight: "His hydration research underscores their importance for ultra-marathoners."
         }
       ],
-      dosage: "1-2 packets daily, adjusted for activity level."
+      dosage: "1-2 packets daily, adjusted for activity level.",
+      amazonLink: "https://www.amazon.com/dp/B07KDRL5LL?tag=maximusgains-20"
     }
   ];
 
@@ -289,11 +300,13 @@ export default function SupplementsPage() {
                 
                 <div className="flex justify-end">
                   <a 
-                    href="#" 
-                    className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium"
+                    href={supplement.amazonLink} 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors shadow-md"
                   >
                     <span>Buy on Amazon</span>
-                    <ExternalLink className="h-3.5 w-3.5" />
+                    <ExternalLink className="h-4 w-4" />
                   </a>
                 </div>
               </div>
