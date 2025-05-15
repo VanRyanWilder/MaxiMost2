@@ -107,6 +107,105 @@ export default function PrinciplesPage() {
       category: "perspective",
       dateAdded: "2023-03-15",
       day: 60
+    },
+    {
+      id: "obstacle-is-the-way",
+      title: "The Obstacle Is The Way",
+      quote: "The impediment to action advances action. What stands in the way becomes the way.",
+      explanation: "This principle teaches that obstacles aren't just challenges to overcome but often the path itself. When facing difficulties, look for how they can become advantages or opportunities. By reframing obstacles as teachers rather than barriers, you can extract value from every challenge. The very thing blocking your path often contains the solution to moving forward in a better way than originally planned.",
+      source: "Meditations",
+      author: "marcus",
+      category: "resilience",
+      dateAdded: "2023-03-22",
+      day: 67
+    },
+    {
+      id: "premeditatio-malorum",
+      title: "Premeditatio Malorum",
+      quote: "Nothing happens to the wise man against his expectation.",
+      explanation: "Premeditatio malorum (premeditation of evils) involves visualizing potential challenges or setbacks before they happen. By mentally rehearsing difficulties, you reduce their emotional impact when they actually occur. This isn't negative thinking but pragmatic preparation. By habitually considering potential obstacles, you develop resilience, prepare contingency plans, and remain unshaken when facing adversity.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "resilience",
+      dateAdded: "2023-03-29",
+      day: 74
+    },
+    {
+      id: "amor-fati",
+      title: "Amor Fati",
+      quote: "Love of fate. Not just bearing what is necessary, but loving it.",
+      explanation: "Amor fati means 'love of fate.' The principle invites us to not merely accept what happens to us but to embrace it wholeheartedly. It transforms 'this is happening to me' into 'this is happening for me.' By looking for the opportunity in every difficulty and the lesson in every setback, you transcend mere resilience to find genuine appreciation for life's full spectrum of experiences.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "perspective",
+      dateAdded: "2023-04-05",
+      day: 81
+    },
+    {
+      id: "summum-bonum",
+      title: "Summum Bonum",
+      quote: "Virtue is the only good. All else is indifferent.",
+      explanation: "Summum bonum (highest good) reminds us that virtue—practical wisdom, courage, justice, and temperance—is the only true good worth pursuing. External outcomes, possessions, health, and even life itself are 'preferred indifferents.' By focusing on developing virtue rather than pursuing outcomes, you gain independence from external circumstances. This principle provides clarity in decision-making and emotional stability regardless of life's ups and downs.",
+      source: "Discourses",
+      author: "epictetus",
+      category: "virtue",
+      dateAdded: "2023-04-12",
+      day: 88
+    },
+    {
+      id: "ego-is-the-enemy",
+      title: "Ego Is The Enemy",
+      quote: "Do not indulge in dreams of having what you have not, but reckon up the chief of the blessings you do possess, and then thankfully remember how you would crave for them if they were not yours.",
+      explanation: "Ego blinds us to our flaws, prevents learning, and makes us defensive. This principle teaches the value of humility and objectivity in self-assessment. By separating your sense of self-worth from external markers of success, you can remain teachable and grounded. Maintaining clear perception of reality requires continually stripping away the distortions of ego and embracing honest self-evaluation.",
+      source: "Meditations",
+      author: "marcus",
+      category: "self-mastery",
+      dateAdded: "2023-04-19",
+      day: 95
+    },
+    {
+      id: "practice-misfortune",
+      title: "Practice Misfortune",
+      quote: "Set aside a certain number of days, during which you shall be content with the scantiest and cheapest fare, with coarse and rough dress, saying to yourself the while: 'Is this the condition that I feared?'",
+      explanation: "This principle advocates for deliberately practicing discomfort and simplicity. By temporarily living with less than you need, you develop resilience against potential hardships and overcome the fear of losing comforts. This practice builds confidence in your ability to handle adversity and reduces anxiety about potential loss. It also develops gratitude for daily provisions often taken for granted.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "resilience",
+      dateAdded: "2023-04-26",
+      day: 102
+    },
+    {
+      id: "morning-routine",
+      title: "Win The Morning",
+      quote: "Discipline starts with waking up early. If you can't discipline yourself to get out of bed then how will you ever discipline yourself to be truly exceptional?",
+      explanation: "How you start your day sets the tone for everything that follows. This principle highlights the compounding power of consistent morning habits. By taking control of your first waking hours—through exercise, reflection, and purposeful work—you create momentum that carries throughout the day. The morning routine is your daily opportunity to demonstrate agency and commitment to your goals.",
+      source: "Discipline Equals Freedom: Field Manual",
+      author: "jocko",
+      category: "discipline",
+      dateAdded: "2023-05-03",
+      day: 109
+    },
+    {
+      id: "growth-mindset",
+      title: "The Growth Mindset",
+      quote: "Don't let the negativity of others who are unable or unwilling to do something themselves affect your own growth and potential.",
+      explanation: "The Growth Mindset principle emphasizes that abilities are developed through dedication and hard work, not fixed traits. By embracing challenges as opportunities for improvement rather than threats to your self-image, you develop resilience and a love of learning. This mindset shifts focus from proving yourself to improving yourself, allowing you to face setbacks with curiosity rather than defensiveness.",
+      source: "Can't Hurt Me",
+      author: "goggins",
+      category: "self-mastery",
+      dateAdded: "2023-05-10",
+      day: 116
+    },
+    {
+      id: "kaizen",
+      title: "Kaizen: 1% Better Every Day",
+      quote: "You don't want to judge your improvement against anyone but your previous self. If you are 1% better than yesterday, then today is a success.",
+      explanation: "This principle focuses on making small, incremental improvements consistently rather than seeking dramatic changes. By improving just 1% each day, you create powerful compound growth over time. This approach makes progress sustainable and achievable while reducing resistance to change. The focus on continuous small steps removes the pressure of perfectionism and makes the journey of improvement itself the reward.",
+      source: "Atomic Habits",
+      author: "other",
+      category: "discipline",
+      dateAdded: "2023-05-17",
+      day: 123
     }
   ];
   
