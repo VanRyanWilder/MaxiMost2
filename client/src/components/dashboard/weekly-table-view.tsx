@@ -119,13 +119,28 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   return (
     <div className="bg-white rounded-lg border p-4">
       <div className="flex justify-between items-center mb-4">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => setWeekOffset(prev => prev - 1)}
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center space-x-1">
+          {/* Week navigation */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setWeekOffset(prev => prev - 1)}
+            title="Previous week"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5 -ml-3" />
+          </Button>
+          {/* Day navigation */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setWeekOffset(prev => prev - (1/7))}
+            title="Previous day"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+        </div>
+        
         <div className="text-center">
           <div className="text-xl font-bold">
             {format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}
@@ -134,13 +149,28 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
             Week {weekOffset === 0 ? '(Current)' : weekOffset > 0 ? `+${weekOffset}` : weekOffset}
           </div>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={() => setWeekOffset(prev => prev + 1)}
-        >
-          <ChevronRight className="h-5 w-5" />
-        </Button>
+        
+        <div className="flex items-center space-x-1">
+          {/* Day navigation */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setWeekOffset(prev => prev + (1/7))}
+            title="Next day"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+          {/* Week navigation */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setWeekOffset(prev => prev + 1)}
+            title="Next week"
+          >
+            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5 -ml-3" />
+          </Button>
+        </div>
       </div>
       
       {/* Sortable habit list - weekly view (table style) */}
