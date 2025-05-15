@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { PageContainer } from "../components/layout/page-container";
-import WeeklyCalendarView from "../components/dashboard/weekly-calendar-view";
+import { PageContainer } from "@/components/layout/page-container";
+import WeeklyCalendarView from "@/components/dashboard/weekly-calendar-view";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PlusCircle, Trophy, Calendar, List } from "lucide-react";
-import { Habit } from "../types/habit";
-import { HabitCompletion } from "../types/habit-completion";
-import { habitSuggestions } from "../data/habit-data";
+import { Habit } from "@/types/habit";
+import { HabitCompletion } from "@/types/habit-completion";
+import { habitSuggestions } from "@/data/habit-data";
 
 // Demo data for habits - ensure all required properties are set
 const demoHabits: Habit[] = [
@@ -105,19 +105,6 @@ export default function HabitTrackerPage() {
           </div>
           
           <div className="flex items-center gap-2">
-            <Tabs value={activeView} onValueChange={setActiveView} className="w-[400px]">
-              <TabsList className="grid grid-cols-2">
-                <TabsTrigger value="calendar" className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Calendar View
-                </TabsTrigger>
-                <TabsTrigger value="list" className="flex items-center gap-1">
-                  <List className="h-4 w-4" />
-                  List View
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
             <Button className="ml-2 bg-blue-600 hover:bg-blue-700">
               <PlusCircle className="h-4 w-4 mr-1" />
               New Habit
@@ -191,31 +178,46 @@ export default function HabitTrackerPage() {
             </Card>
           </div>
           
-          {/* Right column - Calendar View */}
+          {/* Right column - Content */}
           <div className="lg:col-span-3">
-            <TabsContent value="calendar" className="mt-0">
-              <WeeklyCalendarView
-                habits={habits}
-                completions={completions}
-                onToggleCompletion={handleToggleCompletion}
-                days={7}
-                showPreviousDays={3}
-              />
-            </TabsContent>
+            <Tabs value={activeView} onValueChange={setActiveView}>
+              <div className="mb-4">
+                <TabsList className="grid grid-cols-2 w-[300px]">
+                  <TabsTrigger value="calendar" className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    Calendar View
+                  </TabsTrigger>
+                  <TabsTrigger value="list" className="flex items-center gap-1">
+                    <List className="h-4 w-4" />
+                    List View
+                  </TabsTrigger>
+                </TabsList>
+              </div>
             
-            <TabsContent value="list" className="mt-0">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Habit List View</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-500">
-                    This is a simplified view where the list view would go. It would show all habits
-                    in a more compact format with checkboxes for today's completion.
-                  </p>
-                </CardContent>
-              </Card>
-            </TabsContent>
+              <TabsContent value="calendar" className="mt-0">
+                <WeeklyCalendarView
+                  habits={habits}
+                  completions={completions}
+                  onToggleCompletion={handleToggleCompletion}
+                  days={7}
+                  showPreviousDays={3}
+                />
+              </TabsContent>
+              
+              <TabsContent value="list" className="mt-0">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Habit List View</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-500">
+                      This is a simplified view where the list view would go. It would show all habits
+                      in a more compact format with checkboxes for today's completion.
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>
