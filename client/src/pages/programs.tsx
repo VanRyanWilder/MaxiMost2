@@ -1,119 +1,121 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
 import { useState } from "react";
-import { ProgramList } from "@/components/programs/program-list";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { CheckCircle } from "lucide-react";
+import { Program, RecommendationCriteria } from "../types/program";
+import UserGoalForm from "../components/programs/user-goal-form";
+import ProgramRecommendations from "../components/programs/program-recommendations";
+import ProgramDetails from "../components/programs/program-details";
+import { Habit } from "../types/habit";
+import { habitSuggestions } from "../data/habit-data";
+import { programs } from "../data/program-data";
+import { PageContainer } from "../components/layout/page-container";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
-interface MilestoneType {
-  week: number;
-  title: string;
-  description: string;
-  achievements: string[];
-}
+// Combine all habits for the habit library
+const allHabits: Habit[] = [
+  ...habitSuggestions.health,
+  ...habitSuggestions.fitness,
+  ...habitSuggestions.mind,
+  ...habitSuggestions.habits
+];
 
-export default function Programs() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function ProgramsPage() {
+  const [criteria, setCriteria] = useState<RecommendationCriteria | null>(null);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("form");
   
-  const milestones: MilestoneType[] = [
-    {
-      week: 1,
-      title: "Foundation Building",
-      description: "Establish baseline habits and prepare body systems for progression",
-      achievements: [
-        "Establish morning and evening routines",
-        "Baseline fitness assessment",
-        "Implement basic nutrition framework",
-        "Begin daily meditation practice"
-      ]
-    },
-    {
-      week: 4,
-      title: "Adaptation Phase",
-      description: "Your body and mind begin adapting to your new lifestyle",
-      achievements: [
-        "First noticeable physical changes",
-        "Improved sleep quality metrics",
-        "Meditation sessions extending to 15 minutes",
-        "Reduced cravings for processed foods"
-      ]
-    },
-    {
-      week: 8, 
-      title: "Breakthrough Period",
-      description: "Mental and physical breakthroughs as adaptations compound",
-      achievements: [
-        "Significant strength improvements",
-        "Enhanced mental clarity and focus duration",
-        "Established intermittent fasting protocol",
-        "Consistent adherence to cold exposure therapy"
-      ]
-    },
-    {
-      week: 12,
-      title: "Transformation Complete",
-      description: "Fundamental transformation of body composition and mental resilience",
-      achievements: [
-        "Body composition goals achieved",
-        "Advanced meditation practice established",
-        "Full nutritional discipline",
-        "High stress resilience and emotional control"
-      ]
+  const handleFormSubmit = (formCriteria: RecommendationCriteria) => {
+    setCriteria(formCriteria);
+    setActiveTab("recommendations");
+  };
+  
+  const handleSelectProgram = (program: Program) => {
+    setSelectedProgram(program);
+    setActiveTab("details");
+  };
+  
+  const handleBackToRecommendations = () => {
+    setSelectedProgram(null);
+    setActiveTab("recommendations");
+  };
+  
+  const handleResetForm = () => {
+    setCriteria(null);
+    setSelectedProgram(null);
+    setActiveTab("form");
+  };
+  
+  const handleAddHabit = (habitId: string) => {
+    // Find a matching habit from our library
+    const habit = allHabits.find(h => 
+      h.title.toLowerCase().includes(habitId.split('-').join(' ').toLowerCase())
+    );
+    
+    if (habit) {
+      // In a real app, this would dispatch to a store or context
+      console.log("Adding habit:", habit.title);
+    } else {
+      console.log("Adding habit by ID:", habitId);
     }
-  ];
-
+  };
+  
+  const handleAddAllHabits = (habitIds: string[]) => {
+    // In a real app, this would add all habits to the user's dashboard
+    console.log("Adding all habits:", habitIds);
+  };
+  
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
-          <div className="container mx-auto px-4 py-6">
-            <h1 className="text-3xl font-bold mb-6">Development Programs</h1>
-            
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle>Program Milestones</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="w-full whitespace-nowrap rounded-md">
-                  <div className="flex w-max space-x-4 p-4">
-                    {milestones.map((milestone) => (
-                      <Card key={milestone.week} className="w-[350px] shrink-0">
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between items-center">
-                            <CardTitle>Week {milestone.week}</CardTitle>
-                            <span className="text-xs bg-primary bg-opacity-10 text-primary px-2 py-1 rounded">
-                              {milestone.title}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">{milestone.description}</p>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-2">
-                            {milestone.achievements.map((achievement, i) => (
-                              <div key={i} className="flex items-center text-sm">
-                                <CheckCircle className="text-secondary mr-2 h-4 w-4" />
-                                <span>{achievement}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </CardContent>
-            </Card>
-            
-            <ProgramList />
+    <PageContainer>
+      <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Program Recommendations</h1>
+            <p className="text-gray-500 mt-1">
+              Get personalized program recommendations based on your goals and preferences
+            </p>
           </div>
-        </main>
+          
+          {activeTab !== "form" && (
+            <Button variant="outline" onClick={handleResetForm}>
+              <ArrowLeft className="h-4 w-4 mr-1" />
+              Start Over
+            </Button>
+          )}
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="hidden">
+            <TabsTrigger value="form">Goal Form</TabsTrigger>
+            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <TabsTrigger value="details">Program Details</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="form" className="space-y-6">
+            <UserGoalForm onSubmit={handleFormSubmit} initialValues={criteria || undefined} />
+          </TabsContent>
+          
+          <TabsContent value="recommendations" className="space-y-6">
+            {criteria && (
+              <ProgramRecommendations 
+                criteria={criteria}
+                onSelectProgram={handleSelectProgram}
+              />
+            )}
+          </TabsContent>
+          
+          <TabsContent value="details" className="space-y-6">
+            {selectedProgram && (
+              <ProgramDetails 
+                program={selectedProgram}
+                onBack={handleBackToRecommendations}
+                onAddHabit={handleAddHabit}
+                onAddAllHabits={handleAddAllHabits}
+                habitLibrary={allHabits}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-    </div>
+    </PageContainer>
   );
 }
