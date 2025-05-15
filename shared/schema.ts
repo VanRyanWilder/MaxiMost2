@@ -238,6 +238,7 @@ export const supplements = pgTable("supplements", {
   bestValue: boolean("best_value").default(false), // Flag for best value supplements
   imageUrl: text("image_url"),
   amazonUrl: text("amazon_url"),
+  expertInsights: jsonb("expert_insights").default([]).notNull(), // Array of expert insights
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -255,6 +256,7 @@ export const insertSupplementSchema = createInsertSchema(supplements).pick({
   bestValue: true,
   imageUrl: true,
   amazonUrl: true,
+  expertInsights: true,
 });
 
 // Supplement reviews

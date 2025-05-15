@@ -366,6 +366,40 @@ export class MemStorage implements IStorage {
     return updatedMetric;
   }
   
+  // Motivational Content methods
+  async getMotivationalContent(): Promise<MotivationalContent[]> {
+    return Array.from(this.motivationalContents.values());
+  }
+  
+  async getDailyMotivationalContent(): Promise<MotivationalContent | undefined> {
+    // Get current date to potentially select content based on day of year
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+    
+    // Get all daily content
+    const dailyContent = Array.from(this.motivationalContents.values())
+      .filter(content => content.type === 'daily');
+    
+    if (dailyContent.length === 0) return undefined;
+    
+    // Select content based on day of year (rotating through available content)
+    return dailyContent[dayOfYear % dailyContent.length];
+  }
+  
+  async createMotivationalContent(insertContent: InsertMotivationalContent): Promise<MotivationalContent> {
+    const id = this.motivationalContentIdCounter++;
+    const now = new Date();
+    
+    const content: MotivationalContent = {
+      ...insertContent,
+      id,
+      createdAt: now
+    };
+    
+    this.motivationalContents.set(id, content);
+    return content;
+  }
+  
   // Supplement methods
   async getSupplements(): Promise<Supplement[]> {
     return Array.from(this.supplements.values());
@@ -640,6 +674,142 @@ export class MemStorage implements IStorage {
   
   // Initialize with sample data
   private initializeData() {
+    // Sample motivational content for daily principles
+    const principles: InsertMotivationalContent[] = [
+      {
+        title: "1% Better Every Day",
+        content: "Small improvements compound over time. Doing something, no matter how small, is infinitely better than doing nothing. Focus on consistency rather than perfection.",
+        author: "James Clear",
+        source: "Atomic Habits",
+        type: "daily",
+      },
+      {
+        title: "KISS - Keep It Simple, Stupid",
+        content: "Complexity is the enemy of execution. The simplest solution is often the best one. Start with the minimal viable action and build from there.",
+        author: "Kelly Johnson",
+        source: "Lockheed Martin",
+        type: "daily",
+      },
+      {
+        title: "Work Now, Freedom Later",
+        content: "Short-term sacrifice leads to long-term freedom. The work you avoid today becomes the burden you carry tomorrow. Embrace the struggle now for ease later.",
+        author: "David Goggins",
+        source: "Can't Hurt Me",
+        type: "daily",
+      },
+      {
+        title: "The Power of Showing Up",
+        content: "Just showing up is half the battle. A mediocre workout is infinitely better than no workout. Don't let perfect be the enemy of good enough.",
+        author: "Jocko Willink",
+        source: "Discipline Equals Freedom",
+        type: "daily",
+      },
+      {
+        title: "Effort Creates Opportunity",
+        content: "Luck is what happens when preparation meets opportunity. The harder you work, the luckier you get. Create your own opportunities through consistent effort.",
+        author: "Seneca",
+        source: "Letters from a Stoic",
+        type: "daily",
+      }
+    ];
+    
+    principles.forEach(principle => {
+      this.createMotivationalContent(principle);
+    });
+    
+    // Top Supplements with Expert Insights
+    const supplements: InsertSupplement[] = [
+      {
+        name: "Omega-3 Fatty Acids (EPA and DHA)",
+        description: "Essential fatty acids that the body cannot produce on its own. Critical for reducing inflammation and supporting brain and heart health.",
+        benefits: "Reduces inflammation, supports heart and brain health, aids recovery.",
+        dosage: "2-4g daily, with ~2g EPA for optimal anti-inflammatory effects.",
+        sideEffects: "Mild gastrointestinal issues, fishy aftertaste with some products.",
+        interactions: "May interact with blood thinners. Consult with doctor if on medications.",
+        categories: "Essential,Daily,Foundational",
+        valueRating: 9,
+        monthlyCostEstimate: "$15-30",
+        bestValue: true,
+        expertInsights: JSON.stringify([
+          { expert: "Rhonda Patrick", insight: "Highlights omega-3s for their anti-inflammatory properties and cognitive benefits, key for recovery and mental clarity." },
+          { expert: "Peter Attia", insight: "Recommends them for cardiovascular health, vital for endurance athletes." },
+          { expert: "Ben Greenfield", insight: "Suggests omega-3s to reduce joint inflammation and enhance performance in high-intensity sports." }
+        ])
+      },
+      {
+        name: "Vitamin D3",
+        description: "Fat-soluble vitamin critical for immune function, bone health, and overall well-being. Many people are deficient due to limited sun exposure.",
+        benefits: "Boosts bone health, immunity, and muscle function.",
+        dosage: "4,000-5,000 IU/day, adjusted based on blood levels.",
+        sideEffects: "Rare at recommended doses. Excessive amounts can lead to toxicity.",
+        interactions: "May affect calcium absorption and interact with certain medications.",
+        categories: "Essential,Daily,Foundational",
+        valueRating: 10,
+        monthlyCostEstimate: "$5-15",
+        bestValue: true,
+        expertInsights: JSON.stringify([
+          { expert: "Rhonda Patrick", insight: "Stresses its role in immune support and injury prevention for athletes with heavy training loads." },
+          { expert: "Kelly Starrett", insight: "Advocates for vitamin D to maintain bone density and aid recovery, especially for runners." },
+          { expert: "Cate Shanahan", insight: "Notes its importance for calcium absorption and preventing stress fractures." }
+        ])
+      },
+      {
+        name: "Magnesium",
+        description: "Essential mineral involved in over 300 enzymatic reactions in the body. Critical for muscle function, sleep quality, and stress management.",
+        benefits: "Promotes muscle relaxation, sleep quality, and energy production.",
+        dosage: "1g daily, preferably as magnesium glycinate or citrate.",
+        sideEffects: "Digestive discomfort or loose stools at high doses.",
+        interactions: "May interfere with certain antibiotics and medications.",
+        categories: "Essential,Daily,Foundational",
+        valueRating: 9,
+        monthlyCostEstimate: "$10-20",
+        bestValue: true,
+        expertInsights: JSON.stringify([
+          { expert: "Peter Attia", insight: "Uses magnesium for better sleep and muscle recovery, critical for intense training schedules." },
+          { expert: "Phil Maffetone", insight: "Recommends it to prevent cramps and support endurance performance." },
+          { expert: "Stuart McGill", insight: "Emphasizes its role in muscle relaxation and spine health for injury prevention." }
+        ])
+      },
+      {
+        name: "Creatine Monohydrate",
+        description: "The most well-researched sports supplement available. Increases power output, muscle growth, and cognitive performance.",
+        benefits: "Enhances muscle strength, power, and cognitive performance.",
+        dosage: "5-10g daily.",
+        sideEffects: "Water retention initially, digestive discomfort in some individuals.",
+        interactions: "Generally safe with few interactions.",
+        categories: "Performance,Daily",
+        valueRating: 10,
+        monthlyCostEstimate: "$5-15",
+        bestValue: true,
+        expertInsights: JSON.stringify([
+          { expert: "Andrew Huberman", insight: "Praises creatine for physical and mental benefits, especially under fatigue." },
+          { expert: "Andy Galpin", insight: "Recommends it for strength gains and recovery in high-intensity athletes." },
+          { expert: "Brad Schoenfeld", insight: "Supports its use for muscle growth and resilience against injuries." }
+        ])
+      },
+      {
+        name: "Probiotics",
+        description: "Beneficial bacteria that support gut health, immune function, and even mental health through the gut-brain connection.",
+        benefits: "Improves gut health, immunity, and mental well-being.",
+        dosage: "10-50 billion CFU daily, depending on the product.",
+        sideEffects: "Initial bloating or gas when starting supplementation.",
+        interactions: "Take separate from antibiotics.",
+        categories: "Health,Daily",
+        valueRating: 7,
+        monthlyCostEstimate: "$20-40",
+        bestValue: false,
+        expertInsights: JSON.stringify([
+          { expert: "Peter Attia", insight: "Values probiotics for gut health and metabolic benefits, aiding recovery." },
+          { expert: "Rhonda Patrick", insight: "Notes their role in reducing gut inflammation, essential for athletes with high nutritional needs." },
+          { expert: "Ben Greenfield", insight: "Suggests probiotics to optimize nutrient absorption and prevent GI issues in endurance events." }
+        ])
+      }
+    ];
+    
+    supplements.forEach(supplement => {
+      this.createSupplement(supplement);
+    });
+    
     // Sample programs
     const programs: InsertProgram[] = [
       {
