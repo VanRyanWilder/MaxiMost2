@@ -16,7 +16,7 @@ import UnifiedHabits from "@/pages/unified-habits";
 import IntegratedHabits from "@/pages/integrated-habits";
 import HabitTracker from "@/pages/habit-tracker"; // New weekly calendar habit tracker
 import HabitStacks from "@/pages/habit-stacks";
-import FourPillars from "@/pages/four-pillars";
+// Individual pages for performance cornerstones (previously four pillars)
 import Supplements from "@/pages/supplements";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
@@ -106,9 +106,6 @@ function App() {
       </Route>
       <Route path="/habit-stacks">
         <PrivateRoute component={HabitStacks} />
-      </Route>
-      <Route path="/four-pillars">
-        <PrivateRoute component={FourPillars} />
       </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
