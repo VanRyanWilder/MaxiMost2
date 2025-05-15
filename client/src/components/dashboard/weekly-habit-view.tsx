@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { format, startOfWeek, subDays, addDays, isSameDay, isBefore, isAfter } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay, isBefore, isAfter } from 'date-fns';
 import { 
   Calendar, 
   Check, 
@@ -21,11 +20,23 @@ import {
   Heart,
   Droplets,
   BookOpen,
-  Users
+  Users,
+  Pencil,
+  MoreHorizontal
 } from 'lucide-react';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-// Types from streak-habit-tracker
-type Frequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
+import { EditHabitDialog } from "./edit-habit-dialog";
+
+// Types for habits
+type HabitFrequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
+type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
 
 type Habit = {
   id: string;
@@ -35,7 +46,7 @@ type Habit = {
   impact: number; // 1-10 scale
   effort: number; // 1-10 scale
   timeCommitment: string;
-  frequency: Frequency;
+  frequency: HabitFrequency;
   isAbsolute: boolean; // If true, this is a "must-do" activity
   lastCompleted?: Date | null;
   streak?: number;
@@ -55,16 +66,22 @@ type WeeklyHabitViewProps = {
   completions: HabitCompletion[];
   onToggleHabit: (habitId: string, date: Date) => void;
   onAddHabit: () => void;
+  onUpdateHabit?: (habit: Habit) => void;
+  onDeleteHabit?: (habitId: string) => void;
 };
 
 export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
   habits,
   completions,
   onToggleHabit,
-  onAddHabit
+  onAddHabit,
+  onUpdateHabit,
+  onDeleteHabit
 }) => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   
   // Generate dates for the week
   const today = new Date();
@@ -91,14 +108,29 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
       case 'dumbbell': return <Dumbbell className="h-4 w-4" />;
       case 'brain': return <Brain className="h-4 w-4" />;
       case 'heart': return <Heart className="h-4 w-4" />;
-      case 'water': return <Droplets className="h-4 w-4" />;
-      case 'book': return <BookOpen className="h-4 w-4" />;
+      case 'water': 
+      case 'droplets': return <Droplets className="h-4 w-4" />;
+      case 'book':
+      case 'bookopen': return <BookOpen className="h-4 w-4" />;
       case 'check': return <Check className="h-4 w-4" />;
       case 'users': return <Users className="h-4 w-4" />;
       case 'activity': return <Activity className="h-4 w-4" />;
       case 'sparkle': return <Zap className="h-4 w-4" />;
       case 'medal': return <Award className="h-4 w-4" />;
       default: return <Zap className="h-4 w-4" />;
+    }
+  };
+
+  // Function to handle editing a habit
+  const handleEditHabit = (habit: Habit) => {
+    setSelectedHabit(habit);
+    setEditDialogOpen(true);
+  };
+  
+  // Function to save updated habit
+  const handleSaveHabit = (updatedHabit: Habit) => {
+    if (onUpdateHabit) {
+      onUpdateHabit(updatedHabit);
     }
   };
 
@@ -167,118 +199,201 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
       </div>
       
       {/* Week day headers */}
-      <div className="grid grid-cols-8 gap-1 mb-3 text-center text-xs font-medium text-muted-foreground">
-        <div className="text-left pl-2">Habit</div>
+      <div className="grid grid-cols-8 gap-1 mb-3 bg-muted/20 rounded-lg p-3">
+        <div className="text-sm font-medium text-muted-foreground pl-2">Habit</div>
         {weekDates.map((date, i) => (
-          <div key={i} className={`${isSameDay(date, today) ? 'text-primary font-bold' : ''}`}>
-            {format(date, 'E')}
-            <div>{format(date, 'd')}</div>
+          <div key={i} className="text-center">
+            <div className="text-xs font-medium text-muted-foreground">
+              {format(date, 'EEE')}
+            </div>
+            <div 
+              className={`text-xs rounded-full w-6 h-6 flex items-center justify-center mx-auto
+                ${isSameDay(date, today) ? 'bg-primary text-primary-foreground' : 'text-foreground'}
+              `}
+            >
+              {format(date, 'd')}
+            </div>
           </div>
         ))}
       </div>
 
       {/* Absolute habits section */}
       {absoluteHabits.length > 0 && (
-        <>
-          <div className="text-sm font-medium mb-2 text-muted-foreground">Daily Absolutes</div>
-          {absoluteHabits.map(habit => (
-            <div key={habit.id} className="grid grid-cols-8 gap-1 mb-3 items-center">
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
-                <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{habit.title}</span>
-              </div>
-              
-              {weekDates.map((date, i) => {
-                const completed = isHabitCompletedOnDate(habit.id, date);
-                const isPast = isBefore(date, today) && !isSameDay(date, today);
-                const isFuture = isAfter(date, today) && !isSameDay(date, today);
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Badge variant="secondary">Daily Absolutes</Badge>
+            <div className="text-xs text-muted-foreground">Must-do habits for maximum ROI</div>
+          </div>
+          
+          <div className="space-y-2">
+            {absoluteHabits.map(habit => (
+              <div key={habit.id} className="grid grid-cols-8 gap-1 items-center p-3 rounded-lg bg-muted/10 hover:bg-muted/20 transition-colors">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
+                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                    {habit.title}
+                    {habit.streak && habit.streak > 0 && (
+                      <span className="ml-1.5 text-xs text-muted-foreground">
+                        <Badge variant="outline" className="text-[10px] py-0 h-4 px-1">
+                          {habit.streak}d
+                        </Badge>
+                      </span>
+                    )}
+                  </span>
+                  
+                  {/* Edit button */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="xs" className="h-6 w-6 p-0 ml-auto">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Edit Habit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
                 
-                return (
-                  <div key={i} className="flex justify-center">
-                    <button 
-                      onClick={() => onToggleHabit(habit.id, date)}
-                      disabled={isFuture}
-                      className={`rounded-full h-6 w-6 flex items-center justify-center 
-                        ${completed 
-                          ? 'bg-primary text-white' 
-                          : isPast 
-                            ? 'border border-red-300 text-muted-foreground' 
-                            : 'border text-muted-foreground hover:border-primary/80'
-                        }
-                        ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
-                        ${isFuture ? 'opacity-40' : ''}
-                      `}
-                    >
-                      {completed && <Check className="h-3 w-3" />}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-        </>
+                {weekDates.map((date, i) => {
+                  const completed = isHabitCompletedOnDate(habit.id, date);
+                  const isPast = isBefore(date, today) && !isSameDay(date, today);
+                  const isFuture = isAfter(date, today) && !isSameDay(date, today);
+                  
+                  return (
+                    <div key={i} className="flex justify-center">
+                      <button 
+                        onClick={() => onToggleHabit(habit.id, date)}
+                        disabled={isFuture}
+                        className={`rounded-full h-7 w-7 flex items-center justify-center transition-colors
+                          ${completed 
+                            ? 'bg-primary text-white hover:bg-primary/90' 
+                            : isPast && !completed
+                              ? 'border border-red-300 text-muted-foreground hover:border-red-500'
+                              : 'border text-muted-foreground hover:border-primary/80'
+                          }
+                          ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
+                          ${isFuture ? 'opacity-40' : ''}
+                        `}
+                        title={`${format(date, 'EEEE, MMM d')} - ${completed ? 'Completed' : 'Not completed'}`}
+                      >
+                        {completed && <Check className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Optional habits section */}
       {optionalHabits.length > 0 && (
-        <>
-          <div className="text-sm font-medium mb-2 mt-5 text-muted-foreground">Optional Habits</div>
-          {optionalHabits.map(habit => (
-            <div key={habit.id} className="grid grid-cols-8 gap-1 mb-3 items-center">
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
-                <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{habit.title}</span>
-              </div>
-              
-              {weekDates.map((date, i) => {
-                const completed = isHabitCompletedOnDate(habit.id, date);
-                const isPast = isBefore(date, today) && !isSameDay(date, today);
-                const isFuture = isAfter(date, today) && !isSameDay(date, today);
-                
-                // For weekly habits, only enable the first day of the week
-                const isWeeklyHabit = habit.frequency === 'weekly';
-                const isFirstDayOfWeek = i === 0;
-                const isDisabled = isFuture || (isWeeklyHabit && !isFirstDayOfWeek);
-                
-                return (
-                  <div key={i} className="flex justify-center">
-                    <button 
-                      onClick={() => onToggleHabit(habit.id, date)}
-                      disabled={isDisabled}
-                      className={`rounded-full h-6 w-6 flex items-center justify-center 
-                        ${completed 
-                          ? 'bg-primary text-white' 
-                          : isPast 
-                            ? 'border border-red-300 text-muted-foreground' 
-                            : 'border text-muted-foreground hover:border-primary/80'
-                        }
-                        ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
-                        ${isDisabled ? 'opacity-40' : ''}
-                        ${(isWeeklyHabit && !isFirstDayOfWeek) ? 'opacity-20' : ''}
-                      `}
-                    >
-                      {completed && <Check className="h-3 w-3" />}
-                    </button>
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Badge variant="outline">Optional Habits</Badge>
+            <div className="text-xs text-muted-foreground">Flexible habits to enhance your routine</div>
+          </div>
+          
+          <div className="space-y-2">
+            {optionalHabits.map(habit => (
+              <div key={habit.id} className="grid grid-cols-8 gap-1 items-center p-3 rounded-lg bg-muted/5 hover:bg-muted/15 transition-colors">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
+                  <div className="min-w-0 flex flex-col">
+                    <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
+                      {habit.title}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {habit.frequency === 'weekly' ? 'Weekly' :
+                      habit.frequency === '2x-week' ? '2× week' :
+                      habit.frequency === '3x-week' ? '3× week' :
+                      habit.frequency === '4x-week' ? '4× week' : 'Custom'}
+                    </span>
                   </div>
-                );
-              })}
-            </div>
-          ))}
-        </>
+                  
+                  {/* Edit button */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="xs" className="h-6 w-6 p-0 ml-auto">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                        <Pencil className="h-4 w-4 mr-2" />
+                        Edit Habit
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                
+                {weekDates.map((date, i) => {
+                  const completed = isHabitCompletedOnDate(habit.id, date);
+                  const isPast = isBefore(date, today) && !isSameDay(date, today);
+                  const isFuture = isAfter(date, today) && !isSameDay(date, today);
+                  
+                  // For weekly habits, only enable the first day of the week
+                  const isWeeklyHabit = habit.frequency === 'weekly';
+                  const isFirstDayOfWeek = i === 0;
+                  const isDisabled = isFuture || (isWeeklyHabit && !isFirstDayOfWeek);
+                  
+                  return (
+                    <div key={i} className="flex justify-center">
+                      <button 
+                        onClick={() => onToggleHabit(habit.id, date)}
+                        disabled={isDisabled}
+                        className={`rounded-full h-7 w-7 flex items-center justify-center transition-colors
+                          ${completed 
+                            ? 'bg-primary text-white hover:bg-primary/90' 
+                            : isPast && !completed
+                              ? 'border border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/70'
+                              : 'border text-muted-foreground hover:border-primary/50'
+                          }
+                          ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
+                          ${isDisabled ? 'opacity-30 cursor-not-allowed' : ''}
+                          ${(isWeeklyHabit && !isFirstDayOfWeek) ? 'opacity-20 cursor-not-allowed' : ''}
+                        `}
+                        title={`${format(date, 'EEEE, MMM d')} - ${isWeeklyHabit && !isFirstDayOfWeek ? 'Weekly habit - check only once per week' : completed ? 'Completed' : 'Not completed'}`}
+                      >
+                        {completed && <Check className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Add new habit button */}
-      <div className="mt-5">
+      <div className="mt-6">
         <Button 
-          variant="outline" 
+          variant="default" 
           size="sm" 
-          className="w-full flex items-center justify-center gap-1"
+          className="w-full flex items-center justify-center gap-1.5 h-10"
           onClick={onAddHabit}
         >
           <PlusCircle className="h-4 w-4" />
-          Add New Habit
+          <span className="font-medium">Add New Habit</span>
         </Button>
+        <div className="text-xs text-center text-muted-foreground mt-2">
+          Build your habit stack one at a time for maximum consistency
+        </div>
       </div>
+      
+      {/* Edit Habit Dialog */}
+      <EditHabitDialog 
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        habit={selectedHabit}
+        onSave={handleSaveHabit}
+        onDelete={onDeleteHabit}
+      />
     </div>
   );
 };
