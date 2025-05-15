@@ -11,7 +11,9 @@ import {
   startOfMonth, 
   endOfMonth, 
   eachDayOfInterval, 
-  getDay 
+  getDay,
+  addMonths,
+  subMonths
 } from 'date-fns';
 import { 
   DndContext, 
@@ -31,6 +33,7 @@ import {
 import { SortableHabit } from './sortable-habit';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,31 +55,16 @@ import {
   CalendarDays,
   Zap,
   Award,
-  Star
+  Filter,
+  ListFilter
 } from 'lucide-react';
 
-// Import habit types
-import type { Habit } from '@/types/habit';
-import type { HabitCompletion } from '@/types/habit-completion';
+// Import Habit type
+import { Habit } from '@/types/habit';
 
-// Function to get icon component based on icon string
-function getIconComponent(iconName: string) {
-  const iconMap: Record<string, React.ReactNode> = {
-    activity: <Activity className="h-4 w-4" />,
-    calendar: <Calendar className="h-4 w-4" />,
-    zap: <Zap className="h-4 w-4" />,
-    star: <Star className="h-4 w-4" />,
-    award: <Award className="h-4 w-4" />,
-    // Add more icons as needed
-  };
-
-  return iconMap[iconName.toLowerCase()] || <Activity className="h-4 w-4" />;
-}
-
-// Interface for the component props
 interface SortableHabitViewProps {
   habits: Habit[];
-  completions: HabitCompletion[];
+  completions: any[]; // Replace with proper type
   onToggleHabit: (habitId: string, date: Date) => void;
   onAddHabit: () => void;
   onUpdateHabit?: (habit: Habit) => void;
@@ -148,51 +136,32 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
       c.completed
     );
   };
-
-  // Filter habits based on selected category
-  let filteredHabits = [...habits];
   
-  if (filterCategory === "absolute") {
-    filteredHabits = habits.filter(h => h.isAbsolute);
-  } else if (filterCategory === "frequency") {
-    filteredHabits = habits.filter(h => !h.isAbsolute);
-  } else if (filterCategory !== "all") {
-    filteredHabits = habits.filter(h => h.category === filterCategory);
-  } else {
-    // For "All Categories", sort so absolute habits appear first
-    filteredHabits = [
-      ...habits.filter(h => h.isAbsolute),
-      ...habits.filter(h => !h.isAbsolute)
-    ];
-  }
-
-  // Count completed habits for today
-  const todayCompletedCount = habits.filter(h => 
-    isHabitCompletedOnDate(h.id, new Date())
-  ).length;
-
-  // Count total absolute habits
-  const absoluteHabitsCount = habits.filter(h => h.isAbsolute).length;
-
-  // Function to check if a habit has met its weekly frequency goal
-  const hasMetWeeklyFrequency = (habit: Habit): boolean => {
-    // For daily habits, check if completed every day this week
-    if (habit.frequency === 'daily') {
-      return weekDates.every(date => isHabitCompletedOnDate(habit.id, date));
-    }
-    
-    // For X-per-week habits, extract the number from the frequency string
-    const frequencyMatch = habit.frequency.match(/(\d+)x-week/);
-    if (!frequencyMatch) return false;
-    
-    const targetFrequency = parseInt(frequencyMatch[1], 10);
-    const completedDaysThisWeek = weekDates.filter(date => 
-      isHabitCompletedOnDate(habit.id, date)
+  // Function to count completed days in the current week
+  const countCompletedDaysInWeek = (habitId: string): number => {
+    return weekDates.filter(date => 
+      isHabitCompletedOnDate(habitId, date)
     ).length;
-    
-    return completedDaysThisWeek >= targetFrequency;
   };
-
+  
+  // Function to check if a habit has met its weekly frequency requirement
+  const hasMetWeeklyFrequency = (habit: Habit): boolean => {
+    if (habit.frequency === 'daily') {
+      return countCompletedDaysInWeek(habit.id) === 7;
+    } else {
+      const requiredDays = parseInt(habit.frequency.split('x')[0]);
+      return countCompletedDaysInWeek(habit.id) >= requiredDays;
+    }
+  };
+  
+  // Filter habits based on the selected category
+  const filteredHabits = filterCategory === "all" 
+    ? habits 
+    : habits.filter(habit => habit.category === filterCategory);
+  
+  // Extract unique categories from habits
+  const categories = Array.from(new Set(habits.map(habit => habit.category)));
+  
   // Handle editing a habit
   const handleEditHabit = (habit: Habit) => {
     setSelectedHabit(habit);
@@ -246,235 +215,94 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
     if (oldIndex !== -1 && newIndex !== -1) {
       const reorderedFilteredHabits = arrayMove(filteredHabits, oldIndex, newIndex);
       
-      // Maintain the original ordering for any habits that aren't in the filtered view
+      // Map the reordered filtered habits back to their original positions in the full habits array
       const reorderedHabits = [...habits];
       
-      // Update the positions of the habits that were reordered
-      for (let i = 0; i < reorderedFilteredHabits.length; i++) {
-        const habitIndex = reorderedHabits.findIndex(h => h.id === reorderedFilteredHabits[i].id);
-        if (habitIndex !== -1) {
-          reorderedHabits[habitIndex] = reorderedFilteredHabits[i];
+      reorderedFilteredHabits.forEach((habit, newFilteredIndex) => {
+        const oldFullIndex = reorderedHabits.findIndex(h => h.id === habit.id);
+        if (oldFullIndex !== -1) {
+          reorderedHabits[oldFullIndex] = habit;
         }
-      }
+      });
       
+      // Call the onReorderHabits callback with the new order
       onReorderHabits(reorderedHabits);
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* View mode and filter controls */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
-          {/* View mode selector */}
-          <Button
-            onClick={() => setViewMode("daily")}
+    <div className="space-y-6 mb-6">
+      {/* View mode switcher */}
+      <div className="flex items-center space-x-2">
+        <div className="flex border rounded-lg overflow-hidden">
+          <Button 
+            onClick={() => setViewMode("daily")} 
             variant={viewMode === "daily" ? "default" : "outline"}
-            size="sm"
-            className="gap-1"
+            className="rounded-none"
           >
-            <Calendar className="h-4 w-4" /> Daily
+            <ListFilter className="h-4 w-4 mr-1" />
+            Daily
           </Button>
-          <Button
-            onClick={() => setViewMode("weekly")}
+          <Button 
+            onClick={() => setViewMode("weekly")} 
             variant={viewMode === "weekly" ? "default" : "outline"}
-            size="sm"
-            className="gap-1"
+            className="rounded-none"
           >
-            <CalendarDays className="h-4 w-4" /> Weekly
+            <Calendar className="h-4 w-4 mr-1" />
+            Weekly
           </Button>
-          <Button
-            onClick={() => setViewMode("monthly")}
+          <Button 
+            onClick={() => setViewMode("monthly")} 
             variant={viewMode === "monthly" ? "default" : "outline"}
-            size="sm"
-            className="gap-1"
+            className="rounded-none"
           >
-            <Activity className="h-4 w-4" /> Monthly
+            <CalendarDays className="h-4 w-4 mr-1" />
+            Monthly
           </Button>
         </div>
         
-        <div className="flex items-center gap-2">
-          {/* Category filter */}
+        {/* Filter dropdown */}
+        <div className="ml-auto">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
-                {filterCategory === "all" && "All Categories"}
-                {filterCategory === "absolute" && "Absolute Daily Habits"}
-                {filterCategory === "frequency" && "Frequency Habits"}
-                {filterCategory !== "all" && filterCategory !== "absolute" && filterCategory !== "frequency" && 
-                  filterCategory.charAt(0).toUpperCase() + filterCategory.slice(1)
-                }
-                <ChevronDown className="h-4 w-4" />
+              <Button variant="outline" className="flex items-center">
+                <Filter className="h-4 w-4 mr-2" />
+                {filterCategory === "all" ? "All Categories" : filterCategory}
+                <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => setFilterCategory("all")}>
                 All Categories
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("absolute")}>
-                Absolute Daily Habits
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterCategory("frequency")}>
-                Frequency Habits
-              </DropdownMenuItem>
+              {categories.map(category => (
+                <DropdownMenuItem 
+                  key={category} 
+                  onClick={() => setFilterCategory(category)}
+                >
+                  {category}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          {/* Add new habit button */}
-          <Button onClick={onAddHabit} size="sm" className="gap-1 bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4" /> Add New
-          </Button>
         </div>
+        
+        {/* Add habit button */}
+        <Button onClick={onAddHabit}>
+          <Plus className="h-4 w-4 mr-1" />
+          Add Habit
+        </Button>
       </div>
-      
-      {/* Progress summary for today */}
-      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-        <div className="text-sm font-medium">
-          Today's progress: <span className="text-blue-600">{todayCompletedCount}</span> / {habits.length} habits completed
-        </div>
-        <div className="text-sm font-medium">
-          <span className="text-blue-600">{absoluteHabitsCount}</span> absolute daily habits
-        </div>
-        <div className="text-sm font-medium">
-          <span className="text-blue-600">
-            {habits.filter(h => hasMetWeeklyFrequency(h)).length}
-          </span> / {habits.length} weekly goals met
-        </div>
-      </div>
-      
-      {/* Week navigation (for weekly view) */}
-      {viewMode === "weekly" && (
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setWeekOffset(weekOffset - 1)}
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" /> Previous Week
-          </Button>
-          
-          <div className="text-sm font-medium">
-            Week of {format(weekDates[0], 'MMM d')} to {format(weekDates[6], 'MMM d, yyyy')}
-            {weekOffset === 0 && <span className="ml-2 text-blue-600">(Current Week)</span>}
-          </div>
-          
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setWeekOffset(weekOffset + 1)}
-          >
-            Next Week <ChevronRight className="h-4 w-4 ml-1" />
-          </Button>
-        </div>
-      )}
-      
-      {/* Habit list with weekly view headers */}
-      {viewMode === "weekly" && (
-        <div className="bg-white rounded-lg border p-4">
-          {/* Weekday headers */}
-          <div className="grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-3 pr-1">
-            <div className="px-2 py-1 font-medium text-sm">Habit</div>
-            {weekDates.map((date, i) => (
-              <div 
-                key={i} 
-                className={`text-center font-medium text-xs py-1 ${
-                  isSameDay(date, today) ? 'bg-blue-50 text-blue-600 rounded-md' : ''
-                }`}
-              >
-                <div>{format(date, 'EEE')}</div>
-                <div>{format(date, 'd')}</div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Sortable habit list */}
-          <DndContext 
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext 
-              items={filteredHabits.map(habit => habit.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {filteredHabits.length > 0 ? (
-                <div className="space-y-1">
-                  {filterCategory === "all" ? (
-                    // When "All Categories" is selected, we show a separator between absolute and frequency habits
-                    <>
-                      {/* Absolute habits section */}
-                      {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
-                        <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
-                          Absolute Daily Habits
-                        </div>
-                      )}
-                      {filteredHabits.filter(h => h.isAbsolute).map(habit => (
-                        <SortableHabit
-                          key={habit.id}
-                          habit={habit}
-                          completions={completions}
-                          onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                          onEdit={handleEditHabit}
-                          onDelete={handleDeleteHabit}
-                          currentDate={weekDates[0]}
-                        />
-                      ))}
-                      
-                      {/* Frequency habits section */}
-                      {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
-                        <div className="font-medium text-sm mt-4 mb-2 px-2 py-1 bg-sky-50 rounded-md text-sky-700">
-                          Frequency-Based Habits
-                        </div>
-                      )}
-                      {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
-                        <SortableHabit
-                          key={habit.id}
-                          habit={habit}
-                          completions={completions}
-                          onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                          onEdit={handleEditHabit}
-                          onDelete={handleDeleteHabit}
-                          currentDate={weekDates[0]}
-                        />
-                      ))}
-                    </>
-                  ) : (
-                    // For other filter categories, show normally
-                    filteredHabits.map(habit => (
-                      <SortableHabit
-                        key={habit.id}
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
-                        onEdit={handleEditHabit}
-                        onDelete={handleDeleteHabit}
-                        currentDate={weekDates[0]}
-                      />
-                    ))
-                  )}
-                </div>
-              ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground">No habits found. Add your first habit to get started!</p>
-                  <Button onClick={onAddHabit} variant="outline" className="mt-4 gap-1">
-                    <Plus className="h-4 w-4" /> Add Habit
-                  </Button>
-                </div>
-              )}
-            </SortableContext>
-          </DndContext>
-        </div>
-      )}
       
       {/* Daily view */}
       {viewMode === "daily" && (
         <div className="bg-white rounded-lg border p-4">
           <div className="text-center mb-4">
-            <div className="text-xl font-bold mb-1">
+            <div className="text-xl font-bold">
               {format(new Date(), 'EEEE, MMMM d, yyyy')}
             </div>
             <div className="text-sm text-muted-foreground">
-              Focus on completing today's habits
+              Today's habit tracker
             </div>
           </div>
           
@@ -488,65 +316,48 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               items={filteredHabits.map(habit => habit.id)}
               strategy={verticalListSortingStrategy}
             >
-              {filteredHabits.length > 0 ? (
-                <div className="space-y-3">
-                  {filteredHabits.map(habit => {
-                    const isCompleted = isHabitCompletedOnDate(habit.id, new Date());
-                    return (
-                      <div 
-                        key={habit.id} 
-                        className={`p-3 rounded-lg border transition-all ${
-                          isCompleted ? 'bg-green-50 border-green-200' : ''
-                        }`}
-                      >
-                        <SortableHabit
-                          habit={habit}
-                          completions={completions}
-                          onToggleCompletion={(habitId) => onToggleHabit(habitId, new Date())}
-                          onEdit={handleEditHabit}
-                          onDelete={handleDeleteHabit}
-                          currentDate={new Date()}
-                        />
-                      </div>
-                    );
-                  })}
+              {filterCategory === "all" ? (
+                <div className="space-y-4">
+                  {/* Absolute habits section */}
+                  {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
+                    <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
+                      Absolute Daily Habits
+                    </div>
+                  )}
+                  {filteredHabits.filter(h => h.isAbsolute).map(habit => (
+                    <div key={habit.id} className="p-3 rounded-lg border">
+                      <SortableHabit
+                        habit={habit}
+                        completions={completions}
+                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
+                        onEdit={handleEditHabit}
+                        onDelete={handleDeleteHabit}
+                        currentDate={new Date()}
+                      />
+                    </div>
+                  ))}
+                  
+                  {/* Frequency habits section */}
+                  {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+                    <div className="font-medium text-sm mt-4 mb-2 px-2 py-1 bg-sky-50 rounded-md text-sky-700">
+                      Frequency-Based Habits
+                    </div>
+                  )}
+                  {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
+                    <div key={habit.id} className="p-3 rounded-lg border">
+                      <SortableHabit
+                        habit={habit}
+                        completions={completions}
+                        onToggleCompletion={(habitId, date) => onToggleHabit(habitId, date)}
+                        onEdit={handleEditHabit}
+                        onDelete={handleDeleteHabit}
+                        currentDate={new Date()}
+                      />
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground">No habits found. Add your first habit to get started!</p>
-                  <Button onClick={onAddHabit} variant="outline" className="mt-4 gap-1">
-                    <Plus className="h-4 w-4" /> Add Habit
-                  </Button>
-                </div>
-              )}
-            </SortableContext>
-          </DndContext>
-        </div>
-      )}
-      
-      {/* Monthly view */}
-      {viewMode === "monthly" && (
-        <div className="bg-white rounded-lg border p-4">
-          <div className="text-center mb-4">
-            <div className="text-xl font-bold mb-1">
-              {format(new Date(), 'MMMM yyyy')}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              View habit performance for the entire month
-            </div>
-          </div>
-          
-          {/* Sortable habit list - monthly view */}
-          <DndContext 
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext 
-              items={filteredHabits.map(habit => habit.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {filteredHabits.length > 0 ? (
+                // For other filter categories, show normally
                 <div className="space-y-3">
                   {filteredHabits.map(habit => (
                     <div key={habit.id} className="p-3 rounded-lg border">
@@ -558,60 +369,493 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                         onDelete={handleDeleteHabit}
                         currentDate={new Date()}
                       />
-                      <div className="mt-2 pt-2 border-t">
-                        <div className="text-xs text-muted-foreground mb-1">
-                          Monthly Progress: 
-                          {habit.frequency === 'daily' ? (
-                            <span className="ml-1">
-                              {(() => {
-                                const daysInMonth = new Date(
-                                  today.getFullYear(), 
-                                  today.getMonth() + 1, 
-                                  0
-                                ).getDate();
-                                const completedDays = completions.filter(
-                                  c => c.habitId === habit.id && 
-                                  new Date(c.date).getMonth() === today.getMonth() && 
-                                  c.completed
-                                ).length;
-                                return `${completedDays}/${daysInMonth} days (${Math.round((completedDays/daysInMonth)*100)}%)`;
-                              })()}
-                            </span>
-                          ) : (
-                            <span className="ml-1">
-                              {(() => {
-                                const frequencyMatch = habit.frequency.match(/(\d+)x-week/);
-                                if (!frequencyMatch) return 'N/A';
-                                
-                                const targetFrequency = parseInt(frequencyMatch[1], 10);
-                                const weeksInMonth = 4; // Approximation
-                                const targetCompletions = targetFrequency * weeksInMonth;
-                                
-                                const completedDays = completions.filter(
-                                  c => c.habitId === habit.id && 
-                                  new Date(c.date).getMonth() === today.getMonth() && 
-                                  c.completed
-                                ).length;
-                                
-                                return `${completedDays}/${targetCompletions} times (${Math.round((completedDays/targetCompletions)*100)}%)`;
-                              })()}
-                            </span>
-                          )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </SortableContext>
+          </DndContext>
+        </div>
+      )}
+      
+      {/* Weekly view */}
+      {viewMode === "weekly" && (
+        <div className="bg-white rounded-lg border p-4">
+          <div className="flex justify-between items-center mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setWeekOffset(prev => prev - 1)}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="text-center">
+              <div className="text-xl font-bold">
+                {format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Week {weekOffset === 0 ? '(Current)' : weekOffset > 0 ? `+${weekOffset}` : weekOffset}
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setWeekOffset(prev => prev + 1)}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
+          
+          {/* Sortable habit list - weekly view */}
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
+              items={filteredHabits.map(habit => habit.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {filterCategory === "all" ? (
+                <div className="space-y-4">
+                  {/* Absolute habits section */}
+                  {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
+                    <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
+                      Absolute Daily Habits
+                    </div>
+                  )}
+                  {filteredHabits.filter(h => h.isAbsolute).map(habit => (
+                    <div key={habit.id} className="p-3 rounded-lg border">
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium">{habit.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {countCompletedDaysInWeek(habit.id)}/7 days
                         </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {weekDates.map((date, i) => {
+                          const isCompleted = isHabitCompletedOnDate(habit.id, date);
+                          const isPast = isBefore(date, startOfToday());
+                          const isFuture = isAfter(date, endOfToday());
+                          const isToday = isSameDay(date, today);
+                          
+                          return (
+                            <Button
+                              key={i}
+                              variant="outline"
+                              size="sm"
+                              className={`p-2 h-12 w-full ${
+                                isCompleted 
+                                  ? 'bg-blue-500 hover:bg-blue-600 text-white border-blue-600' 
+                                  : isToday
+                                    ? 'border-blue-300 bg-blue-50'
+                                    : ''
+                              }`}
+                              onClick={() => onToggleHabit(habit.id, date)}
+                            >
+                              <div className="flex flex-col items-center text-xs">
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'EEE')}
+                                </div>
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'd')}
+                                </div>
+                              </div>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditHabit(habit)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteHabit(habit.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Frequency habits section */}
+                  {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+                    <div className="font-medium text-sm mt-4 mb-2 px-2 py-1 bg-sky-50 rounded-md text-sky-700">
+                      Frequency-Based Habits
+                    </div>
+                  )}
+                  {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
+                    <div key={habit.id} className="p-3 rounded-lg border">
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium">{habit.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {countCompletedDaysInWeek(habit.id)}/{habit.frequency.split('x')[0]} days
+                          <Badge className="ml-2" variant={hasMetWeeklyFrequency(habit) ? "success" : "outline"}>
+                            {hasMetWeeklyFrequency(habit) ? 'Goal Met' : 'In Progress'}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {weekDates.map((date, i) => {
+                          const isCompleted = isHabitCompletedOnDate(habit.id, date);
+                          const isPast = isBefore(date, startOfToday());
+                          const isFuture = isAfter(date, endOfToday());
+                          const isToday = isSameDay(date, today);
+                          
+                          return (
+                            <Button
+                              key={i}
+                              variant="outline"
+                              size="sm"
+                              className={`p-2 h-12 w-full ${
+                                isCompleted 
+                                  ? 'bg-blue-500 hover:bg-blue-600 text-white border-blue-600' 
+                                  : isToday
+                                    ? 'border-blue-300 bg-blue-50'
+                                    : ''
+                              }`}
+                              onClick={() => onToggleHabit(habit.id, date)}
+                            >
+                              <div className="flex flex-col items-center text-xs">
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'EEE')}
+                                </div>
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'd')}
+                                </div>
+                              </div>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditHabit(habit)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteHabit(habit.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="py-10 text-center">
-                  <p className="text-muted-foreground">No habits found. Add your first habit to get started!</p>
-                  <Button onClick={onAddHabit} variant="outline" className="mt-4 gap-1">
-                    <Plus className="h-4 w-4" /> Add Habit
-                  </Button>
+                <div className="space-y-3">
+                  {filteredHabits.map(habit => (
+                    <div key={habit.id} className="p-3 rounded-lg border">
+                      <div className="flex justify-between mb-2">
+                        <div className="font-medium">{habit.title}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {countCompletedDaysInWeek(habit.id)}/{habit.frequency === 'daily' ? '7' : habit.frequency.split('x')[0]} days
+                          {!habit.isAbsolute && (
+                            <Badge className="ml-2" variant={hasMetWeeklyFrequency(habit) ? "success" : "outline"}>
+                              {hasMetWeeklyFrequency(habit) ? 'Goal Met' : 'In Progress'}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {weekDates.map((date, i) => {
+                          const isCompleted = isHabitCompletedOnDate(habit.id, date);
+                          const isPast = isBefore(date, startOfToday());
+                          const isFuture = isAfter(date, endOfToday());
+                          const isToday = isSameDay(date, today);
+                          
+                          return (
+                            <Button
+                              key={i}
+                              variant="outline"
+                              size="sm"
+                              className={`p-2 h-12 w-full ${
+                                isCompleted 
+                                  ? 'bg-blue-500 hover:bg-blue-600 text-white border-blue-600' 
+                                  : isToday
+                                    ? 'border-blue-300 bg-blue-50'
+                                    : ''
+                              }`}
+                              onClick={() => onToggleHabit(habit.id, date)}
+                            >
+                              <div className="flex flex-col items-center text-xs">
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'EEE')}
+                                </div>
+                                <div className={isToday ? 'font-bold' : ''}>
+                                  {format(date, 'd')}
+                                </div>
+                              </div>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                      
+                      <div className="flex justify-end space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditHabit(habit)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteHabit(habit.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </SortableContext>
           </DndContext>
+        </div>
+      )}
+      
+      {/* Monthly view */}
+      {viewMode === "monthly" && (
+        <div className="bg-white rounded-lg border p-4">
+          <div className="mb-4">
+            <div className="flex items-center justify-between">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setMonthOffset(prev => prev - 1)}
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div className="text-xl font-bold">
+                {format(currentMonth, 'MMMM yyyy')}
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setMonthOffset(prev => prev + 1)}
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground mt-1 text-center">
+              View habit completion for the entire month
+            </div>
+          </div>
+          
+          {/* Monthly calendar view */}
+          <div className="mb-6">
+            {/* Calendar header - days of week */}
+            <div className="grid grid-cols-7 mb-2 text-center">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="font-medium text-sm py-1">
+                  {day}
+                </div>
+              ))}
+            </div>
+            
+            {/* Calendar grid */}
+            <div className="grid grid-cols-7 gap-1">
+              {calendarDays().map((day, index) => {
+                const isCurrentMonth = day ? day.getMonth() === currentMonth.getMonth() : false;
+                const isToday = day ? isSameDay(day, today) : false;
+                
+                // Filter completions for this day
+                const dayCompletions = day ? completions.filter(c => 
+                  isSameDay(new Date(c.date), day) && c.completed
+                ) : [];
+                
+                // Calculate completion stats for this day
+                const absoluteHabits = filteredHabits.filter(h => h.isAbsolute);
+                const absoluteCompletions = day ? dayCompletions.filter(c => 
+                  absoluteHabits.some(h => h.id === c.habitId)
+                ).length : 0;
+                
+                const frequencyHabits = filteredHabits.filter(h => !h.isAbsolute);
+                const frequencyCompletions = day ? dayCompletions.filter(c => 
+                  frequencyHabits.some(h => h.id === c.habitId)
+                ).length : 0;
+                
+                // Color coding for completion status
+                let absoluteColor = 'bg-gray-200';
+                if (absoluteHabits.length > 0) {
+                  const completion = absoluteCompletions / absoluteHabits.length;
+                  if (completion === 1) absoluteColor = 'bg-green-500';
+                  else if (completion > 0) absoluteColor = 'bg-yellow-400';
+                }
+                
+                let frequencyColor = 'bg-gray-200';
+                if (frequencyHabits.length > 0) {
+                  const completion = frequencyCompletions / frequencyHabits.length;
+                  if (completion > 0.5) frequencyColor = 'bg-green-500';
+                  else if (completion > 0) frequencyColor = 'bg-yellow-400';
+                }
+                
+                return (
+                  <div
+                    key={day ? day.toISOString() : `empty-${index}`}
+                    className={`
+                      p-2 aspect-square border rounded-md flex flex-col
+                      ${!day ? 'bg-gray-50' : 'hover:bg-gray-50 cursor-pointer'}
+                      ${isToday ? 'bg-blue-50 border-blue-300' : ''}
+                      ${isCurrentMonth ? '' : 'text-gray-400'}
+                    `}
+                  >
+                    {day && (
+                      <>
+                        <div className="flex justify-between items-center mb-1">
+                          <div className={`font-medium ${isToday ? 'text-blue-700' : ''}`}>
+                            {format(day, 'd')}
+                          </div>
+                          {dayCompletions.length > 0 && (
+                            <div className="flex space-x-1">
+                              {absoluteHabits.length > 0 && (
+                                <div className={`w-2 h-2 rounded-full ${absoluteColor}`} />
+                              )}
+                              {frequencyHabits.length > 0 && (
+                                <div className={`w-2 h-2 rounded-full ${frequencyColor}`} />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Habit indicators */}
+                        <div className="flex-1 overflow-hidden relative">
+                          {day && dayCompletions.length > 0 && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="text-xs text-muted-foreground hover:underline">
+                                    {dayCompletions.length}/{filteredHabits.length}
+                                  </div>
+                                </div>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="start" className="w-56">
+                                <div className="p-2 text-xs font-medium border-b">
+                                  Habits for {format(day, 'MMM d, yyyy')}
+                                </div>
+                                {filteredHabits.map(habit => {
+                                  const isCompleted = isHabitCompletedOnDate(habit.id, day);
+                                  return (
+                                    <DropdownMenuItem 
+                                      key={habit.id}
+                                      onClick={() => onToggleHabit(habit.id, day)}
+                                      className={`flex items-center justify-between ${isCompleted ? 'bg-green-50' : ''}`}
+                                    >
+                                      <div className="flex items-center">
+                                        <div className={`w-3 h-3 rounded-full mr-2 ${habit.isAbsolute ? 'bg-blue-500' : 'bg-purple-500'} ${isCompleted ? 'opacity-100' : 'opacity-30'}`} />
+                                        {habit.title}
+                                        {habit.isAbsolute && <Badge variant="outline" className="ml-2 text-[9px]">ABSOLUTE</Badge>}
+                                      </div>
+                                      {isCompleted ? <Check className="h-3 w-3 text-green-600" /> : null}
+                                    </DropdownMenuItem>
+                                  );
+                                })}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* Monthly Stats Summary */}
+          <div className="mt-8">
+            <div className="text-sm font-medium mb-3">Monthly Habit Completion Summary</div>
+            
+            <div className="space-y-4">
+              {/* Absolute Habits */}
+              {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
+                <div>
+                  <div className="text-sm font-medium px-2 py-1 bg-blue-50 rounded text-blue-700 mb-3">
+                    Absolute Daily Habits
+                  </div>
+                  {filteredHabits.filter(h => h.isAbsolute).map(habit => {
+                    const daysInMonth = monthDays.length;
+                    const completedDays = completions.filter(
+                      c => c.habitId === habit.id && 
+                      c.completed &&
+                      new Date(c.date).getMonth() === currentMonth.getMonth()
+                    ).length;
+                    
+                    const completionRate = Math.round((completedDays / daysInMonth) * 100);
+                    
+                    return (
+                      <div key={habit.id} className="p-3 rounded-lg border mb-2">
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-medium">{habit.title}</div>
+                          <Badge variant={completionRate >= 80 ? "success" : completionRate >= 50 ? "warning" : "destructive"}>
+                            {completionRate}%
+                          </Badge>
+                        </div>
+                        <Progress value={completionRate} className="h-2 mb-1" />
+                        <div className="text-xs text-muted-foreground">
+                          {completedDays}/{daysInMonth} days completed
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {/* Frequency-based Habits */}
+              {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+                <div>
+                  <div className="text-sm font-medium px-2 py-1 bg-purple-50 rounded text-purple-700 mb-3">
+                    Frequency-Based Habits
+                  </div>
+                  {filteredHabits.filter(h => !h.isAbsolute).map(habit => {
+                    const frequencyNumber = parseInt(habit.frequency.split('x')[0]);
+                    const weeksInMonth = Math.ceil(monthDays.length / 7);
+                    const requiredCompletions = frequencyNumber * weeksInMonth;
+                    const actualCompletions = completions.filter(
+                      c => c.habitId === habit.id && 
+                      c.completed &&
+                      new Date(c.date).getMonth() === currentMonth.getMonth()
+                    ).length;
+                    
+                    const completionRate = Math.round((actualCompletions / requiredCompletions) * 100);
+                    
+                    return (
+                      <div key={habit.id} className="p-3 rounded-lg border mb-2">
+                        <div className="flex justify-between items-center mb-2">
+                          <div className="font-medium">{habit.title}</div>
+                          <Badge variant={completionRate >= 80 ? "success" : completionRate >= 50 ? "warning" : "destructive"}>
+                            {completionRate}%
+                          </Badge>
+                        </div>
+                        <Progress value={completionRate} className="h-2 mb-1" />
+                        <div className="text-xs text-muted-foreground">
+                          {actualCompletions}/{requiredCompletions} times ({getFrequencyLabel(habit.frequency)})
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
