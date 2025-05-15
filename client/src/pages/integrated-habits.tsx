@@ -901,6 +901,21 @@ export default function IntegratedHabits() {
     };
     
     setHabits([...habits, habit]);
+    
+    // Add to custom quick add habits for future use
+    const quickAddVersion = {
+      title: newHabit.title,
+      description: newHabit.description,
+      icon: newHabit.icon,
+      impact: newHabit.impact,
+      effort: newHabit.effort,
+      timeCommitment: newHabit.timeCommitment,
+      frequency: newHabit.frequency,
+      category: newHabit.category,
+      isAbsolute: newHabit.isAbsolute,
+    };
+    
+    setCustomQuickAddHabits(prev => [...prev, quickAddVersion]);
     setAddHabitOpen(false);
     
     // Reset form
@@ -919,7 +934,7 @@ export default function IntegratedHabits() {
     // Show success toast
     toast({
       title: "Habit added",
-      description: "Your new habit has been added to your tracking list",
+      description: "Your new habit has been added to your tracking list and quick add menu",
     });
   };
   
@@ -1899,10 +1914,12 @@ export default function IntegratedHabits() {
             {/* Quick Add Templates Tab */}
             <TabsContent value="quick" className="mt-0">
               <ScrollArea className="h-[350px] pr-4">
-                <div className="grid grid-cols-1 gap-3">
+                {/* Predefined Quick Add Habits */}
+                <div className="grid grid-cols-1 gap-3 mb-6">
+                  <h4 className="text-sm font-semibold text-muted-foreground px-1">Recommended Habits</h4>
                   {quickAddHabits.map((template, idx) => (
                     <div 
-                      key={idx} 
+                      key={`predefined-${idx}`} 
                       className="p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
                       onClick={() => {
                         // Directly add the habit instead of just setting form values
@@ -1935,6 +1952,47 @@ export default function IntegratedHabits() {
                     </div>
                   ))}
                 </div>
+                
+                {/* Custom Quick Add Habits */}
+                {customQuickAddHabits.length > 0 && (
+                  <div className="grid grid-cols-1 gap-3">
+                    <h4 className="text-sm font-semibold text-muted-foreground px-1">Your Created Habits</h4>
+                    {customQuickAddHabits.map((template, idx) => (
+                      <div 
+                        key={`custom-${idx}`} 
+                        className="p-3 border border-primary/20 rounded-lg cursor-pointer hover:bg-primary/5 transition-colors"
+                        onClick={() => {
+                          // Directly add the habit instead of just setting form values
+                          addQuickHabit(template);
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="p-1.5 rounded-md bg-primary/10 text-primary">
+                            {getIconComponent(template.icon)}
+                          </span>
+                          <h3 className="font-medium">{template.title}</h3>
+                          <Badge className={`ml-auto text-xs ${getCategoryColor(template.category as HabitCategory)}`}>
+                            {template.category}
+                          </Badge>
+                        </div>
+                        
+                        <p className="text-xs text-muted-foreground mb-2">{template.description}</p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            {template.timeCommitment}
+                          </Badge>
+                          <Badge variant="secondary" className="text-xs">
+                            {getFrequencyLabel(template.frequency as HabitFrequency)}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            Impact: {template.impact}/10
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </ScrollArea>
             </TabsContent>
             
