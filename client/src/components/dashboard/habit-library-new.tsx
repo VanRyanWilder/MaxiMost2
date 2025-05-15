@@ -659,6 +659,7 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent parent click
                       // Send the entire stack object to be handled by the parent component
+                      console.log('Clicked Add All for stack:', stack.title, 'with habits:', stack.habits.length);
                       onAddHabit?.({...stack, isStack: true});
                     }}
                   >
