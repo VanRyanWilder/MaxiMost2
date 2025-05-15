@@ -86,7 +86,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   onReorderHabits,
   onEditHabit
 }) => {
-  const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
+  const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly'>('weekly'); // Default to weekly view
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
@@ -258,7 +258,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
           <div className="flex items-center">
             <div className="join">
               <Button 
-                onClick={() => setViewMode("daily")} 
+                onClick={() => {
+                  setViewMode("daily");
+                  // Reset offsets when changing view mode for consistent behavior
+                  setDayOffset(0);
+                  setWeekOffset(0);
+                }} 
                 variant={viewMode === "daily" ? "default" : "outline"}
                 className="rounded-none"
               >
