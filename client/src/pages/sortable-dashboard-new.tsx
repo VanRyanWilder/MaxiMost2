@@ -399,14 +399,21 @@ export default function SortableDashboard() {
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="icon" onClick={goToPreviousDay}>
                       <span className="sr-only">Previous day</span>
-                      <Calendar className="h-4 w-4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                        <path d="M15 18l-6-6 6-6" />
+                      </svg>
                     </Button>
-                    <span className="font-medium">
-                      {format(currentDate, 'EEEE, MMMM d')}
-                    </span>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
+                      <span className="font-medium">
+                        {format(currentDate, 'EEEE, MMMM d')}
+                      </span>
+                    </div>
                     <Button variant="outline" size="icon" onClick={goToNextDay}>
                       <span className="sr-only">Next day</span>
-                      <Calendar className="h-4 w-4" />
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
                     </Button>
                   </div>
                   
