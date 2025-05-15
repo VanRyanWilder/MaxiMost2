@@ -550,11 +550,10 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="health" className="w-full">
-          <TabsList className="grid grid-cols-4 mb-3">
+          <TabsList className="grid grid-cols-3 mb-3">
             <TabsTrigger value="health">Health</TabsTrigger>
             <TabsTrigger value="fitness">Fitness</TabsTrigger>
             <TabsTrigger value="mind">Mind</TabsTrigger>
-            <TabsTrigger value="habits">Daily Habits</TabsTrigger>
           </TabsList>
           
           <TabsContent value="health" className="space-y-3">
@@ -626,28 +625,7 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
             </div>
           </TabsContent>
           
-          <TabsContent value="habits" className="space-y-3">
-            <div className="grid grid-cols-1 gap-2">
-              {habitSuggestions.habits.map(habit => (
-                <div 
-                  key={habit.id}
-                  className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-yellow-50 transition-colors"
-                  onClick={() => onAddHabit?.(habit)}
-                >
-                  <div className="flex-shrink-0">
-                    {renderIcon(habit.icon, habit.iconColor)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
-                  </div>
-                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
+
         </Tabs>
         
         {/* Habit Stacks Section - Separated from the tabs */}
@@ -666,7 +644,7 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                 key={stack.id}
                 className="p-2 rounded-md bg-gray-50 shadow-sm hover:bg-amber-50 transition-colors"
               >
-                <div className="flex items-center gap-2 cursor-pointer mb-1">
+                <div className="flex items-center gap-2 cursor-pointer mb-1" onClick={() => {}}>
                   <div className="flex-shrink-0">
                     {renderIcon(stack.icon, stack.iconColor)}
                   </div>
@@ -678,7 +656,8 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                     size="sm" 
                     variant="outline" 
                     className="h-8 flex-shrink-0 text-xs"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent parent click
                       stack.habits.forEach((habit: any) => {
                         onAddHabit?.(habit);
                       });
@@ -691,11 +670,24 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                 
                 <div className="pl-6 mt-1">
                   <div className="text-xs text-muted-foreground mb-1">Contains {stack.habits.length} habits:</div>
-                  <div className="flex flex-wrap gap-1 ml-1">
+                  <div className="grid grid-cols-1 gap-1 mt-2">
                     {stack.habits.map((habit: any) => (
-                      <Badge key={habit.id} variant="outline" className="text-xs bg-white">
-                        {habit.title}
-                      </Badge>
+                      <div 
+                        key={habit.id}
+                        className="p-1.5 rounded border border-gray-100 bg-white flex items-center gap-2 cursor-pointer hover:bg-blue-50 transition-colors"
+                        onClick={() => onAddHabit?.(habit)}
+                      >
+                        <div className="flex-shrink-0">
+                          {renderIcon(habit.icon, habit.iconColor)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{habit.description}</p>
+                        </div>
+                        <Button size="sm" variant="ghost" className="h-6 w-6 p-0 flex-shrink-0">
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
                     ))}
                   </div>
                 </div>
