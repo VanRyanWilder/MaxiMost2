@@ -317,7 +317,7 @@ export default function Home() {
             <div className="inline-block p-0.5 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500">
               <div className="bg-gray-900 rounded-md px-8 py-6">
                 <h3 className="text-2xl font-bold mb-2">Ready to maximize your health ROI?</h3>
-                <p className="text-gray-300 mb-4">Join BeastMode today and focus on what truly matters for your health.</p>
+                <p className="text-gray-300 mb-4">Join MaxiMost today and focus on what truly matters for your health.</p>
                 <Button 
                   size="lg" 
                   className="bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500 hover:from-indigo-600 hover:via-purple-600 hover:to-rose-600"
@@ -331,7 +331,7 @@ export default function Home() {
         </main>
         
         <footer className="mt-24 pb-12 text-center text-gray-400 text-sm">
-          <p>© 2025 BeastMode. All rights reserved.</p>
+          <p>© 2025 MaxiMost. All rights reserved.</p>
         </footer>
       </div>
     </div>
