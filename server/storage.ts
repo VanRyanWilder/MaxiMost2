@@ -145,6 +145,26 @@ export class MemStorage implements IStorage {
   private forumCommentIdCounter: number;
   private motivationalContentIdCounter: number;
   
+  // Supplement related storage
+  private supplements: Map<number, Supplement>;
+  private supplementReviews: Map<number, SupplementReview>;
+  private supplementVotes: Map<number, SupplementVote>;
+  private reviewHelpfulVotes: Map<string, ReviewHelpfulVote>;
+  
+  // Body stats and health data storage
+  private bodyStats: Map<number, BodyStat>;
+  private bloodworkResults: Map<number, Bloodwork>;
+  private sleepDataEntries: Map<number, SleepData>;
+  private heartRateDataEntries: Map<number, HeartRateData>;
+  
+  // Additional ID counters
+  private supplementIdCounter: number;
+  private supplementReviewIdCounter: number;
+  private bodyStatIdCounter: number;
+  private bloodworkIdCounter: number;
+  private sleepDataIdCounter: number;
+  private heartRateDataIdCounter: number;
+  
   constructor() {
     this.users = new Map();
     this.programs = new Map();
@@ -155,6 +175,14 @@ export class MemStorage implements IStorage {
     this.forumPosts = new Map();
     this.forumComments = new Map();
     this.motivationalContents = new Map();
+    this.supplements = new Map();
+    this.supplementReviews = new Map();
+    this.supplementVotes = new Map();
+    this.reviewHelpfulVotes = new Map();
+    this.bodyStats = new Map();
+    this.bloodworkResults = new Map();
+    this.sleepDataEntries = new Map();
+    this.heartRateDataEntries = new Map();
     
     this.userIdCounter = 1;
     this.programIdCounter = 1;
@@ -165,6 +193,12 @@ export class MemStorage implements IStorage {
     this.forumPostIdCounter = 1;
     this.forumCommentIdCounter = 1;
     this.motivationalContentIdCounter = 1;
+    this.supplementIdCounter = 1;
+    this.supplementReviewIdCounter = 1;
+    this.bodyStatIdCounter = 1;
+    this.bloodworkIdCounter = 1;
+    this.sleepDataIdCounter = 1;
+    this.heartRateDataIdCounter = 1;
     
     // Initialize with sample data
     this.initializeData();

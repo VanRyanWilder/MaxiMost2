@@ -13,6 +13,7 @@ import Habits from "@/pages/habits";
 import UnifiedHabits from "@/pages/unified-habits";
 import IntegratedHabits from "@/pages/integrated-habits";
 import Supplements from "@/pages/supplements";
+import SupplementDetail from "@/pages/supplement-detail";
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -50,6 +51,7 @@ function App() {
     <Switch>
       {/* Public routes */}
       <Route path="/" component={Home} />
+      <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       
@@ -83,6 +85,9 @@ function App() {
       </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
+      </Route>
+      <Route path="/supplement-detail/:id">
+        <PrivateRoute component={SupplementDetail} />
       </Route>
       <Route path="/body-stats">
         <PrivateRoute component={BodyStats} />

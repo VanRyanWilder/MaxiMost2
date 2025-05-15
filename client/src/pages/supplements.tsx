@@ -8,6 +8,7 @@ import {
   Trophy,
   User,
   Quote,
+  ChevronRight
 } from "lucide-react";
 
 interface ExpertInsight {
