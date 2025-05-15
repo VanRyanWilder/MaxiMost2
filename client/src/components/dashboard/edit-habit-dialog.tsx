@@ -152,7 +152,7 @@ const DEFAULT_NEW_HABIT: Habit = {
   impact: 8,
   effort: 4,
   timeCommitment: "10 min",
-  frequency: "daily",
+  frequency: "daily", // Default frequency
   isAbsolute: false,
   category: "health",
   streak: 0,
@@ -471,8 +471,8 @@ export function EditHabitDialog({
                 <SelectItem value="2x-week">2x per week</SelectItem>
                 <SelectItem value="3x-week">3x per week</SelectItem>
                 <SelectItem value="4x-week">4x per week</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
+                <SelectItem value="5x-week">5x per week</SelectItem>
+                <SelectItem value="6x-week">6x per week</SelectItem>
               </SelectContent>
             </Select>
           </div>

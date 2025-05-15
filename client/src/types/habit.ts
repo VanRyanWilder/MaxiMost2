@@ -1,14 +1,10 @@
 export type HabitFrequency = 
   | "daily" 
-  | "weekdays" 
-  | "weekends" 
-  | "1x-week" 
   | "2x-week" 
   | "3x-week" 
   | "4x-week" 
   | "5x-week" 
-  | "6x-week"
-  | "weekly";
+  | "6x-week";
 
 export type HabitTimeCommitment = 
   | "minimal" 
