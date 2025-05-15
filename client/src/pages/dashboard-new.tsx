@@ -9,6 +9,7 @@ import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
 import { useToast } from "@/hooks/use-toast";
 import { format, addDays, startOfWeek, subDays, isSameDay, isBefore, isAfter } from 'date-fns';
+import { iconMap as habitIconMap, colorSchemes } from "@/components/dashboard/edit-habit-dialog";
 import { 
   Activity, 
   Zap, 
@@ -147,22 +148,30 @@ const initialCompletions: HabitCompletion[] = [
 ];
 
 // Function to get icon component based on icon string
-function getIconComponent(iconName: string) {
-  const iconMap: Record<string, React.ReactNode> = {
-    activity: <Activity className="h-4 w-4" />,
-    "book-open": <BookOpen className="h-4 w-4" />,
-    zap: <Zap className="h-4 w-4" />,
-    brain: <Brain className="h-4 w-4" />,
-    dumbbell: <Dumbbell className="h-4 w-4" />,
-    droplets: <Droplets className="h-4 w-4" />,
-    apple: <Apple className="h-4 w-4" />,
-    pencil: <Pencil className="h-4 w-4" />,
-    sun: <Sun className="h-4 w-4" />,
-    star: <Star className="h-4 w-4" />,
-    "check-square": <CheckSquare className="h-4 w-4" />,
-  };
 
-  return iconMap[iconName.toLowerCase()] || <Activity className="h-4 w-4" />;
+function getIconComponent(iconName: string, iconColor?: string, className: string = "h-4 w-4") {
+  // Get color scheme classes
+  const colorScheme = iconColor ? 
+    colorSchemes.find(c => c.id === iconColor) : 
+    { primary: "text-slate-600", bg: "bg-slate-100" };
+  
+  // If the icon exists in our shared icon map from edit-habit-dialog
+  if (habitIconMap[iconName]) {
+    const IconComponent = habitIconMap[iconName].component;
+    return <IconComponent className={`${className} ${colorScheme?.primary || ""}`} />;
+  }
+  
+  // Fallback icons for backward compatibility
+  const fallbackMap: Record<string, React.ReactNode> = {
+    activity: <Activity className={`${className} ${colorScheme?.primary || ""}`} />,
+    "book-open": <BookOpen className={`${className} ${colorScheme?.primary || ""}`} />,
+    apple: <Apple className={`${className} ${colorScheme?.primary || ""}`} />,
+    star: <Star className={`${className} ${colorScheme?.primary || ""}`} />,
+    "check-square": <CheckSquare className={`${className} ${colorScheme?.primary || ""}`} />,
+  };
+  
+  // Return from fallback map or default to activity icon
+  return fallbackMap[iconName.toLowerCase()] || <Activity className={`${className} ${colorScheme?.primary || ""}`} />;
 }
 
 export default function Dashboard() {
@@ -548,8 +557,17 @@ export default function Dashboard() {
                             >
                               <div className="flex items-center p-1.5 relative group">
                                 <div className="flex items-center gap-2 min-w-0">
-                                  <div className={`p-1.5 rounded-md ${weeklyGoalMet ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-600'}`}>
-                                    {getIconComponent(habit.icon)}
+                                  <div className={`p-1.5 rounded-md ${
+                                      weeklyGoalMet 
+                                        ? 'bg-green-100 text-green-600' 
+                                        : habit.iconColor 
+                                          ? colorSchemes.find(c => c.id === habit.iconColor)?.bg || 'bg-slate-100'
+                                          : 'bg-slate-100'
+                                    }`}>
+                                    {getIconComponent(
+                                      habit.icon, 
+                                      weeklyGoalMet ? undefined : habit.iconColor
+                                    )}
                                   </div>
                                   <div className="min-w-0 flex flex-col">
                                     <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
