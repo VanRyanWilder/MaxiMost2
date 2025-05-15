@@ -1,8 +1,8 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
-// Using our integrated dashboard with drag-and-drop and all features
-import Dashboard from "@/pages/integrated-dashboard";
+// Using our sortable dashboard with drag-and-drop and all features
+import Dashboard from "@/pages/sortable-dashboard";
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
 import MindSpirit from "@/pages/mind-spirit";
