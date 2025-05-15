@@ -47,6 +47,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Your all-in-one habit tracking center"
     },
     { 
+      path: "/habit-building", 
+      name: "Habit Building", 
+      icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
+      description: "Learn proven methods to build lasting habits"
+    },
+    { 
       path: "/supplements", 
       name: "Top 10 Supplements", 
       icon: <Trophy className="w-5 h-5 text-amber-500" />,
