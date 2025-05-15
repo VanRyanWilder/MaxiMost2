@@ -94,7 +94,11 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const [monthOffset, setMonthOffset] = useState(0);
 
   const today = startOfToday();
-  const startOfCurrentWeek = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 });
+  // Calculate the exact day offset by converting weekOffset to days
+  // For whole numbers, this behaves like before
+  // For fractions like 1/7, it shifts by the fractional part of a week
+  const dayOffset = Math.floor(weekOffset) * 7 + Math.round((weekOffset % 1) * 7);
+  const startOfCurrentWeek = startOfWeek(addDays(today, dayOffset), { weekStartsOn: 1 });
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfCurrentWeek, i));
 
   const currentMonth = addMonths(today, monthOffset);
