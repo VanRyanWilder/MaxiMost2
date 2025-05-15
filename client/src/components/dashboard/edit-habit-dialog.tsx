@@ -22,7 +22,10 @@ import {
   Users, 
   Heart, 
   Sun, 
-  Zap, 
+  Zap,
+  Briefcase,
+  Music,
+  Banknote,
   Activity,
   ScrollText
 } from "lucide-react";
