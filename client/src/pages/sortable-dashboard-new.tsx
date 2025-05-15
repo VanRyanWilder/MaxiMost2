@@ -290,11 +290,38 @@ export default function SortableDashboard() {
     // Check if this is a habit stack with multiple habits
     if (habitTemplate.isStack && habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
       console.log('Processing as stack with multiple habits');
-      // If it's a stack, add each habit from the stack
-      habitTemplate.habits.forEach((habitItem: any) => {
-        console.log('Adding habit from stack:', habitItem.title);
-        addHabitFromTemplate(habitItem);
-      });
+      
+      // Create a copy of the habits array to prevent modifications during iteration
+      const habitsToAdd = [...habitTemplate.habits];
+      
+      // Add all habits synchronously in a for loop instead of forEach
+      for (let i = 0; i < habitsToAdd.length; i++) {
+        const habitItem = habitsToAdd[i];
+        console.log(`Adding habit ${i+1}/${habitsToAdd.length} from stack:`, habitItem.title);
+        
+        // Generate a new unique ID for the habit
+        const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}-${i}`;
+        
+        // Create the new habit from the template
+        const newHabit = {
+          id: newId,
+          title: habitItem.title,
+          description: habitItem.description,
+          icon: habitItem.icon,
+          iconColor: habitItem.iconColor,
+          impact: habitItem.impact,
+          effort: habitItem.effort,
+          timeCommitment: habitItem.timeCommitment,
+          frequency: habitItem.frequency,
+          isAbsolute: habitItem.isAbsolute,
+          category: habitItem.category,
+          streak: 0,
+          createdAt: new Date()
+        };
+        
+        // Add it directly to the habits array
+        setHabits(prevHabits => [...prevHabits, newHabit]);
+      }
       
       // Show success feedback for stack
       console.log('Added all habits from stack:', habitTemplate.title);
