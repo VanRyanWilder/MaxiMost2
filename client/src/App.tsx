@@ -29,6 +29,7 @@ import Research from "@/pages/research";
 import Sugar from "@/pages/sugar";
 import Experts from "@/pages/experts";
 import HabitBuilding from "@/pages/habit-building";
+import Branding from "@/pages/branding";
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
@@ -130,6 +131,10 @@ function App() {
       
       <Route path="/habit-building">
         <PrivateRoute component={HabitBuilding} />
+      </Route>
+      
+      <Route path="/branding">
+        <PrivateRoute component={Branding} />
       </Route>
       
       <Route path="/pricing">

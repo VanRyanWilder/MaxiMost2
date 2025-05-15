@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/ui/logo";
 
 // Demo data for habits - ensure all required properties are set
 const absoluteHabits: Habit[] = [
@@ -226,7 +227,7 @@ export default function HabitTrackerPage() {
       <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-[#6366f1]">Maximus Gains</h1>
+            <Logo size="medium" />
             <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Habit Dashboard</Badge>
           </div>
           
