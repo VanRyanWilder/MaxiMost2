@@ -2,6 +2,7 @@ import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
 import Dashboard from "@/pages/dashboard-new";
+import SortableDashboard from "@/pages/sortable-dashboard";
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
 import MindSpirit from "@/pages/mind-spirit";
