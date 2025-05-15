@@ -16,21 +16,22 @@ import UnifiedHabits from "@/pages/unified-habits";
 import IntegratedHabits from "@/pages/integrated-habits";
 import HabitTracker from "@/pages/habit-tracker"; // New weekly calendar habit tracker
 import HabitStacks from "@/pages/habit-stacks";
+import FourPillars from "@/pages/four-pillars";
 import Supplements from "@/pages/supplements";
 import SupplementDetail from "@/pages/supplement-detail";
+import Research from "@/pages/research";
+import Principles from "@/pages/principles";
+import Sugar from "@/pages/sugar";
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import Home from "@/pages/home";
-import Principles from "@/pages/principles";
 import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
 import Progress from "@/pages/progress";
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
 import Motivation from "@/pages/motivation";
-import Research from "@/pages/research";
-import Sugar from "@/pages/sugar";
 import Experts from "@/pages/experts";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
@@ -106,18 +107,26 @@ function App() {
       <Route path="/habit-stacks">
         <PrivateRoute component={HabitStacks} />
       </Route>
+      <Route path="/four-pillars">
+        <PrivateRoute component={FourPillars} />
+      </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
       </Route>
       <Route path="/supplement-detail/:id">
         <PrivateRoute component={SupplementDetail} />
       </Route>
-      <Route path="/body-stats">
-        <PrivateRoute component={BodyStats} />
+      <Route path="/research">
+        <PrivateRoute component={Research} />
       </Route>
-      
       <Route path="/principles">
         <PrivateRoute component={Principles} />
+      </Route>
+      <Route path="/sugar">
+        <PrivateRoute component={Sugar} />
+      </Route>
+      <Route path="/body-stats">
+        <PrivateRoute component={BodyStats} />
       </Route>
       
       <Route path="/community">
@@ -134,14 +143,6 @@ function App() {
       
       <Route path="/motivation">
         <PrivateRoute component={Motivation} />
-      </Route>
-      
-      <Route path="/research">
-        <PrivateRoute component={Research} />
-      </Route>
-      
-      <Route path="/sugar">
-        <PrivateRoute component={Sugar} />
       </Route>
       
       <Route path="/experts">
