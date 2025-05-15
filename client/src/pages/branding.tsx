@@ -37,7 +37,7 @@ export default function BrandingPage() {
                 </CardHeader>
                 <CardContent className="bg-gray-50 p-6 flex flex-col items-center">
                   <img 
-                    src="/images/maximost-alt-logo.png" 
+                    src="/images/maximost-logo-0.png" 
                     alt="MaxiMost Alternative Logo" 
                     className="h-20 object-contain" 
                   />
