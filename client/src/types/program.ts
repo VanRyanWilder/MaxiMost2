@@ -1,48 +1,62 @@
-export type ProgramGoalCategory = 
-  | 'weight-loss' 
-  | 'muscle-gain' 
-  | 'health-optimization' 
-  | 'performance'
-  | 'focus-productivity'
-  | 'stress-reduction'
-  | 'sleep-improvement';
-
-export type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
-
-export type TimeCommitment = 'minimal' | 'moderate' | 'high';
-
-export interface UserGoalProfile {
-  id: string;
-  userId: string;
-  primaryGoal: ProgramGoalCategory;
-  secondaryGoal?: ProgramGoalCategory;
-  fitnessLevel: FitnessLevel;
-  timeCommitment: TimeCommitment;
-  dietaryPreferences?: string[];
-  healthIssues?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface Program {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  primaryGoal: ProgramGoalCategory;
-  supportedGoals: ProgramGoalCategory[];
-  fitnessLevel: FitnessLevel[];
-  timeCommitment: TimeCommitment;
   durationWeeks: number;
-  habitIds: string[];
-  imageUrl?: string;
-  recommendationScore?: number; // Used for personalized sorting
+  category: ProgramCategory;
+  difficulty: ProgramDifficulty;
+  goals: string[];
+  benefits: string[];
+  image?: string;
+  color: string;
+  habits: string[]; // Habit IDs
+  tasks: ProgramTask[];
+  resources: ProgramResource[];
 }
 
+export type ProgramCategory = 
+  | "health" 
+  | "fitness" 
+  | "mind" 
+  | "nutrition" 
+  | "sleep"
+  | "productivity";
+
+export type ProgramDifficulty = 
+  | "beginner" 
+  | "intermediate" 
+  | "advanced";
+
+export interface ProgramTask {
+  id: string;
+  title: string;
+  description: string;
+  duration: number; // in minutes
+  frequency: string;
+  category: string;
+}
+
+export interface ProgramResource {
+  id: string;
+  title: string;
+  type: ResourceType;
+  url?: string;
+  content?: string;
+}
+
+export type ResourceType = 
+  | "article" 
+  | "video" 
+  | "book" 
+  | "app" 
+  | "workout" 
+  | "recipe";
+
 export interface RecommendationCriteria {
-  primaryGoal: ProgramGoalCategory;
-  secondaryGoal?: ProgramGoalCategory;
-  fitnessLevel: FitnessLevel;
-  timeCommitment: TimeCommitment;
-  dietaryPreferences?: string[];
-  healthIssues?: string[];
+  goalType: string; // Primary goal
+  secondaryGoals: string[];
+  timeCommitment: string; // How much time per day/week
+  difficulty: ProgramDifficulty;
+  healthConditions: string[];
+  preferences: string[];
 }
