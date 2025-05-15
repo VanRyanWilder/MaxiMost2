@@ -37,6 +37,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
@@ -158,6 +161,7 @@ function getIconComponent(iconName: string) {
 
 export default function Dashboard() {
   const { user } = useUser();
+  const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
@@ -639,30 +643,57 @@ export default function Dashboard() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="w-56">
-                          <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience")}>
-                            <Brain className="mr-2 h-4 w-4 text-blue-500" /> Cold Shower
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "activity", "fitness", "Improve daily movement and cardiovascular health")}>
-                            <Activity className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "apple", "health", "Avoid added sugar for better metabolic health")}>
-                            <Apple className="mr-2 h-4 w-4 text-red-500" /> No Sugar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition")}>
-                            <Sun className="mr-2 h-4 w-4 text-amber-500" /> Sleep 8 Hours
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity")}>
-                            <Pencil className="mr-2 h-4 w-4 text-purple-500" /> Journal
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "apple", "health", "Nutrient-dense breakfast for health and energy")}>
-                            <Apple className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "activity", "fitness", "Improve flexibility and mobility")}>
-                            <Activity className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "pill", "health", "Supplement with necessary micronutrients")}>
-                            <Droplets className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
-                          </DropdownMenuItem>
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Mind</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience", 7, 6)}>
+                              <Brain className="mr-2 h-4 w-4 text-blue-500" /> Cold Shower
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity", 6, 3)}>
+                              <Pencil className="mr-2 h-4 w-4 text-purple-500" /> Journal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Reading", "book-open", "mind", "Read a book or article for growth", 7, 4)}>
+                              <BookOpen className="mr-2 h-4 w-4 text-amber-500" /> Reading
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7)}>
+                              <Zap className="mr-2 h-4 w-4 text-red-500" /> Digital Detox
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Health</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition", 9, 5)}>
+                              <Sun className="mr-2 h-4 w-4 text-amber-500" /> Sleep 8 Hours
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "apple", "health", "Avoid added sugar for better metabolic health", 8, 7)}>
+                              <Apple className="mr-2 h-4 w-4 text-red-500" /> No Sugar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "apple", "health", "Nutrient-dense breakfast for health and energy", 7, 4)}>
+                              <Apple className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "droplets", "health", "Supplement with necessary micronutrients", 6, 2)}>
+                              <Droplets className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Fitness</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "activity", "fitness", "Improve daily movement and cardiovascular health", 8, 6)}>
+                              <Activity className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "activity", "fitness", "Improve flexibility and mobility", 7, 3)}>
+                              <Activity className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Strength Training", "dumbbell", "fitness", "Build muscle and boost metabolism", 9, 7, "45 min", "3x-week")}>
+                              <Dumbbell className="mr-2 h-4 w-4 text-red-500" /> Strength Training
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("HIIT Workout", "activity", "fitness", "High intensity interval training", 9, 8, "20 min", "3x-week")}>
+                              <Activity className="mr-2 h-4 w-4 text-orange-500" /> HIIT Workout
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -671,7 +702,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Stay hydrated for optimal body function")}
+                        onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Stay hydrated for optimal body function", 9, 2)}
                       >
                         <Droplets className="h-4 w-4 text-blue-500" />
                         Drink Water <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">1.2k</Badge>
@@ -680,7 +711,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Read", "book-open", "mind", "Daily reading for continuous growth")}
+                        onClick={() => addQuickHabit("Read", "book-open", "mind", "Daily reading for continuous growth", 8, 5)}
                       >
                         <BookOpen className="h-4 w-4 text-amber-500" />
                         Read <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">856</Badge>
@@ -689,7 +720,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Meditate", "brain", "mind", "Mindfulness practice for clarity")}
+                        onClick={() => addQuickHabit("Meditate", "brain", "mind", "Mindfulness practice for clarity", 8, 4)}
                       >
                         <Brain className="h-4 w-4 text-violet-500" />
                         Meditate <Badge className="ml-auto bg-violet-100 text-violet-700 hover:bg-violet-200">721</Badge>
@@ -698,7 +729,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Exercise", "dumbbell", "fitness", "Move your body for health and energy")}
+                        onClick={() => addQuickHabit("Exercise", "dumbbell", "fitness", "Move your body for health and energy", 10, 6)}
                       >
                         <Dumbbell className="h-4 w-4 text-red-500" />
                         Exercise <Badge className="ml-auto bg-red-100 text-red-700 hover:bg-red-200">695</Badge>
@@ -707,7 +738,7 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("Gratitude", "pencil", "mind", "Write down three things you're grateful for")}
+                        onClick={() => addQuickHabit("Gratitude", "pencil", "mind", "Write down three things you're grateful for", 7, 3)}
                       >
                         <Pencil className="h-4 w-4 text-green-500" />
                         Gratitude <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">582</Badge>
@@ -716,10 +747,46 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
-                        onClick={() => addQuickHabit("No Phone Hour", "zap", "mind", "Take a break from screens before bed")}
+                        onClick={() => addQuickHabit("No Phone Hour", "zap", "mind", "Take a break from screens before bed", 7, 5)}
                       >
                         <Zap className="h-4 w-4 text-yellow-500" />
                         No Phone <Badge className="ml-auto bg-yellow-100 text-yellow-700 hover:bg-yellow-200">447</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Track Calories", "activity", "health", "Monitor daily caloric intake", 8, 7)}
+                      >
+                        <Activity className="h-4 w-4 text-orange-500" />
+                        Track Calories <Badge className="ml-auto bg-orange-100 text-orange-700 hover:bg-orange-200">412</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Protein Intake", "dumbbell", "health", "Ensure adequate protein consumption", 8, 5, "10 min", "daily")}
+                      >
+                        <Dumbbell className="h-4 w-4 text-purple-500" />
+                        Protein Intake <Badge className="ml-auto bg-purple-100 text-purple-700 hover:bg-purple-200">398</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Supplements", "droplets", "health", "Take daily supplements", 6, 2, "2 min")}
+                      >
+                        <Droplets className="h-4 w-4 text-green-500" />
+                        Supplements <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">375</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Intermittent Fast", "clock", "health", "Practice time-restricted eating", 8, 6, "60 min", "daily")}
+                      >
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        Intermittent Fast <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">354</Badge>
                       </Button>
                     </div>
                     
