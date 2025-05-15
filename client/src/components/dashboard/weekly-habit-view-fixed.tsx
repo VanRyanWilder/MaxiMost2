@@ -194,6 +194,34 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
         </div>
         
         <div className="flex items-center gap-2 self-end sm:self-auto">
+          {/* View Mode Toggle */}
+          <div className="flex items-center gap-0.5 border rounded-md bg-background p-0.5">
+            <Button 
+              variant={viewMode === "daily" ? "default" : "ghost"} 
+              size="sm"
+              onClick={() => setViewMode("daily")}
+              className="h-7 rounded-sm px-2"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+            </Button>
+            <Button 
+              variant={viewMode === "weekly" ? "default" : "ghost"} 
+              size="sm"
+              onClick={() => setViewMode("weekly")}
+              className="h-7 rounded-sm px-2"
+            >
+              <CalendarDays className="h-3.5 w-3.5" />
+            </Button>
+            <Button 
+              variant={viewMode === "monthly" ? "default" : "ghost"} 
+              size="sm"
+              onClick={() => setViewMode("monthly")}
+              className="h-7 rounded-sm px-2"
+            >
+              <Calendar className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -248,41 +276,34 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
         ))}
       </div>
       
-      {/* Absolute habits (always do) */}
-      {absoluteHabits.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Zap className="h-4 w-4 text-blue-500" />
-            <h3 className="font-medium text-sm">Absolute Habits</h3>
-            <span className="text-xs text-muted-foreground">(Do these every day)</span>
-          </div>
-          
-          <div className="space-y-2">
-            {absoluteHabits.map(habit => (
-              <div 
-                key={habit.id} 
-                className={`grid grid-cols-8 gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
-                  ${habit.streak > 0 ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-transparent' : 'border-slate-200'}
-                `}
-              >
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <div className={`p-1.5 rounded-md ${habit.streak > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
-                    {getIconComponent(habit.icon)}
-                  </div>
-                  <div className="min-w-0 flex flex-col">
-                    <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">{habit.title}</span>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-gray-50">
-                        {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
-                      </Badge>
-                      
-                      {habit.streak > 0 && (
-                        <Badge variant="outline" className="px-1 py-0 h-4 text-[10px] flex items-center gap-0.5 bg-blue-500/10 text-blue-700 border-blue-200">
-                          <Award className="h-2.5 w-2.5" /> {habit.streak}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
+      {/* All habits with visual indicators for absolute vs optional */}
+      <div className="space-y-2">
+        {absoluteHabits.length > 0 && absoluteHabits.map(habit => (
+          <div 
+            key={habit.id} 
+            className={`grid grid-cols-8 gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
+              ${habit.streak > 0 ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-transparent' : 'border-slate-200'}
+            `}
+          >
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className={`p-1.5 rounded-md ${habit.streak > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
+                {getIconComponent(habit.icon)}
+              </div>
+              <div className="min-w-0 flex flex-col">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">{habit.title}</span>
+                  <Badge variant="default" className="px-1 py-0 h-4 text-[10px] bg-blue-500 hover:bg-blue-500">
+                    Daily
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-1 mt-0.5">
+                  {habit.streak > 0 && (
+                    <Badge variant="outline" className="px-1 py-0 h-4 text-[10px] flex items-center gap-0.5 bg-blue-500/10 text-blue-700 border-blue-200">
+                      <Award className="h-2.5 w-2.5" /> {habit.streak}
+                    </Badge>
+                  )}
+                </div>
+              </div>
                 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -341,17 +362,8 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
         </div>
       )}
       
-      {/* Optional habits (frequency-based) */}
-      {optionalHabits.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Activity className="h-4 w-4 text-blue-500" />
-            <h3 className="font-medium text-sm">Additional Habits</h3>
-            <span className="text-xs text-muted-foreground">(Based on your target frequency)</span>
-          </div>
-          
-          <div className="space-y-3">
-            {optionalHabits.map(habit => {
+      {/* Continue the list with optional habits */}
+        {optionalHabits.length > 0 && optionalHabits.map(habit => {
               // Calculate completion count for this habit
               const completedCount = countCompletedDaysInWeek(habit.id);
               const targetCount = habit.frequency === 'daily' ? 7 : 
