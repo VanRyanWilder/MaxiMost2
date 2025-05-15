@@ -1,6 +1,6 @@
 // Shared habit types used across the application
-export type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
-export type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
+export type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "5x-week" | "6x-week" | "custom";
+export type HabitCategory = "health" | "fitness" | "mind" | "social" | "work" | "study" | "hobby" | "finance" | "spiritual" | "custom" | string;
 
 export interface Habit {
   id: string;
