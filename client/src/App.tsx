@@ -15,6 +15,7 @@ import Habits from "@/pages/habits";
 import UnifiedHabits from "@/pages/unified-habits";
 import IntegratedHabits from "@/pages/integrated-habits";
 import HabitTracker from "@/pages/habit-tracker"; // New weekly calendar habit tracker
+import HabitStacks from "@/pages/habit-stacks";
 import Supplements from "@/pages/supplements";
 import SupplementDetail from "@/pages/supplement-detail";
 import BodyStats from "@/pages/body-stats";
@@ -101,6 +102,9 @@ function App() {
       </Route>
       <Route path="/habit-tracker">
         <PrivateRoute component={HabitTracker} />
+      </Route>
+      <Route path="/habit-stacks">
+        <PrivateRoute component={HabitStacks} />
       </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
