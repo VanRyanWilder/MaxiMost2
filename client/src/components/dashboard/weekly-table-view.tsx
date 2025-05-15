@@ -67,6 +67,30 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   const isFutureDate = (date: Date) => {
     return date > currentDate;
   };
+  
+  // Reusable habit button component to handle future dates
+  const HabitButton = ({ habitId, date, isCompleted }: { habitId: string, date: Date, isCompleted: boolean }) => {
+    const disabled = isFutureDate(date);
+    
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className={`rounded-full w-8 h-8 ${
+          isCompleted ? 'text-blue-500' : 'text-slate-300'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onClick={() => !disabled && onToggleHabit(habitId, date)}
+        disabled={disabled}
+        title={disabled ? "Can't complete future habits" : ""}
+      >
+        {isCompleted ? (
+          <CheckCircle className="h-6 w-6 fill-blue-500 text-white" />
+        ) : (
+          <Circle className="h-6 w-6" />
+        )}
+      </Button>
+    );
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
