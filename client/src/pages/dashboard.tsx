@@ -9,6 +9,7 @@ import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitViewModes } from "@/components/dashboard/habit-view-modes";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
+import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
 import { 
@@ -364,23 +365,27 @@ export default function Dashboard() {
                                   variant="ghost" 
                                   size="sm" 
                                   onClick={() => {
-                                    const newHabit = {
-                                      id: `h-${Date.now()}-q${index}`,
-                                      title: habit.title,
-                                      description: habit.description,
-                                      icon: habit.icon.type.name.toLowerCase(),
-                                      iconColor: '#3b82f6',
-                                      impact: 8,
-                                      effort: 3,
-                                      timeCommitment: '5 min',
-                                      frequency: 'daily',
-                                      isAbsolute: true,
-                                      category: habit.category,
-                                      streak: 0,
-                                      createdAt: new Date()
-                                    };
-                                    setHabits([...habits, newHabit]);
-                                    alert(`Added "${habit.title}" to your habits!`);
+                                    if (habit.title === "Custom") {
+                                      setShowCustomHabitDialog(true);
+                                    } else {
+                                      const newHabit = {
+                                        id: `h-${Date.now()}-q${index}`,
+                                        title: habit.title,
+                                        description: habit.description,
+                                        icon: habit.icon.type.name.toLowerCase(),
+                                        iconColor: 'blue',
+                                        impact: 8,
+                                        effort: 3,
+                                        timeCommitment: '5 min',
+                                        frequency: 'daily',
+                                        isAbsolute: true,
+                                        category: habit.category,
+                                        streak: 0,
+                                        createdAt: new Date()
+                                      };
+                                      setHabits([...habits, newHabit]);
+                                      alert(`Added "${habit.title}" to your habits!`);
+                                    }
                                   }}
                                   className="h-6 w-6 p-0"
                                 >
@@ -783,6 +788,19 @@ export default function Dashboard() {
             </div>
           </div>
         </PageContainer>
+        
+        {/* Custom Habit Dialog */}
+        {showCustomHabitDialog && (
+          <EditHabitDialog
+            open={showCustomHabitDialog}
+            onOpenChange={setShowCustomHabitDialog}
+            habit={null}  // Passing null creates a new habit
+            onSave={(newHabit) => {
+              setHabits([...habits, newHabit]);
+              setShowCustomHabitDialog(false);
+            }}
+          />
+        )}
       </div>
     </>
   );
