@@ -238,22 +238,22 @@ export const HabitViewModes: React.FC<HabitViewProps> = ({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 gap-1">
                 <span>{filterCategory === "all" ? "All Categories" : 
-                      filterCategory === "absolute" ? "Absolute Habits" :
-                      filterCategory === "optional" ? "Optional Habits" :
+                      filterCategory === "absolute" ? "Absolute Daily Habits" :
+                      filterCategory === "optional" ? "Frequency Habits" :
                       filterCategory.charAt(0).toUpperCase() + filterCategory.slice(1)}
                 </span>
                 <ChevronDown className="h-3.5 w-3.5 opacity-70" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent align="end" className="w-64">
               <DropdownMenuItem onClick={() => setFilterCategory("all")}>
                 All Categories
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setFilterCategory("absolute")}>
-                Absolute Habits
+                Absolute Daily Habits
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setFilterCategory("optional")}>
-                Optional Habits
+                Frequency Habits
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setFilterCategory("health")}>
                 Health
