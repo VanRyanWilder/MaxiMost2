@@ -340,40 +340,45 @@ export function DailyMotivation() {
     document.dispatchEvent(event);
   };
   
-  // Function to add a whole habit stack
+  // Function to add a whole habit stack directly
   const addHabitStack = (stack: any) => {
     console.log("Adding habit stack:", stack);
     
-    // We'll create proper habit objects and add them directly
-    const stackHabits = stack.habits.map((habit: any) => {
-      return {
-        id: `h-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    // Create an array of properly formatted habit objects
+    const formattedHabits = [];
+    
+    for (const habit of stack.habits) {
+      // Add the habit with a proper structure
+      formattedHabits.push({
+        id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
         title: habit.title,
         description: habit.description,
-        icon: habit.icon.type.name.toLowerCase(),
-        impact: habit.impact,
-        effort: habit.effort,
-        timeCommitment: habit.timeCommitment,
-        frequency: habit.frequency,
-        isAbsolute: habit.isAbsolute,
-        category: habit.category,
+        icon: typeof habit.icon === 'object' ? habit.icon.type.name.toLowerCase() : 'zap',
+        impact: habit.impact || 8,
+        effort: habit.effort || 3,
+        timeCommitment: habit.timeCommitment || '10 min',
+        frequency: habit.frequency || 'daily',
+        isAbsolute: habit.isAbsolute || false,
+        category: habit.category || 'health',
         streak: 0,
         createdAt: new Date()
-      };
-    });
+      });
+    }
     
-    // Create a custom event to pass the whole stack of habits to be added at once
-    const event = new CustomEvent('add-habit-stack', { 
-      detail: {
-        stackName: stack.name,
-        habits: stackHabits
-      },
+    console.log(`Created ${formattedHabits.length} habits for ${stack.name} stack`);
+    
+    // Get direct access to the habits state from the parent component
+    (window as any).addStackHabits = formattedHabits;
+    
+    // Create a simpler event with just the name
+    const event = new CustomEvent('add-manual-habit-stack', { 
+      detail: stack.name,
       bubbles: true 
     });
     document.dispatchEvent(event);
     
     // Show confirmation
-    alert(`Added ${stack.name} with ${stack.habits.length} habits successfully!`);
+    alert(`Added ${stack.name} with ${stack.habits.length} habits!`);
   };
 
   return (

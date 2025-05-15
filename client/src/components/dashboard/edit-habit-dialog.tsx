@@ -108,86 +108,93 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="icon" className="text-right">
-              Icon
-            </Label>
-            <Select 
-              value={editedHabit.icon} 
-              onValueChange={(value) => setEditedHabit({...editedHabit, icon: value})}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select an icon" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="brain">
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4" />
-                    <span>Mind</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="droplets">
-                  <div className="flex items-center gap-2">
-                    <DropletIcon className="h-4 w-4" />
-                    <span>Water</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="dumbbell">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4" />
-                    <span>Fitness</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="bookopen">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4" />
-                    <span>Reading</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="users">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    <span>Social</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="heart">
-                  <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4" />
-                    <span>Health</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="sun">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4" />
-                    <span>Energy</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="scroll">
-                  <div className="flex items-center gap-2">
-                    <ScrollText className="h-4 w-4" />
-                    <span>Journal</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
               Category
             </Label>
             <Select 
               value={editedHabit.category} 
-              onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
+              onValueChange={(value: HabitCategory) => {
+                // Set both category and relevant icon based on selection
+                let icon = "zap";
+                switch (value) {
+                  case "health": icon = "heart"; break;
+                  case "fitness": icon = "dumbbell"; break;
+                  case "mind": icon = "brain"; break;
+                  case "social": icon = "users"; break;
+                  case "work": icon = "briefcase"; break;
+                  case "study": icon = "bookopen"; break;
+                  case "hobby": icon = "music"; break;
+                  case "finance": icon = "banknote"; break;
+                  case "spiritual": icon = "sun"; break;
+                  default: icon = "zap";
+                }
+                setEditedHabit({...editedHabit, category: value, icon: icon});
+              }}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="health">Health</SelectItem>
-                <SelectItem value="fitness">Fitness</SelectItem>
-                <SelectItem value="mind">Mind</SelectItem>
-                <SelectItem value="social">Social</SelectItem>
-                <SelectItem value="custom">Custom</SelectItem>
+                <SelectItem value="health">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-red-500" />
+                    <span>Health</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="fitness">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="h-4 w-4 text-green-500" />
+                    <span>Fitness</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="mind">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-purple-500" />
+                    <span>Mind</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="social">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    <span>Social</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="work">
+                  <div className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-amber-500" />
+                    <span>Work</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="study">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-indigo-500" />
+                    <span>Study</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="hobby">
+                  <div className="flex items-center gap-2">
+                    <Music className="h-4 w-4 text-pink-500" />
+                    <span>Hobby</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="finance">
+                  <div className="flex items-center gap-2">
+                    <Banknote className="h-4 w-4 text-emerald-500" />
+                    <span>Finance</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="spiritual">
+                  <div className="flex items-center gap-2">
+                    <Sun className="h-4 w-4 text-orange-500" />
+                    <span>Spiritual</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="custom">
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-gray-500" />
+                    <span>Custom Category</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

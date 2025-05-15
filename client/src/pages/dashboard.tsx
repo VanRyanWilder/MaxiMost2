@@ -152,16 +152,38 @@ export default function Dashboard() {
   
   // Listen for habit stack events
   useEffect(() => {
+    // Handle original event format
     const handleHabitStackEvent = (event: any) => {
       const { stackName, habits: stackHabits } = event.detail;
       console.log(`Adding habit stack: ${stackName} with ${stackHabits.length} habits`);
       setHabits(prev => [...prev, ...stackHabits]);
     };
     
+    // Handle manual event format
+    const handleManualHabitStackEvent = (event: any) => {
+      const stackName = event.detail;
+      console.log(`Manual adding habit stack: ${stackName}`);
+      
+      // Get the habits from the window object
+      const stackHabits = (window as any).addStackHabits || [];
+      
+      if (stackHabits.length > 0) {
+        console.log(`Adding ${stackHabits.length} habits from ${stackName} stack`);
+        setHabits(prev => [...prev, ...stackHabits]);
+        
+        // Clear the window object
+        (window as any).addStackHabits = null;
+      } else {
+        console.error("No habits found for stack:", stackName);
+      }
+    };
+    
     document.addEventListener('add-habit-stack', handleHabitStackEvent);
+    document.addEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
     
     return () => {
       document.removeEventListener('add-habit-stack', handleHabitStackEvent);
+      document.removeEventListener('add-manual-habit-stack', handleManualHabitStackEvent);
     };
   }, []);
   
