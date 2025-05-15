@@ -151,7 +151,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-r-none border-r-0"
-                onClick={() => setWeekOffset(prev => Math.round((prev - 1/7) * 100) / 100)}
+                onClick={() => setWeekOffset(prev => prev - 1/7)}
                 title="Previous day"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -160,7 +160,7 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 variant="outline" 
                 size="icon" 
                 className="h-7 w-7 rounded-l-none"
-                onClick={() => setWeekOffset(prev => Math.round((prev + 1/7) * 100) / 100)}
+                onClick={() => setWeekOffset(prev => prev + 1/7)}
                 title="Next day"
                 disabled={weekOffset >= 0}
               >
