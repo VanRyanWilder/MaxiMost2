@@ -269,10 +269,11 @@ export default function UnifiedHabits() {
     
     if (habit.frequency !== 'daily') {
       switch (habit.frequency) {
-        case 'weekly': expectedDays = 4; break; // About 4 in 30 days
-        case '2x-week': expectedDays = 8; break; // About 8 in 30 days
-        case '3x-week': expectedDays = 12; break; // About 12 in 30 days
-        case '4x-week': expectedDays = 16; break; // About 16 in 30 days
+        case '2x-week': expectedDays = 8; break; // About 8 in 30 days (2 per week * 4 weeks)
+        case '3x-week': expectedDays = 12; break; // About 12 in 30 days (3 per week * 4 weeks)
+        case '4x-week': expectedDays = 16; break; // About 16 in 30 days (4 per week * 4 weeks)
+        case '5x-week': expectedDays = 20; break; // About 20 in 30 days (5 per week * 4 weeks)
+        case '6x-week': expectedDays = 24; break; // About 24 in 30 days (6 per week * 4 weeks)
         default: expectedDays = 4;
       }
     }
