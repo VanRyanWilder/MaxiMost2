@@ -192,8 +192,14 @@ export default function Dashboard() {
                     onToggleHabit={toggleHabitCompletion}
                     onAddHabit={handleAddHabit}
                     onUpdateHabit={(updatedHabit) => {
+                      // Ensure updatedHabit has all required properties
+                      const completeHabit = {
+                        ...updatedHabit,
+                        createdAt: updatedHabit.createdAt || new Date()
+                      };
+                      
                       setHabits(habits.map(h => 
-                        h.id === updatedHabit.id ? updatedHabit : h
+                        h.id === updatedHabit.id ? completeHabit : h
                       ));
                     }}
                     onDeleteHabit={(habitId) => {

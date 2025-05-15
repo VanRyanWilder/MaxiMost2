@@ -1,0 +1,27 @@
+// Shared habit types used across the application
+export type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
+export type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
+
+export interface Habit {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  impact: number;
+  effort: number;
+  timeCommitment: string;
+  frequency: HabitFrequency;
+  isAbsolute: boolean;
+  category: HabitCategory;
+  streak: number;
+  createdAt: Date;
+  type?: "principle" | "custom" | "default";
+  principle?: string;
+  lastCompleted?: Date | null;
+}
+
+export interface HabitCompletion {
+  habitId: string;
+  date: Date;
+  completed: boolean;
+}
