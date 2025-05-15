@@ -271,7 +271,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 Daily
               </Button>
               <Button 
-                onClick={() => setViewMode("weekly")} 
+                onClick={() => {
+                  setViewMode("weekly");
+                  // Reset offsets when changing view mode for consistent behavior
+                  setDayOffset(0);
+                  setWeekOffset(0);
+                }} 
                 variant={viewMode === "weekly" ? "default" : "outline"}
                 className="rounded-none"
               >
@@ -279,7 +284,13 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 Weekly
               </Button>
               <Button 
-                onClick={() => setViewMode("monthly")} 
+                onClick={() => {
+                  setViewMode("monthly");
+                  // Reset offsets when changing view mode for consistent behavior
+                  setDayOffset(0);
+                  setWeekOffset(0);
+                  setMonthOffset(0);
+                }} 
                 variant={viewMode === "monthly" ? "default" : "outline"}
                 className="rounded-none"
               >
