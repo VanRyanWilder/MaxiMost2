@@ -2,14 +2,242 @@ import { useState } from "react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { GeminiResearch } from "@/components/research/gemini-research";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Brain, Sparkles, Bot, Info } from "lucide-react";
+import { BookOpen, Brain, Sparkles, Bot, Info, Users, Heart, Dumbbell, Award, ExternalLink } from "lucide-react";
+
+// Define expert types
+type ExpertCategory = 
+  | "mobility" 
+  | "endurance" 
+  | "nutrition" 
+  | "strength" 
+  | "mental" 
+  | "longevity";
+
+interface Expert {
+  id: string;
+  name: string;
+  title: string;
+  category: ExpertCategory;
+  description: string;
+  specialty: string[];
+  primaryAudience: string[];
+  notableWorks?: string[];
+  imageUrl?: string;
+  websiteUrl?: string;
+}
+
+// Helper function to get border color based on category
+function getBorderColor(category: ExpertCategory): string {
+  switch (category) {
+    case "mobility":
+      return "#3b82f6"; // blue-500
+    case "endurance":
+      return "#ef4444"; // red-500
+    case "nutrition":
+      return "#22c55e"; // green-500
+    case "strength":
+      return "#f59e0b"; // amber-500
+    case "mental":
+      return "#8b5cf6"; // purple-500
+    case "longevity":
+      return "#6366f1"; // indigo-500
+    default:
+      return "#6b7280"; // gray-500
+  }
+}
 
 export default function Research() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Mobility and Physical Therapy experts
+  const mobilityExperts: Expert[] = [
+    {
+      id: "kelly-starrett",
+      name: "Kelly Starrett",
+      title: "Physical Therapist & Mobility Expert",
+      category: "mobility",
+      description: "A physical therapist and founder of The Ready State (formerly MobilityWOD), Kelly is renowned for revolutionizing how athletes think about movement and mobility. He emphasizes a proactive approach to injury prevention and performance optimization through proper movement mechanics.",
+      specialty: [
+        "Movement optimization",
+        "Mobility techniques",
+        "Recovery protocols",
+        "Joint health maintenance"
+      ],
+      primaryAudience: [
+        "Athletes",
+        "CrossFit practitioners",
+        "Fitness professionals",
+        "Anyone experiencing movement limitations"
+      ],
+      notableWorks: [
+        "Becoming a Supple Leopard",
+        "Ready to Run",
+        "Deskbound: Standing Up to a Sitting World"
+      ],
+      websiteUrl: "https://thereadystate.com/"
+    },
+    {
+      id: "aaron-horschig",
+      name: "Aaron Horschig",
+      title: "Physical Therapist & Weightlifting Coach",
+      category: "mobility",
+      description: "Creator of Squat University, Aaron combines his expertise in physical therapy with Olympic weightlifting coaching. He focuses on teaching proper movement patterns and addressing common limitations to improve performance and reduce injury risk in strength sports.",
+      specialty: [
+        "Squat and hip mechanics",
+        "Olympic weightlifting technique",
+        "Injury prevention strategies",
+        "Rehabilitation protocols"
+      ],
+      primaryAudience: [
+        "Weightlifters",
+        "Powerlifters",
+        "Strength athletes",
+        "CrossFit enthusiasts"
+      ],
+      notableWorks: [
+        "Squat Bible",
+        "Rebuilding Milo"
+      ],
+      websiteUrl: "https://squatuniversity.com/"
+    }
+  ];
+
+  // Nutrition experts - we already have these in the Research tab, so we'll reuse this data
+  
+  // Strength and Performance experts
+  const strengthExperts: Expert[] = [
+    {
+      id: "andy-galpin",
+      name: "Andy Galpin",
+      title: "Exercise Physiologist & Performance Specialist",
+      category: "strength",
+      description: "Dr. Andy Galpin specializes in the molecular adaptations to exercise and how humans can optimize training, nutrition, and recovery for maximum physical performance. His evidence-based approach balances scientific rigor with practical application.",
+      specialty: [
+        "Exercise physiology",
+        "Muscle fiber type optimization",
+        "Concurrent training",
+        "Performance nutrition"
+      ],
+      primaryAudience: [
+        "Strength athletes",
+        "Mixed-modal athletes",
+        "Fitness professionals",
+        "Sport scientists"
+      ],
+      notableWorks: [
+        "Unplugged: Evolve from Technology to Upgrade Your Fitness",
+        "Body of Knowledge Podcast"
+      ],
+      websiteUrl: "https://www.andygalpin.com/"
+    },
+    {
+      id: "brad-schoenfeld",
+      name: "Brad Schoenfeld",
+      title: "Hypertrophy Researcher & Training Specialist",
+      category: "strength",
+      description: "Dr. Brad Schoenfeld is one of the world's leading experts on muscle hypertrophy, with extensive research on the mechanisms of muscle growth and science-based approaches to resistance training. His work bridges the gap between lab research and practical application.",
+      specialty: [
+        "Muscle hypertrophy mechanisms",
+        "Resistance training program design",
+        "Training volume optimization",
+        "Protein intake strategies"
+      ],
+      primaryAudience: [
+        "Bodybuilders",
+        "Resistance training enthusiasts",
+        "Strength coaches",
+        "Rehabilitation specialists"
+      ],
+      notableWorks: [
+        "Science and Development of Muscle Hypertrophy",
+        "The MAX Muscle Plan"
+      ],
+      websiteUrl: "https://www.lookgreatnaked.com/"
+    }
+  ];
+
+  // Longevity experts
+  const longevityExperts: Expert[] = [
+    {
+      id: "david-sinclair",
+      name: "David Sinclair",
+      title: "Geneticist & Longevity Researcher",
+      category: "longevity",
+      description: "Dr. David Sinclair is a professor of genetics at Harvard Medical School who focuses on understanding why we age and how to slow its effects. His research explores interventions that may help extend human healthspan through cellular mechanisms and gene expression.",
+      specialty: [
+        "Epigenetics of aging",
+        "NAD+ metabolism",
+        "Sirtuin activation",
+        "Cellular reprogramming"
+      ],
+      primaryAudience: [
+        "Longevity enthusiasts",
+        "Health optimizers",
+        "Aging-concerned individuals",
+        "Scientists and researchers"
+      ],
+      notableWorks: [
+        "Lifespan: Why We Age—and Why We Don't Have To",
+        "Research on resveratrol and NAD+ precursors"
+      ],
+      websiteUrl: "https://sinclair.hms.harvard.edu/"
+    },
+    {
+      id: "matthew-walker",
+      name: "Matthew Walker",
+      title: "Neuroscientist & Sleep Expert",
+      category: "longevity",
+      description: "Dr. Matthew Walker is a professor of neuroscience and psychology at UC Berkeley, specializing in the relationship between sleep, health, and longevity. His research demonstrates the critical role of quality sleep in disease prevention and cognitive performance.",
+      specialty: [
+        "Sleep physiology",
+        "Circadian rhythm optimization",
+        "Sleep's impact on health outcomes",
+        "Cognitive performance enhancement"
+      ],
+      primaryAudience: [
+        "Sleep-deprived individuals",
+        "Health optimizers",
+        "Performance-focused professionals",
+        "Mental health-conscious people"
+      ],
+      notableWorks: [
+        "Why We Sleep: Unlocking the Power of Sleep and Dreams",
+        "TED Talk: Sleep is your superpower"
+      ],
+      websiteUrl: "https://www.sleepdiplomat.com/"
+    }
+  ];
+
+  // Combined experts list for display
+  const allExperts: Record<string, Expert[]> = {
+    "mobility": mobilityExperts,
+    "strength": strengthExperts,
+    "longevity": longevityExperts
+  };
+
+  // Helper function to get category icon
+  function getCategoryIcon(category: ExpertCategory) {
+    switch (category) {
+      case "mobility":
+        return <Dumbbell className="h-5 w-5 text-blue-500" />;
+      case "endurance":
+        return <Heart className="h-5 w-5 text-red-500" />;
+      case "nutrition":
+        return <Heart className="h-5 w-5 text-green-500" />;
+      case "strength":
+        return <Dumbbell className="h-5 w-5 text-amber-500" />;
+      case "mental":
+        return <Brain className="h-5 w-5 text-purple-500" />;
+      case "longevity":
+        return <Heart className="h-5 w-5 text-indigo-500" />;
+      default:
+        return <Users className="h-5 w-5" />;
+    }
+  };
 
   return (
     <div className="bg-gray-50 font-sans">
@@ -327,6 +555,84 @@ export default function Research() {
                 <GeminiResearch />
               </TabsContent>
             </Tabs>
+            
+            {/* Additional Health Experts Section */}
+            <div className="mt-12 mb-8">
+              <div className="flex items-center gap-2 mb-6">
+                <Users className="h-6 w-6 text-primary" />
+                <h2 className="text-2xl font-bold">Additional Health Experts</h2>
+              </div>
+              
+              <p className="text-gray-700 mb-8">
+                Beyond our primary health researchers, here are additional experts in various fields who can help you optimize
+                specific aspects of your health and performance. Following their teachings can help you prevent injuries and improve performance.
+              </p>
+              
+              <Tabs defaultValue="mobility">
+                <TabsList className="mb-6">
+                  <TabsTrigger value="mobility">Mobility & Physical Therapy</TabsTrigger>
+                  <TabsTrigger value="strength">Strength & Performance</TabsTrigger>
+                  <TabsTrigger value="longevity">Longevity</TabsTrigger>
+                </TabsList>
+                
+                {Object.entries(allExperts).map(([category, experts]) => (
+                  <TabsContent key={category} value={category} className="mt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {experts.map((expert) => (
+                        <Card key={expert.id} className="overflow-hidden border-l-4" style={{ borderLeftColor: getBorderColor(expert.category) }}>
+                          <div className="flex flex-col md:flex-row">
+                            <div className="w-full p-5">
+                              <div className="flex items-center gap-2 mb-2">
+                                {getCategoryIcon(expert.category)}
+                                <CardTitle className="text-xl">{expert.name}</CardTitle>
+                              </div>
+                              <Badge className="mb-3">{expert.title}</Badge>
+                              <CardDescription className="mb-3">
+                                {expert.description}
+                              </CardDescription>
+                              <div className="mt-4 space-y-2">
+                                <h4 className="text-sm font-semibold">Top Specialties:</h4>
+                                <ul className="text-sm space-y-1">
+                                  {expert.specialty.slice(0, 3).map((item, i) => (
+                                    <li key={i} className="flex items-center gap-2">
+                                      <span style={{ color: getBorderColor(expert.category) }}>•</span>
+                                      <span>{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                                
+                                {expert.notableWorks && expert.notableWorks.length > 0 && (
+                                  <>
+                                    <h4 className="text-sm font-semibold mt-3">Notable Work:</h4>
+                                    <ul className="text-sm space-y-1">
+                                      {expert.notableWorks.slice(0, 2).map((work, i) => (
+                                        <li key={i} className="flex items-center gap-2">
+                                          <span style={{ color: getBorderColor(expert.category) }}>•</span>
+                                          <span>{work}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </>
+                                )}
+                              </div>
+                              
+                              {expert.websiteUrl && (
+                                <Button variant="outline" size="sm" className="mt-4 flex items-center gap-1" 
+                                  onClick={() => window.open(expert.websiteUrl, "_blank")}
+                                >
+                                  <span>Visit Website</span>
+                                  <ExternalLink className="h-3.5 w-3.5" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </div>
           </div>
         </main>
       </div>
