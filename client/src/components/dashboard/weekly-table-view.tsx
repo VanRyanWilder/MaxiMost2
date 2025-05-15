@@ -2,7 +2,7 @@ import React from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Circle, CheckCircle, Pencil, Trash2, MoreVertical } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle, CheckCircle, Pencil, Trash2, MoreVertical, Star, StarHalf } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,40 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Habit } from "@/types/habit";
-
-// Map of habit icons to their emoji representations
-const habitIcons: { [key: string]: string } = {
-  "water": "💧",
-  "food": "🍎",
-  "exercise": "🏃‍♂️",
-  "sleep": "😴",
-  "meditation": "🧘‍♂️",
-  "reading": "📚",
-  "writing": "✍️",
-  "coding": "💻",
-  "cleaning": "🧹",
-  "learning": "🎓",
-  "social": "👥",
-  "health": "❤️",
-  "work": "💼",
-  "finance": "💰",
-  "creative": "🎨",
-  "music": "🎵",
-  "cooking": "🍳",
-  "family": "👨‍👩‍👧‍👦",
-  "gratitude": "🙏",
-  "journal": "📓",
-  "stretching": "🤸‍♂️",
-  "vitamins": "💊",
-  "skincare": "✨",
-  "phone": "📱",
-  "sunny": "☀️",
-  "walk": "🚶‍♂️",
-  "gym": "🏋️‍♂️",
-  "supplements": "💊",
-  "protein": "🥩",
-  "nosnack": "🚫"
-};
+import { getHabitIcon } from "@/components/ui/icons";
 import {
   DndContext,
   closestCenter,
@@ -119,26 +86,56 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   return (
     <div className="bg-white rounded-lg border p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-1">
-          {/* Week navigation */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setWeekOffset(prev => prev - 1)}
-            title="Previous week"
-          >
-            <ChevronLeft className="h-5 w-5" />
-            <ChevronLeft className="h-5 w-5 -ml-3" />
-          </Button>
-          {/* Day navigation */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setWeekOffset(prev => prev - (1/7))}
-            title="Previous day"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
+        <div className="flex items-center">
+          <div className="flex flex-col items-center gap-1 mr-2">
+            <div className="text-xs text-muted-foreground">Week</div>
+            <div className="flex">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-7 w-7 rounded-r-none border-r-0"
+                onClick={() => setWeekOffset(prev => prev - 1)}
+                title="Previous week"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-7 w-7 rounded-l-none"
+                onClick={() => setWeekOffset(prev => prev + 1)}
+                title="Next week"
+                disabled={weekOffset >= 0}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-center gap-1">
+            <div className="text-xs text-muted-foreground">Day</div>
+            <div className="flex">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-7 w-7 rounded-r-none border-r-0"
+                onClick={() => setWeekOffset(prev => Math.round((prev - 1/7) * 100) / 100)}
+                title="Previous day"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="h-7 w-7 rounded-l-none"
+                onClick={() => setWeekOffset(prev => Math.round((prev + 1/7) * 100) / 100)}
+                title="Next day"
+                disabled={weekOffset >= 0}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         </div>
         
         <div className="text-center">
@@ -150,25 +147,15 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
           </div>
         </div>
         
-        <div className="flex items-center space-x-1">
-          {/* Day navigation */}
+        <div className="flex items-center space-x-2">
           <Button 
-            variant="ghost" 
+            variant="secondary" 
             size="sm" 
-            onClick={() => setWeekOffset(prev => prev + (1/7))}
-            title="Next day"
+            onClick={() => setWeekOffset(0)}
+            disabled={weekOffset === 0}
+            className="text-xs"
           >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-          {/* Week navigation */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setWeekOffset(prev => prev + 1)}
-            title="Next week"
-          >
-            <ChevronRight className="h-5 w-5" />
-            <ChevronRight className="h-5 w-5 -ml-3" />
+            Today
           </Button>
         </div>
       </div>
@@ -212,18 +199,30 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                     <SortableHabit key={habit.id} habit={habit}>
                       <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                         <div className="flex items-center gap-2 px-3 py-2">
-                          <span className="text-lg" style={{ color: habit.iconColor || '#4299e1' }}>
-                            {habitIcons[habit.icon] || '⚪'}
-                          </span>
+                          <div className="flex-shrink-0">
+                            {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
+                          </div>
                           <div className="flex-1">
-                            <div className="font-medium">{habit.title}</div>
-                            <div className="text-xs text-muted-foreground">
+                            <div className="font-medium flex items-center">
+                              {habit.title}
+                              <div className="ml-2 flex items-center">
+                                {Array.from({ length: Math.floor(habit.impact / 2) }).map((_, i) => (
+                                  <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                ))}
+                                {habit.impact % 2 === 1 && (
+                                  <StarHalf className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-xs text-muted-foreground flex items-center flex-wrap gap-1">
                               {habit.category && (
-                                <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 mr-1">
+                                <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600">
                                   {habit.category}
                                 </span>
                               )}
-                              <span>{countCompletedDaysInWeek(habit.id)}/7 daily</span>
+                              <span className="px-1.5 py-0.5 bg-blue-50 rounded text-blue-600">
+                                {countCompletedDaysInWeek(habit.id)}/7 daily
+                              </span>
                             </div>
                           </div>
                           <DropdownMenu>
@@ -305,18 +304,30 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                     <SortableHabit key={habit.id} habit={habit}>
                       <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                         <div className="flex items-center gap-2 px-3 py-2">
-                          <span className="text-lg" style={{ color: habit.iconColor || '#4299e1' }}>
-                            {habitIcons[habit.icon] || '⚪'}
-                          </span>
+                          <div className="flex-shrink-0">
+                            {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
+                          </div>
                           <div className="flex-1">
-                            <div className="font-medium">{habit.title}</div>
-                            <div className="text-xs text-muted-foreground">
+                            <div className="font-medium flex items-center">
+                              {habit.title}
+                              <div className="ml-2 flex items-center">
+                                {Array.from({ length: Math.floor(habit.impact / 2) }).map((_, i) => (
+                                  <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                ))}
+                                {habit.impact % 2 === 1 && (
+                                  <StarHalf className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-xs text-muted-foreground flex items-center flex-wrap gap-1">
                               {habit.category && (
-                                <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 mr-1">
+                                <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600">
                                   {habit.category}
                                 </span>
                               )}
-                              <span>{countCompletedDaysInWeek(habit.id)}/{habit.frequency.split('x')[0]} {habit.frequency.split('-')[1]}</span>
+                              <span className="px-1.5 py-0.5 bg-green-50 rounded text-green-600">
+                                {countCompletedDaysInWeek(habit.id)}/{habit.frequency.split('x')[0]} {habit.frequency.split('-')[1]}
+                              </span>
                             </div>
                           </div>
                           <DropdownMenu>
@@ -389,20 +400,33 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
                 <SortableHabit key={habit.id} habit={habit}>
                   <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                     <div className="flex items-center gap-2 px-3 py-2">
-                      <span className="text-lg" style={{ color: habit.iconColor || '#4299e1' }}>
-                        {habitIcons[habit.icon] || '⚪'}
-                      </span>
-                      <div>
-                        <div className="font-medium">{habit.title}</div>
-                        <div className="text-xs text-muted-foreground">
+                      <div className="flex-shrink-0">
+                        {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium flex items-center">
+                          {habit.title}
+                          <div className="ml-2 flex items-center">
+                            {Array.from({ length: Math.floor(habit.impact / 2) }).map((_, i) => (
+                              <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            ))}
+                            {habit.impact % 2 === 1 && (
+                              <StarHalf className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-xs text-muted-foreground flex items-center flex-wrap gap-1">
                           {habit.category && (
-                            <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 mr-1">
+                            <span className="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600">
                               {habit.category}
                             </span>
                           )}
-                          <span>
+                          <span className="px-1.5 py-0.5 bg-blue-50 rounded text-blue-600">
                             {countCompletedDaysInWeek(habit.id)}/
                             {habit.isAbsolute ? '7 daily' : `${habit.frequency.split('x')[0]} ${habit.frequency.split('-')[1]}`}
+                          </span>
+                          <span className="px-1.5 py-0.5 bg-gray-50 rounded text-gray-600">
+                            {habit.timeCommitment}
                           </span>
                         </div>
                       </div>
