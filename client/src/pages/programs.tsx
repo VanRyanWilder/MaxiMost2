@@ -4,20 +4,14 @@ import UserGoalForm from "../components/programs/user-goal-form";
 import ProgramRecommendations from "../components/programs/program-recommendations";
 import ProgramDetails from "../components/programs/program-details";
 import { Habit } from "../types/habit";
-import { habitSuggestions } from "../data/habit-data";
 import { programs } from "../data/program-data";
 import { PageContainer } from "../components/layout/page-container";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-// Combine all habits for the habit library
-const allHabits: Habit[] = [
-  ...habitSuggestions.health,
-  ...habitSuggestions.fitness,
-  ...habitSuggestions.mind,
-  ...habitSuggestions.habits
-];
+// Placeholder for habit library - to be populated from habit-data.ts once it's fully integrated
+const allHabits: Habit[] = [];
 
 export default function ProgramsPage() {
   const [criteria, setCriteria] = useState<RecommendationCriteria | null>(null);
