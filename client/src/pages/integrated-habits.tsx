@@ -3,6 +3,8 @@ import { format, addDays, startOfWeek, subDays, parseISO, isAfter, isBefore, isT
 import { getEmptyStateMessage } from './empty-state-fix';
 import { Link } from "wouter";
 import { useSort } from '@dnd-kit/sortable';
+import { HabitInsights } from "@/components/insights/habit-insights";
+import { HabitRecommendations } from "@/components/insights/habit-recommendations";
 import { 
   useDraggable, 
   useDroppable, 
@@ -1303,6 +1305,52 @@ export default function IntegratedHabits() {
           </Tabs>
         </CardContent>
       </Card>
+      
+      {/* AI Insights Section */}
+      <div className="mt-6 grid gap-6 grid-cols-1 lg:grid-cols-2">
+        <div>
+          <HabitInsights 
+            habits={habits} 
+            completions={completions} 
+            timeframe="week" 
+          />
+        </div>
+        <div>
+          <HabitRecommendations 
+            habits={habits} 
+            onAddRecommendation={(habitData) => {
+              // Generate a unique ID for the new habit
+              const id = `h${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+              
+              // Create the full habit object
+              const newHabit: Habit = {
+                id,
+                title: habitData.title || "",
+                description: habitData.description || "",
+                icon: habitData.icon || "check",
+                iconColor: habitData.iconColor || "#6b7280",
+                impact: habitData.impact || 5,
+                effort: habitData.effort || 5,
+                timeCommitment: habitData.timeCommitment || "5 min",
+                frequency: habitData.frequency || "daily",
+                isAbsolute: habitData.isAbsolute || false,
+                category: habitData.category || "custom",
+                streak: 0,
+                createdAt: new Date()
+              };
+              
+              // Add the habit to state
+              setHabits(prevHabits => [...prevHabits, newHabit]);
+              
+              // Show success toast
+              toast({
+                title: "Habit added",
+                description: `${newHabit.title} has been added to your habits.`,
+              });
+            }}
+          />
+        </div>
+      </div>
       
       {/* Habit Stacks Section */}
       <div className="mt-6">
