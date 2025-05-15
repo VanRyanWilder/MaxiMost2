@@ -206,6 +206,105 @@ export default function PrinciplesPage() {
       category: "discipline",
       dateAdded: "2023-05-17",
       day: 123
+    },
+    {
+      id: "do-difficult-things",
+      title: "Do Difficult Things",
+      quote: "Seek out discomfort. The most important skill in life is being comfortable being uncomfortable.",
+      explanation: "This principle urges you to deliberately seek challenges rather than avoiding them. By regularly engaging with difficult activities, you expand your comfort zone and build resilience against future adversity. The practice trains both mind and body to handle stress productively rather than shutting down. Each challenge overcome builds confidence for tackling even greater obstacles.",
+      source: "Never Finished",
+      author: "goggins",
+      category: "courage",
+      dateAdded: "2023-05-24",
+      day: 130
+    },
+    {
+      id: "negative-visualization",
+      title: "Negative Visualization",
+      quote: "Begin each day by telling yourself: Today I shall be meeting with interference, ingratitude, insolence, disloyalty, ill-will, and selfishness.",
+      explanation: "Negative visualization involves mentally rehearsing potential hardships or losses. By imagining the worst-case scenarios, you develop gratitude for what you currently have and reduce the sting when facing actual setbacks. This practice also helps prepare contingency plans, reducing anxiety about the future. Regular practice builds emotional resilience and perspective during challenging times.",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-05-31",
+      day: 137
+    },
+    {
+      id: "something-over-nothing",
+      title: "Something Over Nothing",
+      quote: "A small, consistent effort is infinitely better than grand plans that never materialize. Imperfect action beats perfect inaction every time.",
+      explanation: "This principle emphasizes that taking any productive action, however small, creates momentum and progress. Perfectionism often leads to paralysis, while embracing small imperfect steps leads to real results. The compounding effect of consistent 'somethings' ultimately outperforms the theoretical potential of delayed 'perfect' actions that remain undone.",
+      source: "Discipline Equals Freedom: Field Manual",
+      author: "jocko",
+      category: "discipline",
+      dateAdded: "2023-06-07",
+      day: 144
+    },
+    {
+      id: "view-from-above",
+      title: "The View From Above",
+      quote: "How beautifully Plato puts it. Whenever you want to talk about people, it's best to take a bird's-eye view and see everything all at once.",
+      explanation: "The View From Above asks you to mentally zoom out and observe your situation from an increasingly wider perspective—from personal, to community, to global, to cosmic. This practice diminishes the apparent magnitude of your problems and provides clarity about their true significance. By expanding your perspective, you gain objectivity about your challenges and freedom from being consumed by them.",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-06-14",
+      day: 151
+    },
+    {
+      id: "keep-it-simple",
+      title: "Keep It Simple",
+      quote: "Simplicity is the ultimate sophistication. The path to success is not through complexity but through the relentless elimination of the unnecessary.",
+      explanation: "This principle advocates for removing unnecessary complexity in all areas of life. By focusing only on what truly matters and eliminating distractions, you conserve energy and increase effectiveness. The discipline of simplicity forces clarity of thought and purpose. In fitness, nutrition, habits, or productivity—the simplest sustainable approach is often the most effective long-term strategy.",
+      source: "Can't Hurt Me",
+      author: "goggins",
+      category: "self-mastery",
+      dateAdded: "2023-06-21",
+      day: 158
+    },
+    {
+      id: "gratitude-practice",
+      title: "Daily Gratitude Practice",
+      quote: "Do not spoil what you have by desiring what you have not; remember that what you now have was once among the things you only hoped for.",
+      explanation: "The Daily Gratitude Practice involves regularly acknowledging and appreciating what you already have. By focusing on existing blessings rather than perceived lacks, you shift from scarcity to abundance mindset. This practice reduces hedonic adaptation (taking things for granted) and increases present-moment satisfaction. Regular gratitude practice has been shown to improve mental health, sleep quality, and relationship satisfaction.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "perspective",
+      dateAdded: "2023-06-28",
+      day: 165
+    },
+    {
+      id: "delayed-gratification",
+      title: "Delayed Gratification",
+      quote: "Easy choices, hard life. Hard choices, easy life.",
+      explanation: "This principle emphasizes choosing short-term discomfort for long-term benefit over immediate pleasure that leads to future pain. By developing the ability to delay gratification, you build self-discipline and make decisions aligned with your long-term goals rather than momentary desires. This mental muscle enables you to consistently make choices that compound positively over time rather than deteriorating your future position.",
+      source: "Extreme Ownership",
+      author: "jocko",
+      category: "self-mastery",
+      dateAdded: "2023-07-05",
+      day: 172
+    },
+    {
+      id: "take-the-cold-shower",
+      title: "Take The Cold Shower",
+      quote: "Comfort makes you weak. Choose discomfort deliberately and grow stronger, mentally and physically.",
+      explanation: "The Cold Shower principle uses literal or metaphorical cold exposure as training for the mind. By deliberately choosing discomfort in controlled settings, you strengthen your ability to endure necessary discomfort in pursuit of important goals. This practice builds mental toughness through repeated small acts of willpower, preparing you for bigger challenges. Each voluntary discomfort you embrace makes you more resilient against involuntary hardships.",
+      source: "Discipline Equals Freedom: Field Manual",
+      author: "jocko",
+      category: "discipline",
+      dateAdded: "2023-07-12",
+      day: 179
+    },
+    {
+      id: "role-ethics",
+      title: "Role Ethics",
+      quote: "Consider who you are. Not simply your name, but all the roles you play: citizen, parent, friend, leader, student.",
+      explanation: "Role Ethics acknowledges that we occupy multiple roles in life—family member, professional, citizen, friend—each with specific duties and virtues. By clearly understanding each role's responsibilities, you gain clarity on appropriate action in different contexts. This prevents ethical confusion and helps prioritize conflicting demands. By consciously designing and committing to your roles, you create a coherent, purpose-driven identity across all life domains.",
+      source: "Discourses",
+      author: "epictetus",
+      category: "virtue",
+      dateAdded: "2023-07-19",
+      day: 186
     }
   ];
   
