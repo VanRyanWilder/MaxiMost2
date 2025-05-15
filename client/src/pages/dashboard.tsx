@@ -366,10 +366,8 @@ export default function Dashboard() {
               </Card>
             </div>
             
-            {/* Right column with motivation and other elements */}
+            {/* Right column with habit library and other elements */}
             <div className="space-y-6">
-              <DailyMotivation />
-              
               {/* Habit Library Card */}
               <Card>
                 <CardHeader className="pb-3">
@@ -973,6 +971,9 @@ export default function Dashboard() {
                   </ul>
                 </CardContent>
               </Card>
+              
+              {/* Daily Motivation - moved to bottom of sidebar for better UX */}
+              <DailyMotivation />
             </div>
           </div>
         </PageContainer>
