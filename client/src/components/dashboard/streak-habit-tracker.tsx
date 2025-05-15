@@ -75,7 +75,7 @@ export function StreakHabitTracker() {
     timeCommitment: string;
     frequency: Frequency;
     isAbsolute: boolean;
-    category: string;
+    category: "health" | "fitness" | "mind" | "social" | "custom";
   }>({
     title: '',
     description: '',
@@ -89,7 +89,7 @@ export function StreakHabitTracker() {
   });
   
   // Sample habit data
-  const habits: Habit[] = [
+  const [habits, setHabits] = useState<Habit[]>([
     {
       id: 'hydration',
       title: 'Drink 64oz Water',
@@ -155,7 +155,7 @@ export function StreakHabitTracker() {
       streak: 1,
       category: 'social'
     }
-  ];
+  ]);
   
   // Sample completion data
   const completions: Completion[] = [
@@ -232,13 +232,72 @@ export function StreakHabitTracker() {
   
   const saveNewHabit = () => {
     console.log('Saving new habit:', newHabit);
-    // In a real app, this would save to the backend
+    
+    // Generate a unique ID for the new habit
+    const newId = `habit-${Date.now()}`;
+    
+    // Create the new habit with the selected icon
+    const newHabitWithIcon: Habit = {
+      id: newId,
+      title: newHabit.title,
+      description: newHabit.description,
+      icon: getIconByName(newHabit.icon),
+      impact: newHabit.impact,
+      effort: newHabit.effort,
+      timeCommitment: newHabit.timeCommitment,
+      frequency: newHabit.frequency,
+      isAbsolute: newHabit.isAbsolute,
+      streak: 0,
+      category: newHabit.category
+    };
+    
+    // Add the new habit to the habits array
+    setHabits(prevHabits => [...prevHabits, newHabitWithIcon]);
+    
+    // Close the dialog
     setShowAddHabitDialog(false);
+    
+    // Reset the form
+    setNewHabit({
+      title: '',
+      description: '',
+      icon: 'activity',
+      impact: 8,
+      effort: 3,
+      timeCommitment: '10 min',
+      frequency: 'daily',
+      isAbsolute: false,
+      category: 'mind'
+    });
   };
   
   const updateHabit = () => {
+    if (!habitToEdit) return;
+    
     console.log('Updating habit:', habitToEdit, newHabit);
-    // In a real app, this would update in the backend
+    
+    // Update the habit
+    setHabits(prevHabits => 
+      prevHabits.map(habit => {
+        if (habit.id === habitToEdit) {
+          return {
+            ...habit,
+            title: newHabit.title,
+            description: newHabit.description,
+            icon: getIconByName(newHabit.icon),
+            impact: newHabit.impact,
+            effort: newHabit.effort,
+            timeCommitment: newHabit.timeCommitment,
+            frequency: newHabit.frequency,
+            isAbsolute: newHabit.isAbsolute,
+            category: newHabit.category
+          };
+        }
+        return habit;
+      })
+    );
+    
+    // Close the dialog
     setShowEditHabitDialog(false);
     setHabitToEdit(null);
   };
