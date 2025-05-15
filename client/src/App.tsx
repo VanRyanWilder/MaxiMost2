@@ -1,6 +1,7 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
+
 // Using our sortable dashboard with drag-and-drop and all features
 import Dashboard from "@/pages/sortable-dashboard";
 import Profile from "@/pages/profile";
@@ -54,7 +55,15 @@ function App() {
   return (
     <Switch>
       {/* Public routes */}
-      <Route path="/" component={Home} />
+      <Route path="/">
+        {() => {
+          const { user } = useUser();
+          if (user) {
+            return <Redirect to="/dashboard" />;
+          }
+          return <Home />;
+        }}
+      </Route>
       <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
