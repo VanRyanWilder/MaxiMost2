@@ -1,10 +1,8 @@
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
-// Temporarily using sortable dashboard for both routes
-// import Dashboard from "@/pages/dashboard-new";
-import Dashboard from "@/pages/sortable-dashboard";
-import SortableDashboard from "@/pages/sortable-dashboard";
+// Using our integrated dashboard with drag-and-drop and all features
+import Dashboard from "@/pages/integrated-dashboard";
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
 import MindSpirit from "@/pages/mind-spirit";
@@ -63,9 +61,7 @@ function App() {
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
       </Route>
-      <Route path="/sortable-dashboard">
-        <PrivateRoute component={SortableDashboard} />
-      </Route>
+      {/* Integrated sortable dashboard into main dashboard */}
       <Route path="/profile">
         <PrivateRoute component={Profile} />
       </Route>

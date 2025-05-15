@@ -46,12 +46,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <CheckSquare className="w-5 h-5 text-green-500" />,
       description: "Your all-in-one habit tracking center"
     },
-    { 
-      path: "/sortable-dashboard", 
-      name: "Sortable Dashboard", 
-      icon: <CheckSquare className="w-5 h-5 text-blue-500" />,
-      description: "Drag & drop habit dashboard"
-    },
+    // Removed sortable dashboard option as it's now integrated into the main dashboard
     { 
       path: "/habit-building", 
       name: "Habit Building", 
