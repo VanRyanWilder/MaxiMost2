@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="96" fill="#2563EB" />
+  
+  <!-- Stylized "M" letter -->
+  <path d="M50 60 L73 130 L96 80 L119 130 L142 60" stroke="white" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Plus sign symbolizing "Maximum" -->
+  <circle cx="96" cy="40" r="20" fill="white" />
+  <rect x="86" y="30" width="20" height="20" fill="#2563EB" />
+  <rect x="86" y="30" width="20" height="8" fill="white" />
+  <rect x="86" y="30" width="8" height="20" fill="white" />
+</svg>
