@@ -1,42 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from 'react';
 import { format, startOfWeek, addDays, isSameDay, isBefore, isAfter } from 'date-fns';
-import { 
-  Calendar, 
-  Check, 
-  ChevronLeft, 
-  ChevronRight, 
-  PlusCircle, 
-  Settings,
-  BarChart,
-  CheckCircle2,
-  Circle,
-  Award,
-  Zap,
-  Activity,
-  Dumbbell,
-  Brain,
-  Heart,
-  Droplets,
-  BookOpen,
-  Users,
-  Pencil,
-  MoreHorizontal
-} from 'lucide-react';
-import { 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { EditHabitDialog } from './edit-habit-dialog';
+import {
+  Activity,
+  Calendar,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  PlusCircle,
+  Trash2,
+  ChevronDown,
+  CalendarDays,
+  Zap,
+  ListTodo,
+  Award,
+  Star
+} from 'lucide-react';
 
-import { EditHabitDialog } from "./edit-habit-dialog";
+// Import habit types
+import type { Habit, HabitCompletion, HabitFrequency, HabitCategory } from '@/types/habit';
 
-// Import shared types
-import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
+// Function to get icon component based on icon string
+function getIconComponent(iconName: string) {
+  const iconMap: Record<string, React.ReactNode> = {
+    activity: <Activity className="h-4 w-4" />,
+    calendar: <Calendar className="h-4 w-4" />,
+    zap: <Zap className="h-4 w-4" />,
+    star: <Star className="h-4 w-4" />,
+    award: <Award className="h-4 w-4" />,
+    list: <ListTodo className="h-4 w-4" />,
+    // Add more icons as needed
+  };
 
+  return iconMap[iconName.toLowerCase()] || <Activity className="h-4 w-4" />;
+}
+
+// Interface for the component props
 interface WeeklyHabitViewProps {
   habits: Habit[];
   completions: HabitCompletion[];
@@ -75,205 +92,212 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
       c.completed
     );
   };
-  
-  // Function to count completed days for a habit in the current week
+
+  // Function to count completed days in the current week for a habit
   const countCompletedDaysInWeek = (habitId: string): number => {
-    return completions.filter(c => 
-      c.habitId === habitId && 
-      weekDates.some(date => isSameDay(new Date(c.date), date)) &&
-      c.completed
-    ).length;
+    return weekDates.filter(date => isHabitCompletedOnDate(habitId, date)).length;
   };
-  
-  // Function to check if a habit has met its weekly frequency requirement
+
+  // Check if the habit has met its weekly frequency requirement
   const hasMetWeeklyFrequency = (habit: Habit): boolean => {
-    const completedCount = countCompletedDaysInWeek(habit.id);
+    const completedDays = countCompletedDaysInWeek(habit.id);
+    const targetDays = habit.frequency === 'daily' ? 7 : 
+                     habit.frequency === '2x-week' ? 2 :
+                     habit.frequency === '3x-week' ? 3 :
+                     habit.frequency === '4x-week' ? 4 : 1;
     
-    switch(habit.frequency) {
-      case 'daily':
-        return completedCount === 7;
-      case 'weekly':
-        return completedCount >= 1;
-      case '2x-week':
-        return completedCount >= 2;
-      case '3x-week':
-        return completedCount >= 3;
-      case '4x-week':
-        return completedCount >= 4;
-      default:
-        return false;
-    }
+    return completedDays >= targetDays;
   };
 
-  // Function to get icon component
-  const getIconComponent = (icon: string) => {
-    switch(icon) {
-      case 'dumbbell': return <Dumbbell className="h-4 w-4" />;
-      case 'brain': return <Brain className="h-4 w-4" />;
-      case 'heart': return <Heart className="h-4 w-4" />;
-      case 'water': 
-      case 'droplets': return <Droplets className="h-4 w-4" />;
-      case 'book':
-      case 'bookopen': return <BookOpen className="h-4 w-4" />;
-      case 'check': return <Check className="h-4 w-4" />;
-      case 'users': return <Users className="h-4 w-4" />;
-      case 'activity': return <Activity className="h-4 w-4" />;
-      case 'sparkle': return <Zap className="h-4 w-4" />;
-      case 'medal': return <Award className="h-4 w-4" />;
-      default: return <Zap className="h-4 w-4" />;
-    }
-  };
-
-  // Function to handle editing a habit
+  // Handle edit habit
   const handleEditHabit = (habit: Habit) => {
     setSelectedHabit(habit);
     setEditDialogOpen(true);
   };
-  
-  // Function to handle creating a new habit
-  const handleCreateHabit = () => {
-    setSelectedHabit(null); // This will trigger the dialog to create a new habit
-    setEditDialogOpen(true);
-  };
-  
-  // Function to save updated or new habit
+
+  // Handle saving edited habit
   const handleSaveHabit = (updatedHabit: Habit) => {
+    setEditDialogOpen(false);
     if (onUpdateHabit) {
       onUpdateHabit(updatedHabit);
     }
   };
-  
-  // Listen for open-add-habit-dialog events
-  useEffect(() => {
-    const handleOpenAddHabitDialog = () => {
-      handleCreateHabit();
-    };
-    
-    document.addEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
-    
-    return () => {
-      document.removeEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
-    };
-  }, []);
 
-  // Filter habits based on category
+  // Handle deleting a habit
+  const handleDeleteHabit = (habitId: string) => {
+    if (onDeleteHabit) {
+      onDeleteHabit(habitId);
+    }
+  };
+
+  // Handle creating a new habit
+  const handleCreateHabit = () => {
+    onAddHabit();
+  };
+
+  // Filter habits based on selected category
   const filteredHabits = habits.filter(habit => 
-    filterCategory === 'all' || habit.category === filterCategory
+    filterCategory === "all" || 
+    habit.category === filterCategory ||
+    (filterCategory === "absolute" && habit.isAbsolute) ||
+    (filterCategory === "optional" && !habit.isAbsolute)
   );
 
-  // Group habits by absolute vs. optional
+  // Separate absolute and optional habits
   const absoluteHabits = filteredHabits.filter(h => h.isAbsolute);
   const optionalHabits = filteredHabits.filter(h => !h.isAbsolute);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-lg font-medium">Weekly Habit Calendar</div>
+    <div className="space-y-6">
+      {/* Week navigation and filter */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setWeekOffset(weekOffset - 1)}>
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => setWeekOffset(weekOffset - 1)}
+            className="h-8 w-8"
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-medium">
-            {format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d')}
-          </span>
-          <Button variant="outline" size="sm" onClick={() => setWeekOffset(weekOffset + 1)}>
+          
+          <div className="flex items-center gap-1.5">
+            <CalendarDays className="h-4 w-4 text-primary" />
+            <span className="font-medium">
+              {format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d, yyyy')}
+            </span>
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => setWeekOffset(weekOffset + 1)}
+            className="h-8 w-8"
+            disabled={weekOffset >= 0}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
+          
+          {weekOffset !== 0 && (
+            <Button 
+              variant="link" 
+              size="sm" 
+              onClick={() => setWeekOffset(0)}
+              className="h-8 px-2"
+            >
+              Today
+            </Button>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2 self-end sm:self-auto">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8 gap-1">
+                <span>{filterCategory === "all" ? "All Categories" : 
+                      filterCategory === "absolute" ? "Absolute Habits" :
+                      filterCategory === "optional" ? "Optional Habits" :
+                      filterCategory.charAt(0).toUpperCase() + filterCategory.slice(1)}
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => setFilterCategory("all")}>
+                All Categories
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("absolute")}>
+                Absolute Habits
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("optional")}>
+                Optional Habits
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("health")}>
+                Health
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("fitness")}>
+                Fitness
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("mind")}>
+                Mind
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setFilterCategory("social")}>
+                Social
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
-      <div className="flex flex-wrap gap-2 mb-4">
-        <Badge 
-          variant={filterCategory === 'all' ? "default" : "outline"} 
-          className="cursor-pointer"
-          onClick={() => setFilterCategory('all')}
-        >
-          All
-        </Badge>
-        <Badge 
-          variant={filterCategory === 'health' ? "default" : "outline"} 
-          className="cursor-pointer"
-          onClick={() => setFilterCategory('health')}
-        >
-          Health
-        </Badge>
-        <Badge 
-          variant={filterCategory === 'fitness' ? "default" : "outline"} 
-          className="cursor-pointer"
-          onClick={() => setFilterCategory('fitness')}
-        >
-          Fitness
-        </Badge>
-        <Badge 
-          variant={filterCategory === 'mind' ? "default" : "outline"} 
-          className="cursor-pointer"
-          onClick={() => setFilterCategory('mind')}
-        >
-          Mind
-        </Badge>
-        <Badge 
-          variant={filterCategory === 'social' ? "default" : "outline"} 
-          className="cursor-pointer"
-          onClick={() => setFilterCategory('social')}
-        >
-          Social
-        </Badge>
-      </div>
-      
-      {/* Week day headers */}
-      <div className="grid grid-cols-8 gap-1 mb-3 bg-muted/20 rounded-lg p-3">
-        <div className="text-sm font-medium text-muted-foreground pl-2">Habit</div>
+      {/* Week days header */}
+      <div className="grid grid-cols-8 gap-1 text-center border-b pb-2">
+        <div className="font-medium text-sm">Habits</div>
         {weekDates.map((date, i) => (
-          <div key={i} className="text-center">
-            <div className="text-xs font-medium text-muted-foreground">
-              {format(date, 'EEE')}
-            </div>
-            <div 
-              className={`text-xs rounded-full w-6 h-6 flex items-center justify-center mx-auto
-                ${isSameDay(date, today) ? 'bg-primary text-primary-foreground' : 'text-foreground'}
-              `}
-            >
+          <div
+            key={i}
+            className={`text-xs font-medium ${isSameDay(date, today) ? 'text-primary' : ''}`}
+          >
+            <div>{format(date, 'EEE')}</div>
+            <div className={`text-[11px] ${isSameDay(date, today) ? 'bg-primary text-white rounded-full px-1.5 -mx-0.5' : 'text-muted-foreground'}`}>
               {format(date, 'd')}
             </div>
           </div>
         ))}
       </div>
-
-      {/* Absolute habits section */}
+      
+      {/* Absolute habits (always do) */}
       {absoluteHabits.length > 0 && (
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Badge variant="secondary">Daily Absolutes</Badge>
-            <div className="text-xs text-muted-foreground">Must-do habits for maximum ROI</div>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Zap className="h-4 w-4 text-amber-500" />
+            <h3 className="font-medium text-sm">Absolute Habits</h3>
+            <span className="text-xs text-muted-foreground">(Do these every day)</span>
           </div>
           
           <div className="space-y-2">
             {absoluteHabits.map(habit => (
-              <div key={habit.id} className="grid grid-cols-8 gap-1 items-center p-3 rounded-lg bg-muted/10 hover:bg-muted/20 transition-colors">
+              <div 
+                key={habit.id} 
+                className={`grid grid-cols-8 gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
+                  ${habit.streak > 0 ? 'border-amber-200 bg-gradient-to-r from-amber-50 to-transparent' : 'border-slate-200'}
+                `}
+              >
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
-                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                    {habit.title}
-                    {habit.streak && habit.streak > 0 && (
-                      <span className="ml-1.5 text-xs text-muted-foreground">
-                        <Badge variant="outline" className="text-[10px] py-0 h-4 px-1">
-                          {habit.streak}d
+                  <div className={`p-1.5 rounded-md ${habit.streak > 0 ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-600'}`}>
+                    {getIconComponent(habit.icon)}
+                  </div>
+                  <div className="min-w-0 flex flex-col">
+                    <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">{habit.title}</span>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 border-${habit.category}-200 bg-${habit.category}-50/50`}>
+                        {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
+                      </Badge>
+                      
+                      {habit.streak > 0 && (
+                        <Badge variant="outline" className="px-1 py-0 h-4 text-[10px] flex items-center gap-0.5 bg-amber-500/10 text-amber-700 border-amber-200">
+                          <Award className="h-2.5 w-2.5" /> {habit.streak}
                         </Badge>
-                      </span>
-                    )}
-                  </span>
-                  
-                  {/* Edit button */}
+                      )}
+                    </div>
+                  </div>
+                
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto">
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 ml-auto opacity-70 hover:opacity-100">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
+                    <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
                         <Pencil className="h-4 w-4 mr-2" />
                         Edit Habit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleDeleteHabit(habit.id)}
+                        className="text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete Habit
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -289,15 +313,17 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
                       <button 
                         onClick={() => onToggleHabit(habit.id, date)}
                         disabled={isFuture}
-                        className={`rounded-full h-7 w-7 flex items-center justify-center transition-colors
+                        className={`flex items-center justify-center transition-all duration-200 ease-in-out
                           ${completed 
-                            ? 'bg-primary text-white hover:bg-primary/90' 
+                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white hover:shadow-md shadow-sm rounded-full h-8 w-8 scale-105 border border-amber-400' 
                             : isPast && !completed
-                              ? 'border border-red-300 text-muted-foreground hover:border-red-500'
-                              : 'border text-muted-foreground hover:border-primary/80'
+                              ? 'bg-white border border-muted-foreground/30 text-muted-foreground hover:border-amber-300 rounded-full h-7 w-7'
+                              : isSameDay(date, today) && !isFuture
+                                ? 'bg-white border-2 border-amber-300 text-muted-foreground hover:border-amber-400 rounded-full h-7 w-7'
+                                : 'bg-white border border-muted-foreground/20 text-muted-foreground hover:border-amber-300 rounded-full h-7 w-7'
                           }
-                          ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
-                          ${isFuture ? 'opacity-40' : ''}
+                          ${isSameDay(date, today) && !isFuture ? 'ring-2 ring-offset-1 ring-amber-200' : ''}
+                          ${isFuture ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
                         `}
                         title={`${format(date, 'EEEE, MMM d')} - ${completed ? 'Completed' : 'Not completed'}`}
                       >
@@ -311,90 +337,113 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
           </div>
         </div>
       )}
-
-      {/* Additional habits section */}
+      
+      {/* Optional habits (frequency-based) */}
       {optionalHabits.length > 0 && (
-        <div className="mb-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Badge variant="outline">Additional Habits</Badge>
-            <div className="text-xs text-muted-foreground">Flexible habits to enhance your routine</div>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="h-4 w-4 text-blue-500" />
+            <h3 className="font-medium text-sm">Additional Habits</h3>
+            <span className="text-xs text-muted-foreground">(Based on your target frequency)</span>
           </div>
           
-          <div className="space-y-2">
-            {optionalHabits.map(habit => (
-              <div key={habit.id} className="grid grid-cols-8 gap-1 items-center p-3 rounded-lg bg-muted/5 hover:bg-muted/15 transition-colors">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <span className="text-muted-foreground">{getIconComponent(habit.icon)}</span>
-                  <div className="min-w-0 flex flex-col">
-                    <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                      {habit.title}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-muted-foreground">
-                        {habit.frequency === 'weekly' ? 'Weekly' :
-                        habit.frequency === '2x-week' ? '2× week' :
-                        habit.frequency === '3x-week' ? '3× week' :
-                        habit.frequency === '4x-week' ? '4× week' : 'Custom'}
+          <div className="space-y-3">
+            {optionalHabits.map(habit => {
+              // Calculate completion count for this habit
+              const completedCount = countCompletedDaysInWeek(habit.id);
+              const targetCount = habit.frequency === 'daily' ? 7 : 
+                            habit.frequency === '2x-week' ? 2 :
+                            habit.frequency === '3x-week' ? 3 :
+                            habit.frequency === '4x-week' ? 4 : 1;
+              const progressPercent = Math.min(100, Math.round((completedCount / targetCount) * 100));
+              
+              return (
+                <div 
+                  key={habit.id} 
+                  className={`grid grid-cols-8 gap-1 items-center p-4 rounded-xl border shadow-sm transition-all duration-200
+                    ${hasMetWeeklyFrequency(habit) 
+                      ? 'bg-gradient-to-r from-green-50 to-transparent border-green-200' 
+                      : 'bg-gradient-to-r from-blue-50/40 to-transparent border-blue-100/50 hover:from-blue-50/60'}
+                  `}
+                >
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <div className={`p-1.5 rounded-md flex-shrink-0 ${hasMetWeeklyFrequency(habit) ? 'bg-green-100 text-green-600' : 'bg-blue-100/50 text-blue-600'}`}>
+                      {getIconComponent(habit.icon)}
+                    </div>
+                    <div className="min-w-0 flex flex-col">
+                      <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
+                        {habit.title}
                       </span>
-                      {hasMetWeeklyFrequency(habit) && (
-                        <Badge variant="outline" className="h-4 text-[10px] px-1 bg-green-500/10 text-green-600 border-green-500/20">
-                          Done
+                      <div className="flex items-center justify-between gap-1 mt-0.5">
+                        <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 border-${habit.category}-200 bg-${habit.category}-50/50`}>
+                          {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
                         </Badge>
-                      )}
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                          {completedCount}/{targetCount} {habit.frequency} 
+                        </span>
+                      </div>
                     </div>
+                  
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 ml-auto opacity-70 hover:opacity-100">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit Habit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => handleDeleteHabit(habit.id)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Habit
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  
-                  {/* Edit button */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit Habit
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
                 
-                {weekDates.map((date, i) => {
-                  const completed = isHabitCompletedOnDate(habit.id, date);
-                  const isPast = isBefore(date, today) && !isSameDay(date, today);
-                  const isFuture = isAfter(date, today) && !isSameDay(date, today);
-                  
-                  // For weekly habits, only enable the first day of the week
-                  const isWeeklyHabit = habit.frequency === 'weekly';
-                  const isFirstDayOfWeek = i === 0;
-                  const isDisabled = isFuture || (isWeeklyHabit && !isFirstDayOfWeek);
-                  
-                  return (
-                    <div key={i} className="flex justify-center">
-                      <button 
-                        onClick={() => onToggleHabit(habit.id, date)}
-                        disabled={isDisabled}
-                        className={`rounded-full h-7 w-7 flex items-center justify-center transition-colors
-                          ${completed 
-                            ? 'bg-primary text-white hover:bg-primary/90' 
-                            : isPast && !completed
-                              ? 'border border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/70'
-                              : 'border text-muted-foreground hover:border-primary/50'
-                          }
-                          ${isSameDay(date, today) ? 'ring-2 ring-offset-1 ring-primary/30' : ''}
-                          ${isDisabled ? 'opacity-30 cursor-not-allowed' : ''}
-                          ${(isWeeklyHabit && !isFirstDayOfWeek) ? 'opacity-20 cursor-not-allowed' : ''}
-                        `}
-                        title={`${format(date, 'EEEE, MMM d')} - ${isWeeklyHabit && !isFirstDayOfWeek ? 'Weekly habit - check only once per week' : completed ? 'Completed' : 'Not completed'}`}
-                      >
-                        {completed && <Check className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
+                  {weekDates.map((date, i) => {
+                    const completed = isHabitCompletedOnDate(habit.id, date);
+                    const isPast = isBefore(date, today) && !isSameDay(date, today);
+                    const isFuture = isAfter(date, today) && !isSameDay(date, today);
+                    
+                    // For weekly habits, only enable the first day of the week
+                    const isWeeklyHabit = habit.frequency === 'weekly';
+                    const isFirstDayOfWeek = i === 0;
+                    const isDisabled = isFuture || (isWeeklyHabit && !isFirstDayOfWeek);
+                    
+                    return (
+                      <div key={i} className="flex justify-center">
+                        <button 
+                          onClick={() => onToggleHabit(habit.id, date)}
+                          disabled={isDisabled}
+                          className={`flex items-center justify-center transition-all duration-200 ease-in-out
+                            ${completed 
+                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-md shadow-sm rounded-full h-8 w-8 scale-105 border border-blue-400' 
+                              : isPast && !completed
+                                ? 'bg-white border border-muted-foreground/30 text-muted-foreground hover:border-blue-300 rounded-full h-7 w-7'
+                                : isSameDay(date, today) && !isDisabled
+                                  ? 'bg-white border-2 border-blue-300 text-muted-foreground hover:border-blue-400 rounded-full h-7 w-7'
+                                  : 'bg-white border border-muted-foreground/20 text-muted-foreground hover:border-blue-300 rounded-full h-7 w-7'
+                            }
+                            ${isSameDay(date, today) && !isDisabled ? 'ring-2 ring-offset-1 ring-blue-200' : ''}
+                            ${isDisabled ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
+                            ${(isWeeklyHabit && !isFirstDayOfWeek) ? 'opacity-20 cursor-not-allowed' : ''}
+                          `}
+                          title={`${format(date, 'EEEE, MMM d')} - ${isWeeklyHabit && !isFirstDayOfWeek ? 'Weekly habit - check only once per week' : completed ? 'Completed' : 'Not completed'}`}
+                        >
+                          {completed && <Check className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -411,17 +460,17 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
           <span className="font-medium">Add New Habit</span>
         </Button>
         <div className="text-xs text-center text-muted-foreground mt-2">
-          Build your habit stack one at a time for maximum consistency
+          Add your own habits or use our templates to get started
         </div>
       </div>
       
-      {/* Edit Habit Dialog */}
-      <EditHabitDialog 
+      {/* Edit habit dialog */}
+      <EditHabitDialog
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         habit={selectedHabit}
         onSave={handleSaveHabit}
-        onDelete={onDeleteHabit}
+        onDelete={handleDeleteHabit}
       />
     </div>
   );
