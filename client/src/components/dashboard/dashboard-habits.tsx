@@ -134,11 +134,13 @@ const initialCompletions: HabitCompletion[] = [
   { habitId: 'h4', date: subDays(new Date(), 2), completed: true },
 ];
 
+import { WeeklyHabitView } from "./weekly-habit-view";
+
 export function DashboardHabits() {
   const { toast } = useToast();
   const [habits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
-  const [activeView, setActiveView] = useState<'list' | 'calendar'>('list');
+  const [activeView, setActiveView] = useState<'list' | 'calendar' | 'weekly'>('weekly'); // Default to weekly view
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   // Filter to show only top 5 habits
@@ -188,6 +190,11 @@ export function DashboardHabits() {
     });
   };
   
+  // Handle adding a new habit
+  const handleAddHabit = () => {
+    window.location.href = "/habits";
+  };
+  
   return (
     <Card>
       <CardContent className="pt-6">
@@ -203,12 +210,21 @@ export function DashboardHabits() {
               List
             </Button>
             <Button 
+              variant={activeView === 'weekly' ? 'default' : 'outline'} 
+              size="sm"
+              onClick={() => setActiveView('weekly')}
+              className="h-8 px-3"
+            >
+              <Calendar className="h-4 w-4 mr-1" />
+              Weekly
+            </Button>
+            <Button 
               variant={activeView === 'calendar' ? 'default' : 'outline'} 
               size="sm"
               onClick={() => setActiveView('calendar')}
               className="h-8 px-3"
             >
-              <Calendar className="h-4 w-4 mr-1" />
+              <CalendarIcon className="h-4 w-4 mr-1" />
               Calendar
             </Button>
           </div>
@@ -218,6 +234,16 @@ export function DashboardHabits() {
             Add habit
           </a>
         </div>
+        
+        {/* Weekly View (Loop Habit Tracker style) */}
+        {activeView === 'weekly' && (
+          <WeeklyHabitView 
+            habits={habits}
+            completions={completions}
+            onToggleHabit={toggleHabitCompletion}
+            onAddHabit={handleAddHabit}
+          />
+        )}
         
         {/* List View */}
         {activeView === 'list' && (
@@ -253,7 +279,7 @@ export function DashboardHabits() {
           <div>
             <div className="mb-4">
               <h3 className="text-sm font-medium mb-3 flex justify-between items-center">
-                <span>Weekly Habit Tracker</span>
+                <span>Daily Habit Tracker</span>
                 <span className="text-sm text-muted-foreground">
                   {format(startOfCurrentWeek, 'MMM d')} - {format(addDays(startOfCurrentWeek, 6), 'MMM d, yyyy')}
                 </span>
