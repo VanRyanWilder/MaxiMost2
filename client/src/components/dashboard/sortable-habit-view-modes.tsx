@@ -339,125 +339,131 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </div>
             </div>
             
-            <DndContext 
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext 
-                items={filteredHabits.map(habit => habit.id)}
-                strategy={verticalListSortingStrategy}
+            {habits.length === 0 ? (
+              <div className="p-6 text-center">
+                <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
+              </div>  
+            ) : (
+              <DndContext 
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <div className="space-y-4">
-                  {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
-                    <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
-                      Absolute Daily Habits
-                    </div>
-                  )}
-                  
-                  {filteredHabits.filter(h => h.isAbsolute).map(habit => (
-                    <SortableHabit key={habit.id} habit={habit}>
-                      <div className="flex justify-between p-3 rounded-lg border">
-                        <div className="flex items-center">
-                          <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
-                            {getHabitIcon(habit.icon)}
-                          </div>
-                          <div>
-                            <div className="font-medium">{habit.title}</div>
-                            <div className="text-sm text-gray-500">{habit.description}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => onToggleHabit(habit.id, today)}
-                            className="min-w-[100px]"
-                          >
-                            {isHabitCompletedOnDate(habit.id, today) 
-                              ? <><Check className="mr-1 h-4 w-4" /> Completed</>
-                              : "Mark Done"
-                            }
-                          </Button>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                <SortableContext 
+                  items={filteredHabits.map(habit => habit.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
+                      <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
+                        Absolute Daily Habits
                       </div>
-                    </SortableHabit>
-                  ))}
-                  
-                  {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
-                    <div className="font-medium text-sm mb-2 px-2 py-1 bg-green-50 rounded-md text-green-700 mt-4">
-                      Frequency-based Habits
-                    </div>
-                  )}
-                  
-                  {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
-                    <SortableHabit key={habit.id} habit={habit}>
-                      <div className="flex justify-between p-3 rounded-lg border">
-                        <div className="flex items-center">
-                          <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
-                            {getHabitIcon(habit.icon)}
-                          </div>
-                          <div>
-                            <div className="font-medium">{habit.title}</div>
-                            <div className="text-sm text-gray-500">
-                              {habit.description}
-                              <span className="ml-2 text-blue-600">{getFrequencyLabel(habit.frequency)}</span>
+                    )}
+                    
+                    {filteredHabits.filter(h => h.isAbsolute).map(habit => (
+                      <SortableHabit key={habit.id} habit={habit}>
+                        <div className="flex justify-between p-3 rounded-lg border">
+                          <div className="flex items-center">
+                            <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
+                              {getHabitIcon(habit.icon)}
+                            </div>
+                            <div>
+                              <div className="font-medium">{habit.title}</div>
+                              <div className="text-sm text-gray-500">{habit.description}</div>
                             </div>
                           </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => onToggleHabit(habit.id, today)}
+                              className="min-w-[100px]"
+                            >
+                              {isHabitCompletedOnDate(habit.id, today) 
+                                ? <><Check className="mr-1 h-4 w-4" /> Completed</>
+                                : "Mark Done"
+                              }
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Button 
-                            variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => onToggleHabit(habit.id, today)}
-                            className="min-w-[100px]"
-                          >
-                            {isHabitCompletedOnDate(habit.id, today) 
-                              ? <><Check className="mr-1 h-4 w-4" /> Completed</>
-                              : "Mark Done"
-                            }
-                          </Button>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
+                      </SortableHabit>
+                    ))}
+                    
+                    {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+                      <div className="font-medium text-sm mb-2 px-2 py-1 bg-green-50 rounded-md text-green-700 mt-4">
+                        Frequency-based Habits
                       </div>
-                    </SortableHabit>
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
+                    )}
+                    
+                    {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
+                      <SortableHabit key={habit.id} habit={habit}>
+                        <div className="flex justify-between p-3 rounded-lg border">
+                          <div className="flex items-center">
+                            <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
+                              {getHabitIcon(habit.icon)}
+                            </div>
+                            <div>
+                              <div className="font-medium">{habit.title}</div>
+                              <div className="text-sm text-gray-500">
+                                {habit.description}
+                                <span className="ml-2 text-blue-600">{getFrequencyLabel(habit.frequency)}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => onToggleHabit(habit.id, today)}
+                              className="min-w-[100px]"
+                            >
+                              {isHabitCompletedOnDate(habit.id, today) 
+                                ? <><Check className="mr-1 h-4 w-4" /> Completed</>
+                                : "Mark Done"
+                              }
+                            </Button>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" className="h-8 w-8 p-0">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </div>
+                      </SortableHabit>
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
           </div>
         )}
       
