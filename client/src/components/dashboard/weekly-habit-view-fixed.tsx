@@ -34,33 +34,8 @@ import {
 
 import { EditHabitDialog } from "./edit-habit-dialog";
 
-// Types for habits - match with dashboard.tsx
-type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
-type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
-
-interface Habit {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  impact: number;
-  effort: number;
-  timeCommitment: string;
-  frequency: HabitFrequency;
-  isAbsolute: boolean;
-  category: HabitCategory;
-  lastCompleted?: Date | null;
-  streak: number;
-  createdAt: Date;
-  type?: "principle" | "custom" | "default";
-  principle?: string;
-}
-
-interface HabitCompletion {
-  habitId: string;
-  date: Date;
-  completed: boolean;
-}
+// Import shared types
+import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
 
 interface WeeklyHabitViewProps {
   habits: Habit[];
@@ -99,6 +74,35 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
       isSameDay(new Date(c.date), date) && 
       c.completed
     );
+  };
+  
+  // Function to count completed days for a habit in the current week
+  const countCompletedDaysInWeek = (habitId: string): number => {
+    return completions.filter(c => 
+      c.habitId === habitId && 
+      weekDates.some(date => isSameDay(new Date(c.date), date)) &&
+      c.completed
+    ).length;
+  };
+  
+  // Function to check if a habit has met its weekly frequency requirement
+  const hasMetWeeklyFrequency = (habit: Habit): boolean => {
+    const completedCount = countCompletedDaysInWeek(habit.id);
+    
+    switch(habit.frequency) {
+      case 'daily':
+        return completedCount === 7;
+      case 'weekly':
+        return completedCount >= 1;
+      case '2x-week':
+        return completedCount >= 2;
+      case '3x-week':
+        return completedCount >= 3;
+      case '4x-week':
+        return completedCount >= 4;
+      default:
+        return false;
+    }
   };
 
   // Function to get icon component
@@ -306,12 +310,19 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
                     <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                       {habit.title}
                     </span>
-                    <span className="text-xs text-muted-foreground">
-                      {habit.frequency === 'weekly' ? 'Weekly' :
-                      habit.frequency === '2x-week' ? '2× week' :
-                      habit.frequency === '3x-week' ? '3× week' :
-                      habit.frequency === '4x-week' ? '4× week' : 'Custom'}
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-muted-foreground">
+                        {habit.frequency === 'weekly' ? 'Weekly' :
+                        habit.frequency === '2x-week' ? '2× week' :
+                        habit.frequency === '3x-week' ? '3× week' :
+                        habit.frequency === '4x-week' ? '4× week' : 'Custom'}
+                      </span>
+                      {hasMetWeeklyFrequency(habit) && (
+                        <Badge variant="outline" className="h-4 text-[10px] px-1 bg-green-500/10 text-green-600 border-green-500/20">
+                          Done
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Edit button */}

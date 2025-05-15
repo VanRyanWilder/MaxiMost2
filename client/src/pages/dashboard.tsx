@@ -10,30 +10,8 @@ import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
 
-// Types that mirror the ones in dashboard-habits.tsx for habit tracking
-type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
-type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
-
-interface Habit {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  impact: number;
-  effort: number;
-  timeCommitment: string;
-  frequency: HabitFrequency;
-  isAbsolute: boolean;
-  category: HabitCategory;
-  streak: number;
-  createdAt: Date;
-}
-
-interface HabitCompletion {
-  habitId: string;
-  date: Date;
-  completed: boolean;
-}
+// Import shared types
+import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
 
 // Sample data (same as in dashboard-habits.tsx)
 const initialHabits: Habit[] = [
