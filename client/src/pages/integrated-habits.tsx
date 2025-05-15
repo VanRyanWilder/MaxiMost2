@@ -772,7 +772,11 @@ export default function IntegratedHabits() {
   };
   
   const deleteHabit = (id: string) => {
-    setHabits(habits.filter(h => h.id !== id));
+    // Properly update the habits state using a callback to ensure we're working with the most recent state
+    setHabits(prevHabits => prevHabits.filter(h => h.id !== id));
+    
+    // Also remove any completions for this habit
+    setCompletions(prevCompletions => prevCompletions.filter(c => c.habitId !== id));
     
     toast({
       title: "Habit deleted",
