@@ -103,6 +103,98 @@ export default function Research() {
         "Rebuilding Milo"
       ],
       websiteUrl: "https://squatuniversity.com/"
+    },
+    {
+      id: "jill-miller",
+      name: "Jill Miller",
+      title: "Connective Tissue Specialist",
+      category: "mobility",
+      description: "Creator of Yoga Tune Up® and The Roll Model® Method, Jill specializes in helping people overcome pain, improve performance, and enhance body awareness through self-care fitness. She pioneered innovative techniques using therapy balls to address fascial health.",
+      specialty: [
+        "Fascia and connective tissue health",
+        "Self-myofascial release techniques",
+        "Breath work",
+        "Pain management"
+      ],
+      primaryAudience: [
+        "Yoga practitioners",
+        "Athletes with chronic pain",
+        "Fitness professionals",
+        "Rehabilitation specialists"
+      ],
+      notableWorks: [
+        "The Roll Model: A Step-by-Step Guide to Erase Pain",
+        "Body by Breath"
+      ],
+      websiteUrl: "https://www.jillmiller.com/"
+    },
+    {
+      id: "ido-portal",
+      name: "Ido Portal",
+      title: "Movement Specialist",
+      category: "mobility",
+      description: "As a movement teacher, Ido takes a philosophical and practical approach to human movement. He developed the 'Movement Culture' that transcends traditional exercise modalities and focuses on developing complete movement competency across multiple disciplines.",
+      specialty: [
+        "Movement literacy",
+        "Hand balancing",
+        "Locomotion patterns",
+        "Movement improvisation"
+      ],
+      primaryAudience: [
+        "Martial artists",
+        "Dancers",
+        "Athletes seeking movement mastery",
+        "Movement enthusiasts"
+      ],
+      websiteUrl: "https://www.idoportal.com/"
+    },
+    {
+      id: "sue-falsone",
+      name: "Sue Falsone",
+      title: "Sports Physical Therapist",
+      category: "mobility",
+      description: "The first female head athletic trainer in major American professional sports (MLB), Sue specializes in integrating physical therapy and performance training. She focuses on bridging the gap between rehabilitation and high-level athletic performance.",
+      specialty: [
+        "Integration of rehabilitation and performance",
+        "Thoracic spine mobility",
+        "Shoulder mechanics",
+        "Sports-specific recovery protocols"
+      ],
+      primaryAudience: [
+        "Professional athletes",
+        "Sports physical therapists",
+        "Athletic trainers",
+        "Strength coaches"
+      ],
+      notableWorks: [
+        "Bridging the Gap from Rehab to Performance"
+      ],
+      websiteUrl: "https://suefalsone.com/"
+    },
+    {
+      id: "brian-mackenzie",
+      name: "Brian MacKenzie",
+      title: "Human Performance Specialist",
+      category: "mobility",
+      description: "Founder of Power Speed ENDURANCE and XPT, Brian integrates breathing, movement, and recovery approaches for improved athletic performance. He developed innovative training methodologies that focus on functional fitness and stress adaptation.",
+      specialty: [
+        "Breath work optimization",
+        "Environmental training",
+        "Stress adaptation",
+        "Endurance performance"
+      ],
+      primaryAudience: [
+        "Endurance athletes",
+        "CrossFit practitioners",
+        "Performance-focused individuals",
+        "Coaches"
+      ],
+      notableWorks: [
+        "Unbreakable Runner",
+        "Power Speed ENDURANCE",
+        "Unplugged"
+      ],
+      websiteUrl: "https://powerspeedendurance.com/"
     }
   ];
 
@@ -157,6 +249,79 @@ export default function Research() {
         "The MAX Muscle Plan"
       ],
       websiteUrl: "https://www.lookgreatnaked.com/"
+    },
+    {
+      id: "layne-norton",
+      name: "Layne Norton",
+      title: "Physique Scientist & Nutritional Biochemist",
+      category: "strength",
+      description: "Dr. Layne Norton combines his expertise in nutritional biochemistry with practical strength training to create evidence-based approaches to body composition and performance. He's known for his no-nonsense, science-first approach to debunking fitness myths.",
+      specialty: [
+        "Protein metabolism",
+        "Energy balance",
+        "Powerlifting technique",
+        "Contest preparation"
+      ],
+      primaryAudience: [
+        "Bodybuilders",
+        "Powerlifters",
+        "Physique competitors",
+        "Evidence-based fitness enthusiasts"
+      ],
+      notableWorks: [
+        "Fat Loss Forever",
+        "The Complete Contest Prep Guide"
+      ],
+      websiteUrl: "https://www.biolayne.com/"
+    },
+    {
+      id: "stuart-mcgill",
+      name: "Stuart McGill",
+      title: "Spine Biomechanist",
+      category: "strength",
+      description: "Dr. Stuart McGill is a world-renowned spine biomechanist known for his research on spine function, injury mechanisms, and rehabilitation approaches. His work has revolutionized how we understand core training and back pain management.",
+      specialty: [
+        "Spine biomechanics",
+        "Core stability training",
+        "Back pain rehabilitation",
+        "Performance optimization"
+      ],
+      primaryAudience: [
+        "Back pain sufferers",
+        "Strength coaches",
+        "Combat athletes",
+        "Physical therapists"
+      ],
+      notableWorks: [
+        "Back Mechanic",
+        "Ultimate Back Fitness and Performance",
+        "McGill Big 3 core exercises"
+      ],
+      websiteUrl: "https://www.backfitpro.com/"
+    },
+    {
+      id: "mark-rippetoe",
+      name: "Mark Rippetoe",
+      title: "Strength Coach & Author",
+      category: "strength",
+      description: "Mark Rippetoe is a strength training coach and author known for his advocacy of simple, effective barbell training programs. His Starting Strength methodology has become one of the most widely used approaches to teaching proper strength technique.",
+      specialty: [
+        "Barbell training technique",
+        "Linear progression methodology",
+        "Strength program design",
+        "Coaching cues and principles"
+      ],
+      primaryAudience: [
+        "Novice lifters",
+        "Strength enthusiasts",
+        "Athletic coaches",
+        "Powerlifters"
+      ],
+      notableWorks: [
+        "Starting Strength: Basic Barbell Training",
+        "Practical Programming for Strength Training"
+      ],
+      websiteUrl: "https://startingstrength.com/"
     }
   ];
 
@@ -209,6 +374,78 @@ export default function Research() {
         "TED Talk: Sleep is your superpower"
       ],
       websiteUrl: "https://www.sleepdiplomat.com/"
+    },
+    {
+      id: "valter-longo",
+      name: "Valter Longo",
+      title: "Biogerontologist & Fasting Expert",
+      category: "longevity",
+      description: "Dr. Valter Longo is a leading researcher in the field of longevity and aging. His work focuses on the relationship between nutrition, fasting, and longevity, with particular emphasis on cellular protection mechanisms activated by dietary interventions.",
+      specialty: [
+        "Fasting mimicking diet protocols",
+        "Nutrition's impact on longevity",
+        "Cellular stress response",
+        "Disease prevention"
+      ],
+      primaryAudience: [
+        "Health-conscious individuals",
+        "Fasting enthusiasts",
+        "Cancer patients",
+        "Anti-aging researchers"
+      ],
+      notableWorks: [
+        "The Longevity Diet",
+        "Research on Fasting-Mimicking Diet"
+      ],
+      websiteUrl: "https://valterlongo.com/"
+    },
+    {
+      id: "bryan-johnson",
+      name: "Bryan Johnson",
+      title: "Biohacker & Longevity Entrepreneur",
+      category: "longevity",
+      description: "Bryan Johnson is an entrepreneur and biohacker who has developed the Blueprint protocol, a comprehensive system for measuring and optimizing biological age. His approach includes rigorous testing, data collection, and interventions across multiple health domains.",
+      specialty: [
+        "Biomarker tracking and optimization",
+        "Anti-aging interventions",
+        "Data-driven health protocols",
+        "Biological age reversal"
+      ],
+      primaryAudience: [
+        "Biohackers",
+        "Health optimizers",
+        "Tech-oriented health enthusiasts",
+        "Anti-aging advocates"
+      ],
+      notableWorks: [
+        "Blueprint Protocol",
+        "Rejuvenation Olympics"
+      ],
+      websiteUrl: "https://blueprint.bryanjohnson.co/"
+    },
+    {
+      id: "andrew-huberman-longevity",
+      name: "Andrew Huberman",
+      title: "Neuroscientist & Longevity Protocol Expert",
+      category: "longevity",
+      description: "Dr. Andrew Huberman offers science-based protocols for optimizing health and extending healthspan through neurological and physiological interventions. His work connects neuroscience with practical applications for improving vitality and cognitive function.",
+      specialty: [
+        "Neuroplasticity for longevity",
+        "Stress mitigation techniques",
+        "Light exposure protocols",
+        "Heat/cold exposure benefits"
+      ],
+      primaryAudience: [
+        "Science-minded health optimizers",
+        "Performance enthusiasts",
+        "Stress-management seekers",
+        "Sleep optimization seekers"
+      ],
+      notableWorks: [
+        "Huberman Lab Podcast - Longevity episodes",
+        "Time-restricted eating protocols"
+      ],
+      websiteUrl: "https://hubermanlab.com/"
     }
   ];
 
