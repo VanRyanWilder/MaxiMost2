@@ -273,7 +273,7 @@ export const HabitViewModes: React.FC<HabitViewProps> = ({
       
       {/* Week days header - only display in weekly view */}
       {viewMode === "weekly" && (
-        <div className="grid grid-cols-8 gap-1 text-center border-b pb-2">
+        <div className="grid grid-cols-8 md:grid-cols-[1.8fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr] gap-1 text-center border-b pb-2">
           <div className="font-medium text-sm">Habits</div>
           {weekDates.map((date, i) => (
             <div
@@ -294,8 +294,11 @@ export const HabitViewModes: React.FC<HabitViewProps> = ({
         {allHabits.map(habit => (
           <div 
             key={habit.id} 
-            className={`grid ${viewMode === 'weekly' ? 'grid-cols-8' : 'grid-cols-1'} gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
-              ${habit.streak > 0 ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-transparent' : 'border-slate-200'}
+            className={`grid ${viewMode === 'weekly' ? 'grid-cols-8' : 'grid-cols-1'} 
+              ${viewMode === 'weekly' ? 'md:grid-cols-[1.8fr_1fr_1fr_1fr_1fr_1fr_1fr_1fr]' : ''} 
+              gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
+              ${(!habit.isAbsolute && hasMetWeeklyFrequency(habit)) ? 'border-blue-300 bg-gradient-to-r from-blue-100/50 to-transparent' :
+                habit.streak > 0 ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-transparent' : 'border-slate-200'}
             `}
           >
             <div className="flex items-center gap-2 overflow-hidden">
@@ -304,7 +307,9 @@ export const HabitViewModes: React.FC<HabitViewProps> = ({
               </div>
               <div className="min-w-0 flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">{habit.title}</span>
+                  <span className={`font-medium text-sm ${viewMode === 'weekly' ? 'max-w-[95px]' : ''} overflow-hidden text-ellipsis block`}>
+                    {habit.title}
+                  </span>
                   {habit.displayBadge}
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
