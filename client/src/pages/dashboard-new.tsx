@@ -631,6 +631,48 @@ export default function Dashboard() {
               
               {/* Right column with habit library and other elements */}
               <div className="space-y-6">
+                {/* Legend Card */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-500" /> Legend
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Star className="h-4 w-4 text-amber-500" />
+                          <span className="font-medium">Impact Score</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Higher numbers (1-10) indicate habits with greater potential impact on wellness and progress.
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-4 w-4 text-purple-500" />
+                          <span className="font-medium">Effort Score</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Higher numbers (1-10) indicate habits requiring more effort or willpower to complete.
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-green-100 rounded">
+                            <Check className="h-3 w-3 text-green-600" />
+                          </div>
+                          <span className="font-medium">Weekly Goals</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Green background shows when you've met your target frequency for the week.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
                 {/* Habit Library Card */}
                 <Card>
                   <CardHeader>
