@@ -38,6 +38,8 @@ import {
 // Types for habits
 type Frequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
 
+type Category = "health" | "fitness" | "mind" | "social" | "custom";
+
 type Habit = {
   id: string;
   title: string;
@@ -49,7 +51,7 @@ type Habit = {
   frequency: Frequency;
   isAbsolute: boolean;
   streak?: number;
-  category?: "health" | "fitness" | "mind" | "social" | "custom";
+  category: Category;
 };
 
 type Completion = {
@@ -75,7 +77,7 @@ export function StreakHabitTracker() {
     timeCommitment: string;
     frequency: Frequency;
     isAbsolute: boolean;
-    category: "health" | "fitness" | "mind" | "social" | "custom";
+    category: Category;
   }>({
     title: '',
     description: '',
@@ -342,7 +344,7 @@ export function StreakHabitTracker() {
         timeCommitment: habitData.timeCommitment || '10 min',
         frequency: habitData.frequency as Frequency || 'daily',
         isAbsolute: !!habitData.isAbsolute,
-        category: habitData.category || 'mind'
+        category: (habitData.category as Category) || 'mind'
       });
       
       // Open the dialog
