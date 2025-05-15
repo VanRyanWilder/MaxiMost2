@@ -40,7 +40,6 @@ import {
   Flame,
   Dumbbell,
   Brain,
-  DropletIcon,
   Droplets,
   BookOpen,
   Pill
@@ -49,131 +48,105 @@ import {
 // Import shared types
 import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
 
-// Sample data
-const initialHabits: Habit[] = [
-  {
-    id: 'h1',
-    title: 'Drink 64oz Water',
-    description: 'Stay hydrated for optimal performance and health',
-    icon: 'droplets',
-    iconColor: 'blue',
-    impact: 8,
-    effort: 2,
-    timeCommitment: '5 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'health',
-    streak: 12,
-    createdAt: new Date(Date.now() - 86400000 * 30) // 30 days ago
-  },
-  {
-    id: 'h2',
-    title: 'Read 10 Pages',
-    description: 'Daily reading for continuous learning and growth',
-    icon: 'book-open',
-    iconColor: 'purple',
-    impact: 7,
-    effort: 4,
-    timeCommitment: '15 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'mind',
-    streak: 8,
-    createdAt: new Date(Date.now() - 86400000 * 15) // 15 days ago
-  },
-  {
-    id: 'h3',
-    title: 'Meditate',
-    description: 'Mindfulness practice for mental clarity and stress reduction',
-    icon: 'brain',
-    iconColor: 'indigo',
-    impact: 9,
-    effort: 3,
-    timeCommitment: '10 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'mind',
-    streak: 15,
-    createdAt: new Date(Date.now() - 86400000 * 45) // 45 days ago
-  },
-  {
-    id: 'h4',
-    title: 'Resistance Training',
-    description: 'Build and maintain muscle mass and strength',
-    icon: 'dumbbell',
-    iconColor: 'green',
-    impact: 10,
-    effort: 7,
-    timeCommitment: '45 min',
-    frequency: '3x-week',
-    isAbsolute: false,
-    category: 'fitness',
-    streak: 4,
-    createdAt: new Date(Date.now() - 86400000 * 60) // 60 days ago
-  },
-  {
-    id: 'h5',
-    title: 'Take Supplements',
-    description: 'Daily vitamin and mineral supplementation',
-    icon: 'pill',
-    iconColor: 'amber',
-    impact: 6,
-    effort: 1,
-    timeCommitment: '1 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'health',
-    streak: 32,
-    createdAt: new Date(Date.now() - 86400000 * 32) // 32 days ago
-  },
-  {
-    id: 'h6',
-    title: 'Stretch/Mobility',
-    description: 'Maintain flexibility and prevent injuries',
-    icon: 'activity',
-    iconColor: 'teal',
-    impact: 8,
-    effort: 3,
-    timeCommitment: '10 min',
-    frequency: 'daily',
-    isAbsolute: false,
-    category: 'fitness',
-    streak: 3,
-    createdAt: new Date(Date.now() - 86400000 * 10) // 10 days ago
-  }
-];
-
-const initialCompletions: HabitCompletion[] = [
-  // Add some sample completions for today and past days
-  {
-    id: 'c1',
-    habitId: 'h1',
-    date: new Date(),
-    completed: true
-  },
-  {
-    id: 'c2',
-    habitId: 'h2',
-    date: new Date(),
-    completed: true
-  },
-  {
-    id: 'c3',
-    habitId: 'h5',
-    date: new Date(),
-    completed: true
-  }
-];
-
 export default function SortableDashboard() {
-  const [habits, setHabits] = useState<Habit[]>(initialHabits);
-  const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
-  const [editHabitDialogOpen, setEditHabitDialogOpen] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  // Sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Set up drag and drop sensors
+  // Date state
+  const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Habit and completion state
+  const [habits, setHabits] = useState<Habit[]>([
+    {
+      id: "h-1",
+      title: "Drink water",
+      description: "Drink 8 glasses of water daily",
+      icon: "droplet",
+      iconColor: "blue",
+      impact: 8,
+      effort: 2,
+      timeCommitment: "5 min",
+      frequency: "daily",
+      isAbsolute: true,
+      category: "health",
+      streak: 7,
+      createdAt: new Date(2023, 0, 1)
+    },
+    {
+      id: "h-2",
+      title: "Read",
+      description: "Read 10 pages daily",
+      icon: "book-open",
+      iconColor: "purple",
+      impact: 9,
+      effort: 4,
+      timeCommitment: "15 min",
+      frequency: "daily",
+      isAbsolute: true,
+      category: "mind",
+      streak: 5,
+      createdAt: new Date(2023, 0, 5)
+    },
+    {
+      id: "h-3",
+      title: "Meditate",
+      description: "Meditate for 10 minutes",
+      icon: "brain",
+      iconColor: "green",
+      impact: 9,
+      effort: 3,
+      timeCommitment: "10 min",
+      frequency: "daily",
+      isAbsolute: true,
+      category: "mind",
+      streak: 3,
+      createdAt: new Date(2023, 0, 10)
+    },
+    {
+      id: "h-4",
+      title: "Exercise",
+      description: "30 minutes exercise",
+      icon: "dumbbell",
+      iconColor: "red",
+      impact: 10,
+      effort: 7,
+      timeCommitment: "30 min",
+      frequency: "3x-week",
+      isAbsolute: false,
+      category: "fitness",
+      streak: 2,
+      createdAt: new Date(2023, 0, 15)
+    },
+    {
+      id: "h-5",
+      title: "Stretch",
+      description: "Morning stretching routine",
+      icon: "activity",
+      iconColor: "orange",
+      impact: 7,
+      effort: 3,
+      timeCommitment: "5 min",
+      frequency: "daily",
+      isAbsolute: false,
+      category: "fitness",
+      streak: 0,
+      createdAt: new Date(2023, 0, 20)
+    }
+  ]);
+  
+  const [completions, setCompletions] = useState<HabitCompletion[]>([
+    { id: "c-1", habitId: "h-1", date: new Date(), completed: true },
+    { id: "c-2", habitId: "h-2", date: new Date(), completed: true },
+    { id: "c-3", habitId: "h-3", date: subDays(new Date(), 1), completed: true },
+    { id: "c-4", habitId: "h-1", date: subDays(new Date(), 1), completed: true },
+    { id: "c-5", habitId: "h-2", date: subDays(new Date(), 1), completed: true }
+  ]);
+  
+  // Edit/Create habit dialog state
+  const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  
+  // Setup drag and drop sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -181,29 +154,37 @@ export default function SortableDashboard() {
     })
   );
   
-  // Handle drag end event to reorder habits
+  // Handle drag end event
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
     if (active.id !== over?.id) {
-      setHabits((items) => {
-        const oldIndex = items.findIndex(item => item.id === active.id);
-        const newIndex = items.findIndex(item => item.id === over?.id);
+      setHabits(habits => {
+        const oldIndex = habits.findIndex(h => h.id === active.id);
+        const newIndex = habits.findIndex(h => h.id === over?.id);
         
-        return arrayMove(items, oldIndex, newIndex);
+        return arrayMove(habits, oldIndex, newIndex);
       });
     }
   };
   
-  // Toggle habit completion for the selected date
+  // Check if a habit is completed on a specific date
+  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
+    return completions.some(
+      c => c.habitId === habitId && 
+           c.completed && 
+           isSameDay(new Date(c.date), date)
+    );
+  };
+  
+  // Toggle habit completion for a specific date
   const toggleCompletion = (habitId: string, date: Date) => {
-    // Check if we already have a completion for this habit on this date
     const existingCompletionIndex = completions.findIndex(
       c => c.habitId === habitId && isSameDay(new Date(c.date), date)
     );
     
-    if (existingCompletionIndex >= 0) {
-      // Toggle the existing completion
+    if (existingCompletionIndex !== -1) {
+      // Toggle existing completion
       const updatedCompletions = [...completions];
       updatedCompletions[existingCompletionIndex] = {
         ...updatedCompletions[existingCompletionIndex],
@@ -258,22 +239,14 @@ export default function SortableDashboard() {
       effort: 5,
       timeCommitment: '5 min',
       frequency,
-      isAbsolute: frequency === 'daily',
+      isAbsolute: true,
       category: 'health',
       streak: 0,
       createdAt: new Date()
     };
+    
     setSelectedHabit(newHabit);
     setEditHabitDialogOpen(true);
-  };
-  
-  // Check if a habit was completed on a specific date
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(
-      c => c.habitId === habitId && 
-           isSameDay(new Date(c.date), date) && 
-           c.completed
-    );
   };
   
   // Calculate whether a habit has met its weekly frequency requirement
@@ -307,6 +280,14 @@ export default function SortableDashboard() {
   const absoluteHabits = habits.filter(h => h.isAbsolute);
   const additionalHabits = habits.filter(h => !h.isAbsolute);
 
+  // Handle adding a habit from the library
+  const handleAddFromLibrary = (habitId: string) => {
+    // This is where you would look up the library habit template
+    // and add it to the user's habits
+    console.log('Adding habit from library:', habitId);
+    handleCreateHabit();
+  };
+
   return (
     <>
       <div className="flex min-h-screen bg-background">
@@ -325,196 +306,192 @@ export default function SortableDashboard() {
               <div className="flex-1">
                 {/* Progress Summary */}
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
-              {/* Progress Cards */}
-              <div className="bg-white rounded-lg shadow p-4 border">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Day Streak</p>
-                    <p className="text-2xl font-bold">28</p>
-                  </div>
-                  <div className="bg-yellow-100 p-2 rounded-full">
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-4 border">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Completion %</p>
-                    <p className="text-2xl font-bold">75</p>
-                  </div>
-                  <div className="bg-green-100 p-2 rounded-full">
-                    <CheckSquare className="h-4 w-4 text-green-500" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-4 border">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Active Habits</p>
-                    <p className="text-2xl font-bold">{habits.length}</p>
-                  </div>
-                  <div className="bg-blue-100 p-2 rounded-full">
-                    <Activity className="h-4 w-4 text-blue-500" />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow p-4 border">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Weekly Streak</p>
-                    <p className="text-2xl font-bold">4</p>
-                  </div>
-                  <div className="bg-orange-100 p-2 rounded-full">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Date selector and add habit button */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" onClick={goToPreviousDay}>
-                  <span className="sr-only">Previous day</span>
-                  <Calendar className="h-4 w-4" />
-                </Button>
-                <span className="font-medium">
-                  {format(currentDate, 'EEEE, MMMM d')}
-                </span>
-                <Button variant="outline" size="icon" onClick={goToNextDay}>
-                  <span className="sr-only">Next day</span>
-                  <Calendar className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <Button onClick={handleCreateHabit} size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Add Habit
-              </Button>
-            </div>
-            
-            {/* Daily Habits Section */}
-            <Card className="mb-8">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold">
-                  Daily Absolute Habits
-                  <Badge variant="outline" className="ml-2 font-normal">
-                    {absoluteHabits.length} habits
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
-                  <div className="px-3">Habit</div>
-                  {Array.from({ length: 7 }).map((_, i) => {
-                    const date = new Date(currentDate);
-                    date.setDate(date.getDate() + i);
-                    return (
-                      <div key={i} className="text-center">
-                        {format(date, 'EEE')}
-                        <span className="block">{format(date, 'd')}</span>
+                  {/* Progress Cards */}
+                  <div className="bg-white rounded-lg shadow p-4 border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Day Streak</p>
+                        <p className="text-2xl font-bold">28</p>
                       </div>
-                    );
-                  })}
-                </div>
-                
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext 
-                    items={absoluteHabits.map(h => h.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {absoluteHabits.map(habit => (
-                      <SortableHabit
-                        key={habit.id}
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={toggleCompletion}
-                        onEdit={handleEditHabit}
-                        currentDate={currentDate}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              </CardContent>
-            </Card>
-            
-            {/* Additional Habits Section */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold">
-                  Additional Habits
-                  <Badge variant="outline" className="ml-2 font-normal">
-                    {additionalHabits.length} habits
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
-                  <div className="px-3">Habit</div>
-                  {Array.from({ length: 7 }).map((_, i) => {
-                    const date = new Date(currentDate);
-                    date.setDate(date.getDate() + i);
-                    return (
-                      <div key={i} className="text-center">
-                        {format(date, 'EEE')}
-                        <span className="block">{format(date, 'd')}</span>
+                      <div className="bg-yellow-100 p-2 rounded-full">
+                        <Zap className="h-4 w-4 text-yellow-500" />
                       </div>
-                    );
-                  })}
-                </div>
-                
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext 
-                    items={additionalHabits.map(h => h.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {additionalHabits.map(habit => (
-                      <SortableHabit
-                        key={habit.id}
-                        habit={habit}
-                        completions={completions}
-                        onToggleCompletion={toggleCompletion}
-                        onEdit={handleEditHabit}
-                        currentDate={currentDate}
-                      />
-                    ))}
-                  </SortableContext>
-                </DndContext>
-              </CardContent>
-            </Card>
-                </div>
-                
-                {/* Right column - Habit Library and Daily Motivation */}
-                <div className="lg:w-1/3 space-y-4">
-                  {/* Habit Library component positioned above Daily Motivation */}
-                  <HabitLibrary 
-                    onAddSuggestion={(habitId) => {
-                      // Here you would implement logic to add a habit from the library
-                      console.log('Add suggestion:', habitId);
-                      handleCreateHabit();
-                    }}
-                    onCreateCustom={handleCreateHabit}
-                  />
+                    </div>
+                  </div>
                   
-                  {/* Daily Motivation component below Habit Library */}
-                  <DailyMotivation 
-                    quote="The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one."
-                    author="Mark Twain"
-                  />
+                  <div className="bg-white rounded-lg shadow p-4 border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Completion %</p>
+                        <p className="text-2xl font-bold">75</p>
+                      </div>
+                      <div className="bg-green-100 p-2 rounded-full">
+                        <CheckSquare className="h-4 w-4 text-green-500" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg shadow p-4 border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Active Habits</p>
+                        <p className="text-2xl font-bold">{habits.length}</p>
+                      </div>
+                      <div className="bg-blue-100 p-2 rounded-full">
+                        <Activity className="h-4 w-4 text-blue-500" />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg shadow p-4 border">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Weekly Streak</p>
+                        <p className="text-2xl font-bold">4</p>
+                      </div>
+                      <div className="bg-orange-100 p-2 rounded-full">
+                        <Flame className="h-4 w-4 text-orange-500" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                
+                {/* Date selector and add habit button */}
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="icon" onClick={goToPreviousDay}>
+                      <span className="sr-only">Previous day</span>
+                      <Calendar className="h-4 w-4" />
+                    </Button>
+                    <span className="font-medium">
+                      {format(currentDate, 'EEEE, MMMM d')}
+                    </span>
+                    <Button variant="outline" size="icon" onClick={goToNextDay}>
+                      <span className="sr-only">Next day</span>
+                      <Calendar className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <Button onClick={handleCreateHabit} size="sm">
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add Habit
+                  </Button>
+                </div>
+                
+                {/* Daily Habits Section */}
+                <Card className="mb-8">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-semibold">
+                      Daily Absolute Habits
+                      <Badge variant="outline" className="ml-2 font-normal">
+                        {absoluteHabits.length} habits
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
+                      <div className="px-3">Habit</div>
+                      {Array.from({ length: 7 }).map((_, i) => {
+                        const date = new Date(currentDate);
+                        date.setDate(date.getDate() + i);
+                        return (
+                          <div key={i} className="text-center">
+                            {format(date, 'EEE')}
+                            <span className="block">{format(date, 'd')}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext 
+                        items={absoluteHabits.map(h => h.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {absoluteHabits.map(habit => (
+                          <SortableHabit
+                            key={habit.id}
+                            habit={habit}
+                            completions={completions}
+                            onToggleCompletion={toggleCompletion}
+                            onEdit={handleEditHabit}
+                            currentDate={currentDate}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  </CardContent>
+                </Card>
+                
+                {/* Additional Habits Section */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-semibold">
+                      Additional Habits
+                      <Badge variant="outline" className="ml-2 font-normal">
+                        {additionalHabits.length} habits
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-[2fr_repeat(7,1fr)] text-xs font-medium text-muted-foreground mb-2">
+                      <div className="px-3">Habit</div>
+                      {Array.from({ length: 7 }).map((_, i) => {
+                        const date = new Date(currentDate);
+                        date.setDate(date.getDate() + i);
+                        return (
+                          <div key={i} className="text-center">
+                            {format(date, 'EEE')}
+                            <span className="block">{format(date, 'd')}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
+                    <DndContext
+                      sensors={sensors}
+                      collisionDetection={closestCenter}
+                      onDragEnd={handleDragEnd}
+                    >
+                      <SortableContext 
+                        items={additionalHabits.map(h => h.id)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {additionalHabits.map(habit => (
+                          <SortableHabit
+                            key={habit.id}
+                            habit={habit}
+                            completions={completions}
+                            onToggleCompletion={toggleCompletion}
+                            onEdit={handleEditHabit}
+                            currentDate={currentDate}
+                          />
+                        ))}
+                      </SortableContext>
+                    </DndContext>
+                  </CardContent>
+                </Card>
               </div>
+              
+              {/* Right column - Habit Library and Daily Motivation */}
+              <div className="lg:w-1/3 space-y-4">
+                {/* Habit Library component positioned above Daily Motivation */}
+                <HabitLibrary 
+                  onAddSuggestion={handleAddFromLibrary}
+                  onCreateCustom={handleCreateHabit}
+                />
+                
+                {/* Daily Motivation component below Habit Library */}
+                <DailyMotivation 
+                  quote="The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one."
+                  author="Mark Twain"
+                />
+              </div>
+            </div>
           </PageContainer>
         </main>
       </div>
