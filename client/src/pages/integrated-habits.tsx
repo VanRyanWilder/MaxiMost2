@@ -681,6 +681,19 @@ export default function IntegratedHabits() {
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
+  // State for custom quick add habits (new user-created habits added to quick add list)
+  const [customQuickAddHabits, setCustomQuickAddHabits] = useState<Array<{
+    title: string;
+    description: string;
+    icon: string;
+    impact: number;
+    effort: number;
+    timeCommitment: string;
+    frequency: string;
+    category: string;
+    isAbsolute: boolean;
+  }>>([]);
+  
   // New habit form state
   const [newHabit, setNewHabit] = useState<Omit<Habit, 'id' | 'streak' | 'createdAt'>>({
     title: '',
