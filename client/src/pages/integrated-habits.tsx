@@ -320,7 +320,7 @@ function SortableHabitItem({
 export default function IntegratedHabits() {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<"list" | "calendar">("list");
-  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string>("all");
   const [editHabit, setEditHabit] = useState<Habit | null>(null);
   const [addHabitOpen, setAddHabitOpen] = useState(false);
   const [newHabit, setNewHabit] = useState<Partial<Habit>>({
@@ -816,8 +816,8 @@ export default function IntegratedHabits() {
   const getFilteredHabits = () => {
     let filtered = [...habits];
     
-    // Apply category filter if set
-    if (filterCategory) {
+    // Apply category filter if set and not 'all'
+    if (filterCategory && filterCategory !== 'all') {
       filtered = filtered.filter(h => h.category === filterCategory);
     }
     
@@ -959,7 +959,7 @@ export default function IntegratedHabits() {
   
   // Filter dropdown options for different habit categories
   const filterOptions = [
-    { value: null, label: "All habits" },
+    { value: "all", label: "All habits" },
     { value: "health", label: "Health" },
     { value: "fitness", label: "Fitness" },
     { value: "mind", label: "Mind & Spirit" },
