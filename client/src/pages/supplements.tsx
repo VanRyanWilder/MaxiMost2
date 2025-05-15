@@ -250,12 +250,14 @@ export default function SupplementsPage() {
       
       <div className="space-y-16">
         {topSupplements.map((supplement) => (
-          <div key={supplement.id} className="relative pl-6 pb-12 mb-8">
-            <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold shadow-md">
-              {supplement.id}
+          <div key={supplement.id} className="relative pb-12 mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold shadow-md">
+                {supplement.id}
+              </div>
+              <h3 className="text-2xl font-bold">{supplement.name}</h3>
             </div>
             <div className="pt-2">
-              <h3 className="text-2xl font-bold mb-4">{supplement.name}</h3>
               
               <div className="flex flex-col gap-6">
                 <Card className="overflow-hidden border-none shadow-md">
@@ -286,12 +288,16 @@ export default function SupplementsPage() {
                     </div>
                     <div className="space-y-4">
                       {supplement.expertInsights.map((insight, index) => (
-                        <div key={index} className="pl-4 border-l-2 border-purple-300">
+                        <div key={index} className="pl-4 border-l-2 border-purple-300 group relative">
                           <div className="flex items-center gap-2">
                             <Quote className="h-4 w-4 text-purple-500" />
-                            <span className="font-semibold text-purple-700">{insight.expert}</span>
+                            <span className="font-semibold text-purple-700 cursor-help">{insight.expert}</span>
                           </div>
-                          <p className="mt-1 text-sm text-purple-700">{insight.insight}</p>
+                          <div className="absolute left-0 top-full z-10 mt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <div className="bg-white p-3 rounded-md shadow-lg border border-purple-100 max-w-md">
+                              <p className="text-sm text-purple-700">{insight.insight}</p>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
