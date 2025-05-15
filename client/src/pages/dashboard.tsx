@@ -1,11 +1,7 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
-import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
-import { DailyTasks } from "@/components/tasks/daily-tasks";
-import { ResourceLibrary } from "@/components/resources/resource-library";
 import { PageContainer } from "@/components/layout/page-container";
 import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 
@@ -37,32 +33,7 @@ export default function Dashboard() {
             <DailyMotivation />
           </div>
         </div>
-        
-        <Tabs defaultValue="tasks" className="mb-6">
-          <TabsList className="mb-6 border-b border-border w-full justify-start overflow-x-auto">
-            <TabsTrigger value="tasks" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary pb-2">
-              Daily Tasks
-            </TabsTrigger>
-            <TabsTrigger value="resources" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary pb-2">
-              Resources
-            </TabsTrigger>
-            <TabsTrigger value="progress" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary pb-2">
-              Progress
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="tasks" className="mt-0">
-            <DailyTasks />
-          </TabsContent>
-          
-          <TabsContent value="resources" className="mt-0">
-            <ResourceLibrary />
-          </TabsContent>
-          
-          <TabsContent value="progress" className="mt-0">
-            <ProgressVisualization />
-          </TabsContent>
-        </Tabs>
+
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <ProgressCard 
