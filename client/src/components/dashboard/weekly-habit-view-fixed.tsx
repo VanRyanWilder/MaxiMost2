@@ -249,7 +249,7 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
       {absoluteHabits.length > 0 && (
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Zap className="h-4 w-4 text-amber-500" />
+            <Zap className="h-4 w-4 text-blue-500" />
             <h3 className="font-medium text-sm">Absolute Habits</h3>
             <span className="text-xs text-muted-foreground">(Do these every day)</span>
           </div>
@@ -259,22 +259,22 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
               <div 
                 key={habit.id} 
                 className={`grid grid-cols-8 gap-1 items-center p-3 rounded-lg border shadow-sm transition-colors
-                  ${habit.streak > 0 ? 'border-amber-200 bg-gradient-to-r from-amber-50 to-transparent' : 'border-slate-200'}
+                  ${habit.streak > 0 ? 'border-blue-200 bg-gradient-to-r from-blue-50 to-transparent' : 'border-slate-200'}
                 `}
               >
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <div className={`p-1.5 rounded-md ${habit.streak > 0 ? 'bg-amber-100 text-amber-600' : 'bg-gray-100 text-gray-600'}`}>
+                  <div className={`p-1.5 rounded-md ${habit.streak > 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
                     {getIconComponent(habit.icon)}
                   </div>
                   <div className="min-w-0 flex flex-col">
                     <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">{habit.title}</span>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <Badge variant="outline" className={`text-[10px] px-1.5 py-0 h-4 border-${habit.category}-200 bg-${habit.category}-50/50`}>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-gray-50">
                         {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
                       </Badge>
                       
                       {habit.streak > 0 && (
-                        <Badge variant="outline" className="px-1 py-0 h-4 text-[10px] flex items-center gap-0.5 bg-amber-500/10 text-amber-700 border-amber-200">
+                        <Badge variant="outline" className="px-1 py-0 h-4 text-[10px] flex items-center gap-0.5 bg-blue-500/10 text-blue-700 border-blue-200">
                           <Award className="h-2.5 w-2.5" /> {habit.streak}
                         </Badge>
                       )}
@@ -315,14 +315,14 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
                         disabled={isFuture}
                         className={`flex items-center justify-center transition-all duration-200 ease-in-out
                           ${completed 
-                            ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-white hover:shadow-md shadow-sm rounded-full h-8 w-8 scale-105 border border-amber-400' 
+                            ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:shadow-md shadow-sm rounded-full h-8 w-8 scale-105 border border-blue-400' 
                             : isPast && !completed
-                              ? 'bg-white border border-muted-foreground/30 text-muted-foreground hover:border-amber-300 rounded-full h-7 w-7'
+                              ? 'bg-white border border-muted-foreground/30 text-muted-foreground hover:border-blue-300 rounded-full h-7 w-7'
                               : isSameDay(date, today) && !isFuture
-                                ? 'bg-white border-2 border-amber-300 text-muted-foreground hover:border-amber-400 rounded-full h-7 w-7'
-                                : 'bg-white border border-muted-foreground/20 text-muted-foreground hover:border-amber-300 rounded-full h-7 w-7'
+                                ? 'bg-white border-2 border-blue-300 text-muted-foreground hover:border-blue-400 rounded-full h-7 w-7'
+                                : 'bg-white border border-muted-foreground/20 text-muted-foreground hover:border-blue-300 rounded-full h-7 w-7'
                           }
-                          ${isSameDay(date, today) && !isFuture ? 'ring-2 ring-offset-1 ring-amber-200' : ''}
+                          ${isSameDay(date, today) && !isFuture ? 'ring-2 ring-offset-1 ring-blue-200' : ''}
                           ${isFuture ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
                         `}
                         title={`${format(date, 'EEEE, MMM d')} - ${completed ? 'Completed' : 'Not completed'}`}
