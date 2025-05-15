@@ -250,8 +250,8 @@ export default function SupplementsPage() {
       
       <div className="space-y-16">
         {topSupplements.map((supplement) => (
-          <div key={supplement.id} className="relative border-l-4 border-primary pl-6 pb-6">
-            <div className="absolute -left-6 flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary font-bold">
+          <div key={supplement.id} className="relative pl-6 pb-12 mb-8">
+            <div className="absolute left-0 top-0 flex items-center justify-center w-10 h-10 rounded-full bg-primary text-white font-bold shadow-md">
               {supplement.id}
             </div>
             <div className="pt-2">

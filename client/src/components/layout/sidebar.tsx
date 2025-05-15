@@ -36,6 +36,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const navItems = [
     { path: "/dashboard", name: "Dashboard", icon: <Home className="w-5 h-5" /> },
     { 
+      path: "/habits", 
+      name: "Daily Habits", 
+      icon: <CheckSquare className="w-5 h-5 text-green-500" />,
+      description: "Track your daily and weekly habit streaks"
+    },
+    { 
       path: "/supplements", 
       name: "Top 10 Supplements", 
       icon: <Trophy className="w-5 h-5 text-amber-500" />,

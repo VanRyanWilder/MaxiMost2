@@ -9,6 +9,7 @@ import Nutrition from "@/pages/nutrition";
 import Resources from "@/pages/resources";
 import Programs from "@/pages/programs";
 import Tasks from "@/pages/tasks";
+import Habits from "@/pages/habits";
 import Supplements from "@/pages/supplements";
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
@@ -74,6 +75,9 @@ function App() {
       </Route>
       <Route path="/tasks">
         <PrivateRoute component={Tasks} />
+      </Route>
+      <Route path="/habits">
+        <PrivateRoute component={Habits} />
       </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
