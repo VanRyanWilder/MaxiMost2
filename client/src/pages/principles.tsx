@@ -305,6 +305,204 @@ export default function PrinciplesPage() {
       category: "virtue",
       dateAdded: "2023-07-19",
       day: 186
+    },
+    {
+      id: "sympatheia",
+      title: "Sympatheia (Cosmic Sympathy)",
+      quote: "All things are woven together and the common bond is sacred, and scarcely one thing is foreign to another, for they have been arranged together in their places and together make the same ordered Universe.",
+      explanation: "Sympatheia is the Stoic concept of cosmic interconnectedness. It recognizes that all human beings share a common nature and belong to a universal community. This principle encourages empathy by recognizing that all humans are parts of the same whole, facing similar challenges. By viewing others through this lens, you develop compassion and reduce division, seeing the universal human experience in all people regardless of background.",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-07-26",
+      day: 193
+    },
+    {
+      id: "temperance",
+      title: "Practice Temperance",
+      quote: "Self-control is strength. Right thought is mastery. Calmness is power.",
+      explanation: "Temperance involves moderation in all things—eating, drinking, emotional reactions, and desires. By exercising restraint and avoiding excess, you maintain balance and preserve energy for what truly matters. This principle doesn't ask for denial of pleasure but for conscious engagement with it. Through moderated enjoyment, you avoid the diminishing returns and negative consequences of overindulgence.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "self-mastery",
+      dateAdded: "2023-08-02",
+      day: 200
+    },
+    {
+      id: "mental-fortress",
+      title: "Build Your Inner Citadel",
+      quote: "The happiness of your life depends upon the quality of your thoughts.",
+      explanation: "The Inner Citadel represents your mind as a fortress that external events cannot penetrate without your permission. This principle focuses on developing an internal locus of control—where your sense of well-being comes from within rather than from external validation or circumstances. By strengthening this inner refuge through philosophy and reflection, you become increasingly immune to the chaos of the world.",
+      source: "Meditations",
+      author: "marcus",
+      category: "resilience",
+      dateAdded: "2023-08-09",
+      day: 207
+    },
+    {
+      id: "focus-on-process",
+      title: "Focus on Process, Not Outcomes",
+      quote: "Make the best use of what is in your power, and take the rest as it happens.",
+      explanation: "This principle redirects attention from results (which are often beyond our control) to the process (which is within our control). By focusing on executing the right actions with excellence rather than fixating on outcomes, you can maintain equanimity regardless of results. This mindset eliminates anxiety about future outcomes and keeps you present and engaged with the task at hand.",
+      source: "Enchiridion",
+      author: "epictetus",
+      category: "perspective",
+      dateAdded: "2023-08-16",
+      day: 214
+    },
+    {
+      id: "fatalism-about-past",
+      title: "Be a Fatalist About the Past",
+      quote: "Don't seek for everything to happen as you wish it would, but rather wish that everything happens as it actually will—then your life will flow well.",
+      explanation: "This principle encourages complete acceptance of what has already happened. Since the past cannot be changed, wishing it had been different creates unnecessary suffering. By embracing what has occurred as necessary and even beneficial for your growth, you free yourself from regret and resentment. This acceptance doesn't mean condoning wrongs but recognizing the futility of fighting against established reality.",
+      source: "Enchiridion",
+      author: "epictetus",
+      category: "perspective",
+      dateAdded: "2023-08-23",
+      day: 221
+    },
+    {
+      id: "judgments-on-pause",
+      title: "Put Your Judgments on Pause",
+      quote: "When you are offended at any man's fault, turn to yourself and study your own failings. Then you will forget your anger.",
+      explanation: "This principle asks you to suspend automatic judgments, especially negative ones. By creating space between an event and your reaction to it, you gain freedom from impulsive responses. When something appears bad, ask: 'Is this truly harmful, or merely inconvenient? Is my judgment accurate or distorted by bias?' This pause allows for wiser, more measured responses aligned with your values rather than your instincts.",
+      source: "Meditations",
+      author: "marcus",
+      category: "self-mastery",
+      dateAdded: "2023-08-30",
+      day: 228
+    },
+    {
+      id: "voluntary-discomfort",
+      title: "Practice Voluntary Discomfort",
+      quote: "Set aside a certain number of days, during which you shall be content with the scantiest and cheapest fare, with coarse and rough dress, saying to yourself the while: 'Is this the condition that I feared?'",
+      explanation: "Voluntary discomfort involves deliberately embracing challenging conditions—cold showers, fasting, hard physical labor—to build resilience. This practice demonstrates that discomfort isn't harmful in itself and reduces your fear of potential hardships. By regularly facing voluntary challenges, you expand your comfort zone and develop confidence in your ability to handle whatever life presents.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "courage",
+      dateAdded: "2023-09-06",
+      day: 235
+    },
+    {
+      id: "present-moment-awareness",
+      title: "Present Moment Awareness",
+      quote: "Every hour focus your mind attentively on the performance of the task in hand, with dignity, human sympathy, benevolence and freedom, and leave aside all other thoughts.",
+      explanation: "This principle emphasizes full engagement with the current moment rather than dwelling on the past or worrying about the future. By bringing complete attention to what you're doing right now, you increase effectiveness and enjoyment while eliminating anxiety. This practice recognizes that the present moment is the only time in which you can actually take action and experience life directly.",
+      source: "Meditations",
+      author: "marcus",
+      category: "self-mastery",
+      dateAdded: "2023-09-13",
+      day: 242
+    },
+    {
+      id: "fear-setting",
+      title: "Fear Setting",
+      quote: "It is not death that a man should fear, but he should fear never beginning to live.",
+      explanation: "Fear setting involves thoroughly analyzing what you fear might happen, what you could do to prevent it, and how you would recover if it did occur. This practice often reveals that feared outcomes are neither as likely nor as devastating as imagined. By thinking through contingencies, you reduce paralyzing anxiety and can take calculated risks that align with your values and goals.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "courage",
+      dateAdded: "2023-09-20",
+      day: 249
+    },
+    {
+      id: "morning-reflection",
+      title: "Morning Reflection",
+      quote: "When you wake up in the morning, tell yourself: The people I deal with today will be meddling, ungrateful, arrogant, dishonest, jealous, and surly.",
+      explanation: "Morning reflection involves starting each day by preparing your mind for challenges. By anticipating potential frustrations—difficult people, unexpected obstacles—you reduce their emotional impact when encountered. This practice also includes setting intentions for virtuous responses and reviewing your guiding principles. This mental preparation ensures you face the day proactively rather than reactively.",
+      source: "Meditations",
+      author: "marcus",
+      category: "discipline",
+      dateAdded: "2023-09-27",
+      day: 256
+    },
+    {
+      id: "evening-examination",
+      title: "Evening Examination",
+      quote: "I will keep constant watch over myself and—most usefully—will put each day up for review.",
+      explanation: "Evening examination is a daily practice of reviewing your actions and responses. By asking 'What did I do well today? Where did I fall short? How can I improve tomorrow?' you accelerate personal growth through consistent self-reflection. This practice builds self-awareness, reinforces successes, and identifies specific areas for improvement while embedding philosophical principles more deeply into daily life.",
+      source: "On Anger",
+      author: "seneca",
+      category: "self-mastery",
+      dateAdded: "2023-10-04",
+      day: 263
+    },
+    {
+      id: "philosophical-rehearsal",
+      title: "Philosophical Rehearsal",
+      quote: "Rehearse them in your mind: exile, torture, war, shipwreck. All the terms of our human lot should be before our eyes.",
+      explanation: "Philosophical rehearsal involves mentally practicing virtuous responses to challenging situations before they occur. By imagining how your philosophical principles apply to potential difficulties, you develop automatic virtuous responses that don't require deliberation in the moment. This preparation bridges the gap between theoretical understanding and practical application in daily life.",
+      source: "Letters from a Stoic",
+      author: "seneca",
+      category: "discipline",
+      dateAdded: "2023-10-11",
+      day: 270
+    },
+    {
+      id: "view-from-nature",
+      title: "The View From Nature",
+      quote: "All that happens is as usual and familiar as the rose in spring and the crop in summer.",
+      explanation: "The View From Nature recognizes that what seems disruptive or chaotic from our limited perspective is often part of larger natural patterns. By seeing events as expressions of nature rather than violations of how things 'should' be, you reduce resistance to reality. This viewpoint shifts your focus from 'why is this happening to me?' to 'what is the most constructive response to what is happening?'",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-10-18",
+      day: 277
+    },
+    {
+      id: "prosoche",
+      title: "Prosoche (Mindful Attention)",
+      quote: "Pay attention to what you're doing. Most mischief and mistakes happen because we don't attend to what we're engaged in.",
+      explanation: "Prosoche is the practice of continuous mindful attention to your thoughts, judgments, and actions. By maintaining vigilant awareness of your mental processes, you catch unhelpful reactions before they develop momentum. This practice reveals the gap between your philosophical ideals and actual responses, allowing you to gradually align them through consistent attention and adjustment.",
+      source: "Discourses",
+      author: "epictetus",
+      category: "self-mastery",
+      dateAdded: "2023-10-25",
+      day: 284
+    },
+    {
+      id: "virtuous-circle",
+      title: "The Virtuous Circle",
+      quote: "Waste no more time arguing about what a good man should be. Be one.",
+      explanation: "The Virtuous Circle recognizes that virtue isn't primarily developed through theoretical study but through action. By taking virtuous action, you develop character; improved character makes virtuous action more natural, creating a positive cycle. This principle emphasizes that philosophical growth comes from application rather than knowledge accumulation—you don't learn to swim by reading about swimming.",
+      source: "Meditations",
+      author: "marcus",
+      category: "virtue",
+      dateAdded: "2023-11-01",
+      day: 291
+    },
+    {
+      id: "physics-as-ethics",
+      title: "Physics as Ethics",
+      quote: "Constantly regard the universe as one living being, having one substance and one soul.",
+      explanation: "Physics as Ethics connects understanding of the natural world with ethical action. By recognizing that humans are integral parts of a rational cosmos operating according to natural laws, you gain perspective on your place within the larger system. This worldview provides guidance for ethical decisions by aligning your choices with natural processes rather than fighting against the fundamental nature of reality.",
+      source: "Meditations",
+      author: "marcus",
+      category: "perspective",
+      dateAdded: "2023-11-08",
+      day: 298
+    },
+    {
+      id: "preferred-indifferents",
+      title: "Preferred Indifferents",
+      quote: "Make the best use of what is in your power, and take the rest as it happens.",
+      explanation: "Preferred Indifferents recognizes that while virtue is the only true good, external outcomes can still be rationally preferred. Health, wealth, and reputation are 'preferred' over illness, poverty, and disrepute, but they don't determine your well-being. This nuanced approach avoids both detachment from practical concerns and unhealthy attachment to outcomes. You can pursue preferred outcomes energetically while maintaining equanimity if they don't materialize.",
+      source: "Enchiridion",
+      author: "epictetus",
+      category: "perspective",
+      dateAdded: "2023-11-15",
+      day: 305
+    },
+    {
+      id: "philanthropia",
+      title: "Philanthropia (Love of Humanity)",
+      quote: "Men exist for the sake of one another. Teach them then or bear with them.",
+      explanation: "Philanthropia is the cultivation of goodwill toward all humans regardless of their behavior. This principle recognizes that people act according to their limited understanding, not innate malice. By extending compassion even to difficult people, you develop equanimity and effectiveness in relationships. This isn't naïveté about human flaws but a practical approach to maintaining inner tranquility amid human imperfection.",
+      source: "Meditations",
+      author: "marcus",
+      category: "virtue",
+      dateAdded: "2023-11-22",
+      day: 312
     }
   ];
   
