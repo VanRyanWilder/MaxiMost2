@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
+import { HabitLibrary } from "@/components/dashboard/habit-library";
 import { 
   DndContext, 
   closestCenter,
@@ -318,8 +319,12 @@ export default function SortableDashboard() {
             {/* Mobile Header */}
             <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
             
-            {/* Progress Summary */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
+            {/* Two-column layout for desktop */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Left column - Main content */}
+              <div className="flex-1">
+                {/* Progress Summary */}
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
               {/* Progress Cards */}
               <div className="bg-white rounded-lg shadow p-4 border">
                 <div className="flex items-center justify-between">
@@ -489,6 +494,27 @@ export default function SortableDashboard() {
                 </DndContext>
               </CardContent>
             </Card>
+                </div>
+                
+                {/* Right column - Habit Library and Daily Motivation */}
+                <div className="lg:w-1/3 space-y-4">
+                  {/* Habit Library component positioned above Daily Motivation */}
+                  <HabitLibrary 
+                    onAddSuggestion={(habitId) => {
+                      // Here you would implement logic to add a habit from the library
+                      console.log('Add suggestion:', habitId);
+                      handleCreateHabit();
+                    }}
+                    onCreateCustom={handleCreateHabit}
+                  />
+                  
+                  {/* Daily Motivation component below Habit Library */}
+                  <DailyMotivation 
+                    quote="The secret of getting ahead is getting started. The secret of getting started is breaking your complex overwhelming tasks into small manageable tasks, and then starting on the first one."
+                    author="Mark Twain"
+                  />
+                </div>
+              </div>
           </PageContainer>
         </main>
       </div>
