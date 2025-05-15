@@ -3,11 +3,11 @@ import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
-import { StreakHabitTracker } from "@/components/dashboard/streak-habit-tracker";
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
 import { ResourceLibrary } from "@/components/resources/resource-library";
 import { PageContainer } from "@/components/layout/page-container";
+import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 
 export default function Dashboard() {
   return (
@@ -17,27 +17,21 @@ export default function Dashboard() {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <Tabs defaultValue="loop" className="w-full mb-6">
+            <div className="w-full mb-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">High-ROI Habits</h2>
-                <TabsList>
-                  <TabsTrigger value="loop" className="text-xs">
-                    Streak View
-                  </TabsTrigger>
-                  <TabsTrigger value="list" className="text-xs">
-                    List View
-                  </TabsTrigger>
-                </TabsList>
+                <a href="/habits" className="text-primary text-sm hover:underline flex items-center gap-1">
+                  <span>View all habits</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                </a>
               </div>
               
-              <TabsContent value="loop" className="mt-0">
-                <StreakHabitTracker />
-              </TabsContent>
-              
-              <TabsContent value="list" className="mt-0">
-                <HighRoiActivities />
-              </TabsContent>
-            </Tabs>
+              {/* Mini Habits Dashboard */}
+              <DashboardHabits />
+            </div>
           </div>
           <div className="space-y-6">
             <DailyMotivation />
