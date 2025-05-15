@@ -182,34 +182,36 @@ const getFrequencyLabel = (frequency: HabitFrequency) => {
   }
 };
 
-const getIconComponent = (iconName: string) => {
+const getIconComponent = (iconName: string, iconColor?: string) => {
+  const style = iconColor ? { color: iconColor } : {};
+  
   switch (iconName) {
     case "dumbbell":
-      return <Dumbbell className="h-4 w-4" />;
+      return <Dumbbell className="h-4 w-4" style={style} />;
     case "heart":
-      return <Heart className="h-4 w-4" />;
+      return <Heart className="h-4 w-4" style={style} />;
     case "book":
-      return <Book className="h-4 w-4" />;
+      return <Book className="h-4 w-4" style={style} />;
     case "users":
-      return <Users className="h-4 w-4" />;
+      return <Users className="h-4 w-4" style={style} />;
     case "brain":
-      return <Brain className="h-4 w-4" />;
+      return <Brain className="h-4 w-4" style={style} />;
     case "flame":
-      return <Flame className="h-4 w-4" />;
+      return <Flame className="h-4 w-4" style={style} />;
     case "medal":
-      return <Medal className="h-4 w-4" />;
+      return <Medal className="h-4 w-4" style={style} />;
     case "activity":
-      return <Activity className="h-4 w-4" />;
+      return <Activity className="h-4 w-4" style={style} />;
     case "scroll":
-      return <ScrollText className="h-4 w-4" />;
+      return <ScrollText className="h-4 w-4" style={style} />;
     case "water":
-      return <Droplets className="h-4 w-4" />;
+      return <Droplets className="h-4 w-4" style={style} />;
     case "check":
-      return <CopyCheck className="h-4 w-4" />;
+      return <CopyCheck className="h-4 w-4" style={style} />;
     case "food":
-      return <Pizza className="h-4 w-4" />;
+      return <Pizza className="h-4 w-4" style={style} />;
     default:
-      return <SparkleIcon className="h-4 w-4" />;
+      return <SparkleIcon className="h-4 w-4" style={style} />;
   }
 };
 
@@ -257,8 +259,8 @@ function SortableHabitItem({
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center">
-            <span className="text-muted-foreground mr-2">
-              {getIconComponent(habit.icon)}
+            <span className="mr-2">
+              {getIconComponent(habit.icon, habit.iconColor)}
             </span>
             
             <h3 className={`font-medium text-sm ${isCompleted ? 'line-through text-muted-foreground' : ''}`}>
@@ -1235,8 +1237,8 @@ export default function IntegratedHabits() {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center">
-                        <span className="text-muted-foreground mr-2">
-                          {getIconComponent(habit.icon)}
+                        <span className="mr-2">
+                          {getIconComponent(habit.icon, habit.iconColor)}
                         </span>
                         
                         <h3 className={`font-medium text-sm ${isHabitCompletedOnDate(habit.id, selectedDate) ? 'line-through text-muted-foreground' : ''}`}>
@@ -1466,6 +1468,22 @@ export default function IntegratedHabits() {
             <Button onClick={updateHabit}>
               Save Changes
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Delete confirmation dialog */}
+      <Dialog open={habitToDelete !== null} onOpenChange={(open) => !open && setHabitToDelete(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete Habit</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this habit? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setHabitToDelete(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDeleteHabit}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
