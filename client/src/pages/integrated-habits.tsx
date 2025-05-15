@@ -1528,9 +1528,8 @@ export default function IntegratedHabits() {
           </DialogHeader>
           
           <Tabs defaultValue="custom">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-1">
               <TabsTrigger value="custom">Custom Habit</TabsTrigger>
-              <TabsTrigger value="stacks">Habit Stacks</TabsTrigger>
             </TabsList>
             
             <TabsContent value="custom" className="mt-4">
