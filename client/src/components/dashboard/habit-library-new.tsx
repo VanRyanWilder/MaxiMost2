@@ -24,7 +24,6 @@ import {
   Zap,
   Library
 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HabitFrequency, HabitCategory } from "@/types/habit";
 
 // A comprehensive list of suggested habits organized by category
@@ -537,6 +536,9 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
     );
   };
 
+  // Combined all habits from different categories
+  const allHabits = [...habitSuggestions.health, ...habitSuggestions.fitness, ...habitSuggestions.mind];
+
   return (
     <Card className="mb-4">
       <CardHeader className="pb-2">
@@ -548,150 +550,93 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
           Add ready-made habits to your tracking system
         </p>
       </CardHeader>
+      
       <CardContent>
-        <Tabs defaultValue="health" className="w-full">
-          <TabsList className="grid grid-cols-3 mb-3">
-            <TabsTrigger value="health">Health</TabsTrigger>
-            <TabsTrigger value="fitness">Fitness</TabsTrigger>
-            <TabsTrigger value="mind">Mind</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="health" className="space-y-3">
-            <div className="grid grid-cols-1 gap-2">
-              {habitSuggestions.health.map(habit => (
-                <div 
-                  key={habit.id}
-                  className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-blue-50 transition-colors"
-                  onClick={() => onAddHabit?.(habit)}
-                >
-                  <div className="flex-shrink-0">
-                    {renderIcon(habit.icon, habit.iconColor)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
-                  </div>
-                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="fitness" className="space-y-3">
-            <div className="grid grid-cols-1 gap-2">
-              {habitSuggestions.fitness.map(habit => (
-                <div 
-                  key={habit.id}
-                  className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-red-50 transition-colors"
-                  onClick={() => onAddHabit?.(habit)}
-                >
-                  <div className="flex-shrink-0">
-                    {renderIcon(habit.icon, habit.iconColor)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
-                  </div>
-                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="mind" className="space-y-3">
-            <div className="grid grid-cols-1 gap-2">
-              {habitSuggestions.mind.map(habit => (
-                <div 
-                  key={habit.id}
-                  className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-purple-50 transition-colors"
-                  onClick={() => onAddHabit?.(habit)}
-                >
-                  <div className="flex-shrink-0">
-                    {renderIcon(habit.icon, habit.iconColor)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
-                  </div>
-                  <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-          
-
-        </Tabs>
-        
-        {/* Habit Stacks Section - Separated from the tabs */}
-        <div className="mt-6 border-t pt-4">
+        <div className="w-full">
           <h3 className="text-sm font-medium flex items-center mb-3">
-            <Zap className="h-3.5 w-3.5 mr-1 text-yellow-500" />
-            Habit Stacks
-            <Badge className="ml-2 bg-yellow-100 text-yellow-800 hover:bg-yellow-200" variant="outline">
-              Power Combos
-            </Badge>
+            <CheckSquare className="h-3.5 w-3.5 mr-1 text-blue-500" />
+            Quick-Add Habits
           </h3>
           
-          <div className="grid grid-cols-1 gap-2">
-            {habitSuggestions.stacks.map(stack => (
+          <div className="grid grid-cols-1 gap-2 mb-4">
+            {/* Combine all habits into a single list */}
+            {allHabits.map(habit => (
               <div 
-                key={stack.id}
-                className="p-2 rounded-md bg-gray-50 shadow-sm hover:bg-amber-50 transition-colors"
+                key={habit.id}
+                className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => onAddHabit?.(habit)}
               >
-                <div className="flex items-center gap-2 cursor-pointer mb-1" onClick={() => {}}>
-                  <div className="flex-shrink-0">
-                    {renderIcon(stack.icon, stack.iconColor)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium text-${stack.iconColor}-600 truncate`}>{stack.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">{stack.description}</p>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="h-8 flex-shrink-0 text-xs"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent parent click
-                      // Send the entire stack object to be handled by the parent component
-                      onAddHabit?.({...stack, isStack: true});
-                    }}
-                  >
-                    <Plus className="h-3.5 w-3.5 mr-1" />
-                    Add All
-                  </Button>
+                <div className="flex-shrink-0">
+                  {renderIcon(habit.icon, habit.iconColor)}
                 </div>
-                
-                <div className="pl-6 mt-1">
-                  <div className="text-xs text-muted-foreground mb-1">Contains {stack.habits.length} habits:</div>
-                  <div className="grid grid-cols-1 gap-1 mt-2">
-                    {stack.habits.map((habit: any) => (
-                      <div 
-                        key={habit.id}
-                        className="p-1.5 rounded border border-gray-100 bg-white flex items-center gap-2 cursor-pointer hover:bg-blue-50 transition-colors"
-                        onClick={() => onAddHabit?.(habit)}
-                      >
-                        <div className="flex-shrink-0">
-                          {renderIcon(habit.icon, habit.iconColor)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={`text-xs font-medium text-${habit.iconColor}-600 truncate`}>{habit.title}</p>
-                          <p className="text-[10px] text-muted-foreground truncate">{habit.description}</p>
-                        </div>
-                        <Button size="sm" variant="ghost" className="h-6 w-6 p-0 flex-shrink-0">
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate" style={{color: `var(--${habit.iconColor}-600, #4B5563)`}}>
+                    {habit.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
                 </div>
+                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             ))}
+          </div>
+        
+          {/* Habit Stacks Section */}
+          <div className="mt-6 border-t pt-4">
+            <h3 className="text-sm font-medium flex items-center mb-3">
+              <Zap className="h-3.5 w-3.5 mr-1 text-yellow-500" />
+              Habit Stacks
+            </h3>
+            <div className="grid grid-cols-1 gap-2">
+              {habitSuggestions.stacks.map(stack => (
+                <div 
+                  key={stack.id}
+                  className="bg-gray-50 rounded-md p-3 shadow-sm"
+                >
+                  <div className="flex items-center gap-2 cursor-pointer mb-1" onClick={() => {}}>
+                    <div className="flex-shrink-0">
+                      {renderIcon(stack.icon, stack.iconColor)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{color: `var(--${stack.iconColor}-600, #4B5563)`}}>
+                        {stack.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">{stack.description}</p>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-8 flex-shrink-0 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent parent click
+                        // Send the entire stack object to be handled by the parent component
+                        onAddHabit?.({...stack, isStack: true});
+                      }}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1" />
+                      Add All
+                    </Button>
+                  </div>
+                  
+                  <div className="pl-6 mt-1">
+                    <div className="text-xs text-muted-foreground mb-1">Contains {stack.habits.length} habits:</div>
+                    <div className="grid grid-cols-1 gap-1 mt-2">
+                      {stack.habits.map(habit => (
+                        <div key={habit.id} className="flex items-center text-xs">
+                          <div className="flex-shrink-0 mr-1 w-4 h-4">
+                            {renderIcon(habit.icon, habit.iconColor)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="truncate">{habit.title}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </CardContent>
