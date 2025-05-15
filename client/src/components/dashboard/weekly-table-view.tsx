@@ -2,7 +2,13 @@ import React from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Circle, CheckCircle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle, CheckCircle, Pencil, Trash2, MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Habit } from "@/types/habit";
 
 // Map of habit icons to their emoji representations
@@ -60,6 +66,8 @@ interface WeeklyTableViewProps {
   isHabitCompletedOnDate: (habitId: string, date: Date) => boolean;
   countCompletedDaysInWeek: (habitId: string) => number;
   onToggleHabit: (habitId: string, date: Date) => void;
+  onEditHabit: (habit: Habit) => void;
+  onDeleteHabit: (habitId: string) => void;
   setWeekOffset: (cb: (prev: number) => number) => void;
   onReorderHabits: (reorderedHabits: Habit[]) => void;
 }
@@ -74,6 +82,8 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
   isHabitCompletedOnDate,
   countCompletedDaysInWeek,
   onToggleHabit,
+  onEditHabit,
+  onDeleteHabit,
   setWeekOffset,
   onReorderHabits
 }) => {
@@ -217,12 +227,12 @@ export const WeeklyTableView: React.FC<WeeklyTableViewProps> = ({
               </div>
             )}
             
-            {/* Additional habits section */}
+            {/* Frequency-based habits section */}
             {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <div className="font-medium text-lg">
-                    Additional Habits
+                    Frequency-based Habits
                   </div>
                   <Badge variant="outline" className="font-normal">
                     {filteredHabits.filter(h => !h.isAbsolute).length} habits
