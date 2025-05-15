@@ -25,6 +25,8 @@ import Principles from "@/pages/principles";
 import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
 import Progress from "@/pages/progress";
+import ProgressDashboard from "@/pages/progress-dashboard";
+import Gamification from "@/pages/gamification";
 import Motivation from "@/pages/motivation";
 import Research from "@/pages/research";
 import Sugar from "@/pages/sugar";
@@ -120,6 +122,10 @@ function App() {
       
       <Route path="/progress">
         <PrivateRoute component={Progress} />
+      </Route>
+      
+      <Route path="/progress-dashboard">
+        <PrivateRoute component={ProgressDashboard} />
       </Route>
       
       <Route path="/motivation">
