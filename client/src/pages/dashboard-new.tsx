@@ -8,6 +8,21 @@ import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
 import { format, addDays, startOfWeek, subDays, isSameDay, isBefore, isAfter } from 'date-fns';
 import { iconMap as habitIconMap, colorSchemes } from "@/components/dashboard/edit-habit-dialog";
 import { 
@@ -754,17 +769,17 @@ export default function Dashboard() {
                           
                           <DropdownMenuGroup>
                             <DropdownMenuLabel>Health</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition", 9, 5)}>
-                              <Sun className="mr-2 h-4 w-4 text-amber-500" /> Sleep 8 Hours
+                            <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition", 9, 5, "8 hours", "daily", true, "indigo")}>
+                              <Moon className="mr-2 h-4 w-4 text-indigo-500" /> Sleep 8 Hours
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "apple", "health", "Avoid added sugar for better metabolic health", 8, 7)}>
-                              <Apple className="mr-2 h-4 w-4 text-red-500" /> No Sugar
+                            <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "cookie", "health", "Avoid added sugar for better metabolic health", 8, 7, "All day", "daily", true, "red")}>
+                              <Cookie className="mr-2 h-4 w-4 text-red-500" /> No Sugar
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "apple", "health", "Nutrient-dense breakfast for health and energy", 7, 4)}>
-                              <Apple className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
+                            <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "utensils", "health", "Nutrient-dense breakfast for health and energy", 7, 4, "10 min", "daily", true, "green")}>
+                              <Utensils className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "droplets", "health", "Supplement with necessary micronutrients", 6, 2)}>
-                              <Droplets className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
+                            <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "pill", "health", "Supplement with necessary micronutrients", 6, 2, "1 min", "daily", true, "purple")}>
+                              <Pill className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
                           
@@ -772,17 +787,17 @@ export default function Dashboard() {
                           
                           <DropdownMenuGroup>
                             <DropdownMenuLabel>Fitness</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "activity", "fitness", "Improve daily movement and cardiovascular health", 8, 6)}>
-                              <Activity className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
+                            <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "footprints", "fitness", "Improve daily movement and cardiovascular health", 8, 6, "60 min", "daily", true, "green")}>
+                              <Footprints className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "activity", "fitness", "Improve flexibility and mobility", 7, 3)}>
-                              <Activity className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
+                            <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "move", "fitness", "Improve flexibility and mobility", 7, 3, "15 min", "daily", true, "blue")}>
+                              <Move className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Strength Training", "dumbbell", "fitness", "Build muscle and boost metabolism", 9, 7, "45 min", "3x-week")}>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Strength Training", "dumbbell", "fitness", "Build muscle and boost metabolism", 9, 7, "45 min", "3x-week", false, "red")}>
                               <Dumbbell className="mr-2 h-4 w-4 text-red-500" /> Strength Training
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("HIIT Workout", "activity", "fitness", "High intensity interval training", 9, 8, "20 min", "3x-week")}>
-                              <Activity className="mr-2 h-4 w-4 text-orange-500" /> HIIT Workout
+                            <DropdownMenuItem onClick={() => addQuickHabit("HIIT Workout", "timer", "fitness", "High intensity interval training", 9, 8, "20 min", "3x-week", false, "amber")}>
+                              <Timer className="mr-2 h-4 w-4 text-amber-500" /> HIIT Workout
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
