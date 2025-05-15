@@ -9,11 +9,20 @@ import { Habit } from "../types/habit";
 import { HabitCompletion } from "../types/habit-completion";
 import { habitSuggestions } from "../data/habit-data";
 
-// Demo data for habits
+// Demo data for habits - ensure all required properties are set
 const demoHabits: Habit[] = [
-  ...habitSuggestions.health.slice(0, 3),
-  ...habitSuggestions.fitness.slice(0, 2),
-  ...habitSuggestions.mind.slice(0, 2)
+  ...habitSuggestions.health.slice(0, 3).map(habit => ({
+    ...habit,
+    iconColor: habit.iconColor || 'blue' // Default color if missing
+  })),
+  ...habitSuggestions.fitness.slice(0, 2).map(habit => ({
+    ...habit,
+    iconColor: habit.iconColor || 'red' // Default color if missing
+  })),
+  ...habitSuggestions.mind.slice(0, 2).map(habit => ({
+    ...habit,
+    iconColor: habit.iconColor || 'purple' // Default color if missing
+  }))
 ];
 
 // Generate some sample habit completions for the demo
