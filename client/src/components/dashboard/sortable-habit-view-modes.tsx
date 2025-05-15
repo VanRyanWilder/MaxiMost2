@@ -3,6 +3,7 @@ import {
   format, 
   startOfWeek, 
   addDays, 
+  subDays,
   isSameDay, 
   isBefore, 
   isAfter, 
@@ -56,11 +57,47 @@ import {
   Zap,
   Award,
   Filter,
-  ListFilter
+  ListFilter,
+  Circle,
+  CheckCircle
 } from 'lucide-react';
 
 // Import Habit type
 import { Habit } from '@/types/habit';
+
+// Map of habit icons to their emoji representations
+const habitIcons: { [key: string]: string } = {
+  "water": "💧",
+  "food": "🍎",
+  "exercise": "🏃‍♂️",
+  "sleep": "😴",
+  "meditation": "🧘‍♂️",
+  "reading": "📚",
+  "writing": "✍️",
+  "coding": "💻",
+  "cleaning": "🧹",
+  "learning": "🎓",
+  "social": "👥",
+  "health": "❤️",
+  "work": "💼",
+  "finance": "💰",
+  "creative": "🎨",
+  "music": "🎵",
+  "cooking": "🍳",
+  "family": "👨‍👩‍👧‍👦",
+  "gratitude": "🙏",
+  "journal": "📓",
+  "stretching": "🤸‍♂️",
+  "vitamins": "💊",
+  "skincare": "✨",
+  "phone": "📱",
+  "sunny": "☀️",
+  "walk": "🚶‍♂️",
+  "gym": "🏋️‍♂️",
+  "supplements": "💊",
+  "protein": "🥩",
+  "nosnack": "🚫"
+};
 
 interface SortableHabitViewProps {
   habits: Habit[];
@@ -88,6 +125,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [viewMode, setViewMode] = useState<"daily" | "weekly" | "monthly">("weekly");
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   // Set up DnD sensors
   const sensors = useSensors(
