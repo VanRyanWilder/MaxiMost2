@@ -3,12 +3,19 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
+import { Button } from "@/components/ui/button";
 import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { WeeklyHabitView } from "@/components/dashboard/weekly-habit-view-fixed";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
+import { 
+  Activity, 
+  Zap, 
+  PlusCircle, 
+  AlertTriangle 
+} from 'lucide-react';
 
 // Import shared types
 import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
@@ -252,6 +259,237 @@ export default function Dashboard() {
             {/* Right column with motivation and other elements */}
             <div className="space-y-6">
               <DailyMotivation />
+              
+              {/* Quick Add Card */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-1.5">
+                    <Activity className="w-4 h-4" /> Quick Add
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {['Drink water', 'Take vitamins', 'Stretch', 'Cold shower'].map((item, i) => (
+                      <Button 
+                        key={i} 
+                        variant="outline" 
+                        className="w-full flex justify-start items-center text-sm h-10" 
+                        onClick={() => {
+                          const newHabit: Habit = {
+                            id: `h-${Date.now()}-${i}`,
+                            title: item,
+                            description: `Quick-added habit: ${item}`,
+                            icon: item === 'Drink water' ? 'droplets' : 
+                                  item === 'Take vitamins' ? 'pill' : 
+                                  item === 'Stretch' ? 'activity' : 'droplets',
+                            impact: 8,
+                            effort: 3,
+                            timeCommitment: '5 min',
+                            frequency: 'daily',
+                            isAbsolute: true,
+                            category: 'health',
+                            streak: 0,
+                            createdAt: new Date()
+                          };
+                          setHabits([...habits, newHabit]);
+                        }}
+                      >
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        {item}
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              
+              {/* Habit Stacks Card */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-1.5">
+                    <Zap className="w-4 h-4" /> Habit Stacks
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button 
+                    className="w-full flex justify-start items-center text-sm h-10"
+                    variant="outline" 
+                    onClick={() => {
+                      const morningHabits = [
+                        {
+                          title: "Morning Meditation",
+                          description: "10 minutes of focused breathing",
+                          icon: "brain",
+                          category: "mind" as HabitCategory
+                        },
+                        {
+                          title: "Hydrate",
+                          description: "Drink 16oz of water immediately after waking",
+                          icon: "droplets",
+                          category: "health" as HabitCategory
+                        },
+                        {
+                          title: "Journal",
+                          description: "Write down 3 things you're grateful for",
+                          icon: "bookopen",
+                          category: "mind" as HabitCategory
+                        }
+                      ];
+                      
+                      const newHabits = morningHabits.map((h, i) => ({
+                        id: `h-${Date.now()}-${i}`,
+                        title: h.title,
+                        description: h.description,
+                        icon: h.icon,
+                        impact: 9,
+                        effort: 2,
+                        timeCommitment: '10 min',
+                        frequency: 'daily' as HabitFrequency,
+                        isAbsolute: true,
+                        category: h.category,
+                        streak: 0,
+                        createdAt: new Date()
+                      }));
+                      
+                      setHabits([...habits, ...newHabits]);
+                    }}
+                  >
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    Add morning routine (3 habits)
+                  </Button>
+
+                  <Button 
+                    className="w-full flex justify-start items-center text-sm h-10"
+                    variant="outline" 
+                    onClick={() => {
+                      const fitnessHabits = [
+                        {
+                          title: "Strength Training",
+                          description: "Build muscle with resistance exercises",
+                          icon: "dumbbell",
+                          category: "fitness" as HabitCategory
+                        },
+                        {
+                          title: "Protein Intake",
+                          description: "Consume enough protein daily",
+                          icon: "activity",
+                          category: "health" as HabitCategory
+                        },
+                        {
+                          title: "Post-workout Stretch",
+                          description: "Increase flexibility and recovery",
+                          icon: "activity",
+                          category: "fitness" as HabitCategory
+                        }
+                      ];
+                      
+                      const newHabits = fitnessHabits.map((h, i) => ({
+                        id: `h-${Date.now()}-${i}`,
+                        title: h.title,
+                        description: h.description,
+                        icon: h.icon,
+                        impact: 9,
+                        effort: 6,
+                        timeCommitment: '45 min',
+                        frequency: '3x-week' as HabitFrequency,
+                        isAbsolute: false,
+                        category: h.category,
+                        streak: 0,
+                        createdAt: new Date()
+                      }));
+                      
+                      setHabits([...habits, ...newHabits]);
+                    }}
+                  >
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    Add fitness stack (3 habits)
+                  </Button>
+
+                  <Button 
+                    className="w-full flex justify-start items-center text-sm h-10"
+                    variant="outline" 
+                    onClick={() => {
+                      const sleepHabits = [
+                        {
+                          title: "No screens before bed",
+                          description: "Avoid blue light 1 hour before sleep",
+                          icon: "brain",
+                          category: "health" as HabitCategory
+                        },
+                        {
+                          title: "Evening reading",
+                          description: "Read a physical book before sleep",
+                          icon: "bookopen",
+                          category: "mind" as HabitCategory
+                        },
+                        {
+                          title: "Sleep 7+ hours",
+                          description: "Prioritize adequate sleep for recovery",
+                          icon: "activity",
+                          category: "health" as HabitCategory
+                        }
+                      ];
+                      
+                      const newHabits = sleepHabits.map((h, i) => ({
+                        id: `h-${Date.now()}-${i}`,
+                        title: h.title,
+                        description: h.description,
+                        icon: h.icon,
+                        impact: 10,
+                        effort: 4,
+                        timeCommitment: '1 hour',
+                        frequency: 'daily' as HabitFrequency,
+                        isAbsolute: true,
+                        category: h.category,
+                        streak: 0,
+                        createdAt: new Date()
+                      }));
+                      
+                      setHabits([...habits, ...newHabits]);
+                    }}
+                  >
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    Add sleep optimization (3 habits)
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Break Bad Habits Card */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-red-500" /> Break Bad Habits
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {['No alcohol', 'No smoking', 'No porn', 'No junk food', 'No social media'].map((item, i) => (
+                    <Button 
+                      key={i} 
+                      variant="outline" 
+                      className="w-full flex justify-start items-center text-sm h-10 border-red-200 hover:border-red-300 hover:bg-red-50/10" 
+                      onClick={() => {
+                        const newHabit: Habit = {
+                          id: `h-${Date.now()}-${i}`,
+                          title: item,
+                          description: `Break this harmful habit for health and wellbeing`,
+                          icon: "activity",
+                          impact: 9,
+                          effort: 7,
+                          timeCommitment: 'All day',
+                          frequency: 'daily',
+                          isAbsolute: true,
+                          category: 'health',
+                          streak: 0,
+                          createdAt: new Date()
+                        };
+                        setHabits([...habits, newHabit]);
+                      }}
+                    >
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      {item}
+                    </Button>
+                  ))}
+                </CardContent>
+              </Card>
               
               {/* High ROI message */}
               <Card>
