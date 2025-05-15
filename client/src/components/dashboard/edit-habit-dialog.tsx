@@ -208,11 +208,11 @@ export function EditHabitDialog({
           
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
-              Category
+              Category/Icon
             </Label>
             <Select 
-              value={showCustomCategoryInput ? "custom" : editedHabit.category} 
-              onValueChange={handleCategoryChange}
+              value={editedHabit.category} 
+              onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select a category" />
@@ -220,19 +220,19 @@ export function EditHabitDialog({
               <SelectContent>
                 <SelectItem value="health">
                   <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-red-500" />
+                    <Heart className="h-4 w-4 text-blue-500" />
                     <span>Health</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="fitness">
                   <div className="flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4 text-green-500" />
+                    <Dumbbell className="h-4 w-4 text-blue-500" />
                     <span>Fitness</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="mind">
                   <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-purple-500" />
+                    <Brain className="h-4 w-4 text-blue-500" />
                     <span>Mind</span>
                   </div>
                 </SelectItem>
@@ -242,31 +242,9 @@ export function EditHabitDialog({
                     <span>Social</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="custom">
-                  <div className="flex items-center gap-2">
-                    <PlusCircle className="h-4 w-4 text-gray-500" />
-                    <span>Create Custom Category</span>
-                  </div>
-                </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
-          {/* Custom Category Input - only shown when "Custom" is selected */}
-          {showCustomCategoryInput && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="customCategory" className="text-right">
-                Custom Category
-              </Label>
-              <Input
-                id="customCategory"
-                value={customCategory}
-                onChange={(e) => setCustomCategory(e.target.value)}
-                className="col-span-3"
-                placeholder="Enter custom category name"
-              />
-            </div>
-          )}
           
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="frequency" className="text-right">
