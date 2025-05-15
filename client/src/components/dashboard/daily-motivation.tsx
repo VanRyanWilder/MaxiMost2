@@ -344,16 +344,36 @@ export function DailyMotivation() {
   const addHabitStack = (stack: any) => {
     console.log("Adding habit stack:", stack);
     
-    // Add each habit in the stack one by one
-    stack.habits.forEach((habit: any) => {
-      setTimeout(() => {
-        const event = new CustomEvent('add-prefilled-habit', { 
-          detail: habit,
-          bubbles: true 
-        });
-        document.dispatchEvent(event);
-      }, 100); // Small delay to prevent overwhelming the system
+    // We'll create proper habit objects and add them directly
+    const stackHabits = stack.habits.map((habit: any) => {
+      return {
+        id: `h-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        title: habit.title,
+        description: habit.description,
+        icon: habit.icon.type.name.toLowerCase(),
+        impact: habit.impact,
+        effort: habit.effort,
+        timeCommitment: habit.timeCommitment,
+        frequency: habit.frequency,
+        isAbsolute: habit.isAbsolute,
+        category: habit.category,
+        streak: 0,
+        createdAt: new Date()
+      };
     });
+    
+    // Create a custom event to pass the whole stack of habits to be added at once
+    const event = new CustomEvent('add-habit-stack', { 
+      detail: {
+        stackName: stack.name,
+        habits: stackHabits
+      },
+      bubbles: true 
+    });
+    document.dispatchEvent(event);
+    
+    // Show confirmation
+    alert(`Added ${stack.name} with ${stack.habits.length} habits successfully!`);
   };
 
   return (
