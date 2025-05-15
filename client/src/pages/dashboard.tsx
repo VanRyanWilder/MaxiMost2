@@ -15,7 +15,10 @@ import {
   Zap, 
   PlusCircle, 
   AlertTriangle,
-  ChevronDown
+  ChevronDown,
+  BookOpen,
+  Pencil,
+  Apple
 } from 'lucide-react';
 
 // Import shared types
@@ -575,6 +578,230 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
+              {/* Core Principles Habits */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-1.5">
+                    <BookOpen className="w-4 h-4 text-blue-500" /> Principle-Based Habits
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 mb-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full flex justify-between items-center"
+                      onClick={() => {
+                        // Toggle visibility of principles
+                        const principlesSection = document.getElementById('principles-list');
+                        if (principlesSection) {
+                          principlesSection.classList.toggle('hidden');
+                        }
+                      }}
+                    >
+                      <span className="font-medium">Core Stoic Principles</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    
+                    <div id="principles-list" className="space-y-2 hidden pl-2 pr-2 pt-2">
+                      {[
+                        { title: "Practice Negative Visualization", description: "Contemplate what you'd do if you lost what you value", icon: "brain" },
+                        { title: "Focus on What You Can Control", description: "Distinguish between what is and isn't in your power", icon: "activity" },
+                        { title: "Take the View From Above", description: "Consider problems from a broader perspective", icon: "brain" },
+                        { title: "Practice Voluntary Discomfort", description: "Deliberately forgo comfort occasionally", icon: "zap" },
+                        { title: "Apply the Dichotomy of Control", description: "Accept what you cannot change, focus on your responses", icon: "activity" }
+                      ].map((principle, i) => (
+                        <div key={i} className="flex flex-col p-3 border rounded-md">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">{principle.title}</span>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2"
+                              onClick={() => {
+                                const newHabit: Habit = {
+                                  id: `h-${Date.now()}-principle-${i}`,
+                                  title: principle.title,
+                                  description: principle.description,
+                                  icon: principle.icon,
+                                  impact: 10,
+                                  effort: 5,
+                                  timeCommitment: '15 min',
+                                  frequency: 'daily',
+                                  isAbsolute: true,
+                                  category: 'mind',
+                                  streak: 0,
+                                  createdAt: new Date(),
+                                  type: "principle"
+                                };
+                                setHabits([...habits, newHabit]);
+                              }}
+                            >
+                              <PlusCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <span className="text-xs text-muted-foreground">{principle.description}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 mb-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full flex justify-between items-center"
+                      onClick={() => {
+                        // Toggle visibility 
+                        const sugarSection = document.getElementById('sugar-principles');
+                        if (sugarSection) {
+                          sugarSection.classList.toggle('hidden');
+                        }
+                      }}
+                    >
+                      <span className="font-medium">Sugar Avoidance</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    
+                    <div id="sugar-principles" className="space-y-2 hidden pl-2 pr-2 pt-2">
+                      {[
+                        { title: "Read Food Labels", description: "Check for hidden sugars in packaged foods", icon: "activity" },
+                        { title: "No Liquid Calories", description: "Avoid sugar-sweetened beverages completely", icon: "droplets" },
+                        { title: "Eat Whole Foods", description: "Focus on unprocessed foods without added sugar", icon: "apple" },
+                        { title: "Sugar-Free Breakfast", description: "Start your day without any added sugar", icon: "activity" }
+                      ].map((principle, i) => (
+                        <div key={i} className="flex flex-col p-3 border rounded-md">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-medium text-sm">{principle.title}</span>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-6 px-2"
+                              onClick={() => {
+                                const newHabit: Habit = {
+                                  id: `h-${Date.now()}-sugar-${i}`,
+                                  title: principle.title,
+                                  description: principle.description,
+                                  icon: principle.icon,
+                                  impact: 9,
+                                  effort: 6,
+                                  timeCommitment: 'All day',
+                                  frequency: 'daily',
+                                  isAbsolute: true,
+                                  category: 'health',
+                                  streak: 0,
+                                  createdAt: new Date()
+                                };
+                                setHabits([...habits, newHabit]);
+                              }}
+                            >
+                              <PlusCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          <span className="text-xs text-muted-foreground">{principle.description}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Create Custom Habit */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="flex items-center gap-1.5">
+                    <Pencil className="w-4 h-4" /> Create Custom Habit
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-sm font-medium">Habit Name</label>
+                      <input
+                        id="custom-habit-title"
+                        className="w-full p-2 mt-1 border rounded-md"
+                        placeholder="E.g., Daily Meditation"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-sm font-medium">Category</label>
+                        <select 
+                          id="custom-habit-category"
+                          className="w-full p-2 mt-1 border rounded-md"
+                        >
+                          <option value="health">Health</option>
+                          <option value="fitness">Fitness</option>
+                          <option value="mind">Mind</option>
+                          <option value="social">Social</option>
+                          <option value="custom">Custom</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium">Frequency</label>
+                        <select 
+                          id="custom-habit-frequency"
+                          className="w-full p-2 mt-1 border rounded-md"
+                        >
+                          <option value="daily">Daily</option>
+                          <option value="weekly">Weekly</option>
+                          <option value="2x-week">2x per week</option>
+                          <option value="3x-week">3x per week</option>
+                          <option value="4x-week">4x per week</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="is-absolute" 
+                        className="rounded border-gray-300"
+                      />
+                      <label htmlFor="is-absolute" className="text-sm font-medium">
+                        Mark as Daily Absolute
+                      </label>
+                    </div>
+                    
+                    <Button
+                      className="w-full"
+                      onClick={() => {
+                        const titleInput = document.getElementById('custom-habit-title') as HTMLInputElement;
+                        const categorySelect = document.getElementById('custom-habit-category') as HTMLSelectElement;
+                        const frequencySelect = document.getElementById('custom-habit-frequency') as HTMLSelectElement;
+                        const isAbsoluteCheck = document.getElementById('is-absolute') as HTMLInputElement;
+                        
+                        if (titleInput && titleInput.value.trim()) {
+                          const newHabit: Habit = {
+                            id: `h-${Date.now()}-custom`,
+                            title: titleInput.value.trim(),
+                            description: `Custom habit: ${titleInput.value.trim()}`,
+                            icon: "activity",
+                            impact: 8,
+                            effort: 5,
+                            timeCommitment: '15 min',
+                            frequency: frequencySelect.value as HabitFrequency,
+                            isAbsolute: isAbsoluteCheck.checked,
+                            category: categorySelect.value as HabitCategory,
+                            streak: 0,
+                            createdAt: new Date(),
+                            type: "custom"
+                          };
+                          
+                          setHabits([...habits, newHabit]);
+                          
+                          // Reset form
+                          titleInput.value = '';
+                          isAbsoluteCheck.checked = false;
+                        }
+                      }}
+                    >
+                      Add Custom Habit
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+              
               {/* Break Bad Habits Card */}
               <Card>
                 <CardHeader className="pb-3">
