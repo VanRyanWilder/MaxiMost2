@@ -152,7 +152,7 @@ export function HabitInsights({ habits, completions, timeframe = 'week' }: Habit
           <div>
             <CardTitle className="flex items-center gap-2">
               AI Habit Insights
-              <Badge variant={insights?.overallScore && insights.overallScore > 70 ? "success" : "outline"}>
+              <Badge variant="outline" className={insights?.overallScore && insights.overallScore > 70 ? "bg-green-100 text-green-800 border-green-500" : ""}>
                 Score: {insights?.overallScore || 0}/100
               </Badge>
             </CardTitle>
