@@ -1,27 +1,36 @@
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
-import WeeklyCalendarView from "@/components/dashboard/weekly-calendar-view";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PlusCircle, Trophy, Calendar, List } from "lucide-react";
+import { Check, Plus, Calendar, Trophy } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Habit } from "@/types/habit";
 import { HabitCompletion } from "@/types/habit-completion";
 import { habitSuggestions } from "@/data/habit-data";
+import { formatDate } from "@/lib/utils";
 
 // Demo data for habits - ensure all required properties are set
-const demoHabits: Habit[] = [
-  ...habitSuggestions.health.slice(0, 3).map(habit => ({
+const absoluteHabits: Habit[] = [
+  ...habitSuggestions.health.slice(0, 2).map(habit => ({
     ...habit,
-    iconColor: habit.iconColor || 'blue' // Default color if missing
+    isAbsolute: true,
+    iconColor: habit.iconColor || 'blue' 
   })),
-  ...habitSuggestions.fitness.slice(0, 2).map(habit => ({
+  ...habitSuggestions.mind.slice(0, 1).map(habit => ({
     ...habit,
-    iconColor: habit.iconColor || 'red' // Default color if missing
+    isAbsolute: true,
+    iconColor: habit.iconColor || 'purple'
+  }))
+];
+
+const additionalHabits: Habit[] = [
+  ...habitSuggestions.fitness.slice(0, 1).map(habit => ({
+    ...habit,
+    iconColor: habit.iconColor || 'red'
   })),
-  ...habitSuggestions.mind.slice(0, 2).map(habit => ({
+  ...habitSuggestions.mind.slice(1, 2).map(habit => ({
     ...habit,
-    iconColor: habit.iconColor || 'purple' // Default color if missing
+    iconColor: habit.iconColor || 'blue'
   }))
 ];
 
@@ -32,14 +41,13 @@ const generateSampleCompletions = (habits: Habit[]): HabitCompletion[] => {
   today.setHours(0, 0, 0, 0);
   
   habits.forEach(habit => {
-    // Add some random completions in the past 7 days
+    // Add some completions in the past 7 days
     for (let i = 0; i < 7; i++) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
       
-      // Randomly determine if this habit was completed on this day
       // More likely to be completed if it's an "absolute" habit
-      const completed = Math.random() < (habit.isAbsolute ? 0.8 : 0.6);
+      const completed = Math.random() < (habit.isAbsolute ? 0.85 : 0.5);
       
       if (completed) {
         completions.push({
@@ -55,14 +63,49 @@ const generateSampleCompletions = (habits: Habit[]): HabitCompletion[] => {
   return completions;
 };
 
+// Function to get day name
+function getDayName(date: Date): string {
+  return date.toLocaleDateString('en-US', { weekday: 'short' });
+}
+
+// Function to format date as "May 15"
+function formatMonthDay(date: Date): string {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+// Get an array of dates for a view (Thursday to Wednesday)
+function getViewDates(daysBack: number = 3, daysForward: number = 4): Date[] {
+  const dates: Date[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // Add past days (including today)
+  for (let i = daysBack; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    dates.push(date);
+  }
+  
+  // Add future days
+  for (let i = 1; i <= daysForward - 1; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() + i);
+    dates.push(date);
+  }
+  
+  return dates;
+}
+
 export default function HabitTrackerPage() {
-  const [habits, setHabits] = useState<Habit[]>(demoHabits);
+  const allHabits = [...absoluteHabits, ...additionalHabits];
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
-  const [activeView, setActiveView] = useState<string>("calendar");
+  const [viewDates, setViewDates] = useState<Date[]>(getViewDates());
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
   
   // Generate sample completions when the component mounts
   useEffect(() => {
-    setCompletions(generateSampleCompletions(habits));
+    setCompletions(generateSampleCompletions(allHabits));
   }, []);
   
   // Handle toggling habit completion status
@@ -93,133 +136,239 @@ export default function HabitTrackerPage() {
     }
   };
   
+  // Check if a habit is completed on a specific date
+  const isHabitCompleted = (habitId: string, date: Date) => {
+    return completions.some(
+      (completion) =>
+        completion.habitId === habitId &&
+        formatDate(new Date(completion.date)) === formatDate(date) &&
+        completion.completed
+    );
+  };
+
+  // Calculate completion percentage
+  const completionPercentage = Math.round(
+    (completions.filter(c => formatDate(new Date(c.date)) === formatDate(today)).length / 
+    allHabits.length) * 100
+  );
+  
+  // Count active habits (those with completions in the past 7 days)
+  const activeHabits = new Set(
+    completions.filter(c => {
+      const date = new Date(c.date);
+      const daysDiff = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff <= 7;
+    }).map(c => c.habitId)
+  ).size;
+
+  // Calculate current streak
+  const dailyStreak = 4; // Mock value, would normally be calculated based on continuous days
+  
+  // Stats metrics
+  const stats = [
+    { title: 'Day Streak', value: 28, icon: '🔥' },
+    { title: 'Completion %', value: completionPercentage, icon: '🎯' },
+    { title: 'Active Habits', value: activeHabits, icon: '⚡' },
+    { title: 'Weekly Streak', value: dailyStreak, icon: '📅' }
+  ];
+  
   return (
     <PageContainer>
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Habit Tracker</h1>
-            <p className="text-gray-500 mt-1">
-              Track your daily habits and build consistency
-            </p>
+      <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-[#6366f1]">Maximus Gains</h1>
+            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Habit Dashboard</Badge>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Button className="ml-2 bg-blue-600 hover:bg-blue-700">
-              <PlusCircle className="h-4 w-4 mr-1" />
-              New Habit
+          <div className="flex gap-2">
+            <Button className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Habit
             </Button>
           </div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left column - Stats */}
-          <div className="lg:col-span-1">
-            <Card className="mb-6">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold flex items-center">
-                  <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
-                  Your Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-500">Total Habits</span>
-                    <span className="text-lg font-bold">{habits.length}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-500">Completed Today</span>
-                    <span className="text-lg font-bold">
-                      {completions.filter(c => 
-                        new Date(c.date).toDateString() === new Date().toDateString()
-                      ).length}
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-500">Weekly Completion</span>
-                    <span className="text-lg font-bold">
-                      {Math.round(completions.length / (habits.length * 7) * 100)}%
-                    </span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-500">Absolute Habits</span>
-                    <span className="text-lg font-bold">
-                      {habits.filter(h => h.isAbsolute).length}
-                    </span>
-                  </div>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat, index) => (
+            <Card key={index} className="border border-gray-200 shadow-sm">
+              <CardContent className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-gray-500">{stat.title}</p>
+                  <h3 className="text-3xl font-bold">{stat.value}</h3>
                 </div>
+                <div className="text-2xl">{stat.icon}</div>
               </CardContent>
             </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold">Categories</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {/* Unique categories in the habits array */}
-                  {Array.from(new Set(habits.map(h => h.category))).map(category => (
-                    <div key={category} className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <div className={`w-3 h-3 rounded-full bg-${category === 'health' ? 'green' : category === 'fitness' ? 'red' : 'blue'}-500 mr-2`} />
-                        <span className="capitalize text-sm font-medium">{category}</span>
-                      </div>
-                      <span className="text-sm text-gray-500">
-                        {habits.filter(h => h.category === category).length} habits
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          
-          {/* Right column - Content */}
-          <div className="lg:col-span-3">
-            <Tabs value={activeView} onValueChange={setActiveView}>
-              <div className="mb-4">
-                <TabsList className="grid grid-cols-2 w-[300px]">
-                  <TabsTrigger value="calendar" className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    Calendar View
-                  </TabsTrigger>
-                  <TabsTrigger value="list" className="flex items-center gap-1">
-                    <List className="h-4 w-4" />
-                    List View
-                  </TabsTrigger>
-                </TabsList>
+          ))}
+        </div>
+        
+        {/* Current Date with Calendar */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <div className="flex-1 mr-4">
+              <div className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-gray-500" />
+                <span className="text-lg font-medium">Thursday, May 15</span>
               </div>
-            
-              <TabsContent value="calendar" className="mt-0">
-                <WeeklyCalendarView
-                  habits={habits}
-                  completions={completions}
-                  onToggleCompletion={handleToggleCompletion}
-                  days={7}
-                  showPreviousDays={3}
-                />
-              </TabsContent>
-              
-              <TabsContent value="list" className="mt-0">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Habit List View</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-500">
-                      This is a simplified view where the list view would go. It would show all habits
-                      in a more compact format with checkboxes for today's completion.
-                    </p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+            </div>
           </div>
         </div>
+        
+        {/* Daily Absolute Habits */}
+        <Card className="mb-6">
+          <CardHeader className="py-4 px-6 border-b">
+            <CardTitle className="text-lg font-semibold">Daily Absolute Habits</CardTitle>
+            <span className="text-xs text-gray-500">{absoluteHabits.length} habits</span>
+          </CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-xs text-gray-500 bg-gray-50">
+                  <th className="py-3 px-6 font-medium w-[200px]">Habit</th>
+                  {viewDates.map((date, i) => (
+                    <th 
+                      key={i} 
+                      className={`py-3 px-2 text-center font-medium ${
+                        formatDate(date) === formatDate(today) ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <div className="flex flex-col items-center">
+                        <span>{getDayName(date)}</span>
+                        <span>{date.getDate()}</span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {absoluteHabits.map((habit, index) => (
+                  <tr key={habit.id} className="border-b border-gray-100">
+                    <td className="py-3 px-6">
+                      <div className="flex items-center">
+                        <div 
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-white mr-3`}
+                          style={{ backgroundColor: habit.category === 'health' ? '#38BDF8' : '#A78BFA' }}
+                        >
+                          {habit.category === 'health' ? '💧' : '📖'}
+                        </div>
+                        <div>
+                          <div className="font-medium">{habit.title}</div>
+                          <div className="text-xs text-gray-500">{habit.category} · {habit.timeCommitment}</div>
+                        </div>
+                      </div>
+                    </td>
+                    {viewDates.map((date, i) => {
+                      const isPast = date <= today;
+                      const isCompleted = isHabitCompleted(habit.id, date);
+                      return (
+                        <td key={i} className="py-3 px-2 text-center">
+                          <button
+                            onClick={() => isPast && handleToggleCompletion(habit.id, date)}
+                            className={`w-6 h-6 rounded-md flex items-center justify-center mx-auto ${
+                              isCompleted 
+                                ? 'bg-green-100 text-green-600' 
+                                : 'bg-gray-100 text-gray-400'
+                            } ${!isPast ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                            disabled={!isPast}
+                          >
+                            {isCompleted && <Check className="h-4 w-4" />}
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+        
+        {/* Additional Habits */}
+        <Card>
+          <CardHeader className="py-4 px-6 border-b">
+            <CardTitle className="text-lg font-semibold">Additional Habits</CardTitle>
+            <span className="text-xs text-gray-500">{additionalHabits.length} habits</span>
+          </CardHeader>
+          <CardContent className="p-0">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-xs text-gray-500 bg-gray-50">
+                  <th className="py-3 px-6 font-medium w-[200px]">Habit</th>
+                  {viewDates.map((date, i) => (
+                    <th 
+                      key={i} 
+                      className={`py-3 px-2 text-center font-medium ${
+                        formatDate(date) === formatDate(today) ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <div className="flex flex-col items-center">
+                        <span>{getDayName(date)}</span>
+                        <span>{date.getDate()}</span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {additionalHabits.map((habit, index) => (
+                  <tr key={habit.id} className="border-b border-gray-100">
+                    <td className="py-3 px-6">
+                      <div className="flex items-center">
+                        <div 
+                          className={`w-6 h-6 rounded-full flex items-center justify-center text-white mr-3`}
+                          style={{ backgroundColor: habit.category === 'fitness' ? '#EF4444' : '#A78BFA' }}
+                        >
+                          {habit.category === 'fitness' ? '💪' : '🧘'}
+                        </div>
+                        <div>
+                          <div className="font-medium">{habit.title}</div>
+                          <div className="text-xs text-gray-500">{habit.category} · {habit.frequency}</div>
+                        </div>
+                      </div>
+                    </td>
+                    {viewDates.map((date, i) => {
+                      const isPast = date <= today;
+                      const isCompleted = isHabitCompleted(habit.id, date);
+                      return (
+                        <td key={i} className="py-3 px-2 text-center">
+                          <button
+                            onClick={() => isPast && handleToggleCompletion(habit.id, date)}
+                            className={`w-6 h-6 rounded-md flex items-center justify-center mx-auto ${
+                              isCompleted 
+                                ? 'bg-green-100 text-green-600' 
+                                : 'bg-gray-100 text-gray-400'
+                            } ${!isPast ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                            disabled={!isPast}
+                          >
+                            {isCompleted && <Check className="h-4 w-4" />}
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </CardContent>
+        </Card>
+        
+        {/* Daily Motivation Section */}
+        <Card className="mt-6">
+          <CardHeader className="py-4 px-6 flex items-center">
+            <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
+            <CardTitle className="text-lg font-semibold">Daily Motivation</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <blockquote className="text-gray-600 italic">
+              "The secret of getting ahead is getting started. The secret of getting started is breaking your
+              complex overwhelming tasks into small manageable tasks, and then starting on the first
+              one."
+            </blockquote>
+            <p className="text-right text-sm text-gray-500 mt-2">- Mark Twain</p>
+          </CardContent>
+        </Card>
       </div>
     </PageContainer>
   );
