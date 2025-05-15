@@ -236,39 +236,59 @@ export default function Dashboard() {
             
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Weekly habit view & streaks (left column) */}
+              {/* Unified habit tracker (left column) */}
               <div className="lg:col-span-2 space-y-6">
                 <Card>
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-1.5">
-                      <Activity className="w-4 h-4 text-blue-500" /> Weekly Habit Tracker
-                    </CardTitle>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="flex items-center gap-1.5">
+                        <Activity className="w-4 h-4 text-blue-500" /> Habit Tracker
+                      </CardTitle>
+                      <Button 
+                        onClick={() => {
+                          const newHabit = {
+                            id: `h-${Date.now()}`,
+                            title: "New Habit",
+                            description: "Description of your new habit",
+                            icon: "activity",
+                            impact: 8,
+                            effort: 4,
+                            timeCommitment: '10 min',
+                            frequency: 'daily' as HabitFrequency,
+                            isAbsolute: true,
+                            category: "health" as HabitCategory,
+                            streak: 0,
+                            createdAt: new Date()
+                          };
+                          addHabit(newHabit);
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600"
+                        size="sm"
+                      >
+                        <PlusCircle className="h-4 w-4 mr-1" /> Add New Habit
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardContent className="pb-6">
-                    <WeeklyHabitView 
-                      habits={habits.filter(h => h.isAbsolute)}
-                      dates={weekDates}
-                      completions={completions}
-                      onToggleCompletion={toggleCompletion}
-                    />
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-1.5">
-                      <CheckSquare className="w-4 h-4 text-blue-500" /> Habit List
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <DashboardHabits 
-                      habits={habits}
-                      completions={completions.filter(c => isSameDay(c.date, new Date()))}
-                      onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
-                      onAddHabit={addHabit}
-                      onEditHabit={editHabit}
-                      onDeleteHabit={deleteHabit}
-                    />
+                    <div className="space-y-6">
+                      <WeeklyHabitView 
+                        habits={habits.filter(h => h.isAbsolute)}
+                        dates={weekDates}
+                        completions={completions}
+                        onToggleCompletion={toggleCompletion}
+                      />
+                      
+                      <div className="mt-8">
+                        <DashboardHabits 
+                          habits={habits}
+                          completions={completions.filter(c => isSameDay(c.date, new Date()))}
+                          onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
+                          onAddHabit={addHabit}
+                          onEditHabit={editHabit}
+                          onDeleteHabit={deleteHabit}
+                        />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
