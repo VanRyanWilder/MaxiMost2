@@ -1219,9 +1219,27 @@ export default function IntegratedHabits() {
               </div>
               
               <div className="py-4">
-                <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                  {formatDate(selectedDate)}
-                </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <button 
+                    onClick={() => setSelectedDate(subDays(selectedDate, 1))} 
+                    className="p-1 rounded-full hover:bg-gray-100 text-muted-foreground"
+                    aria-label="Previous day"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    {formatDate(selectedDate)}
+                  </h3>
+                  
+                  <button 
+                    onClick={() => setSelectedDate(addDays(selectedDate, 1))} 
+                    className="p-1 rounded-full hover:bg-gray-100 text-muted-foreground"
+                    aria-label="Next day"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
                 
                 {filteredHabits.map(habit => (
                   <div key={habit.id} className="p-4 mb-2.5 rounded-lg border bg-white hover:shadow-sm transition-all flex items-center gap-3">
