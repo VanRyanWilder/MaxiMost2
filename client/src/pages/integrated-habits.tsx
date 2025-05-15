@@ -69,6 +69,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { DeleteHabitDialog } from "@/components/dialogs/delete-habit-dialog";
 import {
   Card,
   CardContent,
