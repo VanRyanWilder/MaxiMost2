@@ -240,12 +240,37 @@ export default function Dashboard() {
   };
   
   // Function to add a quick habit from the library
-  const addQuickHabit = (title: string, icon: string, category: string, description: string, impact = 7, effort = 4, timeCommitment = '10 min', frequency: HabitFrequency = 'daily', isAbsolute = true) => {
+  const addQuickHabit = (
+    title: string, 
+    icon: string, 
+    category: string, 
+    description: string, 
+    impact = 7, 
+    effort = 4, 
+    timeCommitment = '10 min', 
+    frequency: HabitFrequency = 'daily', 
+    isAbsolute = true,
+    iconColor?: string
+  ) => {
+    // Determine a suitable default color if none provided
+    let defaultColor = iconColor;
+    if (!defaultColor) {
+      // Choose color based on category
+      switch (category) {
+        case 'health': defaultColor = 'green'; break;
+        case 'fitness': defaultColor = 'red'; break;
+        case 'mind': defaultColor = 'purple'; break;
+        case 'social': defaultColor = 'blue'; break;
+        default: defaultColor = 'blue';
+      }
+    }
+    
     const newHabit: Habit = {
       id: `h-${Date.now()}`,
       title,
       description,
       icon,
+      iconColor: defaultColor,
       impact,
       effort,
       timeCommitment,
@@ -711,16 +736,16 @@ export default function Dashboard() {
                         <DropdownMenuContent className="w-56">
                           <DropdownMenuGroup>
                             <DropdownMenuLabel>Mind</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience", 7, 6)}>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience", 7, 6, "10 min", "daily", true, "blue")}>
                               <Brain className="mr-2 h-4 w-4 text-blue-500" /> Cold Shower
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity", 6, 3)}>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity", 6, 3, "15 min", "daily", true, "purple")}>
                               <Pencil className="mr-2 h-4 w-4 text-purple-500" /> Journal
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Reading", "book-open", "mind", "Read a book or article for growth", 7, 4)}>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Reading", "book", "mind", "Read a book or article for growth", 7, 4, "30 min", "daily", true, "amber")}>
                               <BookOpen className="mr-2 h-4 w-4 text-amber-500" /> Reading
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7)}>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7, "60 min", "daily", true, "red")}>
                               <Zap className="mr-2 h-4 w-4 text-red-500" /> Digital Detox
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
