@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { useUser } from "@/context/user-context";
+import { useToast } from "@/hooks/use-toast";
 import { format, addDays, startOfWeek, subDays, isSameDay, isBefore, isAfter } from 'date-fns';
 import { 
   Activity, 
@@ -220,17 +221,17 @@ export default function Dashboard() {
   };
   
   // Function to add a quick habit from the library
-  const addQuickHabit = (title: string, icon: string, category: string, description: string) => {
+  const addQuickHabit = (title: string, icon: string, category: string, description: string, impact = 7, effort = 4, timeCommitment = '10 min', frequency: HabitFrequency = 'daily', isAbsolute = true) => {
     const newHabit: Habit = {
       id: `h-${Date.now()}`,
       title,
       description,
       icon,
-      impact: 7,
-      effort: 4,
-      timeCommitment: '10 min',
-      frequency: 'daily' as HabitFrequency,
-      isAbsolute: true,
+      impact,
+      effort,
+      timeCommitment,
+      frequency,
+      isAbsolute,
       category: category as HabitCategory,
       streak: 0,
       createdAt: new Date()
@@ -238,8 +239,12 @@ export default function Dashboard() {
     
     addHabit(newHabit);
     
-    // Show a confirmation toast or dialog here
-    alert(`Added "${title}" to your habits!`);
+    // Show a confirmation toast instead of an alert
+    toast({
+      title: "Habit Added",
+      description: `"${title}" was added to your habits!`,
+      variant: "default",
+    });
   };
 
   // Function to check if a habit is completed on a specific date
