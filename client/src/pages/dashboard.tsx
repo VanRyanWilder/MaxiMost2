@@ -722,19 +722,51 @@ export default function Dashboard() {
                       />
                     </div>
                     
+                    <div>
+                      <label className="text-sm font-medium">Description</label>
+                      <input
+                        id="custom-habit-description"
+                        className="w-full p-2 mt-1 border rounded-md"
+                        placeholder="Brief description of your habit"
+                      />
+                    </div>
+                    
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-sm font-medium">Category</label>
-                        <select 
-                          id="custom-habit-category"
-                          className="w-full p-2 mt-1 border rounded-md"
-                        >
-                          <option value="health">Health</option>
-                          <option value="fitness">Fitness</option>
-                          <option value="mind">Mind</option>
-                          <option value="social">Social</option>
-                          <option value="custom">Custom</option>
-                        </select>
+                        <div className="relative">
+                          <select 
+                            id="custom-habit-category"
+                            className="w-full p-2 mt-1 border rounded-md appearance-none"
+                            onChange={(e) => {
+                              const customOption = document.getElementById('custom-category-option');
+                              const customInput = document.getElementById('custom-category-input');
+                              
+                              if (e.target.value === 'new-category' && customInput) {
+                                customInput.classList.remove('hidden');
+                                customInput.focus();
+                              } else if (customInput) {
+                                customInput.classList.add('hidden');
+                              }
+                            }}
+                          >
+                            <option value="health">Health</option>
+                            <option value="fitness">Fitness</option>
+                            <option value="mind">Mind</option>
+                            <option value="social">Social</option>
+                            <option value="work">Work</option>
+                            <option value="study">Study</option>
+                            <option value="hobby">Hobby</option>
+                            <option value="finance">Finance</option>
+                            <option value="spiritual">Spiritual</option>
+                            <option id="custom-category-option" value="new-category">+ Create New Category</option>
+                          </select>
+                          <input 
+                            id="custom-category-input"
+                            className="w-full p-2 mt-1 border rounded-md hidden absolute top-0 left-0"
+                            placeholder="Enter custom category name"
+                          />
+                        </div>
                       </div>
                       
                       <div>
@@ -748,7 +780,67 @@ export default function Dashboard() {
                           <option value="2x-week">2x per week</option>
                           <option value="3x-week">3x per week</option>
                           <option value="4x-week">4x per week</option>
+                          <option value="5x-week">5x per week</option>
+                          <option value="6x-week">6x per week</option>
+                          <option value="custom">Custom</option>
                         </select>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-sm font-medium">Icon</label>
+                        <select 
+                          id="custom-habit-icon"
+                          className="w-full p-2 mt-1 border rounded-md"
+                        >
+                          <option value="activity">Activity</option>
+                          <option value="brain">Brain</option>
+                          <option value="droplets">Droplets</option>
+                          <option value="dumbbell">Dumbbell</option>
+                          <option value="apple">Apple</option>
+                          <option value="bookopen">Book</option>
+                          <option value="users">Social</option>
+                          <option value="zap">Energy</option>
+                          <option value="pill">Pill</option>
+                          <option value="heart">Heart</option>
+                        </select>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium">Time Commitment</label>
+                        <input
+                          id="custom-habit-time"
+                          className="w-full p-2 mt-1 border rounded-md"
+                          placeholder="E.g., 10 min, 1 hour"
+                          defaultValue="15 min"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium">Impact (1-10)</label>
+                        <input
+                          id="custom-habit-impact"
+                          type="number"
+                          min="1"
+                          max="10"
+                          className="w-full p-2 mt-1 border rounded-md"
+                          defaultValue="8"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium">Effort (1-10)</label>
+                        <input
+                          id="custom-habit-effort"
+                          type="number"
+                          min="1"
+                          max="10"
+                          className="w-full p-2 mt-1 border rounded-md"
+                          defaultValue="5"
+                        />
                       </div>
                     </div>
                     
@@ -767,22 +859,37 @@ export default function Dashboard() {
                       className="w-full"
                       onClick={() => {
                         const titleInput = document.getElementById('custom-habit-title') as HTMLInputElement;
+                        const descriptionInput = document.getElementById('custom-habit-description') as HTMLInputElement;
                         const categorySelect = document.getElementById('custom-habit-category') as HTMLSelectElement;
+                        const customCategoryInput = document.getElementById('custom-category-input') as HTMLInputElement;
                         const frequencySelect = document.getElementById('custom-habit-frequency') as HTMLSelectElement;
+                        const iconSelect = document.getElementById('custom-habit-icon') as HTMLSelectElement;
+                        const timeInput = document.getElementById('custom-habit-time') as HTMLInputElement;
+                        const impactInput = document.getElementById('custom-habit-impact') as HTMLInputElement;
+                        const effortInput = document.getElementById('custom-habit-effort') as HTMLInputElement;
                         const isAbsoluteCheck = document.getElementById('is-absolute') as HTMLInputElement;
                         
                         if (titleInput && titleInput.value.trim()) {
+                          // Determine actual category - either selected or custom input
+                          let category: HabitCategory = categorySelect.value as HabitCategory;
+                          
+                          if (category === 'new-category' && customCategoryInput && customCategoryInput.value.trim()) {
+                            // Use the custom category name directly - type system will see this as a valid category
+                            // since we'll have validated it by this point
+                            category = customCategoryInput.value.trim() as HabitCategory;
+                          }
+                          
                           const newHabit: Habit = {
                             id: `h-${Date.now()}-custom`,
                             title: titleInput.value.trim(),
-                            description: `Custom habit: ${titleInput.value.trim()}`,
-                            icon: "activity",
-                            impact: 8,
-                            effort: 5,
-                            timeCommitment: '15 min',
+                            description: descriptionInput?.value?.trim() || `Custom habit: ${titleInput.value.trim()}`,
+                            icon: iconSelect?.value || "activity",
+                            impact: parseInt(impactInput?.value || "8"),
+                            effort: parseInt(effortInput?.value || "5"),
+                            timeCommitment: timeInput?.value?.trim() || '15 min',
                             frequency: frequencySelect.value as HabitFrequency,
                             isAbsolute: isAbsoluteCheck.checked,
-                            category: categorySelect.value as HabitCategory,
+                            category: category,
                             streak: 0,
                             createdAt: new Date(),
                             type: "custom"
@@ -792,7 +899,13 @@ export default function Dashboard() {
                           
                           // Reset form
                           titleInput.value = '';
+                          if (descriptionInput) descriptionInput.value = '';
+                          if (customCategoryInput) customCategoryInput.value = '';
+                          if (timeInput) timeInput.value = '15 min';
                           isAbsoluteCheck.checked = false;
+                          
+                          // Show confirmation
+                          alert(`Custom habit "${newHabit.title}" added successfully!`);
                         }
                       }}
                     >
