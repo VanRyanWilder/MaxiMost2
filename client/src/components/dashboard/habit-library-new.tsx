@@ -93,6 +93,45 @@ const habitSuggestions = {
       effort: 4,
       timeCommitment: '15 min',
       description: 'Start day with high protein breakfast'
+    },
+    {
+      id: 'sl-h6',
+      title: 'No snacking',
+      icon: 'utensils',
+      iconColor: 'red',
+      category: 'health',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: true,
+      impact: 7,
+      effort: 6,
+      timeCommitment: 'all day',
+      description: 'Avoid between-meal snacking'
+    },
+    {
+      id: 'sl-h7',
+      title: 'Cold exposure',
+      icon: 'droplets',
+      iconColor: 'blue',
+      category: 'health',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: false,
+      impact: 6,
+      effort: 7,
+      timeCommitment: '2 min',
+      description: 'Cold shower or ice bath for health benefits'
+    },
+    {
+      id: 'sl-h8',
+      title: 'Track calories',
+      icon: 'activity',
+      iconColor: 'green',
+      category: 'health',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: false,
+      impact: 8,
+      effort: 5,
+      timeCommitment: '10 min',
+      description: 'Log all food intake for awareness'
     }
   ],
   fitness: [
@@ -201,6 +240,45 @@ const habitSuggestions = {
       effort: 6,
       timeCommitment: '60 min',
       description: 'Avoid screens before bedtime for better sleep'
+    },
+    {
+      id: 'sl-m5',
+      title: 'Gratitude practice',
+      icon: 'smile',
+      iconColor: 'yellow',
+      category: 'mind',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: true,
+      impact: 7,
+      effort: 2,
+      timeCommitment: '5 min',
+      description: 'Write down three things you are grateful for'
+    },
+    {
+      id: 'sl-m6',
+      title: 'Learn something new',
+      icon: 'book-open',
+      iconColor: 'blue',
+      category: 'mind',
+      frequency: '3x-week' as HabitFrequency,
+      isAbsolute: false,
+      impact: 7,
+      effort: 4,
+      timeCommitment: '30 min',
+      description: 'Dedicate time to learning a new skill'
+    },
+    {
+      id: 'sl-m7',
+      title: 'Focus blocks',
+      icon: 'timer',
+      iconColor: 'red',
+      category: 'mind',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: false,
+      impact: 9,
+      effort: 5,
+      timeCommitment: '90 min',
+      description: 'Dedicated deep work with no distractions'
     }
   ],
   habits: [
@@ -538,6 +616,12 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
 
   // Combined all habits from different categories
   const allHabits = [...habitSuggestions.health, ...habitSuggestions.fitness, ...habitSuggestions.mind];
+  
+  // State for expandable section
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Show initial limited set or all habits based on expanded state
+  const visibleHabits = isExpanded ? allHabits : allHabits.slice(0, 9);
 
   return (
     <Card className="mb-4">
@@ -558,28 +642,38 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
             Quick-Add Habits
           </h3>
           
-          <div className="grid grid-cols-1 gap-2 mb-4">
-            {/* Combine all habits into a single list */}
-            {allHabits.map(habit => (
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            {/* Show only visible habits based on expanded state */}
+            {visibleHabits.map(habit => (
               <div 
                 key={habit.id}
-                className="p-2 rounded-md bg-gray-50 shadow-sm flex items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-md bg-gray-50 shadow-sm flex flex-col items-center gap-1 cursor-pointer hover:bg-gray-100 transition-colors"
                 onClick={() => onAddHabit?.(habit)}
               >
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mb-1">
                   {renderIcon(habit.icon, habit.iconColor)}
                 </div>
-                <div className="flex-1 min-w-0">
+                <div className="w-full text-center">
                   <p className="text-sm font-medium truncate" style={{color: `var(--${habit.iconColor}-600, #4B5563)`}}>
                     {habit.title}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
                 </div>
-                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 flex-shrink-0">
-                  <Plus className="h-4 w-4" />
+                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 mt-1">
+                  <Plus className="h-3 w-3" />
                 </Button>
               </div>
             ))}
+            
+            {/* Show expand/collapse button if we have more than the initial set */}
+            {allHabits.length > 9 && (
+              <div 
+                className="col-span-3 text-center mt-2 text-xs text-blue-600 cursor-pointer hover:text-blue-800"
+                onClick={() => setIsExpanded(!isExpanded)}
+              >
+                {isExpanded ? 'Show less habits' : 'Show more habits'} ({allHabits.length} total)
+              </div>
+            )}
           </div>
         
           {/* Habit Stacks Section */}
