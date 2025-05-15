@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
+import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { 
   DndContext, 
   closestCenter,
@@ -35,7 +36,13 @@ import {
   Calendar,
   Plus,
   Zap,
-  Flame
+  Flame,
+  Dumbbell,
+  Brain,
+  DropletIcon,
+  Droplets,
+  BookOpen,
+  Pill
 } from 'lucide-react';
 
 // Import shared types
