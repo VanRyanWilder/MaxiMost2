@@ -209,9 +209,19 @@ export default function SortableViewTest() {
             onUpdateHabit={handleUpdateHabit}
             onDeleteHabit={handleDeleteHabit}
             onReorderHabits={handleReorderHabits}
+            onEditHabit={handleEditHabit}
           />
         </CardContent>
       </Card>
+      
+      {/* Edit Habit Dialog */}
+      <EditHabitDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        habit={selectedHabit}
+        onSave={handleSaveHabit}
+        onDelete={handleDeleteHabit}
+      />
     </div>
   );
 }

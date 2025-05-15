@@ -69,6 +69,7 @@ interface SortableHabitViewProps {
   onUpdateHabit?: (habit: Habit) => void;
   onDeleteHabit?: (habitId: string) => void;
   onReorderHabits: (reorderedHabits: Habit[]) => void;
+  onEditHabit?: (habit: Habit) => void;
 }
 
 export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
@@ -78,7 +79,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   onAddHabit,
   onUpdateHabit,
   onDeleteHabit,
-  onReorderHabits
+  onReorderHabits,
+  onEditHabit
 }) => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState<string>("all");
@@ -155,7 +157,10 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   // Handle editing a habit
   const handleEditHabit = (habit: Habit) => {
     setSelectedHabit(habit);
-    if (onUpdateHabit) {
+    // Use the onEditHabit prop if available, otherwise fallback to onUpdateHabit
+    if (onEditHabit) {
+      onEditHabit(habit);
+    } else if (onUpdateHabit) {
       onUpdateHabit(habit);
     }
   };
