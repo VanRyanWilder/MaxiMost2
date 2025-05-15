@@ -27,27 +27,8 @@ import {
   ScrollText
 } from "lucide-react";
 
-// Types that mirror the ones in dashboard.tsx
-type HabitFrequency = "daily" | "weekly" | "2x-week" | "3x-week" | "4x-week" | "custom";
-type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
-
-interface Habit {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  impact: number;
-  effort: number;
-  timeCommitment: string;
-  frequency: HabitFrequency;
-  isAbsolute: boolean;
-  category: HabitCategory;
-  streak: number;
-  createdAt: Date;
-  type?: "principle" | "custom" | "default";
-  principle?: string;
-  lastCompleted?: Date | null;
-}
+// Import shared types
+import { Habit, HabitFrequency, HabitCategory } from "@/types/habit";
 
 type EditHabitDialogProps = {
   open: boolean;
