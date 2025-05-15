@@ -390,6 +390,17 @@ const quickAddHabits: Array<{
     isAbsolute: false
   },
   {
+    title: "Morning Prayer",
+    description: "Daily Christian prayer and reflection time",
+    icon: "heart",
+    impact: 9,
+    effort: 3,
+    timeCommitment: "10 min",
+    frequency: "daily",
+    category: "spirit",
+    isAbsolute: true
+  },
+  {
     title: "Exercise",
     description: "30 minutes of physical activity",
     icon: "dumbbell",
@@ -414,10 +425,21 @@ const quickAddHabits: Array<{
   {
     title: "Journal",
     description: "Write in journal for reflection and clarity",
-    icon: "checkcircle",
+    icon: "pencil",
     impact: 7,
     effort: 3,
     timeCommitment: "10 min",
+    frequency: "daily",
+    category: "mind",
+    isAbsolute: false
+  },
+  {
+    title: "Read Daily Dad",
+    description: "Read Ryan Holiday's Daily Dad newsletter",
+    icon: "mail",
+    impact: 6,
+    effort: 2,
+    timeCommitment: "5 min",
     frequency: "daily",
     category: "mind",
     isAbsolute: false
@@ -432,6 +454,83 @@ const quickAddHabits: Array<{
     frequency: "daily",
     category: "health",
     isAbsolute: true
+  },
+  {
+    title: "Cold Shower",
+    description: "Take a 2-3 minute cold shower for mental toughness",
+    icon: "thermometer",
+    impact: 8,
+    effort: 7,
+    timeCommitment: "3 min",
+    frequency: "daily",
+    category: "health",
+    isAbsolute: false
+  },
+  {
+    title: "Morning Sunlight",
+    description: "Get natural sunlight exposure in the morning",
+    icon: "sun",
+    impact: 8,
+    effort: 2,
+    timeCommitment: "5-10 min",
+    frequency: "daily",
+    category: "health",
+    isAbsolute: false
+  },
+  {
+    title: "Fasting Window",
+    description: "Maintain 16:8 intermittent fasting window",
+    icon: "clock",
+    impact: 8,
+    effort: 6,
+    timeCommitment: "16 hrs",
+    frequency: "daily",
+    category: "health",
+    isAbsolute: false
+  },
+  {
+    title: "Take Supplements",
+    description: "Take daily supplement stack",
+    icon: "pill",
+    impact: 7,
+    effort: 1,
+    timeCommitment: "1 min",
+    frequency: "daily",
+    category: "health",
+    isAbsolute: true
+  },
+  {
+    title: "Gratitude Practice",
+    description: "Write down 3 things you're grateful for",
+    icon: "edit",
+    impact: 7,
+    effort: 2,
+    timeCommitment: "5 min",
+    frequency: "daily",
+    category: "mind",
+    isAbsolute: false
+  },
+  {
+    title: "Brain Dump",
+    description: "Stream-of-consciousness writing to clear thoughts",
+    icon: "file-text",
+    impact: 6,
+    effort: 4,
+    timeCommitment: "10 min",
+    frequency: "daily",
+    category: "mind",
+    isAbsolute: false
+  },
+  {
+    title: "No Phone (Morning)",
+    description: "Avoid phone for first hour after waking",
+    icon: "smartphone",
+    impact: 8,
+    effort: 5,
+    timeCommitment: "60 min",
+    frequency: "daily",
+    category: "mind",
+    isAbsolute: false
   }
 ];
 
