@@ -281,11 +281,32 @@ export default function SortableDashboard() {
   const additionalHabits = habits.filter(h => !h.isAbsolute);
 
   // Handle adding a habit from the library
-  const handleAddFromLibrary = (habitId: string) => {
-    // This is where you would look up the library habit template
-    // and add it to the user's habits
-    console.log('Adding habit from library:', habitId);
-    handleCreateHabit();
+  const handleAddFromLibrary = (habitTemplate: any) => {
+    // Generate a new unique ID for the habit
+    const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+    
+    // Create a new habit from the template
+    const newHabit: Habit = {
+      id: newId,
+      title: habitTemplate.title,
+      description: habitTemplate.description,
+      icon: habitTemplate.icon,
+      iconColor: habitTemplate.iconColor,
+      impact: habitTemplate.impact,
+      effort: habitTemplate.effort,
+      timeCommitment: habitTemplate.timeCommitment,
+      frequency: habitTemplate.frequency,
+      isAbsolute: habitTemplate.isAbsolute,
+      category: habitTemplate.category,
+      streak: 0,
+      createdAt: new Date()
+    };
+    
+    // Add the new habit to the list
+    addHabit(newHabit);
+    
+    // Show success feedback
+    console.log('Added habit from library:', newHabit.title);
   };
 
   return (
