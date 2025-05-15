@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Dialog, 
   DialogContent, 
@@ -23,11 +23,7 @@ import {
   Heart, 
   Sun, 
   Zap,
-  Briefcase,
-  Music,
-  Banknote,
-  Activity,
-  ScrollText
+  PlusCircle
 } from "lucide-react";
 
 // Import shared types
@@ -41,6 +37,22 @@ type EditHabitDialogProps = {
   onDelete?: (habitId: string) => void;
 };
 
+// Default habit template for creating new habits
+const DEFAULT_NEW_HABIT: Habit = {
+  id: `h-${Date.now()}`,
+  title: "",
+  description: "",
+  icon: "zap",
+  impact: 8,
+  effort: 4,
+  timeCommitment: "10 min",
+  frequency: "daily",
+  isAbsolute: false,
+  category: "health",
+  streak: 0,
+  createdAt: new Date()
+};
+
 export function EditHabitDialog({ 
   open, 
   onOpenChange, 
@@ -49,11 +61,61 @@ export function EditHabitDialog({
   onDelete
 }: EditHabitDialogProps) {
   const [editedHabit, setEditedHabit] = useState<Habit | null>(null);
+  const [customCategory, setCustomCategory] = useState("");
+  const [showCustomCategoryInput, setShowCustomCategoryInput] = useState(false);
+  
+  // Ref to track if we're creating a new habit or editing an existing one
+  const isCreatingNewHabit = useRef(false);
   
   // Reset form when habit changes
   useEffect(() => {
-    setEditedHabit(habit ? {...habit} : null);
-  }, [habit]);
+    if (habit) {
+      setEditedHabit({...habit});
+      isCreatingNewHabit.current = false;
+      setShowCustomCategoryInput(habit.category !== "health" && 
+                                 habit.category !== "fitness" && 
+                                 habit.category !== "mind" && 
+                                 habit.category !== "social");
+      if (habit.category !== "health" && 
+          habit.category !== "fitness" && 
+          habit.category !== "mind" && 
+          habit.category !== "social") {
+        setCustomCategory(habit.category);
+      }
+    } else {
+      // Create a new habit with a unique ID
+      const newHabit = {
+        ...DEFAULT_NEW_HABIT,
+        id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
+      };
+      setEditedHabit(newHabit);
+      isCreatingNewHabit.current = true;
+      setShowCustomCategoryInput(false);
+      setCustomCategory("");
+    }
+  }, [habit, open]);
+  
+  // Listen for add-habit-dialog events
+  useEffect(() => {
+    const handleOpenAddHabitDialog = () => {
+      // Create a new habit with a unique ID
+      const newHabit = {
+        ...DEFAULT_NEW_HABIT,
+        id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
+      };
+      setEditedHabit(newHabit);
+      isCreatingNewHabit.current = true;
+      setShowCustomCategoryInput(false);
+      setCustomCategory("");
+      onOpenChange(true);
+    };
+    
+    document.addEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
+    
+    return () => {
+      document.removeEventListener('open-add-habit-dialog', handleOpenAddHabitDialog);
+    };
+  }, [onOpenChange]);
   
   if (!editedHabit) {
     return null;
@@ -61,7 +123,16 @@ export function EditHabitDialog({
   
   const handleSave = () => {
     if (editedHabit) {
-      onSave(editedHabit);
+      // If using a custom category, set the category to the custom value
+      if (showCustomCategoryInput && customCategory) {
+        const finalHabit = {
+          ...editedHabit,
+          category: customCategory as HabitCategory
+        };
+        onSave(finalHabit);
+      } else {
+        onSave(editedHabit);
+      }
       onOpenChange(false);
     }
   };
@@ -73,13 +144,38 @@ export function EditHabitDialog({
     }
   };
   
+  const handleCategoryChange = (value: string) => {
+    if (value === "custom") {
+      setShowCustomCategoryInput(true);
+      return;
+    }
+    
+    setShowCustomCategoryInput(false);
+    
+    // Set both category and relevant icon based on selection
+    let icon = "zap";
+    switch (value) {
+      case "health": icon = "heart"; break;
+      case "fitness": icon = "dumbbell"; break;
+      case "mind": icon = "brain"; break;
+      case "social": icon = "users"; break;
+      default: icon = "zap";
+    }
+    
+    setEditedHabit({...editedHabit, category: value as HabitCategory, icon: icon});
+  };
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Edit Habit</DialogTitle>
+          <DialogTitle>
+            {isCreatingNewHabit.current ? "Create New Habit" : "Edit Habit"}
+          </DialogTitle>
           <DialogDescription>
-            Refine this habit to maximize your success and consistency.
+            {isCreatingNewHabit.current 
+              ? "Define a new habit to add to your dashboard."
+              : "Refine this habit to maximize your success and consistency."}
           </DialogDescription>
         </DialogHeader>
         
@@ -115,24 +211,8 @@ export function EditHabitDialog({
               Category
             </Label>
             <Select 
-              value={editedHabit.category} 
-              onValueChange={(value: HabitCategory) => {
-                // Set both category and relevant icon based on selection
-                let icon = "zap";
-                switch (value) {
-                  case "health": icon = "heart"; break;
-                  case "fitness": icon = "dumbbell"; break;
-                  case "mind": icon = "brain"; break;
-                  case "social": icon = "users"; break;
-                  case "work": icon = "briefcase"; break;
-                  case "study": icon = "bookopen"; break;
-                  case "hobby": icon = "music"; break;
-                  case "finance": icon = "banknote"; break;
-                  case "spiritual": icon = "sun"; break;
-                  default: icon = "zap";
-                }
-                setEditedHabit({...editedHabit, category: value, icon: icon});
-              }}
+              value={showCustomCategoryInput ? "custom" : editedHabit.category} 
+              onValueChange={handleCategoryChange}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select a category" />
@@ -162,45 +242,31 @@ export function EditHabitDialog({
                     <span>Social</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="work">
-                  <div className="flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-amber-500" />
-                    <span>Work</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="study">
-                  <div className="flex items-center gap-2">
-                    <BookOpen className="h-4 w-4 text-indigo-500" />
-                    <span>Study</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="hobby">
-                  <div className="flex items-center gap-2">
-                    <Music className="h-4 w-4 text-pink-500" />
-                    <span>Hobby</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="finance">
-                  <div className="flex items-center gap-2">
-                    <Banknote className="h-4 w-4 text-emerald-500" />
-                    <span>Finance</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="spiritual">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4 text-orange-500" />
-                    <span>Spiritual</span>
-                  </div>
-                </SelectItem>
                 <SelectItem value="custom">
                   <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-gray-500" />
-                    <span>Custom Category</span>
+                    <PlusCircle className="h-4 w-4 text-gray-500" />
+                    <span>Create Custom Category</span>
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
+          
+          {/* Custom Category Input - only shown when "Custom" is selected */}
+          {showCustomCategoryInput && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="customCategory" className="text-right">
+                Custom Category
+              </Label>
+              <Input
+                id="customCategory"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="col-span-3"
+                placeholder="Enter custom category name"
+              />
+            </div>
+          )}
           
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="frequency" className="text-right">
