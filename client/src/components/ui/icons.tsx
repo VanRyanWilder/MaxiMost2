@@ -110,22 +110,43 @@ export const iconMap: Record<string, IconMapItem> = {
   "smile": { component: Smile, label: "Happy", category: "social" }
 };
 
-// Helper function to get the icon component by name
-export function getHabitIcon(iconName: string, className: string = "h-4 w-4"): React.ReactNode {
+// Helper function to get the icon component by name with enhanced styling
+export function getHabitIcon(
+  iconName: string, 
+  className: string = "h-4 w-4", 
+  color?: string
+): React.ReactNode {
+  // Choose the appropriate icon component
+  let IconComponent: React.ElementType = Activity; // Default fallback
+  
   if (iconMap[iconName]) {
-    const IconComponent = iconMap[iconName].component;
-    return <IconComponent className={className} />;
+    IconComponent = iconMap[iconName].component;
+  } else {
+    // Fallback for any missing icons with hyphens
+    const hyphenVersion = iconName.replace(/-/g, '');
+    if (iconMap[hyphenVersion]) {
+      IconComponent = iconMap[hyphenVersion].component;
+    }
   }
   
-  // Fallback for any missing icons with hyphens
-  const hyphenVersion = iconName.replace(/-/g, '');
-  if (iconMap[hyphenVersion]) {
-    const IconComponent = iconMap[hyphenVersion].component;
-    return <IconComponent className={className} />;
-  }
+  // Create a styled wrapper for the icon with gradient background and shadow
+  const iconColor = color || '#3b82f6'; // Default to blue if no color provided
   
-  // Final fallback
-  return <Activity className={className} />;
+  return (
+    <div 
+      className="rounded-full p-1.5 flex items-center justify-center"
+      style={{ 
+        background: `linear-gradient(135deg, ${iconColor}15, ${iconColor}30)`,
+        boxShadow: `0 2px 4px ${iconColor}25`,
+        border: `1px solid ${iconColor}40`
+      }}
+    >
+      <IconComponent 
+        className={className} 
+        style={{ color: iconColor }} 
+      />
+    </div>
+  );
 }
 
 // Export a namespace for convenience
