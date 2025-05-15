@@ -30,14 +30,24 @@ import {
   Zap, 
   PlusCircle, 
   AlertTriangle,
+  BookText,
   ChevronDown,
   BookOpen,
+  Cookie,
+  Dumbbell, 
+  Droplet,
+  Droplets,
+  Footprints,
+  Moon,
+  Move,
   Pencil,
+  Pill,
+  Timer,
+  Trash,
+  Utensils,
+  Wine,
   Apple,
   Brain,
-  Dumbbell,
-  Droplets,
-  Trash,
   Sun,
   Clock,
   CheckSquare,
@@ -50,7 +60,6 @@ import {
   PenLine,
   PhoneOff,
   ListChecks,
-  Wine,
   Slash,
   Candy
 } from 'lucide-react';
@@ -264,7 +273,7 @@ export default function Dashboard() {
     effort = 4, 
     timeCommitment = '10 min', 
     frequency: HabitFrequency = 'daily', 
-    isAbsolute = true,
+    isAbsolute?: boolean,
     iconColor?: string
   ) => {
     // Determine a suitable default color if none provided
@@ -280,6 +289,12 @@ export default function Dashboard() {
       }
     }
     
+    // Determine if this is an "absolute" (daily must-do) habit based on frequency
+    // if isAbsolute is explicitly provided, use that value, otherwise infer from frequency
+    const shouldBeAbsolute = isAbsolute !== undefined 
+      ? isAbsolute 
+      : frequency === 'daily';
+    
     const newHabit: Habit = {
       id: `h-${Date.now()}`,
       title,
@@ -290,7 +305,7 @@ export default function Dashboard() {
       effort,
       timeCommitment,
       frequency,
-      isAbsolute,
+      isAbsolute: shouldBeAbsolute,
       category: category as HabitCategory,
       streak: 0,
       createdAt: new Date()
