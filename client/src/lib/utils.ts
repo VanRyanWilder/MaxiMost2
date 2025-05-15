@@ -13,6 +13,111 @@ export function formatDate(date: Date): string {
   }).format(date);
 }
 
+/**
+ * Format a date to YYYY-MM-DD string for comparison
+ */
+export function formatDateISO(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Format a date to MM/DD format
+ */
+export function formatDateShort(date: Date): string {
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${month}/${day}`;
+}
+
+/**
+ * Get the day name for a date
+ */
+export function getDayName(date: Date): string {
+  return date.toLocaleDateString('en-US', { weekday: 'long' });
+}
+
+/**
+ * Get an array of dates for a week starting from the given date
+ */
+export function getWeekDates(startDate: Date, days = 7): Date[] {
+  const dates: Date[] = [];
+  for (let i = 0; i < days; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    dates.push(date);
+  }
+  return dates;
+}
+
+/**
+ * Get the start date of the current week (Sunday)
+ */
+export function getCurrentWeekStart(): Date {
+  const now = new Date();
+  const day = now.getDay(); // 0 is Sunday
+  const diff = now.getDate() - day;
+  const sunday = new Date(now);
+  sunday.setDate(diff);
+  sunday.setHours(0, 0, 0, 0);
+  return sunday;
+}
+
+/**
+ * Calculate streak for a habit based on completions
+ */
+export function calculateStreak(habitId: string, completions: any[]): number {
+  if (!completions.length) return 0;
+  
+  // Sort completions by date (most recent first)
+  const sortedCompletions = [...completions]
+    .filter(c => c.habitId === habitId && c.completed)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  
+  if (!sortedCompletions.length) return 0;
+  
+  // Get the most recent completion date
+  const mostRecentDate = new Date(sortedCompletions[0].date);
+  mostRecentDate.setHours(0, 0, 0, 0);
+  
+  // Check if the most recent completion is from today or yesterday
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  const isRecentCompletion = 
+    formatDateISO(mostRecentDate) === formatDateISO(today) || 
+    formatDateISO(mostRecentDate) === formatDateISO(yesterday);
+  
+  if (!isRecentCompletion) return 0;
+  
+  // Start counting streak days
+  let streak = 1;
+  let currentDate = new Date(mostRecentDate);
+  
+  // Go back one day at a time to find the streak
+  while (streak < sortedCompletions.length) {
+    currentDate.setDate(currentDate.getDate() - 1);
+    
+    // Look for completion on this date
+    const hasCompletion = sortedCompletions.some(
+      c => formatDateISO(new Date(c.date)) === formatDateISO(currentDate)
+    );
+    
+    if (hasCompletion) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  
+  return streak;
+}
+
 export function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
