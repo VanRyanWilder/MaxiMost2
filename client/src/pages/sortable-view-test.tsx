@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { SortableHabitViewModes } from '@/components/dashboard/sortable-habit-view-modes';
 import { Card, CardContent } from '@/components/ui/card';
+import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { Habit } from '@/types/habit';
 import { HabitCompletion, isSameDay } from '@/types/habit-completion';
 
 export default function SortableViewTest() {
+  // State for edit dialog
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  
   // Sample habits data
   const [habits, setHabits] = useState<Habit[]>([
     {
@@ -163,6 +168,17 @@ export default function SortableViewTest() {
       h.id === updatedHabit.id ? updatedHabit : h
     );
     setHabits(updatedHabits);
+  };
+
+  // Open edit dialog for habit
+  const handleEditHabit = (habit: Habit) => {
+    setSelectedHabit(habit);
+    setEditDialogOpen(true);
+  };
+
+  // Handle saving a habit after editing
+  const handleSaveHabit = (updatedHabit: Habit) => {
+    handleUpdateHabit(updatedHabit);
   };
 
   // Delete habit
