@@ -9,9 +9,11 @@ import { DashboardHabits } from "@/components/dashboard/dashboard-habits";
 import { HighRoiActivities } from "@/components/dashboard/high-roi-activities";
 import { WelcomeBanner } from "@/components/dashboard/welcome-banner";
 import { ProgressCard } from "@/components/dashboard/progress-card";
+import { useUser } from "@/context/user-context";
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, userLoading } = useUser();
   
   return (
     <div className="flex min-h-screen bg-background">
