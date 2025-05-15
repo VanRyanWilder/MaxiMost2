@@ -822,6 +822,7 @@ export default function IntegratedHabits() {
       title: template.title,
       description: template.description,
       icon: template.icon,
+      iconColor: template.iconColor || '#4F46E5', // Add default iconColor if not present
       impact: template.impact,
       effort: template.effort,
       timeCommitment: template.timeCommitment,
