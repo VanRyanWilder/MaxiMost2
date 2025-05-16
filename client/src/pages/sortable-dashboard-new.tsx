@@ -8,7 +8,7 @@ import { SettingsProvider } from "@/components/settings/settings-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
+import { SimpleEditDialog } from '@/components/dashboard/simple-edit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
@@ -760,13 +760,13 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog */}
-      <EditHabitDialog 
+      {/* Edit Habit Dialog - Using simplified version */}
+      <SimpleEditDialog 
         open={editHabitDialogOpen}
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("EDIT DIALOG - Received habit update for:", updatedHabit.title);
+          console.log("EDIT DIALOG - Received habit update for:", updatedHabit.title, "with color:", updatedHabit.iconColor);
           
           // Create a completely new habits array
           let newHabitsArray = [...habits];
@@ -775,38 +775,39 @@ export default function SortableDashboard() {
           const existingIndex = newHabitsArray.findIndex(h => h.id === updatedHabit.id);
           
           if (existingIndex >= 0) {
-            // This is an edit of an existing habit - replace it in the array
+            // This is an edit of an existing habit
             console.log("EDIT - Replacing habit at index:", existingIndex);
             
-            // Create a new array with the updated habit
-            newHabitsArray = [
-              ...newHabitsArray.slice(0, existingIndex),
-              updatedHabit,
-              ...newHabitsArray.slice(existingIndex + 1)
-            ];
+            // Directly replace the habit at that index
+            newHabitsArray[existingIndex] = {...updatedHabit};
           } else {
             // This is a new habit
             console.log("ADD - Adding new habit");
-            newHabitsArray.push(updatedHabit);
+            newHabitsArray.push({...updatedHabit});
           }
           
-          // Convert any Date objects to strings
-          const normalizedHabits = newHabitsArray.map(habit => ({
-            ...habit,
-            createdAt: habit.createdAt instanceof Date 
-              ? habit.createdAt.toISOString() 
-              : habit.createdAt
-          }));
-          
-          // Save to localStorage first to ensure consistency
+          // Save to localStorage first
           try {
-            localStorage.setItem('maximost-habits', JSON.stringify(normalizedHabits));
-            console.log("✅ Saved to localStorage successfully");
+            localStorage.setItem('maximost-habits', JSON.stringify(newHabitsArray));
+            console.log("✅ Saved habits to localStorage, count:", newHabitsArray.length);
             
-            // Only update state after successful localStorage save
-            console.log("Setting habits state to new array with length:", normalizedHabits.length);
-            console.log("HABIT COLOR CHECK:", updatedHabit.title, "color =", updatedHabit.iconColor);
-            setHabits(normalizedHabits);
+            // Update state after successful localStorage save
+            setHabits(newHabitsArray);
+          } catch (err) {
+            console.error("❌ Error saving to localStorage:", err);
+          }
+        }}
+        onDelete={(habitId) => {
+          // Filter out the habit to be deleted
+          const filteredHabits = habits.filter(h => h.id !== habitId);
+          
+          // Save to localStorage
+          try {
+            localStorage.setItem('maximost-habits', JSON.stringify(filteredHabits));
+            console.log("✅ Saved habits after deletion, count:", filteredHabits.length);
+            
+            // Update state
+            setHabits(filteredHabits);
           } catch (err) {
             console.error("❌ Error saving to localStorage:", err);
           }
