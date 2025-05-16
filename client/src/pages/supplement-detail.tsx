@@ -32,6 +32,7 @@ import {
   MessageSquare,
   ExternalLink
 } from "lucide-react";
+import { ReviewList } from "@/components/supplements/review-list";
 import {
   Accordion,
   AccordionContent,
@@ -111,18 +112,53 @@ const supplements = [
   }
 ];
 
+// Define the supplement type
+interface Supplement {
+  id: number;
+  name: string;
+  rating: number;
+  votesUp: number;
+  votesDown: number;
+  reviewCount: number;
+  category: string;
+  tags: string[];
+  price: number;
+  image: string;
+  description: string;
+  longDescription: string;
+  benefits: string[];
+  sideEffects: string[];
+  dosage: string;
+  timing: string;
+  quality: string;
+  interactions: string[];
+  faq: {
+    question: string;
+    answer: string;
+  }[];
+  amazonUrl: string;
+  featured: boolean;
+  sources: {
+    title: string;
+    authors: string;
+    journal: string;
+    year: number;
+    url: string;
+  }[];
+}
+
 export default function SupplementDetailPage() {
   const [, params] = useRoute("/supplement-detail/:id");
-  const [supplement, setSupplement] = useState(null);
+  const [supplement, setSupplement] = useState<Supplement | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
-  const [userVote, setUserVote] = useState(null);
+  const [userVote, setUserVote] = useState<string | null>(null);
   
   useEffect(() => {
     if (params?.id) {
       // In a real app, this would be an API call
       const foundSupplement = supplements.find(s => s.id === parseInt(params.id));
       if (foundSupplement) {
-        setSupplement(foundSupplement);
+        setSupplement(foundSupplement as Supplement);
       }
     }
   }, [params?.id]);
@@ -147,7 +183,7 @@ export default function SupplementDetailPage() {
     );
   }
   
-  const handleVote = (voteType) => {
+  const handleVote = (voteType: string) => {
     setUserVote(prev => prev === voteType ? null : voteType);
     // In a real app, this would make an API call to update the vote
   };
@@ -388,35 +424,13 @@ export default function SupplementDetailPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex justify-between items-center mb-6">
-                      <div className="flex items-end gap-2">
-                        <span className="text-4xl font-bold">{supplement.rating}</span>
-                        <div>
-                          <div className="flex mb-1">
-                            {[1, 2, 3, 4, 5].map(star => (
-                              <Star 
-                                key={star} 
-                                className={`h-4 w-4 ${star <= Math.round(supplement.rating) ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} 
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-muted-foreground">
-                            Based on {supplement.reviewCount} reviews
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <Button>
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Write a Review
-                      </Button>
-                    </div>
-                    
-                    <div className="text-center py-10">
-                      <p className="text-muted-foreground mb-2">
-                        Full review functionality coming soon!
-                      </p>
-                    </div>
+                    {/* Import and use the ReviewList component */}
+                    <ReviewList 
+                      supplementId={supplement.id}
+                      supplementName={supplement.name}
+                      overallRating={supplement.rating}
+                      reviewCount={supplement.reviewCount}
+                    />
                   </CardContent>
                 </Card>
               </TabsContent>
