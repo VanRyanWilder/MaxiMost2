@@ -790,14 +790,23 @@ export default function SortableDashboard() {
             newHabitsArray.push(updatedHabit);
           }
           
-          // Directly set the habits state with the new array
-          console.log("Setting habits state to new array with length:", newHabitsArray.length);
-          setHabits(newHabitsArray);
+          // Convert any Date objects to strings
+          const normalizedHabits = newHabitsArray.map(habit => ({
+            ...habit,
+            createdAt: habit.createdAt instanceof Date 
+              ? habit.createdAt.toISOString() 
+              : habit.createdAt
+          }));
           
-          // Save to localStorage immediately
+          // Save to localStorage first to ensure consistency
           try {
-            localStorage.setItem('maximost-habits', JSON.stringify(newHabitsArray));
+            localStorage.setItem('maximost-habits', JSON.stringify(normalizedHabits));
             console.log("✅ Saved to localStorage successfully");
+            
+            // Only update state after successful localStorage save
+            console.log("Setting habits state to new array with length:", normalizedHabits.length);
+            console.log("HABIT COLOR CHECK:", updatedHabit.title, "color =", updatedHabit.iconColor);
+            setHabits(normalizedHabits);
           } catch (err) {
             console.error("❌ Error saving to localStorage:", err);
           }
