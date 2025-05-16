@@ -7,13 +7,15 @@ interface HabitButtonProps {
   date: Date;
   isCompleted: boolean;
   onToggle: (habitId: string, date: Date) => void;
+  size?: 'sm' | 'md';
 }
 
 export const HabitButton: React.FC<HabitButtonProps> = ({
   habitId,
   date,
   isCompleted,
-  onToggle
+  onToggle,
+  size = 'sm'
 }) => {
   const isFutureDate = isFuture(date);
   const isToday = isSameDay(date, startOfToday());
@@ -21,7 +23,7 @@ export const HabitButton: React.FC<HabitButtonProps> = ({
   return (
     <Button 
       variant={isCompleted ? "default" : "outline"}
-      size="sm"
+      size={size === 'md' ? 'default' : 'sm'}
       onClick={() => !isFutureDate && onToggle(habitId, date)}
       className={`min-w-[40px] h-[30px] p-1 
         ${isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}
