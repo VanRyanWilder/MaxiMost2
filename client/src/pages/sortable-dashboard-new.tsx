@@ -8,7 +8,7 @@ import { SettingsProvider } from "@/components/settings/settings-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { SimpleEditDialog } from '@/components/dashboard/simple-edit-dialog';
+import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
@@ -777,23 +777,33 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog - Using simplified version */}
-      <SimpleEditDialog 
+      {/* Edit Habit Dialog - Using fixed version */}
+      <FixedEditDialog 
         open={editHabitDialogOpen}
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("👍 Dashboard received habit from dialog:", updatedHabit.title);
-          console.log("👍 Color value:", updatedHabit.iconColor);
+          console.log("🔵 Dashboard received habit from dialog:", updatedHabit.title);
+          console.log("🔵 Color value being saved:", updatedHabit.iconColor);
           
-          // For editing, use our dedicated function to ensure consistent behavior
-          editHabit(updatedHabit);
+          // Close dialog first to avoid state conflicts
+          setEditHabitDialogOpen(false);
+          
+          // For editing, use our dedicated function with a small delay to ensure state is updated
+          setTimeout(() => {
+            editHabit(updatedHabit);
+          }, 100);
         }}
         onDelete={(habitId) => {
-          console.log("👍 Dashboard received delete request for habit ID:", habitId);
+          console.log("🔴 Dashboard received delete request for habit ID:", habitId);
           
-          // Use our dedicated deletion function
-          deleteHabit(habitId);
+          // Close dialog first to avoid state conflicts
+          setEditHabitDialogOpen(false);
+          
+          // Use our dedicated deletion function with a small delay
+          setTimeout(() => {
+            deleteHabit(habitId);
+          }, 100);
         }}
       />
     </SettingsProvider>
