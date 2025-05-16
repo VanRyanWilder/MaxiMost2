@@ -144,7 +144,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             </button>
           </div>
 
-          {!userLoading && user && (
+          {!userLoading && (
             <div className="mt-4">
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -153,31 +153,25 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-sm">{user.name || "MaxiMost User"}</h3>
+                  <h3 className="font-medium text-sm">MaxiMost User</h3>
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
-              <div className="rounded-md bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 p-2">
-                <div className="flex justify-between mb-1">
-                  <span className="text-xs font-medium flex items-center gap-1">
-                    <CheckSquare className="h-3 w-3 text-blue-500" />
+              <div className="rounded-md bg-blue-50 dark:bg-blue-900/20 p-2.5">
+                <div className="flex justify-between mb-1.5">
+                  <span className="text-xs font-medium flex items-center gap-1.5">
+                    <Zap className="h-3.5 w-3.5 text-amber-500" />
                     Current Streak
                   </span>
                   <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
-                    {user && user.streak ? user.streak : 7} days
+                    7 days
                   </span>
                 </div>
-                <div className="w-full bg-blue-100 dark:bg-blue-900/30 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-blue-100 dark:bg-blue-900/40 h-2.5 rounded-full overflow-hidden">
                   <div 
-                    className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full" 
-                    style={{ width: `${Math.min(100, ((user && user.streak ? user.streak : 7) / 10) * 100)}%` }}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full" 
+                    style={{ width: '70%' }}
                   ></div>
-                </div>
-                <div className="mt-1.5 flex justify-between">
-                  <span className="text-[10px] text-muted-foreground">Goal: 10 days</span>
-                  <span className="text-[10px] text-muted-foreground">
-                    {Math.max(0, 10 - (user && user.streak ? user.streak : 7))} days left
-                  </span>
                 </div>
               </div>
             </div>
