@@ -51,6 +51,11 @@ interface AppSettings {
   };
   habitDisplayMode: 'compact' | 'detailed';
   weekStartsOn: 0 | 1; // 0 = Sunday, 1 = Monday
+  animations?: {
+    enabled: boolean;
+    confetti: boolean;
+    pulseEffect: boolean;
+  };
 }
 
 // Initial default settings
@@ -67,6 +72,11 @@ const defaultSettings: AppSettings = {
   },
   habitDisplayMode: 'detailed',
   weekStartsOn: 0,
+  animations: {
+    enabled: true,
+    confetti: true,
+    pulseEffect: true
+  }
 };
 
 interface SettingsProviderProps {
@@ -147,15 +157,33 @@ export function useSettings() {
 export function SettingsPanel() {
   const { settings, updateSettings, resetSettings } = useSettings();
   const { theme, setTheme } = useTheme();
+  const [open, setOpen] = useState(false);
 
-  // Handle theme change from settings
+  // Handle theme change from settings - prevent switching to dark mode
   const handleThemeChange = (value: string) => {
-    setTheme(value as 'light' | 'dark' | 'system');
-    updateSettings({ theme: value as 'light' | 'dark' | 'system' });
+    if (value === 'dark') {
+      // Ignore dark mode for now, as it's disabled
+      return;
+    }
+    setTheme(value as 'light' | 'system');
+    updateSettings({ theme: value as 'light' | 'system' });
   };
 
+  // Add animations type to AppSettings
+  useEffect(() => {
+    if (!settings.animations) {
+      updateSettings({
+        animations: {
+          enabled: true,
+          confetti: true,
+          pulseEffect: true
+        }
+      });
+    }
+  }, []);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="h-9 w-9 border-muted-foreground" aria-label="Settings">
           <Settings className="h-5 w-5 text-primary" />
@@ -510,12 +538,13 @@ export function SettingsPanel() {
           </Button>
           <Button
             onClick={() => {
-              // Save is automatic but we'll add a confirmation here
-              alert('Settings saved!');
+              // Settings are saved automatically
+              // Close the panel when save is clicked
+              setOpen(false);
             }}
           >
             <Save className="h-4 w-4 mr-2" />
-            Save
+            Save Changes
           </Button>
         </SheetFooter>
       </SheetContent>
