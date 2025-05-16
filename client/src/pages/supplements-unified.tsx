@@ -385,15 +385,21 @@ function SupplementCard({ supplement, index, onReview }: {
         )}
         
         <div className="flex gap-2 mt-4">
-          <Button 
-            variant="outline"
-            size="sm"
-            className="w-full gap-1"
-            onClick={() => window.open(amazonUrl, '_blank')}
+          <a 
+            href={amazonUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full"
           >
-            <ExternalLink className="h-3.5 w-3.5" />
-            View on Amazon
-          </Button>
+            <Button 
+              variant="outline"
+              size="sm"
+              className="w-full gap-1"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+              View on Amazon
+            </Button>
+          </a>
           
           {onReview && (
             <Button 
