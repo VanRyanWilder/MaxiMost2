@@ -100,7 +100,7 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
   };
   
   return (
-    <React.Fragment>
+    <>
       {/* Stack Card */}
       <div 
         className="p-3 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -195,7 +195,7 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
           </div>
         </div>
       )}
-    </React.Fragment>
+    </>
   );
 }
 
