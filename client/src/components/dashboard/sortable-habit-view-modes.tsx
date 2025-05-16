@@ -148,137 +148,22 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const handleEditHabit = (habit: Habit) => {
     console.log("SortableHabitViewModes - Edit habit clicked:", habit);
     
-    // Make sure we're passing a fully populated habit with MaxiMost properties
-    let iconColor = habit.iconColor || "blue";
-    let icon = habit.icon || "zap";
-    let category = habit.category;
-    
-    // Convert legacy categories to MaxiMost categories if needed
-    if (category === "health" || category === "fitness") {
-      category = "physical";
-    } else if (category === "mind") {
-      category = "mental";
-    } else if (category === "social") {
-      category = "relationships";
-    } else if (category === "finance" || category === "productivity") {
-      category = "financial";
-    }
-    
-    // Ensure appropriate colors for MaxiMost categories
-    switch (category) {
-      case "physical": 
-        iconColor = "red"; 
-        icon = "dumbbell";
-        break;
-      case "nutrition": 
-        iconColor = "orange"; 
-        icon = "utensils";
-        break;
-      case "sleep": 
-        iconColor = "indigo"; 
-        icon = "moon";
-        break;
-      case "mental": 
-        iconColor = "yellow"; 
-        icon = "lightbulb";
-        break;
-      case "relationships": 
-        iconColor = "green"; 
-        icon = "users";
-        break;
-      case "financial": 
-        iconColor = "emerald"; 
-        icon = "dollar-sign";
-        break;
-    }
-    
-    // Create enriched habit with validated properties
-    const enrichedHabit = {
-      ...habit,
-      iconColor,
-      icon,
-      category
-    };
-    
-    console.log("SortableHabitViewModes - Opening edit dialog with:", enrichedHabit);
-    
-    setSelectedHabit(enrichedHabit);
+    // Simply store the original habit - our FixHabitDialog component
+    // will handle the category mapping and enrichment
+    setSelectedHabit(habit);
     setEditDialogOpen(true);
   };
   
   const handleSaveHabit = (updatedHabit: Habit) => {
     console.log("SortableHabitViewModes - Saving habit:", updatedHabit);
     
-    // Make sure we have the required color and icon for MaxiMost categories
-    let iconColor = updatedHabit.iconColor || "blue";
-    let icon = updatedHabit.icon || "zap";
-    let category = updatedHabit.category;
-    
-    // Convert legacy categories to MaxiMost categories if needed
-    if (category === "health" || category === "fitness") {
-      category = "physical";
-    } else if (category === "mind") {
-      category = "mental";
-    } else if (category === "social") {
-      category = "relationships";
-    } else if (category === "finance" || category === "productivity") {
-      category = "financial";
-    }
-    
-    // Ensure appropriate colors for MaxiMost categories
-    switch (category) {
-      case "physical": 
-        iconColor = "red"; 
-        icon = "dumbbell";
-        break;
-      case "nutrition": 
-        iconColor = "orange"; 
-        icon = "utensils";
-        break;
-      case "sleep": 
-        iconColor = "indigo"; 
-        icon = "moon";
-        break;
-      case "mental": 
-        iconColor = "yellow"; 
-        icon = "lightbulb";
-        break;
-      case "relationships": 
-        iconColor = "green"; 
-        icon = "users";
-        break;
-      case "financial": 
-        iconColor = "emerald"; 
-        icon = "dollar-sign";
-        break;
-    }
-    
-    // Force daily habits to be absolute
-    const isAbsolute = updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute;
-    
-    // Create final habit with validated properties
-    const finalHabit = {
-      ...updatedHabit,
-      iconColor,
-      icon,
-      category,
-      isAbsolute
-    };
-    
-    console.log("SortableHabitViewModes - Final habit being saved:", {
-      id: finalHabit.id,
-      title: finalHabit.title,
-      category: finalHabit.category,
-      icon: finalHabit.icon,
-      iconColor: finalHabit.iconColor,
-      frequency: finalHabit.frequency,
-      isAbsolute: finalHabit.isAbsolute
-    });
-    
+    // The FixHabitDialog component now handles category mapping and icon assignments
+    // We directly pass the updated habit to the parent component
     if (onUpdateHabit) {
-      console.log("Calling onUpdateHabit with:", finalHabit);
-      onUpdateHabit(finalHabit);
+      console.log("Calling onUpdateHabit with:", updatedHabit);
+      onUpdateHabit(updatedHabit);
     }
+    
     setEditDialogOpen(false);
   };
   
