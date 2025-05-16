@@ -50,7 +50,7 @@ const topSupplements = [
     ],
     dosage: "1-3g daily (combined EPA/DHA) with meals",
     considerations: "Look for high-quality, tested products with minimal oxidation. Higher doses need physician oversight.",
-    amazonUrl: "https://www.amazon.com/dp/B002CQU53K?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=nordic+naturals+ultimate+omega&tag=maximost-20"
   },
   {
     id: 2,
@@ -68,7 +68,7 @@ const topSupplements = [
     ],
     dosage: "1,000-5,000 IU daily with fat-containing meal",
     considerations: "Test levels first. Take with K2 for optimal calcium regulation. Morning dosing may be beneficial for circadian rhythm.",
-    amazonUrl: "https://www.amazon.com/dp/B0797ND64V?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=vitamin+d3+k2&tag=maximost-20"
   },
   {
     id: 3,
@@ -86,7 +86,7 @@ const topSupplements = [
     ],
     dosage: "200-400mg elemental magnesium daily (divided doses)",
     considerations: "Different forms have different effects: glycinate for sleep/relaxation, threonate for cognitive benefits, malate for energy.",
-    amazonUrl: "https://www.amazon.com/dp/B0058HWM9S?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=magnesium+glycinate&tag=maximost-20"
   },
   {
     id: 4,
@@ -104,7 +104,7 @@ const topSupplements = [
     ],
     dosage: "3-5g daily, timing doesn't matter",
     considerations: "No loading phase needed. Micronized form may reduce digestive discomfort. Benefit accumulates over time.",
-    amazonUrl: "https://www.amazon.com/dp/B002DYIZEO?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=creatine+monohydrate&tag=maximost-20"
   },
   {
     id: 5,
@@ -122,7 +122,7 @@ const topSupplements = [
     ],
     dosage: "20-40g per serving as needed to meet daily protein targets",
     considerations: "Whey isolate for lactose sensitivity, plant blend for vegetarians. Look for third-party tested products with minimal additives.",
-    amazonUrl: "https://www.amazon.com/dp/B000QSNYGI?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=optimum+nutrition+protein+powder&tag=maximost-20"
   },
   {
     id: 6,
@@ -140,7 +140,7 @@ const topSupplements = [
     ],
     dosage: "100-200mcg daily with fat-containing meal",
     considerations: "Take with vitamin D3. MK-7 form has longer half-life than MK-4. May interact with blood thinners.",
-    amazonUrl: "https://www.amazon.com/dp/B004GW4S0G?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=vitamin+k2+mk7&tag=maximost-20"
   },
   {
     id: 7,
@@ -158,7 +158,7 @@ const topSupplements = [
     ],
     dosage: "15-30mg daily with food",
     considerations: "Zinc picolinate or zinc bisglycinate have better absorption. Long-term use requires copper balance. Take with food to reduce nausea.",
-    amazonUrl: "https://www.amazon.com/dp/B004O9ESUO?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=zinc+picolinate&tag=maximost-20"
   },
   {
     id: 8,
@@ -176,7 +176,7 @@ const topSupplements = [
     ],
     dosage: "200-400mg as needed or daily",
     considerations: "Synergistic with caffeine (2:1 theanine:caffeine ratio). Can be taken multiple times per day safely. Particularly useful during stressful periods.",
-    amazonUrl: "https://www.amazon.com/dp/B01D1YQBOK?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=l+theanine&tag=maximost-20"
   },
   {
     id: 9,
@@ -194,7 +194,7 @@ const topSupplements = [
     ],
     dosage: "600mg daily (standardized extract)",
     considerations: "KSM-66 or Sensoril extracts have best research. Take consistently for 4-8 weeks for full effects. May be best avoided with autoimmune thyroid conditions.",
-    amazonUrl: "https://www.amazon.com/dp/B07N13YMK1?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/s?k=ashwagandha+ksm+66&tag=maximost-20"
   },
   {
     id: 10,
