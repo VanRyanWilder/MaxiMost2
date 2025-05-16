@@ -31,7 +31,13 @@ export type HabitCategory =
   | "supplements"
   | "research"
   | "stoic"
-  | "sugar";
+  | "sugar"
+  | "physical"
+  | "nutrition"
+  | "sleep"
+  | "mental"
+  | "relationships"
+  | "financial";
 
 export interface Habit {
   id: string;
