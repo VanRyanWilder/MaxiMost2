@@ -63,14 +63,21 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
   };
   
   const addSelectedHabits = () => {
+    console.log("Adding selected habits");
     const habitsToAdd = stack.habits.filter((habit: any) => selectedHabits[habit.id]);
+    console.log("Habits to add:", habitsToAdd);
+    
     if (habitsToAdd.length > 0) {
-      habitsToAdd.forEach((habit: any) => {
-        // Create a new habit with a unique ID to prevent duplicates
+      // Generate a timestamp once to ensure each habit gets a unique but related timestamp
+      const timestamp = Date.now();
+      
+      habitsToAdd.forEach((habit: any, index: number) => {
+        // Create a new habit with a truly unique ID by combining the original ID, timestamp, index, and random string
         const uniqueHabit = {
           ...habit,
-          id: `${habit.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+          id: `${habit.id}-${timestamp}-${index}-${Math.random().toString(36).substring(2, 9)}`
         };
+        console.log(`Adding habit ${index+1}/${habitsToAdd.length}:`, uniqueHabit.title);
         onAddHabit?.(uniqueHabit);
       });
     }
