@@ -30,7 +30,7 @@ export default function Home() {
           <div className="space-x-4">
             <Button 
               variant="outline" 
-              className="text-white hover:text-white border-white hover:border-white"
+              className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
               onClick={() => setLocation("/login")}
             >
               Log in
@@ -79,7 +79,7 @@ export default function Home() {
                   <Button 
                     size="lg" 
                     variant="outline"
-                    className="text-white hover:text-white border-white hover:border-white"
+                    className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
                     onClick={() => setLocation("/dashboard")}
                   >
                     Habit Building
