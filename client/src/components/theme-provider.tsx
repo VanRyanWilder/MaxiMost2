@@ -41,15 +41,14 @@ export function ThemeProvider({
     // Remove existing theme classes
     root.classList.remove("light", "dark")
 
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-
-      root.classList.add(systemTheme)
-    } else {
-      root.classList.add(theme)
+    // Always use light mode for now to simplify and fix issues
+    // We'll re-enable dark mode in a future update
+    root.classList.add("light")
+    
+    // Store the selected theme for future reference when we re-enable dark mode
+    if (theme !== "light") {
+      localStorage.setItem(storageKey, "light")
+      setTheme("light")
     }
     
     // Re-enable transitions after a short delay to prevent flashing
@@ -58,7 +57,7 @@ export function ThemeProvider({
     }, 100)
     
     return () => clearTimeout(transitionTimeout)
-  }, [theme])
+  }, [theme, storageKey])
 
   const value = {
     theme,
