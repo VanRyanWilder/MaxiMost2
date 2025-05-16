@@ -118,8 +118,9 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
     }
   };
 
-  // Function to handle editing a habit - now uses parent component's edit function
+  // Function to handle editing a habit - pass to the parent component to use FixHabitDialog
   const handleEditHabit = (habit: Habit) => {
+    console.log("Weekly table view - Edit habit clicked:", habit);
     if (onUpdateHabit) {
       onUpdateHabit(habit);
     }
