@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
 import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog';
-import { UltraSimpleEditor } from '@/components/dashboard/ultra-simple-editor';
+import { RobustHabitEditor } from '@/components/dashboard/robust-habit-editor';
 import { NewHabitEditor } from '@/components/dashboard/new-habit-editor';
 import { MaximostHabitEditor } from '@/components/dashboard/maximost-habit-editor';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
@@ -782,13 +782,13 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog - Using our ultra simple editor with improved state management */}
-      <UltraSimpleEditor
+      {/* Edit Habit Dialog - Using a more robust editor with improved state management */}
+      <RobustHabitEditor
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("🔄 Dashboard received habit from UltraSimpleEditor:", updatedHabit.title);
+          console.log("🔄 Dashboard received habit from RobustHabitEditor:", updatedHabit.title);
           console.log("🔄 Color value being saved:", updatedHabit.iconColor);
           
           // For editing, we'll use our unified save function
@@ -803,7 +803,7 @@ export default function SortableDashboard() {
         onDelete={(habitId) => {
           console.log("🔄 Dashboard received delete request for habit ID:", habitId);
           
-          // Use our dedicated deletion function (only call once)
+          // Use our dedicated deletion function
           deleteHabit(habitId);
         }}
       />

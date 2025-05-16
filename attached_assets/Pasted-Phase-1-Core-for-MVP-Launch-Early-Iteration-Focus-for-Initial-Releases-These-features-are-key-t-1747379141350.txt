@@ -1,0 +1,64 @@
+Phase 1: Core for MVP Launch / Early Iteration (Focus for Initial Releases)
+These features are key to establishing Maximost's unique value proposition and providing immediate benefits to early adopters.
+
+I. Enhanced Personalization & AI-Driven Insights (Core MVP Elements):
+
+[ ] Basic AI-Powered Habit Suggestions:
+
+Suggest new habits based on user-stated goals or very common positive pairings (e.g., if tracking workouts, suggest a recovery habit). Keep initial logic simple.
+
+Focus on "Atomic Habits" principle: suggest small, easy-to-start habits.
+
+[ ] Personalized Feedback & "Stoic Coach" AI (Simple Version):
+
+Basic encouraging messages for streaks and Stoic-reframing for missed habits.
+
+Incorporate simple quotes from Stoic texts or "Discipline Equals Freedom."
+
+[ ] Basic "Habit Synergy" Nudges:
+
+Pre-defined positive pairings (e.g., "Good sleep often leads to better workouts").
+
+II. Deeper Habit Analysis & Reflection (Core MVP Elements):
+
+[ ] Basic Habit Analytics:
+
+Streaks, completion percentages, simple charts.
+
+[ ] Integrated Journaling:
+
+A simple in-app journal for users to log notes, mood, or reflections related to their habits or day.
+
+A few pre-set Stoic or "Atomic Habits" inspired prompts.
+
+[ ] Simple Weekly Review:
+
+Prompt users to look back at their week's habit completion.
+
+III. Gamification & Motivation (Basic MVP Elements):
+
+[ ] Basic Badge System: For achieving streaks or completing a certain number of habits (e.g., "7-Day Workout Streak," "First 10 Habits Mastered").
+
+IV. Breaking Bad Habits & Addiction Recovery Support (Core MVP Elements for this focus area):
+
+[ ] Bad Habit Identification & Manual Replacement:
+
+Allow users to define a habit to break.
+
+Allow users to manually select or define a positive replacement habit.
+
+Simple tracking of "days free" from the bad habit.
+
+[ ] Basic Urge Tracking/Logging:
+
+Allow users to log when they experience an urge for the bad habit.
+
+[ ] Trackable Support Habits (Manual Entry):
+
+Allow users to add and track habits like "Daily Prayer/Meditation for Intention," "Attend Meeting," "Talk to Sponsor."
+
+V. Integration & Utility (Essential MVP Elements):
+
+[ ] Customizable Reminders: Standard, user-set reminders for habits.
+
+[ ] Basic Resource Links: A simple page with links to external resources for Stoicism, "Atomic Habits," and general support (e.g., AA, SMART Recovery if applicable to user goals).

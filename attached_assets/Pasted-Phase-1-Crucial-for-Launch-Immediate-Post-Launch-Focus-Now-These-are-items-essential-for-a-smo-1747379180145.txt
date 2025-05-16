@@ -1,0 +1,35 @@
+Phase 1: Crucial for Launch & Immediate Post-Launch (Focus Now)
+These are items essential for a smooth, compliant, and effective launch, and for gathering initial traction and feedback.
+1. Legal & Compliance (Non-Negotiable Before Launch):
+* [ ] Privacy Policy: Finalize and publish for both website and app.
+* [ ] Terms of Service (ToS): Finalize and publish for app and website.
+* [ ] Disclaimer: Add to website, especially regarding fitness and supplement advice.
+* [ ] Affiliate Disclosure: Implement clearly on your website where Amazon Associate links are used.
+* [ ] Cookie Consent Banner (Website): Ensure compliance if using tracking cookies.
+* [ ] App Store Legal Requirements: Double-check all guidelines are met for submission.
+2. App Launch Preparations & Go-Live:
+* [ ] App Store Optimization (ASO): Finalize your app store listing (title, keywords, description, screenshots, preview video).
+* [ ] Thoroughly Analyze Beta Testing Feedback: Implement critical bug fixes and key usability improvements identified during testing.
+* [ ] App Landing Page on Website: Ensure this page is compelling, clearly explains the app's value, and has direct links to the app stores (once live). Consider an email signup for launch announcements if not already launched.
+* [ ] Prepare Initial Promotional Materials: Basic social media graphics/posts for launch day.
+* [ ] Submit to App Stores: Navigate the submission process for Apple App Store and Google Play Store.
+* [ ] Monitor Initial App Performance & Reviews: Be ready to address any immediate issues or feedback post-launch.
+3. Core Website Content & Foundation:
+* [ ] Essential Website Pages:
+* [ ] Homepage: Clear value proposition, app download CTAs.
+* [ ] About Us/Our Philosophy: Explain the Maximost principles.
+* [ ] Features Page: Clearly showcase app benefits.
+* [ ] Supplements Guide/Recommendations Page: Well-structured with your affiliate links and valuable content.
+* [ ] Contact Page & FAQ: Basic versions ready.
+* [ ] Basic SEO Setup:
+* [ ] Ensure Google Analytics and Google Search Console are set up and tracking.
+* [ ] Basic on-page SEO for core pages (titles, meta descriptions).
+* [ ] XML sitemap submitted.
+4. Initial Customer Support & Feedback Channels:
+* [ ] Define Basic Support Channels: At a minimum, an email address for support and a clear FAQ page.
+* [ ] Plan for Monitoring App Store Reviews: Be prepared to respond professionally.
+* [ ] Simple In-App Feedback Mechanism (if feasible): An easy way for users to report bugs or suggest features.
+5. Technical Launch Readiness:
+* [ ] Final Security Checks (Website & App Backend on Google Cloud):
+* [ ] Backup Procedures in Place: For website and app data.
+* [ ] Basic Performance Monitoring: Ensure your Google Cloud setup can handle initial launch traffic.
