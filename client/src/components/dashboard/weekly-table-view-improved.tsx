@@ -203,7 +203,7 @@ export function WeeklyTableViewImproved({
                 return (
                   <TableSortableItem key={habit.id} habit={habit}>
                     <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                      <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[70px]">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                         <div className="flex-shrink-0">
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
@@ -303,7 +303,7 @@ export function WeeklyTableViewImproved({
                   return (
                     <TableSortableItem key={habit.id} habit={habit}>
                       <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[70px]">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                           <div className="flex-shrink-0">
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>

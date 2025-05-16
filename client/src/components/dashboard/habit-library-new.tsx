@@ -38,10 +38,15 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
   const [selectedHabits, setSelectedHabits] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     stack.habits.forEach((habit: any) => {
-      initial[habit.id] = true;
+      initial[habit.id] = true; // Initially select all habits
     });
     return initial;
   });
+  
+  // For debugging
+  useEffect(() => {
+    console.log('Selected habits:', selectedHabits);
+  }, [selectedHabits]);
   
   const toggleHabitSelection = (habitId: string) => {
     setSelectedHabits(prev => ({
