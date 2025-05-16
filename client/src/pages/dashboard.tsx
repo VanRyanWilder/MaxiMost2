@@ -702,6 +702,135 @@ export default function Dashboard() {
                           </div>
                         </div>
                         
+                        {/* Dr. Brecka Protocol Stack */}
+                        <div className="border rounded-md mb-4 hover:border-blue-200 transition-colors">
+                          <div className="p-3 border-b bg-gray-50">
+                            <div className="flex justify-between items-center">
+                              <h5 className="font-medium flex items-center gap-2">
+                                <Pill className="h-4 w-4 text-green-500" />
+                                Dr. Brecka Protocol
+                              </h5>
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
+                                onClick={() => {
+                                  const breckaHabits = [
+                                    {
+                                      id: `h-${Date.now()}-br1`,
+                                      title: "Track blood sugar",
+                                      description: "Monitor glucose levels to optimize metabolism",
+                                      icon: "activity",
+                                      iconColor: "blue",
+                                      impact: 9,
+                                      effort: 3,
+                                      timeCommitment: '1 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: false,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-br2`,
+                                      title: "Optimize sleep",
+                                      description: "Prioritize sleep quality through environment and timing",
+                                      icon: "bed",
+                                      iconColor: "indigo",
+                                      impact: 10,
+                                      effort: 5,
+                                      timeCommitment: '8 hours',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-br3`,
+                                      title: "Supplement protocol",
+                                      description: "Take targeted supplements based on biomarkers",
+                                      icon: "pill",
+                                      iconColor: "green",
+                                      impact: 8,
+                                      effort: 2,
+                                      timeCommitment: '2 min',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    },
+                                    {
+                                      id: `h-${Date.now()}-br4`,
+                                      title: "Protein intake",
+                                      description: "Consume 1g protein per pound of body weight",
+                                      icon: "utensils",
+                                      iconColor: "red",
+                                      impact: 8,
+                                      effort: 5,
+                                      timeCommitment: 'All day',
+                                      frequency: 'daily' as HabitFrequency,
+                                      isAbsolute: true,
+                                      category: "health" as HabitCategory,
+                                      streak: 0,
+                                      createdAt: new Date()
+                                    }
+                                  ];
+                                  
+                                  // Clone the current habits array first to prevent any reference issues
+                                  const updatedHabits = [...habits];
+                                  
+                                  // Add each habit individually to ensure they all get added
+                                  breckaHabits.forEach(habit => {
+                                    updatedHabits.push(habit);
+                                  });
+                                  
+                                  // Update the habits state with all new habits
+                                  setHabits(updatedHabits);
+                                  alert("Added Dr. Brecka Protocol stack successfully!");
+                                }}
+                              >
+                                Add All 4 Habits
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 p-3">
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Activity className="h-4 w-4 text-blue-500" />
+                                <span className="text-sm font-medium">Track blood sugar</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Optimize metabolism</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Bed className="h-4 w-4 text-indigo-500" />
+                                <span className="text-sm font-medium">Optimize sleep</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">8 hours daily</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Pill className="h-4 w-4 text-green-500" />
+                                <span className="text-sm font-medium">Supplement protocol</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">Based on biomarkers</p>
+                            </div>
+                            
+                            <div className="p-2 border rounded-md bg-gray-50/50">
+                              <div className="flex items-center gap-2">
+                                <Utensils className="h-4 w-4 text-red-500" />
+                                <span className="text-sm font-medium">Protein intake</span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">1g per pound daily</p>
+                            </div>
+                          </div>
+                        </div>
+                        
                         {/* Fitness Stack */}
                         <div className="border rounded-md hover:border-blue-200 transition-colors">
                           <div className="p-3 border-b bg-gray-50">
