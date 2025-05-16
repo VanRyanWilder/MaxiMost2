@@ -216,7 +216,7 @@ export function WeeklyTableViewFixedUpdated({
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Day headers */}
-          <div className="grid grid-cols-[1.2fr,65px,65px,65px,65px,65px,65px,65px] border-b py-2">
+          <div className="grid grid-cols-[1.2fr,80px,80px,80px,80px,80px,80px,80px] border-b py-2">
             <div className="px-4 py-2 font-medium text-base flex items-center">
               <span className="text-gray-700">{format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d')}</span>
             </div>
