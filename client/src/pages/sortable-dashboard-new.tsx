@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from "@/components/layout/sidebar";
+import { useTheme } from "@/components/theme-provider";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { PageContainer } from "@/components/layout/page-container";
 import { HeaderWithSettings } from "@/components/layout/header-with-settings";
@@ -354,6 +355,23 @@ export default function SortableDashboard() {
     // Show success feedback
     console.log('Added habit from library:', newHabit.title);
   };
+
+  const { setTheme } = useTheme();
+
+  // Load user preferences on initial load if available in settings
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('appSettings');
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        if (parsedSettings.theme) {
+          setTheme(parsedSettings.theme);
+        }
+      } catch (error) {
+        console.error('Failed to parse settings from localStorage', error);
+      }
+    }
+  }, [setTheme]);
 
   return (
     <SettingsProvider>

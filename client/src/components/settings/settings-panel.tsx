@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTheme } from "@/components/theme-provider";
 import {
   Settings,
   Moon,
@@ -84,6 +85,7 @@ export const SettingsContext = React.createContext<{
 
 // Settings provider that will be used at a higher level
 export function SettingsProvider({ children }: SettingsProviderProps) {
+  const { setTheme } = useTheme();
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
 
   // Load settings from localStorage on initial render
@@ -91,12 +93,18 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
     const savedSettings = localStorage.getItem('appSettings');
     if (savedSettings) {
       try {
-        setSettings(JSON.parse(savedSettings));
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings(parsedSettings);
+        
+        // Sync theme with ThemeProvider
+        if (parsedSettings.theme) {
+          setTheme(parsedSettings.theme);
+        }
       } catch (error) {
         console.error('Failed to parse settings from localStorage', error);
       }
     }
-  }, []);
+  }, [setTheme]);
 
   // Save settings to localStorage whenever they change
   useEffect(() => {
@@ -108,10 +116,16 @@ export function SettingsProvider({ children }: SettingsProviderProps) {
       ...prevSettings,
       ...newSettings
     }));
+    
+    // If theme is updated, sync with ThemeProvider
+    if (newSettings.theme) {
+      setTheme(newSettings.theme);
+    }
   };
 
   const resetSettings = () => {
     setSettings(defaultSettings);
+    setTheme(defaultSettings.theme);
   };
 
   return (
@@ -132,6 +146,13 @@ export function useSettings() {
 
 export function SettingsPanel() {
   const { settings, updateSettings, resetSettings } = useSettings();
+  const { theme, setTheme } = useTheme();
+
+  // Handle theme change from settings
+  const handleThemeChange = (value: string) => {
+    setTheme(value as 'light' | 'dark' | 'system');
+    updateSettings({ theme: value as 'light' | 'dark' | 'system' });
+  };
 
   return (
     <Sheet>
@@ -170,8 +191,8 @@ export function SettingsPanel() {
                 <div>
                   <h3 className="text-sm font-medium mb-2">Theme</h3>
                   <RadioGroup 
-                    defaultValue={settings.theme} 
-                    onValueChange={(value) => updateSettings({ theme: value as 'light' | 'dark' | 'system' })}
+                    value={theme}
+                    onValueChange={handleThemeChange}
                     className="flex space-x-2"
                   >
                     <div className="flex items-center space-x-2">
@@ -217,7 +238,13 @@ export function SettingsPanel() {
                           <SelectItem value="orange">Orange</SelectItem>
                         </SelectContent>
                       </Select>
-                      <div className={`h-4 w-full rounded-full bg-${settings.habitColors.completed}-500`}></div>
+                      <div className="h-4 w-full rounded-full" style={{ 
+                        backgroundColor: settings.habitColors.completed === 'blue' ? '#3b82f6' : 
+                                         settings.habitColors.completed === 'green' ? '#22c55e' : 
+                                         settings.habitColors.completed === 'purple' ? '#a855f7' : 
+                                         settings.habitColors.completed === 'indigo' ? '#6366f1' : 
+                                         settings.habitColors.completed === 'orange' ? '#f97316' : '#3b82f6'
+                      }}></div>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="pending-color">Pending</Label>
@@ -236,7 +263,11 @@ export function SettingsPanel() {
                           <SelectItem value="zinc">Zinc</SelectItem>
                         </SelectContent>
                       </Select>
-                      <div className={`h-4 w-full rounded-full bg-${settings.habitColors.pending}-300`}></div>
+                      <div className="h-4 w-full rounded-full" style={{ 
+                        backgroundColor: settings.habitColors.pending === 'gray' ? '#d1d5db' : 
+                                         settings.habitColors.pending === 'slate' ? '#cbd5e1' : 
+                                         settings.habitColors.pending === 'zinc' ? '#d4d4d8' : '#d1d5db'
+                      }}></div>
                     </div>
                   </div>
                 </div>
@@ -260,21 +291,33 @@ export function SettingsPanel() {
                     </SelectContent>
                   </Select>
 
-                  <div className="mt-3 p-3 bg-gray-50 rounded-md">
+                  <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
                     <span className="text-xs text-gray-500">Preview:</span>
                     {settings.habitDisplayMode === 'compact' ? (
-                      <div className="flex items-center mt-2 p-2 border rounded-md">
-                        <div className="h-3 w-3 rounded-full bg-blue-500 mr-2"></div>
+                      <div className="flex items-center mt-2 p-2 border rounded-md bg-white dark:bg-gray-900">
+                        <div className="h-3 w-3 rounded-full mr-2" style={{ 
+                          backgroundColor: settings.habitColors.completed === 'blue' ? '#3b82f6' : 
+                                           settings.habitColors.completed === 'green' ? '#22c55e' : 
+                                           settings.habitColors.completed === 'purple' ? '#a855f7' : 
+                                           settings.habitColors.completed === 'indigo' ? '#6366f1' : 
+                                           settings.habitColors.completed === 'orange' ? '#f97316' : '#3b82f6'
+                        }}></div>
                         <span className="text-sm font-medium">Habit Name</span>
                       </div>
                     ) : (
-                      <div className="flex flex-col mt-2 p-2 border rounded-md">
+                      <div className="flex flex-col mt-2 p-2 border rounded-md bg-white dark:bg-gray-900">
                         <div className="flex items-center">
-                          <div className="h-3 w-3 rounded-full bg-blue-500 mr-2"></div>
+                          <div className="h-3 w-3 rounded-full mr-2" style={{ 
+                            backgroundColor: settings.habitColors.completed === 'blue' ? '#3b82f6' : 
+                                            settings.habitColors.completed === 'green' ? '#22c55e' : 
+                                            settings.habitColors.completed === 'purple' ? '#a855f7' : 
+                                            settings.habitColors.completed === 'indigo' ? '#6366f1' : 
+                                            settings.habitColors.completed === 'orange' ? '#f97316' : '#3b82f6'
+                          }}></div>
                           <span className="text-sm font-medium">Habit Name</span>
                           <Badge className="ml-auto text-[10px]">Daily</Badge>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">Habit description goes here</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Habit description goes here</p>
                       </div>
                     )}
                   </div>
