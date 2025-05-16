@@ -331,15 +331,16 @@ export function DailyViewFixedUpdated({
                               const isExceeding = completedDays > targetDays;
                               
                               return hasMetFrequency && (
-                                <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-[10px] text-white font-medium px-1.5 py-0 h-4 ml-1">
+                                <Badge className="bg-white text-[10px] px-1 py-0 h-4 border border-red-500 ml-1">
                                   {isExceeding ? (
                                     <>
-                                      <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye +{completedDays - targetDays}
+                                      <Target className="h-3 w-3 text-red-500" />
+                                      {completedDays > targetDays && (
+                                        <span className="text-xs text-red-500 font-medium ml-0.5">+{completedDays - targetDays}</span>
+                                      )}
                                     </>
                                   ) : (
-                                    <>
-                                      <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye
-                                    </>
+                                    <Target className="h-3 w-3 text-red-500" />
                                   )}
                                 </Badge>
                               );
