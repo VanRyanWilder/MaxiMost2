@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModernLayout } from "@/components/layout/modern-layout";
+import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -156,7 +156,7 @@ export default function PrinciplesPage() {
   const regularPrinciples = filteredPrinciples.filter(p => !p.featured);
   
   return (
-    <ModernLayout pageTitle="Core Stoic Principles">
+    <PageContainer title="Core Stoic Principles">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="flex flex-col">
           {/* Header */}
@@ -303,7 +303,7 @@ export default function PrinciplesPage() {
           </Card>
         </div>
       </div>
-    </ModernLayout>
+    </PageContainer>
   );
 }
 
