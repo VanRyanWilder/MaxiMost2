@@ -328,7 +328,7 @@ export default function SortableDashboard() {
     // Ensure date is a Date object
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     const existingCompletionIndex = completions.findIndex(
-      c => c.habitId === habitId && isSameDay(new Date(c.date), date)
+      c => c.habitId === habitId && isSameDay(new Date(c.date), dateObj)
     );
     
     let updatedCompletions = [...completions];
@@ -348,7 +348,7 @@ export default function SortableDashboard() {
       const newCompletion: HabitCompletion = {
         id: `c-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
         habitId,
-        date: date.toISOString(),
+        date: typeof dateObj === 'string' ? dateObj : dateObj.toISOString(),
         completed: true
       };
       updatedCompletions = [...completions, newCompletion];
@@ -358,7 +358,7 @@ export default function SortableDashboard() {
     // Only check for celebrations if a habit was marked as completed
     if (isNowCompleted) {
       // Check for perfect day completion (all of today's habits completed)
-      if (isSameDay(date, new Date())) {
+      if (isSameDay(dateObj, new Date())) {
         // Get all habit IDs
         const habitIds = habits.map(h => h.id);
         
@@ -367,7 +367,7 @@ export default function SortableDashboard() {
           return updatedCompletions.some(c => 
             c.habitId === hId && 
             c.completed && 
-            isSameDay(new Date(c.date), date)
+            isSameDay(new Date(c.date), dateObj)
           );
         });
         
