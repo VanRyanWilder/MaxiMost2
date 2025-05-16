@@ -34,9 +34,19 @@ export function TableSortableItem({
     <div 
       ref={setNodeRef} 
       style={style}
+      className="relative group cursor-move"
       {...attributes}
       {...listeners}
     >
+      <div className="absolute left-0 top-0 bottom-0 w-8 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+        <div className="text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/>
+            <circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/>
+            <circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/>
+          </svg>
+        </div>
+      </div>
       {children}
     </div>
   );
