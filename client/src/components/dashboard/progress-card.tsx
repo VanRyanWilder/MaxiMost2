@@ -3,10 +3,11 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 
 interface ProgressCardProps {
   title: string;
-  value: string;
+  value: string | number;
   trend?: string;
   description?: string;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 export function ProgressCard({ 
@@ -14,7 +15,8 @@ export function ProgressCard({
   value, 
   trend, 
   description,
-  className 
+  className,
+  icon
 }: ProgressCardProps) {
   // Determine if trend is positive or negative
   const isTrendPositive = trend?.startsWith("+");
@@ -23,8 +25,11 @@ export function ProgressCard({
     <Card className={className}>
       <CardContent className="pt-6">
         <div className="flex justify-between items-start">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              {icon && <div className="flex-shrink-0">{icon}</div>}
+              <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            </div>
             <h2 className="text-2xl sm:text-3xl font-bold">{value}</h2>
             {description && (
               <p className="text-xs text-muted-foreground mt-1">{description}</p>
