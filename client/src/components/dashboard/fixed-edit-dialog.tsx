@@ -213,27 +213,33 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
             </Select>
           </div>
 
-          {/* Category selection */}
+          {/* Category selection - disabled with "coming soon" message */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
               Category
             </Label>
-            <Select 
-              value={category}
-              onValueChange={(value: HabitCategory) => setCategory(value)}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="health">Health</SelectItem>
-                <SelectItem value="fitness">Fitness</SelectItem>
-                <SelectItem value="mind">Mind</SelectItem>
-                <SelectItem value="social">Social</SelectItem>
-                <SelectItem value="productivity">Productivity</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="col-span-3">
+              <div className="flex items-center gap-2">
+                <Select 
+                  value={category}
+                  disabled
+                  onValueChange={(value: HabitCategory) => setCategory(value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="health">Health</SelectItem>
+                    <SelectItem value="fitness">Fitness</SelectItem>
+                    <SelectItem value="mind">Mind</SelectItem>
+                    <SelectItem value="social">Social</SelectItem>
+                    <SelectItem value="productivity">Productivity</SelectItem>
+                    <SelectItem value="finance">Finance</SelectItem>
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-amber-600 font-semibold">Coming Soon</span>
+              </div>
+            </div>
           </div>
 
           {/* Color selection */}
