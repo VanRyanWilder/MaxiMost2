@@ -324,7 +324,11 @@ function SupplementCard({ supplement, index, onReview }: {
   index?: number;
   onReview?: () => void;
 }) {
-  const amazonUrl = supplement.amazonUrl || "https://www.amazon.com/s?k=" + encodeURIComponent(supplement.name) + "&tag=maximost-20";
+  // Ensure all Amazon links work properly
+  const productId = supplement.amazonUrl ? supplement.amazonUrl.match(/\/dp\/([A-Z0-9]+)/)?.[1] : null;
+  const amazonUrl = productId 
+    ? `https://amazon.com/dp/${productId}?tag=maximost-20` 
+    : `https://www.amazon.com/s?k=${encodeURIComponent(supplement.name)}&tag=maximost-20`;
   const isTopPick = index === 0;
   const isTopThree = index !== undefined && index < 3;
   
