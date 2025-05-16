@@ -786,8 +786,7 @@ export default function SortableDashboard() {
         onDelete={(habitId) => {
           console.log("🔄 Dashboard received delete request for habit ID:", habitId);
           
-          // Use our dedicated deletion function
-          deleteHabit(habitId);
+          // Use our dedicated deletion function (only call once)
           deleteHabit(habitId);
         }}
       />
