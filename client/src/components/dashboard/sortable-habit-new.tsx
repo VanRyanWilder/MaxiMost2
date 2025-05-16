@@ -194,7 +194,7 @@ export function SortableHabit({
         const isFuture = isAfter(date, endOfToday());
         
         return (
-          <div key={i} className="flex justify-center">
+          <div key={i} className="flex justify-center items-center">
             <button 
               onClick={() => onToggleCompletion(habit.id, date)}
               disabled={isFuture}
@@ -207,9 +207,13 @@ export function SortableHabit({
                 } w-full h-10 rounded-md`}
             >
               {completed ? (
-                <Check className="h-5 w-5" />
+                <div className="flex items-center justify-center h-5 w-5">
+                  <Check className="h-4 w-4" />
+                </div>
               ) : (
-                <div className={`h-5 w-5 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current hover:scale-110`}></div>
+                <div className={`h-5 w-5 flex items-center justify-center`}>
+                  <div className={`h-4 w-4 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current hover:scale-110`}></div>
+                </div>
               )}
             </button>
           </div>
