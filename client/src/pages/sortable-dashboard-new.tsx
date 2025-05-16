@@ -151,7 +151,7 @@ export default function SortableDashboard() {
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   
-  // Confetti celebration states
+  // Confetti celebration state
   const [showPerfectDayConfetti, setShowPerfectDayConfetti] = useState(false);
   const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
   
@@ -608,6 +608,19 @@ export default function SortableDashboard() {
           </PageContainer>
         </main>
       </div>
+      
+      {/* Confetti Celebrations */}
+      <ConfettiCelebration 
+        trigger={showPerfectDayConfetti} 
+        type="perfectDay"
+        onComplete={() => setShowPerfectDayConfetti(false)}
+      />
+      
+      <ConfettiCelebration 
+        trigger={showPerfectWeekConfetti} 
+        type="perfectWeek"
+        onComplete={() => setShowPerfectWeekConfetti(false)}
+      />
       
       {/* Edit Habit Dialog */}
       <EditHabitDialog 
