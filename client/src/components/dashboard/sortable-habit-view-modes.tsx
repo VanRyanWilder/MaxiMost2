@@ -200,7 +200,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-5xl mx-auto">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -269,7 +269,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button onClick={handleCreateHabit} variant="default" size="sm">
+            <Button onClick={handleCreateHabit} variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
               <Plus className="h-4 w-4 mr-1" /> Add Habit
             </Button>
           </div>
