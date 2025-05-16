@@ -436,7 +436,15 @@ export default function SortableDashboard() {
   
   // Add a new habit
   const addHabit = (habit: Habit) => {
-    setHabits([...habits, habit]);
+    // Clean up any trailing O characters in title
+    let cleanedHabit = {...habit};
+    
+    if (cleanedHabit.title && cleanedHabit.title.endsWith("O")) {
+      cleanedHabit.title = cleanedHabit.title.replace(/O$/, "");
+      console.log("Removed trailing O character from new habit title");
+    }
+    
+    setHabits([...habits, cleanedHabit]);
   };
   
   // Improved habit editing function with better error handling and reliability
@@ -450,9 +458,17 @@ export default function SortableDashboard() {
       return;
     }
     
+    // Clean up title to remove any trailing "O" characters
+    let cleanTitle = updatedHabit.title;
+    if (cleanTitle && cleanTitle.endsWith("O")) {
+      cleanTitle = cleanTitle.replace(/O$/, "");
+      console.log("Removed trailing O character from habit title");
+    }
+    
     // Force daily habits to be absolute
     const finalHabit = {
       ...updatedHabit,
+      title: cleanTitle,
       isAbsolute: updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute,
       // Ensure these fields have valid values
       iconColor: updatedHabit.iconColor || 'blue',
@@ -694,10 +710,17 @@ export default function SortableDashboard() {
     // Generate a new unique ID for the habit
     const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
     
-    // Create a new habit from the template
+    // Clean up any trailing O characters in template title
+    let cleanTitle = template.title;
+    if (cleanTitle && cleanTitle.endsWith("O")) {
+      cleanTitle = cleanTitle.replace(/O$/, "");
+      console.log("Removed trailing O character from template habit title");
+    }
+    
+    // Create a new habit from the template with clean title
     const newHabit: Habit = {
       id: newId,
-      title: template.title,
+      title: cleanTitle,
       description: template.description,
       icon: template.icon,
       iconColor: template.iconColor,

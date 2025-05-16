@@ -236,9 +236,16 @@ export function EditHabitDialog({
       else if (editedHabit.category === 'financial') iconColor = 'green';
     }
     
+    // Clean up title to remove any trailing "O" characters
+    let cleanTitle = editedHabit.title;
+    if (cleanTitle && cleanTitle.endsWith("O")) {
+      cleanTitle = cleanTitle.replace(/O$/, "");
+    }
+    
     // Clone the habit to avoid reference issues
     const finalHabit: Habit = {
       ...editedHabit,
+      title: cleanTitle,
       isAbsolute: isDaily,
       iconColor: iconColor
       // Don't add updatedAt field as it's not in our Habit type
@@ -317,7 +324,7 @@ export function EditHabitDialog({
             <Input
               id="title"
               value={editedHabit.title}
-              onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value})}
+              onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value.replace(/\u004F$/, '')})}
               className="col-span-3"
               placeholder="Habit name"
             />
