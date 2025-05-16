@@ -2,7 +2,7 @@ import React from "react";
 import { format, isSameDay } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Pencil, Trash2, MoreHorizontal, PlusCircle, CheckSquare } from "lucide-react";
+import { Check, Star, Pencil, Trash2, MoreHorizontal, PlusCircle, CheckSquare, Target } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +65,29 @@ export function DailyViewFixedUpdated({
         isSameDay(new Date(completion.date), date) && 
         completion.completed
     );
+  };
+  
+  // Get target days from frequency
+  const getTargetDays = (habit: Habit): number => {
+    switch(habit.frequency) {
+      case 'daily': return 7;
+      case '2x-week': return 2;
+      case '3x-week': return 3;
+      case '4x-week': return 4;
+      case '5x-week': return 5;
+      case '6x-week': return 6;
+      case 'weekly': return 1;
+      default: return 1;
+    }
+  };
+  
+  // Count completed days in the current week for a habit
+  const countCompletedDaysInWeek = (habitId: string): number => {
+    return completions.filter(
+      completion => 
+        completion.habitId === habitId && 
+        completion.completed
+    ).length;
   };
 
   // Get appropriate frequency text
@@ -299,6 +322,28 @@ export function DailyViewFixedUpdated({
                             <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
                               {getFrequencyText(habit.frequency)}
                             </Badge>
+                            
+                            {/* Bullseye indicator for frequency habits */}
+                            {(() => {
+                              const targetDays = getTargetDays(habit);
+                              const completedDays = countCompletedDaysInWeek(habit.id);
+                              const hasMetFrequency = completedDays >= targetDays;
+                              const isExceeding = completedDays > targetDays;
+                              
+                              return hasMetFrequency && (
+                                <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-[10px] text-white font-medium px-1.5 py-0 h-4 ml-1">
+                                  {isExceeding ? (
+                                    <>
+                                      <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye +{completedDays - targetDays}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye
+                                    </>
+                                  )}
+                                </Badge>
+                              );
+                            })()}
                             {habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
