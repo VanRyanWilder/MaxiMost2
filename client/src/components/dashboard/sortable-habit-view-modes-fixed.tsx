@@ -25,8 +25,10 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
+import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
+import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { DailyViewFixed } from './daily-view-fixed';
+import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
   arrayMove,
   SortableContext,
@@ -48,24 +50,23 @@ import { ChevronLeft, ChevronRight, Plus, Pencil, Trash2, MoreHorizontal, Calend
 import { Habit } from '@/types/habit';
 import { getHabitIcon } from '@/components/ui/icons';
 import { PlusCircle } from 'lucide-react';
-import { EditHabitDialog } from './edit-habit-dialog';
 
 interface SortableHabitViewProps {
   habits: Habit[];
   completions: any[]; // Replace with proper type
   onToggleHabit: (habitId: string, date: Date) => void;
-  onAddHabit: () => void;
+  onOpenAddHabitDialog: () => void; // Changed to be more explicit
   onUpdateHabit?: (habit: Habit) => void;
   onDeleteHabit?: (habitId: string) => void;
   onReorderHabits: (reorderedHabits: Habit[]) => void;
   onEditHabit?: (habit: Habit) => void;
 }
 
-export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
+export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
   habits,
   completions,
   onToggleHabit,
-  onAddHabit,
+  onOpenAddHabitDialog, // Renamed for clarity 
   onUpdateHabit,
   onDeleteHabit,
   onReorderHabits,
@@ -76,28 +77,27 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const [weekOffset, setWeekOffset] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState('all');
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   
   // Calculate current date based on offsets
   const today = new Date();
+  
+  // Calculate current day (affected by dayOffset)
   const currentDay = dayOffset === 0 
     ? today 
     : dayOffset > 0 
       ? addDays(today, dayOffset)
       : subDays(today, Math.abs(dayOffset));
-      
-  // Calculate current week
-  const startOfCurrentWeek = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 });
+  
+  // Calculate which week the current day belongs to
+  const currentDayWeek = startOfWeek(currentDay, { weekStartsOn: 1 });
+  
+  // Calculate current week based on both day and week offsets
+  const startOfCurrentWeek = addDays(currentDayWeek, weekOffset * 7);
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfCurrentWeek, i));
   
   // Calculate current month
   const currentMonth = addMonths(today, monthOffset);
   const firstDayOfMonth = startOfMonth(currentMonth);
-  const lastDayOfMonth = endOfMonth(currentMonth);
-  const daysInMonth = eachDayOfInterval({ start: firstDayOfMonth, end: lastDayOfMonth });
-  
-  // Calculate calendar grid, including padding days
   const firstDayOfGrid = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 });
   const lastDayOfGrid = addDays(
     endOfMonth(currentMonth),
@@ -139,15 +139,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   
   // For edit habit dialog
   const handleEditHabit = (habit: Habit) => {
-    setSelectedHabit(habit);
-    setEditDialogOpen(true);
-  };
-  
-  const handleSaveHabit = (updatedHabit: Habit) => {
-    if (onUpdateHabit) {
-      onUpdateHabit(updatedHabit);
+    console.log("SortableHabitViewModes - Edit habit clicked:", habit);
+    
+    // Use the parent component's edit handler
+    if (onEditHabit) {
+      onEditHabit(habit);
     }
-    setEditDialogOpen(false);
   };
   
   const handleDeleteHabit = (habitId: string) => {
@@ -157,7 +154,9 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   };
   
   const handleCreateHabit = () => {
-    onAddHabit();
+    // Call parent component function to show dialog
+    onOpenAddHabitDialog();
+    console.log("Triggering enhanced add habit dialog from sortable habit view");
   };
   
   // DnD handlers
@@ -200,47 +199,34 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-5xl mx-auto">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <div className="join">
-              <Button 
-                onClick={() => {
-                  setViewMode("daily");
-                  // Reset offsets when changing view mode for consistent behavior
-                  setDayOffset(0);
-                  setWeekOffset(0);
-                }} 
+              <Button
                 variant={viewMode === "daily" ? "default" : "outline"}
-                className="rounded-none"
+                className={viewMode === "daily" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                size="sm"
+                onClick={() => setViewMode("daily")}
               >
-                <Calendar className="h-4 w-4 mr-1" />
-                Daily
+                <Calendar className="h-4 w-4 mr-1" /> Daily
               </Button>
-              <Button 
-                onClick={() => {
-                  setViewMode("weekly");
-                  setDayOffset(0);
-                  setWeekOffset(0);
-                }} 
+              <Button
                 variant={viewMode === "weekly" ? "default" : "outline"}
-                className="rounded-none"
+                className={viewMode === "weekly" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                size="sm"
+                onClick={() => setViewMode("weekly")}
               >
-                <CalendarDays className="h-4 w-4 mr-1" />
-                Weekly
+                <CalendarDays className="h-4 w-4 mr-1" /> Weekly
               </Button>
-              <Button 
-                onClick={() => {
-                  setViewMode("monthly");
-                  setDayOffset(0);
-                  setWeekOffset(0);
-                }} 
+              <Button
                 variant={viewMode === "monthly" ? "default" : "outline"}
-                className="rounded-none"
+                className={viewMode === "monthly" ? "bg-blue-600 hover:bg-blue-700" : ""}
+                size="sm"
+                onClick={() => setViewMode("monthly")}
               >
-                <Grid3X3 className="h-4 w-4 mr-1" />
-                Monthly
+                <Grid3X3 className="h-4 w-4 mr-1" /> Monthly
               </Button>
             </div>
           </div>
@@ -269,7 +255,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button onClick={handleCreateHabit} variant="default" size="sm">
+            <Button onClick={handleCreateHabit} variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
               <Plus className="h-4 w-4 mr-1" /> Add Habit
             </Button>
           </div>
@@ -279,21 +265,45 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "daily" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Today's Habits</h3>
-              <div className="text-sm text-gray-500">
-                {format(today, 'EEEE, MMMM d, yyyy')}
+              <h3 className="text-lg font-medium">Daily View</h3>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(prev => prev - 1)}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(0)}
+                >
+                  Today
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(prev => prev + 1)}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              {format(currentDay, 'MMM d, yyyy')}
             </div>
             {habits.length === 0 ? (
               <div className="p-6 text-center">
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <DailyViewFixed
+              <DailyViewFixedUpdated
                 habits={filteredHabits}
                 completions={completions}
-                today={today}
+                currentDay={currentDay}
                 onToggleHabit={onToggleHabit}
+                onAddHabit={onOpenAddHabitDialog}
                 onEditHabit={handleEditHabit}
                 onDeleteHabit={handleDeleteHabit}
                 onReorderHabits={onReorderHabits}
@@ -305,156 +315,106 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
       
         {/* Weekly view */}
         {viewMode === "weekly" && (
-          <WeeklyTableViewImproved
-            habits={filteredHabits}
-            completions={completions}
-            weekDates={weekDates}
-            onToggleHabit={onToggleHabit}
-            onAddHabit={onAddHabit}
-            onEditHabit={handleEditHabit}
-            onDeleteHabit={handleDeleteHabit}
-            onReorderHabits={onReorderHabits}
-            selectedCategory={filterCategory}
-            currentDay={today}
-          />
+          <div className="bg-white rounded-lg border p-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">Weekly View</h3>
+              <div className="flex items-center space-x-2">
+                {/* Week navigation */}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setWeekOffset(prev => prev - 1)}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setWeekOffset(0)}
+                >
+                  This Week
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setWeekOffset(prev => prev + 1)}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="text-sm text-gray-500 mb-4">
+              {format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d, yyyy')}
+            </div>
+            
+            {habits.length === 0 ? (
+              <div className="p-6 text-center">
+                <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
+              </div>  
+            ) : (
+              <WeeklyTableViewFixedUpdated
+                habits={filteredHabits}
+                completions={completions}
+                weekDates={weekDates}
+                onToggleHabit={onToggleHabit}
+                onAddHabit={onOpenAddHabitDialog}
+                onEditHabit={handleEditHabit}
+                onDeleteHabit={handleDeleteHabit}
+                onReorderHabits={onReorderHabits}
+                selectedCategory={filterCategory}
+                currentDay={currentDay}
+              />
+            )}
+          </div>
         )}
-      
+        
         {/* Monthly view */}
         {viewMode === "monthly" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">{format(currentMonth, 'MMMM yyyy')}</h3>
+              <h3 className="text-lg font-medium">Monthly View</h3>
               <div className="flex items-center space-x-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setMonthOffset(prev => prev - 1)}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setMonthOffset(0)}
                 >
-                  Today
+                  This Month
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setMonthOffset(prev => prev + 1)}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
             </div>
             
-            <div className="grid grid-cols-7 gap-1">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
-                <div key={i} className="text-center font-medium text-sm p-2">
-                  {day}
-                </div>
-              ))}
-              
-              {calendarDays.map((day, index) => {
-                const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
-                const isToday = isSameDay(day, today);
-                
-                // Check if any habits are completed on this day
-                const completedHabits = completions.filter(c => 
-                  isSameDay(new Date(c.date), day) && c.completed
-                );
-                
-                const absoluteHabitsCount = filteredHabits.filter(h => h.isAbsolute).length;
-                const completedAbsoluteHabits = filteredHabits.filter(h => 
-                  h.isAbsolute && 
-                  completedHabits.some(c => c.habitId === h.id)
-                ).length;
-                
-                const frequencyHabitsCount = filteredHabits.filter(h => !h.isAbsolute).length;
-                const completedFrequencyHabits = filteredHabits.filter(h => 
-                  !h.isAbsolute && 
-                  completedHabits.some(c => c.habitId === h.id)
-                ).length;
-                
-                // Calculate completion percentage for the cell
-                const totalHabits = filteredHabits.length;
-                const totalCompleted = completedHabits.length;
-                const completionPercentage = totalHabits > 0 
-                  ? (totalCompleted / totalHabits) * 100 
-                  : 0;
-                
-                return (
-                  <div 
-                    key={index} 
-                    className={`
-                      border rounded-md p-2 min-h-[80px] 
-                      ${isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400'} 
-                      ${isToday ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}
-                    `}
-                  >
-                    <div className="text-right text-sm mb-1">
-                      {format(day, 'd')}
-                    </div>
-                    
-                    {filteredHabits.length > 0 && (
-                      <div className="mt-1">
-                        {absoluteHabitsCount > 0 && (
-                          <div 
-                            className={`text-xs ${
-                              completedAbsoluteHabits === absoluteHabitsCount && absoluteHabitsCount > 0
-                                ? 'text-green-600' 
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {completedAbsoluteHabits}/{absoluteHabitsCount} daily
-                            {completedAbsoluteHabits === absoluteHabitsCount && absoluteHabitsCount > 0 && ' ✓'}
-                          </div>
-                        )}
-                        
-                        {frequencyHabitsCount > 0 && (
-                          <div 
-                            className={`text-xs ${
-                              completedFrequencyHabits > 0 
-                                ? 'text-blue-600' 
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {completedFrequencyHabits}/{frequencyHabitsCount} freq
-                          </div>
-                        )}
-                        
-                        <div className="mt-1">
-                          <Progress 
-                            value={completionPercentage} 
-                            className="h-1" 
-                            indicatorClassName={
-                              completionPercentage >= 100 
-                                ? "bg-green-500" 
-                                : completionPercentage > 50 
-                                  ? "bg-blue-500" 
-                                  : "bg-blue-300"
-                            }
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="text-sm text-gray-500 mb-4">
+              {format(currentMonth, 'MMMM yyyy')}
             </div>
+            
+            {habits.length === 0 ? (
+              <div className="p-6 text-center">
+                <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
+              </div>  
+            ) : (
+              <div className="p-6 text-center">
+                <p className="text-muted-foreground">Monthly view coming soon...</p>
+              </div>
+            )}
           </div>
         )}
       </div>
-      
-      {/* Edit Habit Dialog */}
-      <EditHabitDialog 
-        open={editDialogOpen} 
-        setOpen={setEditDialogOpen}
-        habit={selectedHabit}
-        onSave={handleSaveHabit}
-        onDelete={handleDeleteHabit}
-      />
     </div>
   );
 };

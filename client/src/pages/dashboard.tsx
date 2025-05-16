@@ -280,14 +280,11 @@ export default function Dashboard() {
                   </CardHeader>
                   <CardContent className="pb-6">
                     <div className="space-y-6">
-                      <SortableHabitViewModes 
+                      <SortableHabitViewModesFixed
                         habits={habits}
                         completions={completions}
                         onToggleHabit={toggleCompletion}
-                        onAddHabit={() => {
-                          // This should open the enhanced dialog without passing a habit
-                          setShowCustomHabitDialog(true);
-                        }}
+                        onOpenAddHabitDialog={() => setShowCustomHabitDialog(true)}
                         onUpdateHabit={editHabit}
                         onDeleteHabit={deleteHabit}
                         onReorderHabits={(reorderedHabits) => setHabits(reorderedHabits)}
