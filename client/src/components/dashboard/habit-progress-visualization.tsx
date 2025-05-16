@@ -39,7 +39,7 @@ const CATEGORY_COLORS = {
   "Sleep": "#8b5cf6",     // Indigo
   "Mental": "#facc15",    // Yellow
   "Relationships": "#22c55e", // Green
-  "Financial": "#10b981", // Emerald
+  "Financial": "#0ea5e9", // Blue (changed from Emerald to be more distinct)
 };
 
 // Sample habit completion data by date and category
