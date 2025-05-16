@@ -107,7 +107,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-strength-training",
@@ -122,7 +122,7 @@ export default function SortableDashboard() {
       isAbsolute: false,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-walk",
@@ -137,7 +137,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-reading",
@@ -152,7 +152,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "mind",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-cold-exposure",
@@ -167,7 +167,7 @@ export default function SortableDashboard() {
       isAbsolute: false,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-bed-before-midnight",
@@ -182,7 +182,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "sleep",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-protein-first",
@@ -197,7 +197,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "nutrition",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-no-snacking",
@@ -212,7 +212,7 @@ export default function SortableDashboard() {
       isAbsolute: false,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-6",
@@ -227,7 +227,7 @@ export default function SortableDashboard() {
       isAbsolute: false,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-7",
@@ -242,7 +242,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "health",
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     },
     {
       id: "h-8",
@@ -565,7 +565,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: 'health',
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     };
     
     setSelectedHabit(newHabit);
@@ -631,7 +631,7 @@ export default function SortableDashboard() {
           isAbsolute: habitItem.isAbsolute,
           category: habitItem.category,
           streak: 0,
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         };
         
         // Add it directly to the habits array
@@ -662,7 +662,7 @@ export default function SortableDashboard() {
           isAbsolute: habitItem.isAbsolute,
           category: habitItem.category,
           streak: 0,
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         };
       });
       
@@ -693,7 +693,7 @@ export default function SortableDashboard() {
       isAbsolute: template.isAbsolute,
       category: template.category,
       streak: 0,
-      createdAt: new Date().toISOString()
+      createdAt: new Date()
     };
     
     // Add the new habit to the list

@@ -158,7 +158,7 @@ const DEFAULT_NEW_HABIT: Habit = {
   isAbsolute: true,
   category: "health",
   streak: 0,
-  createdAt: new Date()
+  createdAt: new Date().toISOString()
 };
 
 // Helper function to render an icon from our icon map
