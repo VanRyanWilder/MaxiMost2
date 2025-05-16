@@ -22,9 +22,6 @@ const colorOptions = [
   { name: 'Red', value: 'red', bgClass: 'bg-red-100', textClass: 'text-red-500' },
   { name: 'Amber', value: 'amber', bgClass: 'bg-amber-100', textClass: 'text-amber-500' },
   { name: 'Purple', value: 'purple', bgClass: 'bg-purple-100', textClass: 'text-purple-500' },
-  { name: 'Indigo', value: 'indigo', bgClass: 'bg-indigo-100', textClass: 'text-indigo-500' },
-  { name: 'Cyan', value: 'cyan', bgClass: 'bg-cyan-100', textClass: 'text-cyan-500' },
-  { name: 'Orange', value: 'orange', bgClass: 'bg-orange-100', textClass: 'text-orange-500' },
 ];
 
 // Frequency options
