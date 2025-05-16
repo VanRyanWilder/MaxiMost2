@@ -252,16 +252,25 @@ export function EditHabitDialog({
   
   const handleSave = () => {
     if (editedHabit) {
-      // If using a custom category, set the category to the custom value
-      if (showCustomCategoryInput && customCategory) {
-        const finalHabit = {
-          ...editedHabit,
-          category: customCategory as HabitCategory
-        };
-        onSave(finalHabit);
-      } else {
-        onSave(editedHabit);
-      }
+      // Make sure isAbsolute is set correctly based on frequency
+      const isDaily = editedHabit.frequency === 'daily';
+      
+      // Prepare the final habit with updated properties
+      const finalHabit = {
+        ...editedHabit,
+        // Make sure daily habits are always absolute
+        isAbsolute: isDaily,
+        // If using a custom category, set the category
+        ...(showCustomCategoryInput && customCategory ? { category: customCategory as HabitCategory } : {})
+      };
+      
+      console.log("Saving habit with:", { 
+        frequency: finalHabit.frequency, 
+        isAbsolute: finalHabit.isAbsolute,
+        iconColor: finalHabit.iconColor 
+      });
+      
+      onSave(finalHabit);
       handleOpenChange(false);
     }
   };
@@ -461,7 +470,17 @@ export function EditHabitDialog({
             </Label>
             <Select 
               value={editedHabit.frequency} 
-              onValueChange={(value: HabitFrequency) => setEditedHabit({...editedHabit, frequency: value})}
+              onValueChange={(value: HabitFrequency) => {
+                // When frequency is set to daily, automatically set isAbsolute to true
+                // Otherwise, set it to false for 2x-6x per week habits
+                const isDaily = value === 'daily';
+                setEditedHabit({
+                  ...editedHabit, 
+                  frequency: value,
+                  isAbsolute: isDaily
+                });
+                console.log(`Changed frequency to ${value}, isAbsolute set to ${isDaily}`);
+              }}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select frequency" />
