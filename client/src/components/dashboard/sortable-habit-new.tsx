@@ -108,7 +108,7 @@ export function SortableHabit({
     <div 
       ref={setNodeRef} 
       style={style}
-      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
+      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-0 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
         weeklyGoalMet ? 'bg-green-50 border border-green-100' : `${colorScheme?.lightBg || "bg-transparent"} border ${colorScheme?.border || "border-gray-200"}`
       }`}
     >
@@ -194,7 +194,7 @@ export function SortableHabit({
         const isFuture = isAfter(date, endOfToday());
         
         return (
-          <div key={i} className="flex justify-center items-center">
+          <div key={i} className="flex justify-center items-center px-1">
             <button 
               onClick={() => onToggleCompletion(habit.id, date)}
               disabled={isFuture}
@@ -204,9 +204,9 @@ export function SortableHabit({
                   : isPast 
                     ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
                     : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
-                } w-full h-10 rounded-md`}
+                } w-10 h-10 rounded-md`}
             >
-              <div className="flex items-center justify-center w-full h-full">
+              <div className="flex items-center justify-center">
                 {completed ? (
                   <div className="flex items-center justify-center h-5 w-5 border border-green-200 rounded-sm bg-green-100">
                     <Check className="h-4 w-4 text-green-600" />
