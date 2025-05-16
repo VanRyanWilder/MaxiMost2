@@ -64,21 +64,35 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
   
   const addSelectedHabits = () => {
     console.log("Adding selected habits");
-    const habitsToAdd = stack.habits.filter((habit: any) => selectedHabits[habit.id]);
+    const selectedHabitIds = Object.entries(selectedHabits)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([id]) => id);
+    
+    console.log("Selected habit IDs:", selectedHabitIds);
+    
+    // Get the actual habit objects for selected IDs
+    const habitsToAdd = stack.habits.filter((habit: any) => 
+      selectedHabitIds.includes(habit.id)
+    );
+    
     console.log("Habits to add:", habitsToAdd);
     
     if (habitsToAdd.length > 0) {
       // Generate a timestamp once to ensure each habit gets a unique but related timestamp
       const timestamp = Date.now();
       
-      habitsToAdd.forEach((habit: any, index: number) => {
-        // Create a new habit with a truly unique ID by combining the original ID, timestamp, index, and random string
-        const uniqueHabit = {
-          ...habit,
-          id: `${habit.id}-${timestamp}-${index}-${Math.random().toString(36).substring(2, 9)}`
-        };
-        console.log(`Adding habit ${index+1}/${habitsToAdd.length}:`, uniqueHabit.title);
-        onAddHabit?.(uniqueHabit);
+      // Create an array of all habits with unique IDs
+      const uniqueHabits = habitsToAdd.map((habit: any, index: number) => ({
+        ...habit,
+        id: `${habit.id}-${timestamp}-${index}-${Math.random().toString(36).substring(2, 9)}`
+      }));
+      
+      console.log("Created unique habits:", uniqueHabits.map(h => h.title));
+      
+      // Add each habit one by one
+      uniqueHabits.forEach((uniqueHabit: any, index: number) => {
+        console.log(`Adding habit ${index+1}/${uniqueHabits.length}:`, uniqueHabit.title);
+        onAddHabit(uniqueHabit);
       });
     }
     setIsOpen(false);
