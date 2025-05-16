@@ -203,12 +203,12 @@ export function WeeklyTableViewImproved({
                 return (
                   <TableSortableItem key={habit.id} habit={habit}>
                     <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                      <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-md shadow-sm mx-1">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[70px]">
                         <div className="flex-shrink-0">
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium flex items-center text-foreground dark:text-gray-100">
+                          <div className="font-medium flex items-center text-gray-900 dark:text-white">
                             {habit.title}
                             <div className="ml-2 flex items-center">
                               {habit.streak > 0 && (
@@ -224,11 +224,11 @@ export function WeeklyTableViewImproved({
                             </div>
                           </div>
                           <div className="text-xs flex items-center">
-                            <span className="text-muted-foreground dark:text-gray-300 truncate max-w-[150px]">
+                            <span className="text-gray-600 dark:text-gray-300 truncate max-w-[150px]">
                               {habit.description}
                             </span>
                             {completedDaysCount > 0 && !allDaysCompleted && (
-                              <span className="ml-2 text-blue-500 dark:text-blue-300 font-medium">{completedDaysCount}/7 days</span>
+                              <span className="ml-2 text-blue-600 dark:text-blue-300 font-medium">{completedDaysCount}/7 days</span>
                             )}
                           </div>
                         </div>
@@ -260,8 +260,8 @@ export function WeeklyTableViewImproved({
                         
                         return (
                           <div 
-                            key={i} 
-                            className={`text-center ${isCurrentDay ? 'bg-blue-50/60' : ''}`}
+                            key={`${habit.id}-date-${i}`} 
+                            className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                           >
                             <HabitButton
                               isCompleted={completed}
@@ -303,14 +303,14 @@ export function WeeklyTableViewImproved({
                   return (
                     <TableSortableItem key={habit.id} habit={habit}>
                       <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-md shadow-sm mx-1">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[70px]">
                           <div className="flex-shrink-0">
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium flex items-center text-foreground dark:text-gray-100">
+                            <div className="font-medium flex items-center text-gray-900 dark:text-white">
                               {habit.title}
-                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 dark:text-white dark:border-slate-500">
+                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
                                 {getFrequencyText(habit.frequency)}
                               </Badge>
                               {habit.streak > 0 && (
@@ -382,8 +382,8 @@ export function WeeklyTableViewImproved({
                           
                           return (
                             <div 
-                              key={i} 
-                              className={`text-center ${isCurrentDay ? 'bg-blue-50/60' : ''}`}
+                              key={`${habit.id}-day-${i}`} 
+                              className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                             >
                               <HabitButton
                                 isCompleted={completed}
