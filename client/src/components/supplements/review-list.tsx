@@ -12,6 +12,27 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+// Types for supplement reviews
+interface SupplementReview {
+  id: number;
+  supplementId: number;
+  userId: number;
+  user: {
+    id: number;
+    username?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+    email?: string;
+  };
+  rating: number;
+  content: string;
+  helpfulVotes: number;
+  unhelpfulVotes: number;
+  isVerifiedPurchase: boolean;
+  createdAt: string;
+}
+
 interface ReviewListProps {
   supplementId: number;
   supplementName: string;
@@ -28,7 +49,7 @@ export function ReviewList({
   const queryClient = useQueryClient();
   const [showReviewForm, setShowReviewForm] = useState(false);
   
-  const { data: reviews, isLoading, error } = useQuery({
+  const { data: reviews, isLoading, error } = useQuery<SupplementReview[]>({
     queryKey: ['/api/supplement-reviews', supplementId],
     enabled: !!supplementId,
   });
@@ -47,7 +68,7 @@ export function ReviewList({
   
   // Calculate rating distribution from reviews
   const ratingCounts = reviews ? [1, 2, 3, 4, 5].map(rating => 
-    reviews.filter(review => review.rating === rating).length
+    reviews.filter((review: SupplementReview) => review.rating === rating).length
   ) : [0, 0, 0, 0, 0];
   
   return (
@@ -120,7 +141,7 @@ export function ReviewList({
         </div>
       ) : reviews && reviews.length > 0 ? (
         <div className="space-y-4">
-          {reviews.map(review => (
+          {reviews.map((review: SupplementReview) => (
             <ReviewCard 
               key={review.id} 
               review={review}
