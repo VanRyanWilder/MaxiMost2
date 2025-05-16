@@ -168,7 +168,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
     return completions.some(completion => 
       completion.habitId === habitId && 
-      isSameDay(new Date(completion.date), date)
+      isSameDay(new Date(completion.date), date) &&
+      completion.completed
     );
   };
 
