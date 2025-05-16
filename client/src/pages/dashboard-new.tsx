@@ -925,10 +925,37 @@ export default function Dashboard() {
                       <Button 
                         variant="outline" 
                         className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1)}
+                      >
+                        <Sun className="h-4 w-4 text-amber-500" />
+                        Make Bed <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">412</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day")}
+                      >
+                        <Zap className="h-4 w-4 text-blue-500" />
+                        Brush Teeth <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">405</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
+                        onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily")}
+                      >
+                        <Star className="h-4 w-4 text-amber-500" />
+                        Pray <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">399</Badge>
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="justify-start gap-2 text-sm" 
                         onClick={() => addQuickHabit("Track Calories", "activity", "health", "Monitor daily caloric intake", 8, 7)}
                       >
                         <Activity className="h-4 w-4 text-orange-500" />
-                        Track Calories <Badge className="ml-auto bg-orange-100 text-orange-700 hover:bg-orange-200">412</Badge>
+                        Track Calories <Badge className="ml-auto bg-orange-100 text-orange-700 hover:bg-orange-200">387</Badge>
                       </Button>
                       
                       <Button 
