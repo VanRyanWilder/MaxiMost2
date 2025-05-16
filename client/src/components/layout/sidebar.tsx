@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
+import { SettingsPanel } from "@/components/settings/settings-panel";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -220,12 +221,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         <div className="p-2 border-t border-border mt-auto">
-          <div 
-            onClick={() => navigateTo("/settings")}
-            className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted cursor-pointer"
-          >
+          <div className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted cursor-pointer">
             <Settings className="w-5 h-5" />
             <span>Settings</span>
+            <SettingsPanel />
           </div>
           <button 
             onClick={() => {
