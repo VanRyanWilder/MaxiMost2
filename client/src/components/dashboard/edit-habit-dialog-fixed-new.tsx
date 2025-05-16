@@ -223,17 +223,34 @@ export function EditHabitDialog({
     // Force daily habits to be absolute
     const isDaily = editedHabit.frequency === 'daily';
     
+    // Ensure colors are set correctly for each category
+    let iconColor = editedHabit.iconColor || 'blue';
+    
+    // Keep colors consistent with MaxiMost categories if the user hasn't changed them
+    if (!editedHabit.hasOwnProperty('userChangedColor') || !editedHabit.userChangedColor) {
+      if (editedHabit.category === 'physical') iconColor = 'red';
+      else if (editedHabit.category === 'nutrition') iconColor = 'orange';
+      else if (editedHabit.category === 'sleep') iconColor = 'indigo';
+      else if (editedHabit.category === 'mental') iconColor = 'yellow';
+      else if (editedHabit.category === 'relationships') iconColor = 'blue';
+      else if (editedHabit.category === 'financial') iconColor = 'green';
+    }
+    
     // Clone the habit to avoid reference issues
     const finalHabit: Habit = {
       ...editedHabit,
       isAbsolute: isDaily,
+      iconColor: iconColor,
+      // Add updated timestamp
+      updatedAt: new Date()
     };
     
     console.log("SAVE - Submitting habit with:", {
       id: finalHabit.id,
       title: finalHabit.title,
       iconColor: finalHabit.iconColor,
-      frequency: finalHabit.frequency
+      frequency: finalHabit.frequency,
+      category: finalHabit.category
     });
     
     onSave(finalHabit);
@@ -255,7 +272,20 @@ export function EditHabitDialog({
     if (!editedHabit) return;
     
     console.log("COLOR - Setting habit color to:", colorId);
-    setEditedHabit({...editedHabit, iconColor: colorId});
+    setEditedHabit({
+      ...editedHabit, 
+      iconColor: colorId,
+      // Update category color mapping if it's a MaxiMost-specific category
+      ...(editedHabit.category === 'physical' && colorId !== 'red' ? { iconColor: colorId } : {}),
+      ...(editedHabit.category === 'nutrition' && colorId !== 'orange' ? { iconColor: colorId } : {}),
+      ...(editedHabit.category === 'sleep' && colorId !== 'indigo' ? { iconColor: colorId } : {}),
+      ...(editedHabit.category === 'mental' && colorId !== 'yellow' ? { iconColor: colorId } : {}),
+      ...(editedHabit.category === 'relationships' && colorId !== 'blue' ? { iconColor: colorId } : {}),
+      ...(editedHabit.category === 'financial' && colorId !== 'green' ? { iconColor: colorId } : {})
+    });
+    
+    // For debugging
+    console.log(`Updated habit color to ${colorId} for ${editedHabit.title}`);
   };
   
   const handleIconChange = (iconKey: string) => {
