@@ -788,6 +788,7 @@ export default function SortableDashboard() {
           
           // Use our dedicated deletion function
           deleteHabit(habitId);
+          deleteHabit(habitId);
         }}
       />
     </SettingsProvider>
