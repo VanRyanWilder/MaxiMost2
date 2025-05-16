@@ -156,12 +156,12 @@ export function SimpleHabitEditor({
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="health">Health</SelectItem>
-                  <SelectItem value="fitness">Fitness</SelectItem>
-                  <SelectItem value="mindset">Mindset</SelectItem>
-                  <SelectItem value="productivity">Productivity</SelectItem>
-                  <SelectItem value="energy">Energy</SelectItem>
-                  <SelectItem value="focus">Focus</SelectItem>
+                  <SelectItem value="physical">Physical Training</SelectItem>
+                  <SelectItem value="nutrition">Nutrition & Fueling</SelectItem>
+                  <SelectItem value="sleep">Sleep & Hygiene</SelectItem>
+                  <SelectItem value="mental">Mental Acuity & Growth</SelectItem>
+                  <SelectItem value="relationships">Relationships & Community</SelectItem>
+                  <SelectItem value="financial">Financial Habits</SelectItem>
                 </SelectContent>
               </Select>
               <span className="text-xs font-semibold text-amber-500">Coming Soon</span>
