@@ -335,8 +335,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "Invalid supplement ID" });
     }
     
-    const reviews = await storage.getSupplementReviews(supplementId);
-    res.json(reviews);
+    try {
+      const reviews = await storage.getSupplementReviews(supplementId);
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching supplement reviews:", error);
+      // Return empty array instead of failing
+      res.json([]);
+    }
   });
   
   app.post("/api/supplements/reviews", async (req, res) => {

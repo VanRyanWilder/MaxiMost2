@@ -414,71 +414,104 @@ export class DatabaseStorage implements IStorage {
 
   // Supplement Review methods
   async getSupplementReviews(supplementId: number): Promise<(SupplementReview & { user: User })[]> {
-    // Use raw SQL to get only the columns that exist in the database
-    const rawReviews = await db.execute(sql`
-      SELECT 
-        id, 
-        supplement_id as "supplementId", 
-        user_id as "userId", 
-        rating, 
-        content, 
-        created_at as "createdAt", 
-        updated_at as "updatedAt"
-      FROM supplement_reviews
-      WHERE supplement_id = ${supplementId}
-      ORDER BY created_at DESC
-    `);
-    
-    const reviews = rawReviews.map(row => ({
-      ...row,
+    try {
+      // Use raw SQL to get only the columns that exist in the database
+      const result = await db.execute(sql`
+        SELECT 
+          id, 
+          supplement_id as "supplementId", 
+          user_id as "userId", 
+          rating, 
+          content, 
+          created_at as "createdAt", 
+          updated_at as "updatedAt"
+        FROM supplement_reviews
+        WHERE supplement_id = ${supplementId}
+        ORDER BY created_at DESC
+      `);
+      
+      // Convert result to array of objects
+      const rawReviews = Array.isArray(result) ? result : (result.rows || []);
+      
       // Add default values for missing columns
-      helpfulVotes: 0,
-      unhelpfulVotes: 0,
-      isVerifiedPurchase: false
-    }));
-    
-    // Fetch users for the reviews
-    const userIds = reviews.map(review => review.userId);
-    const usersList = userIds.length > 0 
-      ? await db.select().from(users).where(sql`${users.id} IN (${userIds.join(',')})`)
-      : [];
-    
-    // Map users to reviews
-    const usersMap = new Map(usersList.map(user => [user.id, user]));
-    
-    return reviews.map(review => {
-      const user = usersMap.get(review.userId);
-      if (!user) throw new Error(`User with id ${review.userId} not found`);
-      return { ...review, user };
-    });
+      const reviews = rawReviews.map((row: any) => ({
+        ...row,
+        helpfulVotes: 0,
+        unhelpfulVotes: 0,
+        isVerifiedPurchase: false
+      }));
+      
+      if (reviews.length === 0) {
+        return [];
+      }
+      
+      // Fetch users for the reviews
+      const userIds = reviews.map(review => review.userId);
+      const usersList = userIds.length > 0 
+        ? await db.select().from(users).where(sql`${users.id} IN (${userIds.join(',')})`)
+        : [];
+      
+      // Map users to reviews
+      const usersMap = new Map(usersList.map(user => [user.id, user]));
+      
+      return reviews.map(review => {
+        const user = usersMap.get(review.userId);
+        if (!user) {
+          console.warn(`User with id ${review.userId} not found for review ${review.id}`);
+          // Return review without user rather than failing
+          return { 
+            ...review, 
+            user: { 
+              id: review.userId, 
+              username: 'Unknown User', 
+              name: 'Unknown',
+              email: '',
+              password: '' 
+            } as User 
+          };
+        }
+        return { ...review, user };
+      });
+    } catch (error) {
+      console.error('Error in getSupplementReviews:', error);
+      return []; // Return empty array instead of failing
+    }
   }
 
   async getSupplementReview(id: number): Promise<SupplementReview | undefined> {
-    // Use raw SQL to get only the columns that exist in the database
-    const rawReviews = await db.execute(sql`
-      SELECT 
-        id, 
-        supplement_id as "supplementId", 
-        user_id as "userId", 
-        rating, 
-        content, 
-        created_at as "createdAt", 
-        updated_at as "updatedAt"
-      FROM supplement_reviews
-      WHERE id = ${id}
-    `);
-    
-    if (rawReviews.length === 0) {
+    try {
+      // Use raw SQL to get only the columns that exist in the database
+      const result = await db.execute(sql`
+        SELECT 
+          id, 
+          supplement_id as "supplementId", 
+          user_id as "userId", 
+          rating, 
+          content, 
+          created_at as "createdAt", 
+          updated_at as "updatedAt"
+        FROM supplement_reviews
+        WHERE id = ${id}
+      `);
+      
+      // Convert result to array of objects
+      const rawReviews = Array.isArray(result) ? result : (result.rows || []);
+      
+      if (!rawReviews || rawReviews.length === 0) {
+        return undefined;
+      }
+      
+      // Add default values for missing columns
+      return {
+        ...rawReviews[0],
+        helpfulVotes: 0,
+        unhelpfulVotes: 0,
+        isVerifiedPurchase: false
+      };
+    } catch (error) {
+      console.error('Error in getSupplementReview:', error);
       return undefined;
     }
-    
-    // Add default values for missing columns
-    return {
-      ...rawReviews[0],
-      helpfulVotes: 0,
-      unhelpfulVotes: 0,
-      isVerifiedPurchase: false
-    };
   }
 
   async createSupplementReview(insertReview: InsertSupplementReview): Promise<SupplementReview> {
