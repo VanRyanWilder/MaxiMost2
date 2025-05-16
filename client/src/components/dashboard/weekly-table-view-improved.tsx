@@ -307,7 +307,7 @@ export function WeeklyTableViewImproved({
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium flex items-center">
+                            <div className="font-medium text-foreground flex items-center">
                               {habit.title}
                               <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4">
                                 {getFrequencyText(habit.frequency)}

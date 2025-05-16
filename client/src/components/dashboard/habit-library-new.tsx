@@ -1013,7 +1013,7 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
                             {renderIcon(habit.icon, habit.iconColor)}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <span className="truncate">{habit.title}</span>
+                            <span className="truncate text-foreground">{habit.title}</span>
                           </div>
                         </div>
                       ))}
