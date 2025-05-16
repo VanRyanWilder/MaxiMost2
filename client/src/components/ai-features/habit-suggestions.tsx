@@ -232,10 +232,10 @@ export function HabitSuggestions({ userHabits, userGoals, onAddHabit }: HabitSug
                     <CardTitle className="text-base">{habit.title}</CardTitle>
                     <div className="flex flex-wrap gap-1 mt-1">
                       <Badge variant="outline" className="text-xs">
-                        {habit.category?.charAt(0).toUpperCase() + habit.category?.slice(1)}
+                        {habit.category ? habit.category.charAt(0).toUpperCase() + habit.category.slice(1) : 'General'}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
-                        {habit.frequency}
+                        {habit.frequency || 'daily'}
                       </Badge>
                       <Badge variant="outline" className="text-xs">
                         {habit.timeCommitment}
