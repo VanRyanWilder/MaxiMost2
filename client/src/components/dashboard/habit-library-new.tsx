@@ -50,11 +50,20 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
     }));
   };
   
+  const handleCardClick = () => {
+    // If dialog is not open, just show the dialog
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+  };
+  
   const addSelectedHabits = () => {
     const habitsToAdd = stack.habits.filter((habit: any) => selectedHabits[habit.id]);
-    habitsToAdd.forEach((habit: any) => {
-      onAddHabit?.(habit);
-    });
+    if (habitsToAdd.length > 0) {
+      habitsToAdd.forEach((habit: any) => {
+        onAddHabit?.(habit);
+      });
+    }
     setIsOpen(false);
   };
   
