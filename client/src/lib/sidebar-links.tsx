@@ -15,7 +15,12 @@ import {
   Layers,
   LineChart,
   Sparkles,
-  Zap
+  Zap,
+  BedDouble,
+  Utensils,
+  Coins,
+  Lightbulb,
+  UserCircle2
 } from "lucide-react";
 
 export interface SidebarLink {
@@ -82,28 +87,40 @@ export const sidebarLinks: SidebarLink[] = [
     section: "main"
   },
   {
-    title: "Workouts",
-    href: "/workouts",
+    title: "Physical Training",
+    href: "/physical",
     icon: <Dumbbell className="h-5 w-5" />,
-    section: "health"
+    section: "habit-categories"
   },
   {
-    title: "Mind & Spirit",
-    href: "/mind-spirit",
-    icon: <Brain className="h-5 w-5" />,
-    section: "health"
-  },
-  {
-    title: "Nutrition",
+    title: "Nutrition & Fueling",
     href: "/nutrition",
-    icon: <Apple className="h-5 w-5" />,
-    section: "health"
+    icon: <Utensils className="h-5 w-5" />,
+    section: "habit-categories"
   },
   {
-    title: "Body Stats",
-    href: "/body-stats",
-    icon: <Heart className="h-5 w-5" />,
-    section: "health"
+    title: "Sleep & Hygiene",
+    href: "/sleep",
+    icon: <BedDouble className="h-5 w-5" />,
+    section: "habit-categories"
+  },
+  {
+    title: "Mental Acuity & Growth",
+    href: "/mental",
+    icon: <Lightbulb className="h-5 w-5" />,
+    section: "habit-categories"
+  },
+  {
+    title: "Relationships & Community",
+    href: "/relationships",
+    icon: <UserCircle2 className="h-5 w-5" />,
+    section: "habit-categories"
+  },
+  {
+    title: "Financial Habits",
+    href: "/financial",
+    icon: <Coins className="h-5 w-5" />,
+    section: "habit-categories"
   },
   {
     title: "Experts",
