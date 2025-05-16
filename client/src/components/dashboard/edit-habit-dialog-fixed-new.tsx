@@ -240,9 +240,8 @@ export function EditHabitDialog({
     const finalHabit: Habit = {
       ...editedHabit,
       isAbsolute: isDaily,
-      iconColor: iconColor,
-      // Add updated timestamp
-      updatedAt: new Date()
+      iconColor: iconColor
+      // Don't add updatedAt field as it's not in our Habit type
     };
     
     console.log("SAVE - Submitting habit with:", {

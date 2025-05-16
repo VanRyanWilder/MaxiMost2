@@ -454,8 +454,8 @@ export default function SortableDashboard() {
       isAbsolute: updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute,
       // Ensure these fields have valid values
       iconColor: updatedHabit.iconColor || 'blue',
-      icon: updatedHabit.icon || 'check-square',
-      updatedAt: new Date()
+      icon: updatedHabit.icon || 'check-square'
+      // Don't add updatedAt field as it's not in our Habit type
     };
     
     console.log("Saving with color:", finalHabit.iconColor);
