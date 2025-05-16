@@ -784,177 +784,24 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Habit Edit Dialog */}
-      <Dialog open={editHabitDialogOpen} onOpenChange={setEditHabitDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedHabit && selectedHabit.id.includes("habit-") ? 'Create New Habit' : 'Edit Habit'}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedHabit && selectedHabit.id.includes("habit-") 
-                ? 'Add a new habit to track.'
-                : 'Make changes to your existing habit.'}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedHabit && (
-            <div className="grid gap-4 py-4">
-              {/* Title field */}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="title" className="text-right">
-                  Title
-                </Label>
-                <Input
-                  id="title"
-                  value={selectedHabit.title}
-                  onChange={(e) => setSelectedHabit({...selectedHabit, title: e.target.value})}
-                  className="col-span-3"
-                  placeholder="Habit name"
-                />
-              </div>
-              
-              {/* Description field */}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
-                  Description
-                </Label>
-                <Input
-                  id="description"
-                  value={selectedHabit.description}
-                  onChange={(e) => setSelectedHabit({...selectedHabit, description: e.target.value})}
-                  className="col-span-3"
-                  placeholder="Brief description"
-                />
-              </div>
-              
-              {/* Frequency field */}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="frequency" className="text-right">
-                  Frequency
-                </Label>
-                <Select 
-                  value={selectedHabit.frequency}
-                  onValueChange={(value) => {
-                    // If frequency is set to daily, also make it a must-do habit
-                    if (value === 'daily') {
-                      setSelectedHabit({
-                        ...selectedHabit, 
-                        frequency: value,
-                        isAbsolute: true
-                      });
-                    } else {
-                      setSelectedHabit({
-                        ...selectedHabit, 
-                        frequency: value
-                      });
-                    }
-                  }}
-                >
-                  <SelectTrigger className="col-span-3">
-                    <SelectValue placeholder="Select frequency" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="daily">Daily (every day)</SelectItem>
-                    <SelectItem value="2x-week">2x per week</SelectItem>
-                    <SelectItem value="3x-week">3x per week</SelectItem>
-                    <SelectItem value="4x-week">4x per week</SelectItem>
-                    <SelectItem value="5x-week">5x per week</SelectItem>
-                    <SelectItem value="6x-week">6x per week</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Time Commitment */}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="timeCommitment" className="text-right">Time</Label>
-                <Input
-                  id="timeCommitment"
-                  value={selectedHabit.timeCommitment}
-                  onChange={(e) => setSelectedHabit({...selectedHabit, timeCommitment: e.target.value})}
-                  className="col-span-3"
-                  placeholder="e.g. 5 min, 30 min"
-                />
-              </div>
-              
-              {/* Is Absolute (must-do) switch */}
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="isAbsolute" className="text-right">Must-do</Label>
-                <div className="col-span-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isAbsolute"
-                    checked={selectedHabit.isAbsolute}
-                    onChange={(e) => setSelectedHabit({...selectedHabit, isAbsolute: e.target.checked})}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">Mark as must-do (highest priority)</span>
-                </div>
-              </div>
-              
-              {/* Icon selection with improved picker */}
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label className="text-right pt-2">Icon</Label>
-                <div className="col-span-3">
-                  <IconPicker 
-                    selectedIcon={selectedHabit.icon} 
-                    category={selectedHabit.category}
-                    onChange={(icon) => setSelectedHabit({...selectedHabit, icon})}
-                  />
-                </div>
-              </div>
-            
-              {/* Color selection */}
-              <div className="grid grid-cols-4 items-start gap-4">
-                <Label className="text-right pt-2">Color</Label>
-                <div className="col-span-3 grid grid-cols-4 gap-2">
-                  {['blue', 'green', 'red', 'purple', 'amber', 'indigo', 'pink', 'cyan'].map(color => (
-                    <button
-                      key={color}
-                      type="button"
-                      className={`h-8 w-8 rounded-full bg-${color}-100 flex items-center justify-center transition-all
-                        ${selectedHabit.iconColor === color ? 'ring-2 ring-offset-2 ring-offset-background ring-primary' : ''}`}
-                      onClick={() => setSelectedHabit({...selectedHabit, iconColor: color})}
-                    >
-                      {selectedHabit.iconColor === color && (
-                        <Check className={`h-3 w-3 text-${color}-500`} />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter className="flex justify-between">
-            {selectedHabit && !selectedHabit.id.includes("habit-") && (
-              <Button variant="destructive" onClick={() => {
-                deleteHabit(selectedHabit.id);
-                setEditHabitDialogOpen(false);
-              }}>
-                Delete
-              </Button>
-            )}
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setEditHabitDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => {
-                if (selectedHabit) {
-                  if (selectedHabit.id.includes("habit-")) {
-                    addHabit(selectedHabit);
-                  } else {
-                    editHabit(selectedHabit);
-                  }
-                  setEditHabitDialogOpen(false);
-                }
-              }}>
-                Save
-              </Button>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Edit Habit Dialog - Using the consistent component */}
+      <EditHabitDialog
+        open={editHabitDialogOpen}
+        setOpen={setEditHabitDialogOpen}
+        habit={selectedHabit}
+        onSave={(updatedHabit) => {
+          if (updatedHabit.id && !updatedHabit.id.includes("habit-")) {
+            // Edit existing habit
+            console.log("Editing existing habit:", updatedHabit.title);
+            editHabit(updatedHabit);
+          } else {
+            // Add new habit
+            console.log("Adding new habit:", updatedHabit.title);
+            addHabit(updatedHabit);
+          }
+        }}
+        onDelete={deleteHabit}
+      />
     </SettingsProvider>
   );
 }
