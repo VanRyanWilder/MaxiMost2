@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { format, isFuture, addDays, startOfWeek, endOfWeek, isSameDay, startOfDay, startOfToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf, CheckCircle, Check as CheckIcon, CheckSquare } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf, CheckCircle, Check as CheckIcon, CheckSquare, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -340,7 +340,15 @@ export function WeeklyTableViewFixedUpdated({
                                   
                                   {hasMetFrequency && (
                                     <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-[10px] text-white font-medium px-1.5 py-0 h-4">
-                                      <CheckIcon className="h-3 w-3 mr-0.5" /> Target Met
+                                      {isExceeding ? (
+                                        <>
+                                          <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye +{completedDays - targetDays}
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Target className="h-3 w-3 mr-0.5 text-white" /> Bullseye
+                                        </>
+                                      )}
                                     </Badge>
                                   )}
                                 </div>
