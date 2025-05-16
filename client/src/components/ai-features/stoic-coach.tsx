@@ -1,39 +1,30 @@
-import { useState } from 'react';
-import { Sparkles, Quote, RefreshCw } from 'lucide-react';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
+import React, { useState } from 'react';
+import { Habit, HabitCompletion } from '@/types/habit';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { EnhancedHabitIcon } from '@/components/ui/enhanced-habit-icon';
+import { Leaf, RefreshCcw, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Habit } from '@/types/habit';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Progress } from '@/components/ui/progress';
 
 interface StoicCoachProps {
   habits: Habit[];
-  completions: any[];
+  completions: HabitCompletion[];
   streaks: Record<string, number>;
 }
 
-// Stoic quotes for encouragement
+// Collection of stoic quotes
 const STOIC_QUOTES = [
   {
-    quote: "You have power over your mind - not outside events. Realize this, and you will find strength.",
+    quote: "You have power over your mind — not outside events. Realize this, and you will find strength.",
     author: "Marcus Aurelius"
   },
   {
-    quote: "The obstacle is the way.",
-    author: "Marcus Aurelius"
-  },
-  {
-    quote: "It's not what happens to you, but how you react to it that matters.",
+    quote: "The key is to keep company only with people who uplift you, whose presence calls forth your best.",
     author: "Epictetus"
   },
   {
-    quote: "He who fears death will never do anything worthy of a man who is alive.",
+    quote: "He who fears death will never do anything worthy of a living man.",
     author: "Seneca"
   },
   {
@@ -41,220 +32,255 @@ const STOIC_QUOTES = [
     author: "Marcus Aurelius"
   },
   {
-    quote: "Waste no more time arguing about what a good man should be. Be one.",
-    author: "Marcus Aurelius"
+    quote: "Wealth consists not in having great possessions, but in having few wants.",
+    author: "Epictetus"
+  },
+  {
+    quote: "No man is free who is not master of himself.",
+    author: "Epictetus"
+  },
+  {
+    quote: "It's not what happens to you, but how you react to it that matters.",
+    author: "Epictetus"
   },
   {
     quote: "If it is not right, do not do it, if it is not true, do not say it.",
     author: "Marcus Aurelius"
   },
   {
+    quote: "Begin at once to live, and count each separate day as a separate life.",
+    author: "Seneca"
+  },
+  {
     quote: "He who is brave is free.",
     author: "Seneca"
   },
   {
-    quote: "Man is disturbed not by things, but by the views he takes of them.",
-    author: "Epictetus"
-  },
-  {
-    quote: "The soul becomes dyed with the color of its thoughts.",
+    quote: "The obstacle is the way.",
     author: "Marcus Aurelius"
+  },
+  {
+    quote: "You become what you give your attention to.",
+    author: "Epictetus"
   }
 ];
 
-// Quotes from Jocko Willink's "Discipline Equals Freedom"
-const DISCIPLINE_QUOTES = [
-  {
-    quote: "Discipline equals freedom.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "Don't expect to be motivated every day to get out there and make things happen. You won't be. Don't count on motivation. Count on discipline.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "The temptation to take the easy road is always there. It is as easy as staying in bed in the morning and sleeping in. But discipline is paramount to ultimate success.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "If you want to be better, truly better, you have to put in the work.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "Waking up early was the first example I noticed in the SEAL Teams in which discipline was really the difference between being good and being exceptional.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "It's not about having time, it's about making time.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "When you think you can't take anymore – take more.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "Don't let your mind control you. Control your mind.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "There are no hacks. There are no shortcuts. There's only one way: Hard work that never ends.",
-    author: "Jocko Willink"
-  },
-  {
-    quote: "Don't fight stress. Embrace it. Turn it on itself. Use it to make yourself sharper and more alert. Use it to make you think and learn and get better and smarter and more effective.",
-    author: "Jocko Willink"
+// Personalized stoic advice based on habit streaks and consistency
+const getPersonalizedAdvice = (habit: Habit, streak: number) => {
+  if (streak >= 10) {
+    return {
+      message: `Excellent consistency with your "${habit.title}" habit. Remember, true progress comes not from the outcome but from the dedicated practice itself. Each day you maintain this habit builds your inner citadel of discipline.`,
+      type: 'success'
+    };
+  } else if (streak >= 5) {
+    return {
+      message: `Good progress with your "${habit.title}" habit. The path to excellence is not always linear. Focus on the process, not the result, and maintain your daily commitment regardless of external circumstances.`,
+      type: 'success'
+    };
+  } else if (streak >= 2) {
+    return {
+      message: `You've begun your journey with "${habit.title}". Remember that consistency matters more than intensity. Fate leads the willing and drags the unwilling - choose to embrace this habit willingly each day.`,
+      type: 'neutral'
+    };
+  } else {
+    return {
+      message: `Consider what obstacles are preventing consistency with "${habit.title}". Are these obstacles within your control or outside it? Focus energy only on what you can change, and remember that struggle is where growth happens.`,
+      type: 'challenge'
+    };
   }
-];
+};
 
-// Reframes for missed habits
-const STOIC_REFRAMES = [
-  "Remember that missing a habit is not a reflection of your character, but an opportunity to practice resilience.",
-  "Every missed day is data, not failure. Use it to understand your obstacles better.",
-  "The path to mastery includes setbacks. A Stoic uses these moments to strengthen resolve.",
-  "What matters is not that you missed your habit, but how you respond to this moment now.",
-  "Consider what you can control: not yesterday's miss, but today's action.",
-  "A temporary setback does not define your journey unless you allow it to.",
-  "The obstacle becomes the way. What can this missed habit teach you?",
-  "Find the lesson in the setback - perhaps there is a pattern to address.",
-  "Remember that consistency, not perfection, is the goal.",
-  "Use this moment to reflect: was this habit truly aligned with your values?",
-  "A Stoic views each setback as training for resilience.",
-  "The struggle itself is valuable - it strengthens your will for the next attempt."
-];
+// Stoic reframing of common obstacles
+const getObstacleReframing = (habit: Habit) => {
+  const obstacles = {
+    physical: [
+      "Pain is temporary, but the knowledge that you pushed through it lasts forever.",
+      "The body will only protest until it adapts. Every discomfort today makes tomorrow easier.",
+      "The strength you seek comes precisely from overcoming the resistance you feel now."
+    ],
+    nutrition: [
+      "Each food choice is a vote for the person you wish to become.",
+      "Temporary pleasure from poor food choices creates permanent obstacles to your goals.",
+      "Self-control in eating is mastery over one of life's strongest primal urges."
+    ],
+    sleep: [
+      "Quality sleep is not luxury but necessity—it is the foundation upon which your day's virtue is built.",
+      "Screen temptations before bed are tests of character. Choose wisely.",
+      "The discipline to maintain consistent sleep patterns shows mastery over modern life's chaos."
+    ],
+    mental: [
+      "The mind becomes what it consistently focuses on. Guard your attention as your most precious resource.",
+      "Mental strength comes from deliberate practice and repeated challenges, not from comfort.",
+      "Your thoughts create your reality—cultivate them with the same care as a garden."
+    ],
+    relationships: [
+      "True connection requires presence. Be fully where you are, with whom you're with.",
+      "The quality of your relationships reflects the quality of your communication and presence.",
+      "Social connections are not distractions from your path but essential parts of your humanity."
+    ],
+    financial: [
+      "Wealth is not in having many possessions, but in having few needs.",
+      "Financial freedom comes not from abundance, but from reasonable desires.",
+      "Each purchase is a statement about what you value. Ensure your spending aligns with your principles."
+    ]
+  };
 
-// Encouragements for successful streaks
-const STREAK_ENCOURAGEMENTS = [
-  "Your consistent practice is building not just habits, but character.",
-  "This streak represents your commitment to your own growth. Well done.",
-  "A Stoic values the process, and your process is strong.",
-  "Each day of your streak represents a victory of will over impulse.",
-  "Your discipline is becoming freedom, just as the Stoics taught.",
-  "The daily choice to continue this habit reveals your inner strength.",
-  "Remember that this streak's value lies not in numbers, but in the person you're becoming.",
-  "You're proving that consistency compounds into excellence.",
-  "Excellent habits lead to an excellent life - you're on the path.",
-  "Your streak is evidence of your ability to honor commitments to yourself."
-];
+  // Get relevant obstacle reframing based on habit category
+  const category = (habit.category || 'physical') as keyof typeof obstacles;
+  const relevantObstacles = obstacles[category] || obstacles.physical;
+  
+  // Pick a random obstacle reframing
+  return relevantObstacles[Math.floor(Math.random() * relevantObstacles.length)];
+};
 
 export function StoicCoach({ habits, completions, streaks }: StoicCoachProps) {
-  const [message, setMessage] = useState<string | null>(null);
-  const [quote, setQuote] = useState<{quote: string, author: string} | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [randomQuoteIndex, setRandomQuoteIndex] = useState(
+    Math.floor(Math.random() * STOIC_QUOTES.length)
+  );
 
-  // Find habits with good streaks to encourage
-  const getStreakEncouragement = () => {
-    // Find habits with streaks of 3 or more
-    const goodStreakHabits = habits.filter(h => streaks[h.id] >= 3);
-    
-    if (goodStreakHabits.length > 0) {
-      // Pick a random habit with a good streak
-      const randomHabit = goodStreakHabits[Math.floor(Math.random() * goodStreakHabits.length)];
-      const encouragement = STREAK_ENCOURAGEMENTS[Math.floor(Math.random() * STREAK_ENCOURAGEMENTS.length)];
-      
-      return `${randomHabit.title} - ${streaks[randomHabit.id]} day streak: ${encouragement}`;
-    }
-    
-    return null;
+  // Get a new random quote
+  const refreshQuote = () => {
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * STOIC_QUOTES.length);
+    } while (newIndex === randomQuoteIndex);
+    setRandomQuoteIndex(newIndex);
   };
-  
-  // Find missed habits to reframe
-  const getMissedHabitReframe = () => {
-    // Find habits that were missed recently (this is a simplification - would be based on actual completion data)
-    const missedHabits = habits.filter(habit => {
-      const today = new Date();
-      const habitCompletions = completions.filter(c => c.habitId === habit.id);
-      return habitCompletions.length === 0 || 
-             !habitCompletions.some(c => new Date(c.date).toDateString() === today.toDateString());
+
+  // Get habits with their streaks, sorted by streak
+  const habitsWithStreaks = habits
+    .map(habit => ({
+      habit,
+      streak: streaks[habit.id] || 0
+    }))
+    .sort((a, b) => b.streak - a.streak);
+
+  // Get overall consistency score based on completion ratio
+  const calculateConsistencyScore = () => {
+    if (!habits.length || !completions.length) return 0;
+    
+    const last7Days = Array.from({ length: 7 }).map((_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      return date.toISOString().split('T')[0];
     });
     
-    if (missedHabits.length > 0) {
-      // Pick a random missed habit
-      const randomMissedHabit = missedHabits[Math.floor(Math.random() * missedHabits.length)];
-      const reframe = STOIC_REFRAMES[Math.floor(Math.random() * STOIC_REFRAMES.length)];
-      
-      return `${randomMissedHabit.title}: ${reframe}`;
-    }
+    const possibleCompletions = habits.length * 7;
+    const actualCompletions = completions.filter(c => 
+      last7Days.includes(c.date.split('T')[0]) && c.completed
+    ).length;
     
-    return null;
-  };
-  
-  // Get random quote
-  const getRandomQuote = () => {
-    const allQuotes = [...STOIC_QUOTES, ...DISCIPLINE_QUOTES];
-    return allQuotes[Math.floor(Math.random() * allQuotes.length)];
+    return Math.round((actualCompletions / possibleCompletions) * 100);
   };
 
-  const generateFeedback = () => {
-    setIsLoading(true);
-    
-    // Simulate AI processing delay
-    setTimeout(() => {
-      // First try to give streak encouragement
-      const streakMessage = getStreakEncouragement();
-      
-      // If no streak to encourage, try to reframe a missed habit
-      const reframeMessage = getMissedHabitReframe();
-      
-      // Set the message
-      setMessage(streakMessage || reframeMessage || "Focus on today's habits. What one small action would move you forward?");
-      
-      // Always provide a quote
-      setQuote(getRandomQuote());
-      
-      setIsLoading(false);
-    }, 1000);
-  };
+  const consistencyScore = calculateConsistencyScore();
 
   return (
-    <Card className="border border-indigo-100 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 pb-3">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-indigo-500" />
-            <CardTitle className="text-lg">Stoic Coach</CardTitle>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="gap-1"
-            onClick={generateFeedback}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            {isLoading ? 'Thinking...' : 'Get Insight'}
-          </Button>
-        </div>
-        <CardDescription>
-          Personalized Stoic wisdom for your habit journey
-        </CardDescription>
-      </CardHeader>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <Leaf className="h-5 w-5 text-green-500" />
+        <h2 className="text-xl font-semibold">Stoic Coach</h2>
+      </div>
       
-      <CardContent className="pt-4">
-        {message ? (
-          <div className="space-y-4">
-            <p className="text-gray-700">{message}</p>
-            
-            {quote && (
-              <>
-                <Separator />
-                <div className="bg-gray-50 p-3 rounded-md">
-                  <div className="flex items-start gap-2">
-                    <Quote className="h-5 w-5 text-indigo-400 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-gray-700 italic mb-1">{quote.quote}</p>
-                      <p className="text-sm text-gray-500">— {quote.author}</p>
-                    </div>
-                  </div>
+      <Alert>
+        <AlertDescription>
+          Receive personalized stoic wisdom and reframing based on your habit progress and challenges.
+        </AlertDescription>
+      </Alert>
+      
+      {/* Inspirational Quote Card */}
+      <Card className="overflow-hidden border-amber-200 bg-amber-50">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Quote className="h-5 w-5 text-amber-500" />
+              Stoic Wisdom
+            </CardTitle>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={refreshQuote} 
+              className="h-8 w-8 p-0"
+            >
+              <RefreshCcw className="h-4 w-4" />
+              <span className="sr-only">Refresh quote</span>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="pb-4 pt-0">
+          <p className="text-lg italic font-serif">"{STOIC_QUOTES[randomQuoteIndex].quote}"</p>
+          <p className="text-right text-sm text-muted-foreground mt-2">— {STOIC_QUOTES[randomQuoteIndex].author}</p>
+        </CardContent>
+      </Card>
+      
+      {/* Overall Consistency Score */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Overall Consistency</CardTitle>
+        </CardHeader>
+        <CardContent className="pb-4 pt-0">
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Past 7 days</span>
+              <span className="font-medium">{consistencyScore}%</span>
+            </div>
+            <Progress value={consistencyScore} className="h-2" />
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            {consistencyScore >= 80 
+              ? "Excellent discipline. Remember that virtue is its own reward." 
+              : consistencyScore >= 50 
+                ? "Good progress. The obstacle is the way forward."
+                : "Focus on small, consistent steps. How we do anything is how we do everything."}
+          </p>
+        </CardContent>
+      </Card>
+      
+      {/* Personalized Habit Advice */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {habitsWithStreaks.slice(0, 4).map(({ habit, streak }) => {
+          const advice = getPersonalizedAdvice(habit, streak);
+          const obstacleReframing = getObstacleReframing(habit);
+          
+          return (
+            <Card key={habit.id} className="overflow-hidden">
+              <CardHeader className="pb-2">
+                <div className="flex items-start gap-2">
+                  <EnhancedHabitIcon 
+                    icon={habit.icon} 
+                    color={habit.iconColor}
+                    size="sm" 
+                  />
+                  <CardTitle className="text-base">{habit.title}</CardTitle>
                 </div>
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-6 text-gray-500">
-            Click "Get Insight" for personalized Stoic coaching based on your habits and progress.
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              </CardHeader>
+              <CardContent className="pb-2 pt-0">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-muted-foreground">Current streak</span>
+                  <span className={`font-medium ${
+                    streak >= 10 ? 'text-green-600' : 
+                    streak >= 5 ? 'text-blue-600' : 
+                    'text-muted-foreground'
+                  }`}>{streak} days</span>
+                </div>
+                
+                <p className={`text-sm mt-2 p-2 rounded-md ${
+                  advice.type === 'success' ? 'bg-green-50 text-green-900' :
+                  advice.type === 'challenge' ? 'bg-amber-50 text-amber-900' :
+                  'bg-blue-50 text-blue-900'
+                }`}>
+                  {advice.message}
+                </p>
+              </CardContent>
+              <CardFooter className="pt-0 pb-3">
+                <p className="text-xs text-muted-foreground border-t pt-2 italic">
+                  <span className="font-medium">Obstacle reframing:</span> {obstacleReframing}
+                </p>
+              </CardFooter>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
   );
 }
