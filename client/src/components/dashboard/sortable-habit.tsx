@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { format, isSameDay, isBefore, isAfter, startOfToday, endOfToday } from 'date-fns';
 import { Habit, HabitCompletion } from '@/types/habit';
 import { iconMap, colorSchemes } from './edit-habit-dialog';
+import { EnhancedHabitIcon } from "@/components/ui/habit-icon";
 
 interface SortableHabitProps {
   habit: Habit;
@@ -49,9 +50,6 @@ export function SortableHabit({
     { primary: "text-blue-600", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200" } : 
     { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200" };
 
-  // Import our enhanced icon component
-  import { EnhancedHabitIcon } from "@/components/ui/habit-icon";
-  
   // Render appropriate icon based on the habit's icon property
   const renderIcon = () => {
     return (
