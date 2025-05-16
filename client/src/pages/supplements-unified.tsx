@@ -50,7 +50,7 @@ const topSupplements = [
     ],
     dosage: "1-3g daily (combined EPA/DHA) with meals",
     considerations: "Look for high-quality, tested products with minimal oxidation. Higher doses need physician oversight.",
-    amazonUrl: "https://www.amazon.com/Nordic-Naturals-Ultimate-Lemon-softgels/dp/B002CQU53K?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B002CQU53K?tag=maximost-20"
   },
   {
     id: 2,
@@ -68,7 +68,7 @@ const topSupplements = [
     ],
     dosage: "1,000-5,000 IU daily with fat-containing meal",
     considerations: "Test levels first. Take with K2 for optimal calcium regulation. Morning dosing may be beneficial for circadian rhythm.",
-    amazonUrl: "https://www.amazon.com/Thorne-Research-Vitamin-K2-Liquid/dp/B0797ND64V?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B0797ND64V?tag=maximost-20"
   },
   {
     id: 3,
@@ -86,7 +86,7 @@ const topSupplements = [
     ],
     dosage: "200-400mg elemental magnesium daily (divided doses)",
     considerations: "Different forms have different effects: glycinate for sleep/relaxation, threonate for cognitive benefits, malate for energy.",
-    amazonUrl: "https://www.amazon.com/Pure-Encapsulations-Magnesium-Glycinate-Capsules/dp/B0058HWM9S?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B0058HWM9S?tag=maximost-20"
   },
   {
     id: 4,
