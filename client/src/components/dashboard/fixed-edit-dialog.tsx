@@ -87,13 +87,13 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
       return;
     }
 
-    // Construct the complete habit object
+    // Construct the complete habit object with explicit properties
     const updatedHabit: Habit = {
       id: habitId,
       title,
       description,
       icon: getCategoryIcon(category),
-      iconColor,
+      iconColor, // Make sure this is included
       impact: 8,
       effort: 4,
       timeCommitment: '5 min',
@@ -104,17 +104,23 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
       createdAt: habit?.createdAt || new Date()
     };
 
-    console.log("📦 SAVING HABIT:", {
+    console.log("📦 FIXED EDIT DIALOG SAVING HABIT:", {
       title: updatedHabit.title,
-      color: updatedHabit.iconColor,
+      color: updatedHabit.iconColor, // Log the color specifically
       id: updatedHabit.id
     });
 
-    // Call parent's onSave function
-    onSave(updatedHabit);
-    
-    // Close the dialog
+    // First close the dialog to avoid state conflicts
     setOpen(false);
+    
+    // Short timeout to ensure UI is updated before calling parent's onSave
+    setTimeout(() => {
+      // Call parent's onSave function
+      onSave(updatedHabit);
+      
+      // Additional log to verify save completion
+      console.log("✅ FIXED EDIT DIALOG SAVE COMPLETED");
+    }, 50);
   };
 
   // Get an appropriate icon based on category
