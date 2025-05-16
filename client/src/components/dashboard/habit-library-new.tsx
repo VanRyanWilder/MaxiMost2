@@ -376,6 +376,258 @@ const habitSuggestions = {
   ],
   stacks: [
     {
+      id: 'stack-huberman',
+      title: 'Huberman Protocol',
+      category: 'stacks',
+      description: 'Science-based habits for optimal brain function and health',
+      icon: 'brain',
+      iconColor: 'purple',
+      impact: 10,
+      habits: [
+        {
+          id: 'huberman-1',
+          title: 'Morning sunlight',
+          icon: 'sun',
+          iconColor: 'orange',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 9,
+          effort: 1,
+          timeCommitment: '5-10 min',
+          description: 'Get sunlight exposure within 30-60 minutes of waking'
+        },
+        {
+          id: 'huberman-2',
+          title: 'Avoid morning caffeine',
+          icon: 'coffee',
+          iconColor: 'red',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency, 
+          isAbsolute: true,
+          impact: 7,
+          effort: 4,
+          timeCommitment: 'N/A',
+          description: 'Delay caffeine by 90-120 minutes after waking'
+        },
+        {
+          id: 'huberman-3',
+          title: 'Non-sleep deep rest',
+          icon: 'brain',
+          iconColor: 'blue',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 8,
+          effort: 2,
+          timeCommitment: '10-20 min',
+          description: 'NSDR or meditation to restore focus and energy'
+        },
+        {
+          id: 'huberman-4',
+          title: 'Cold exposure',
+          icon: 'droplets',
+          iconColor: 'blue',
+          category: 'health',
+          frequency: '3x-week' as HabitFrequency,
+          isAbsolute: false,
+          impact: 8,
+          effort: 7,
+          timeCommitment: '2-5 min',
+          description: 'Cold shower or exposure for mental resilience and metabolism'
+        }
+      ]
+    },
+    {
+      id: 'stack-goggins',
+      title: 'Goggins Method',
+      category: 'stacks',
+      description: 'Extreme mental toughness and physical discipline habits',
+      icon: 'zap',
+      iconColor: 'red',
+      impact: 10,
+      habits: [
+        {
+          id: 'goggins-1',
+          title: 'Early morning workout',
+          icon: 'dumbbell',
+          iconColor: 'red',
+          category: 'fitness',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 9,
+          effort: 9,
+          timeCommitment: '45-60 min',
+          description: 'Hard training before 6am to build mental toughness'
+        },
+        {
+          id: 'goggins-2',
+          title: 'Push past 40%',
+          icon: 'activity',
+          iconColor: 'orange',
+          category: 'fitness',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 10,
+          effort: 10,
+          timeCommitment: 'All day',
+          description: 'Push through the 40% mental barrier in any activity'
+        },
+        {
+          id: 'goggins-3',
+          title: 'Daily calluses',
+          icon: 'scroll-text',
+          iconColor: 'yellow',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 6,
+          timeCommitment: '5 min',
+          description: 'Document daily hardships overcome to build mental calluses'
+        },
+        {
+          id: 'goggins-4',
+          title: 'Accountability mirror',
+          icon: 'smile',
+          iconColor: 'blue',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 3,
+          timeCommitment: '5 min',
+          description: 'Honest self-assessment in mirror each morning'
+        }
+      ]
+    },
+    {
+      id: 'stack-jocko',
+      title: 'Jocko Protocol',
+      category: 'stacks',
+      description: 'Discipline, leadership, and warrior mentality habits',
+      icon: 'timer',
+      iconColor: 'slate',
+      impact: 9,
+      habits: [
+        {
+          id: 'jocko-1',
+          title: '4:30 AM wake-up',
+          icon: 'timer',
+          iconColor: 'gray',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 10,
+          effort: 8,
+          timeCommitment: 'N/A',
+          description: 'Extreme early rising for psychological advantage'
+        },
+        {
+          id: 'jocko-2',
+          title: 'Intense training',
+          icon: 'dumbbell',
+          iconColor: 'red',
+          category: 'fitness',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 9,
+          effort: 8,
+          timeCommitment: '60-90 min',
+          description: 'High-intensity strength and conditioning'
+        },
+        {
+          id: 'jocko-3',
+          title: 'After Action Review',
+          icon: 'scroll-text',
+          iconColor: 'blue',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 4,
+          timeCommitment: '10 min',
+          description: 'End-of-day assessment of performance and mistakes'
+        },
+        {
+          id: 'jocko-4',
+          title: 'Detachment',
+          icon: 'brain',
+          iconColor: 'purple',
+          category: 'mind',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 7,
+          effort: 6,
+          timeCommitment: 'All day',
+          description: 'Practice emotional detachment from outcomes'
+        }
+      ]
+    },
+    {
+      id: 'stack-brecka',
+      title: 'Brecka Protocol',
+      category: 'stacks',
+      description: 'Optimizing health span through medical testing and biomarkers',
+      icon: 'pill',
+      iconColor: 'green',
+      impact: 9,
+      habits: [
+        {
+          id: 'brecka-1',
+          title: 'Track blood sugar',
+          icon: 'activity',
+          iconColor: 'blue',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: false,
+          impact: 9,
+          effort: 3,
+          timeCommitment: '1 min',
+          description: 'Monitor glucose levels to optimize metabolism'
+        },
+        {
+          id: 'brecka-2',
+          title: 'Optimize sleep',
+          icon: 'bed',
+          iconColor: 'indigo',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 10,
+          effort: 5,
+          timeCommitment: '8 hours',
+          description: 'Prioritize sleep quality through environment and timing'
+        },
+        {
+          id: 'brecka-3',
+          title: 'Supplement protocol',
+          icon: 'pill',
+          iconColor: 'green',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 2,
+          timeCommitment: '2 min',
+          description: 'Take targeted supplements based on biomarkers'
+        },
+        {
+          id: 'brecka-4',
+          title: 'Protein intake',
+          icon: 'utensils',
+          iconColor: 'red',
+          category: 'health',
+          frequency: 'daily' as HabitFrequency,
+          isAbsolute: true,
+          impact: 8,
+          effort: 5,
+          timeCommitment: 'All day',
+          description: 'Consume 1g protein per pound of body weight'
+        }
+      ]
+    },
+    {
       id: 'stack-1',
       title: 'Morning Power Stack',
       category: 'stacks',
