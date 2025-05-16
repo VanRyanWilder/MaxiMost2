@@ -142,8 +142,14 @@ export function FixHabitDialog({
     };
     
     console.log("Saving habit:", finalHabit);
-    onSave(finalHabit);
+    
+    // We'll close the dialog first to prevent any state issues
     onOpenChange(false);
+    
+    // Small delay to ensure the dialog is closed before saving
+    setTimeout(() => {
+      onSave(finalHabit);
+    }, 10);
   };
 
   const handleDelete = () => {
