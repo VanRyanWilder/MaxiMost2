@@ -68,3 +68,11 @@ export interface HabitStack {
   createdAt: Date;
   icon?: string;
 }
+
+export interface HabitCompletion {
+  id: string;
+  habitId: string;
+  date: string; // ISO format date
+  completed: boolean;
+  notes?: string;
+}

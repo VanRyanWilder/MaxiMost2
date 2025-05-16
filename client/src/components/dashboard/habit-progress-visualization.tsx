@@ -27,20 +27,19 @@ import {
   Minus,
   Info
 } from "lucide-react";
+import { Habit, HabitCompletion } from "@/types/habit";
+import { 
+  CATEGORY_COLORS,
+  calculateTrend,
+  formatDate
+} from "@/utils/habit-progress-utils";
 
 interface HabitProgressVisualizationProps {
   className?: string;
+  habits?: Habit[];
+  completions?: HabitCompletion[];
+  isCompact?: boolean;
 }
-
-// Color palette for habit categories
-const CATEGORY_COLORS = {
-  "Physical": "#ef4444",  // Red
-  "Nutrition": "#f97316", // Orange
-  "Sleep": "#8b5cf6",     // Indigo
-  "Mental": "#facc15",    // Yellow
-  "Relationships": "#0ea5e9", // Blue
-  "Financial": "#22c55e", // Green
-};
 
 // Sample habit completion data by date and category
 const mockPhysicalHabitData = [
@@ -101,10 +100,18 @@ const mockHabitCompletionData = [
   { name: "Financial", value: 75 },
 ];
 
-export function HabitProgressVisualization({ className }: HabitProgressVisualizationProps) {
+export function HabitProgressVisualization({ 
+  className,
+  habits = [],
+  completions = [],
+  isCompact = false
+}: HabitProgressVisualizationProps) {
   const [timeRange, setTimeRange] = useState<string>("4w");
   const [chartType, setChartType] = useState<string>("line");
   const [selectedCategories, setSelectedCategories] = useState<string[]>(["Physical", "Mental"]);
+  
+  // Use real data if available, otherwise fall back to mock data
+  const useRealData = habits.length > 0 && completions.length > 0;
 
   const timeRangeOptions = [
     { value: "1w", label: "1 Week" },
@@ -113,44 +120,74 @@ export function HabitProgressVisualization({ className }: HabitProgressVisualiza
     { value: "24w", label: "24 Weeks" },
   ];
 
-  const categoryOptions = [
-    { id: "Physical", name: "Physical", unit: "%", data: mockPhysicalHabitData, color: CATEGORY_COLORS.Physical },
-    { id: "Nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: CATEGORY_COLORS.Nutrition },
-    { id: "Sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: CATEGORY_COLORS.Sleep },
-    { id: "Mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: CATEGORY_COLORS.Mental },
-    { id: "Relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: CATEGORY_COLORS.Relationships },
-    { id: "Financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: CATEGORY_COLORS.Financial },
-  ];
+  // Calculate date ranges based on selected time range
+  const getDateRange = () => {
+    const today = new Date();
+    let startDate;
+    
+    switch(timeRange) {
+      case "1w":
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case "12w":
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 84);
+        break;
+      case "24w":
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 168);
+        break;
+      case "4w":
+      default:
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 28);
+    }
+    
+    return { startDate, endDate: today };
+  };
+  
+  // Get real data if available
+  const getCategoryData = () => {
+    if (useRealData) {
+      const { startDate, endDate } = getDateRange();
+      
+      // Use utilities to calculate real data
+      const realData = getLatestCompletionsByCategory(
+        habits,
+        completions
+      );
+      
+      return [
+        { id: "Physical", name: "Physical", unit: "%", data: realData["Physical"] || [], color: CATEGORY_COLORS.Physical },
+        { id: "Nutrition", name: "Nutrition", unit: "%", data: realData["Nutrition"] || [], color: CATEGORY_COLORS.Nutrition },
+        { id: "Sleep", name: "Sleep", unit: "%", data: realData["Sleep"] || [], color: CATEGORY_COLORS.Sleep },
+        { id: "Mental", name: "Mental", unit: "%", data: realData["Mental"] || [], color: CATEGORY_COLORS.Mental },
+        { id: "Relationships", name: "Relationships", unit: "%", data: realData["Relationships"] || [], color: CATEGORY_COLORS.Relationships },
+        { id: "Financial", name: "Financial", unit: "%", data: realData["Financial"] || [], color: CATEGORY_COLORS.Financial },
+      ];
+    } else {
+      // Use mock data
+      return [
+        { id: "Physical", name: "Physical", unit: "%", data: mockPhysicalHabitData, color: CATEGORY_COLORS.Physical },
+        { id: "Nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: CATEGORY_COLORS.Nutrition },
+        { id: "Sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: CATEGORY_COLORS.Sleep },
+        { id: "Mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: CATEGORY_COLORS.Mental },
+        { id: "Relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: CATEGORY_COLORS.Relationships },
+        { id: "Financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: CATEGORY_COLORS.Financial },
+      ];
+    }
+  };
+  
+  // Get category options
+  const categoryOptions = getCategoryData();
 
   // Filter categories based on selection
   const filteredCategories = categoryOptions.filter(category => 
     selectedCategories.includes(category.id)
   );
 
-  // Calculate trend for each category
-  const calculateTrend = (data: { date: string; value: number }[]) => {
-    if (data.length < 2) return { trend: "stable", percentage: 0 };
-    
-    const firstValue = data[0].value;
-    const lastValue = data[data.length - 1].value;
-    const difference = lastValue - firstValue;
-    const percentageChange = Math.round((difference / firstValue) * 100);
-    
-    let trend = "stable";
-    if (percentageChange > 0) trend = "up";
-    else if (percentageChange < 0) trend = "down";
-    
-    return {
-      trend,
-      percentage: Math.abs(percentageChange)
-    };
-  };
-
-  // Format date for display
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  // Using the utility functions from habit-progress-utils.ts
 
   // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }: any) => {
