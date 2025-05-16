@@ -390,7 +390,7 @@ function SupplementCard({ supplement, index, onReview }: {
         
         <div className="flex gap-2 mt-4">
           <a 
-            href={amazonUrl}
+            href={`https://www.amazon.com/s?k=${encodeURIComponent(supplement.name)}&tag=maximost-20`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full"
