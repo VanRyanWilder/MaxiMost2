@@ -766,26 +766,40 @@ export default function SortableDashboard() {
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("Dashboard received updated habit:", updatedHabit.title);
+          console.log("EDIT DIALOG - Received habit update for:", updatedHabit.title);
           
-          if (habits.some(h => h.id === updatedHabit.id)) {
-            console.log("Editing existing habit with ID:", updatedHabit.id);
-            editHabit(updatedHabit);
+          // Create a completely new habits array
+          let newHabitsArray = [...habits];
+          
+          // Find if this habit already exists
+          const existingIndex = newHabitsArray.findIndex(h => h.id === updatedHabit.id);
+          
+          if (existingIndex >= 0) {
+            // This is an edit of an existing habit - replace it in the array
+            console.log("EDIT - Replacing habit at index:", existingIndex);
+            
+            // Create a new array with the updated habit
+            newHabitsArray = [
+              ...newHabitsArray.slice(0, existingIndex),
+              updatedHabit,
+              ...newHabitsArray.slice(existingIndex + 1)
+            ];
           } else {
-            console.log("Adding new habit:", updatedHabit.title);
-            addHabit(updatedHabit);
+            // This is a new habit
+            console.log("ADD - Adding new habit");
+            newHabitsArray.push(updatedHabit);
           }
           
-          // Force a save to localStorage
-          const updatedHabits = habits.some(h => h.id === updatedHabit.id)
-            ? habits.map(h => h.id === updatedHabit.id ? updatedHabit : h)
-            : [...habits, updatedHabit];
-            
+          // Directly set the habits state with the new array
+          console.log("Setting habits state to new array with length:", newHabitsArray.length);
+          setHabits(newHabitsArray);
+          
+          // Save to localStorage immediately
           try {
-            localStorage.setItem('maximost-habits', JSON.stringify(updatedHabits));
-            console.log("Saved updated habits to localStorage");
+            localStorage.setItem('maximost-habits', JSON.stringify(newHabitsArray));
+            console.log("✅ Saved to localStorage successfully");
           } catch (err) {
-            console.error("Error saving to localStorage:", err);
+            console.error("❌ Error saving to localStorage:", err);
           }
         }}
       />
