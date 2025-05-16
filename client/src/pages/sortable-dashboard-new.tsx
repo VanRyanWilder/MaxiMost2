@@ -894,11 +894,20 @@ export default function SortableDashboard() {
                         ${selectedHabit.icon === iconType ? 'ring-2 ring-offset-2 ring-offset-background ring-primary' : ''}`}
                       onClick={() => setSelectedHabit({...selectedHabit, icon: iconType})}
                     >
-                      <EnhancedHabitIcon 
-                        icon={iconType} 
-                        category={selectedHabit.category}
-                        size="xs"
-                      />
+                      <div className={`p-1 rounded-full bg-${selectedHabit.category || "blue"}-100`}>
+                        {/* Using a simpler approach for now */}
+                        {iconType === "dumbbell" && <Dumbbell className="h-4 w-4" />}
+                        {iconType === "brain" && <Brain className="h-4 w-4" />}
+                        {iconType === "activity" && <Activity className="h-4 w-4" />}
+                        {iconType === "droplets" && <Droplets className="h-4 w-4" />}
+                        {iconType === "book" && <BookOpen className="h-4 w-4" />}
+                        {iconType === "moon" && <Moon className="h-4 w-4" />}
+                        {iconType === "pill" && <Pill className="h-4 w-4" />}
+                        {iconType === "utensils" && <Utensils className="h-4 w-4" />}
+                        {iconType === "users" && <Users className="h-4 w-4" />}
+                        {iconType === "dollar" && <CircleDollarSign className="h-4 w-4" />}
+                        {iconType === "flame" && <Flame className="h-4 w-4" />}
+                      </div>
                     </button>
                   ))}
                 </div>
