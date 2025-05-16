@@ -285,10 +285,33 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "daily" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Today's Habits</h3>
-              <div className="text-sm text-gray-500">
-                {format(today, 'EEEE, MMMM d, yyyy')}
+              <h3 className="text-lg font-medium">Daily Habits</h3>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(prev => prev - 1)}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous Day
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(0)}
+                >
+                  Today
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setDayOffset(prev => prev + 1)}
+                >
+                  Next Day <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
               </div>
+            </div>
+            <div className="text-sm text-gray-500 mb-4">
+              {format(currentDay, 'EEEE, MMMM d, yyyy')}
             </div>
             {habits.length === 0 ? (
               <div className="p-6 text-center">
@@ -298,7 +321,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               <DailyViewFixed
                 habits={filteredHabits}
                 completions={completions}
-                today={today}
+                today={currentDay}
                 onToggleHabit={onToggleHabit}
                 onEditHabit={handleEditHabit}
                 onDeleteHabit={handleDeleteHabit}
