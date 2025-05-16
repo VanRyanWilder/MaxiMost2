@@ -197,12 +197,15 @@ export function SimpleHabitEditor({
             </Select>
           </div>
           
-          {/* Category - disabled with "coming soon" */}
+          {/* Category */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">Category</Label>
-            <div className="col-span-3 flex items-center gap-2">
-              <Select disabled value={habitData.category}>
-                <SelectTrigger className="w-full">
+            <div className="col-span-3">
+              <Select 
+                value={habitData.category}
+                onValueChange={val => updateField('category', val as HabitCategory)}
+              >
+                <SelectTrigger id="category" className="w-full">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -213,7 +216,6 @@ export function SimpleHabitEditor({
                   ))}
                 </SelectContent>
               </Select>
-              <span className="text-xs font-semibold text-amber-500">Coming Soon</span>
             </div>
           </div>
           
