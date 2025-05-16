@@ -40,6 +40,7 @@ import { TopRatedSupplements } from "@/components/dashboard/top-rated-supplement
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { HabitProgressVisualization } from "@/components/dashboard/habit-progress-visualization";
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
+import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog-fixed-new";
 import { 
   DndContext, 
   closestCenter,
