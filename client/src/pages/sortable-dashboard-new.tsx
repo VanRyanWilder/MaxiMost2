@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Sidebar } from "@/components/layout/sidebar";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { PageContainer } from "@/components/layout/page-container";
+import { HeaderWithSettings } from "@/components/layout/header-with-settings";
+import { SettingsProvider } from "@/components/settings/settings-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
