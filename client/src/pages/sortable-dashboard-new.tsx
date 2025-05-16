@@ -13,6 +13,7 @@ import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
+import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 import { 
   DndContext, 
   closestCenter,
@@ -150,6 +151,10 @@ export default function SortableDashboard() {
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   
+  // Confetti celebration states
+  const [showPerfectDayConfetti, setShowPerfectDayConfetti] = useState(false);
+  const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
+  
   // Setup drag and drop sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -187,23 +192,106 @@ export default function SortableDashboard() {
       c => c.habitId === habitId && isSameDay(new Date(c.date), date)
     );
     
+    let updatedCompletions = [...completions];
+    let isNowCompleted = false;
+    
     if (existingCompletionIndex !== -1) {
       // Toggle existing completion
-      const updatedCompletions = [...completions];
+      isNowCompleted = !updatedCompletions[existingCompletionIndex].completed;
       updatedCompletions[existingCompletionIndex] = {
         ...updatedCompletions[existingCompletionIndex],
-        completed: !updatedCompletions[existingCompletionIndex].completed
+        completed: isNowCompleted
       };
       setCompletions(updatedCompletions);
     } else {
       // Create a new completion
+      isNowCompleted = true;
       const newCompletion: HabitCompletion = {
         id: `c-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
         habitId,
         date,
         completed: true
       };
-      setCompletions([...completions, newCompletion]);
+      updatedCompletions = [...completions, newCompletion];
+      setCompletions(updatedCompletions);
+    }
+    
+    // Only check for celebrations if a habit was marked as completed
+    if (isNowCompleted) {
+      // Check for perfect day completion (all of today's habits completed)
+      if (isSameDay(date, new Date())) {
+        // Get all habit IDs
+        const habitIds = habits.map(h => h.id);
+        
+        // Check if every habit has a completion for today
+        const allHabitsCompleted = habitIds.every(hId => {
+          return updatedCompletions.some(c => 
+            c.habitId === hId && 
+            c.completed && 
+            isSameDay(new Date(c.date), date)
+          );
+        });
+        
+        if (allHabitsCompleted) {
+          // Trigger perfect day celebration
+          setShowPerfectDayConfetti(true);
+        }
+      }
+      
+      // Check for perfect week completion
+      const currentWeekStart = startOfWeek(new Date());
+      const currentWeekEnd = endOfWeek(new Date());
+      
+      // Map to track completed days per habit per frequency
+      const habitCompletionMap = new Map();
+      
+      // Initialize tracking for each habit
+      habits.forEach(habit => {
+        habitCompletionMap.set(habit.id, {
+          completed: 0,
+          target: getTargetDaysFromFrequency(habit.frequency),
+          isAbsolute: habit.isAbsolute
+        });
+      });
+      
+      // Count completed days for each habit in the current week
+      updatedCompletions.forEach(completion => {
+        const completionDate = new Date(completion.date);
+        
+        // Only consider completions in the current week
+        if (completion.completed && 
+            completionDate >= currentWeekStart && 
+            completionDate <= currentWeekEnd) {
+          
+          const habitInfo = habitCompletionMap.get(completion.habitId);
+          if (habitInfo) {
+            habitInfo.completed += 1;
+          }
+        }
+      });
+      
+      // Check if all habits have met their frequency requirements
+      const perfectWeek = Array.from(habitCompletionMap.values()).every(info => {
+        return info.completed >= info.target;
+      });
+      
+      if (perfectWeek) {
+        // Trigger perfect week celebration
+        setShowPerfectWeekConfetti(true);
+      }
+    }
+  };
+  
+  // Helper function to get target days from frequency
+  const getTargetDaysFromFrequency = (frequency: string): number => {
+    switch (frequency) {
+      case 'daily': return 7;
+      case '2x-week': return 2;
+      case '3x-week': return 3;
+      case '4x-week': return 4;
+      case '5x-week': return 5;
+      case '6x-week': return 6;
+      default: return 1;
     }
   };
   
