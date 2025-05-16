@@ -9,11 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
-import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog';
-import { RobustHabitEditor } from '@/components/dashboard/robust-habit-editor';
-import { NewHabitEditor } from '@/components/dashboard/new-habit-editor';
-import { MaximostHabitEditor } from '@/components/dashboard/maximost-habit-editor';
+import { CompleteHabitEditor } from '@/components/dashboard/complete-habit-editor';
 import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
@@ -760,13 +756,13 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog - Using a more robust editor with improved state management */}
-      <RobustHabitEditor
+      {/* Edit Habit Dialog - Using our complete editor with all fields */}
+      <CompleteHabitEditor
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("🔄 Dashboard received habit from RobustHabitEditor:", updatedHabit.title);
+          console.log("🔄 Dashboard received habit from CompleteHabitEditor:", updatedHabit.title);
           console.log("🔄 Color value being saved:", updatedHabit.iconColor);
           
           // For editing, we'll use our unified save function
