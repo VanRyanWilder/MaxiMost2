@@ -36,6 +36,7 @@ import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
+import { TopRatedSupplements } from "@/components/dashboard/top-rated-supplements";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { HabitProgressVisualization } from "@/components/dashboard/habit-progress-visualization";
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
@@ -757,6 +758,9 @@ export default function SortableDashboard() {
               <div className="w-full lg:w-80 space-y-6">
                 {/* Daily Motivation Card */}
                 <DailyMotivation />
+                
+                {/* Top Rated Supplements Card */}
+                <TopRatedSupplements />
                 
                 {/* Habit Library Card */}
                 <HabitLibrary onAddHabit={handleAddFromLibrary} />
