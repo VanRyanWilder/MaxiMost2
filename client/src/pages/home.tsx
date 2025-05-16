@@ -24,7 +24,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="pt-6 flex justify-between items-center">
           <div className="text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent flex items-center gap-1">
-            Maximus Gains
+            MaxiMost
             <span className="text-xs bg-purple-700 px-1 py-0.5 rounded text-white align-top mt-2">ALPHA</span>
           </div>
           <div className="space-x-4">
@@ -46,11 +46,11 @@ export default function Home() {
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
                 <span className="block">Unlock your</span>
                 <span className="block bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent">
-                  MAXIMUS Potential
+                  MaxiMost Potential
                 </span>
               </h1>
               <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Focus only on the highest-impact habits that deliver exponential gains. Our evidence-based system helps you achieve maximum results with the least wasted effort.
+                Get the maximum bang for your buck. Our evidence-based system focuses on the vital few habits that deliver 80% of your results with just 20% of the effort.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 <span className="bg-indigo-900/40 text-indigo-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
@@ -145,7 +145,7 @@ export default function Home() {
           
           {/* Core knowledge areas for maximum performance */}
           <div className="mt-24">
-            <h2 className="text-3xl font-bold text-center mb-12">Performance Cornerstones</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">MaxiMost Cornerstones</h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {/* Principles Section */}

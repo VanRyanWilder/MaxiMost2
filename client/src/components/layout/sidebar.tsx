@@ -62,12 +62,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
     },
-    { 
-      path: "/habit-stacks", 
-      name: "Habit Stacks", 
-      icon: <Zap className="w-5 h-5 text-purple-500" />,
-      description: "Pre-built habit routines for optimal results"
-    },
+
     
     // Categories section
     { 
