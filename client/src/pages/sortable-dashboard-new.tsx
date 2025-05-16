@@ -32,7 +32,8 @@ import {
 import { 
   format, 
   addDays, 
-  startOfWeek, 
+  startOfWeek,
+  endOfWeek, 
   subDays, 
   isSameDay
 } from 'date-fns';

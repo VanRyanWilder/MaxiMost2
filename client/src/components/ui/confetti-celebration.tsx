@@ -18,7 +18,7 @@ export const ConfettiCelebration = ({
 
   useEffect(() => {
     if (trigger && !hasPlayedRef.current && confettiRef.current) {
-      const myConfetti = confetti.create(confettiRef.current, {
+      const myConfetti = confetti.create(confettiRef.current as HTMLCanvasElement, {
         resize: true,
         useWorker: true
       });
@@ -58,7 +58,7 @@ export const ConfettiCelebration = ({
 };
 
 // Function for default confetti
-async function shootDefaultConfetti(myConfetti: confetti.CreateTypes) {
+async function shootDefaultConfetti(myConfetti: any) {
   return new Promise<void>(resolve => {
     myConfetti({
       particleCount: 100,
@@ -71,7 +71,7 @@ async function shootDefaultConfetti(myConfetti: confetti.CreateTypes) {
 }
 
 // Impressive celebration for completing all habits for the day
-async function shootPerfectDayConfetti(myConfetti: confetti.CreateTypes) {
+async function shootPerfectDayConfetti(myConfetti: any) {
   return new Promise<void>(resolve => {
     // Blue theme
     const colors = ['#3b82f6', '#93c5fd', '#60a5fa', '#2563eb'];
@@ -109,7 +109,7 @@ async function shootPerfectDayConfetti(myConfetti: confetti.CreateTypes) {
 }
 
 // Epic celebration for achieving a perfect week
-async function shootPerfectWeekConfetti(myConfetti: confetti.CreateTypes) {
+async function shootPerfectWeekConfetti(myConfetti: any) {
   return new Promise<void>(resolve => {
     let count = 0;
     const goldColors = ['#f59e0b', '#fbbf24', '#fcd34d', '#fef3c7'];
