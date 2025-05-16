@@ -164,7 +164,7 @@ export function WeeklyTableViewFixedNew({
   return (
     <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 border-b flex justify-between items-center">
-        <h3 className="font-medium text-lg">{format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}</h3>
+        <h3 className="font-medium text-lg">{format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d')}</h3>
       </div>
       
       <div className="overflow-x-auto">

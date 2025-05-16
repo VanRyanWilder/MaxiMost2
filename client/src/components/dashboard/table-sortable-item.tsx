@@ -4,13 +4,17 @@ import { ReactNode } from 'react';
 import { Habit } from '@/types/habit';
 
 interface TableSortableItemProps {
-  habit: Habit;
+  habit?: Habit;
+  id: string;
   children: ReactNode;
+  className?: string;
 }
 
 export function TableSortableItem({ 
   habit, 
-  children 
+  id,
+  children,
+  className
 }: TableSortableItemProps) {
   // Set up sortable functionality
   const {
@@ -19,7 +23,7 @@ export function TableSortableItem({
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: habit.id });
+  } = useSortable({ id: id || (habit?.id ?? '') });
   
   const style = {
     transform: CSS.Transform.toString(transform),

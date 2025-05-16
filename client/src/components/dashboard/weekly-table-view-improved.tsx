@@ -157,10 +157,14 @@ export function WeeklyTableViewImproved({
     onAddHabit();
   };
 
+  // Split habits into absolute and frequency-based
+  const absoluteHabits = filteredHabits.filter(h => h.isAbsolute);
+  const frequencyHabits = filteredHabits.filter(h => !h.isAbsolute);
+
   return (
     <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 border-b flex justify-between items-center">
-        <h3 className="font-medium text-lg">{format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}</h3>
+        <h3 className="font-medium text-lg">{format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d')}</h3>
       </div>
       
       <div className="overflow-x-auto">
@@ -173,35 +177,34 @@ export function WeeklyTableViewImproved({
               return (
                 <div 
                   key={i} 
-                  className={`text-center p-2 ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
+                  className={`text-center p-2 flex flex-col items-center justify-center ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
                 >
                   <div className="text-xs text-gray-500">{format(date, 'EEE')}</div>
-                  <div className={`text-sm ${isCurrentDay ? 'text-blue-600' : ''}`}>{format(date, 'd')}</div>
+                  <div className={`text-sm ${isCurrentDay ? 'text-blue-600 font-medium' : ''}`}>{format(date, 'd')}</div>
                 </div>
               );
             })}
           </div>
           
-          {/* All habits in one DndContext */}
-          <DndContext
+          {/* All habits section */}
+          <DndContext 
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleDragEnd}
           >
-            {/* Absolute habits section */}
-            {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
-              <div className="mb-6">
+            {/* Absolute habits */}
+            {absoluteHabits.length > 0 && (
+              <div className="mb-4">
                 <SortableContext 
-                  items={filteredHabits.filter(h => h.isAbsolute).map(h => h.id)}
+                  items={absoluteHabits.map(h => h.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {filteredHabits.filter(h => h.isAbsolute).map(habit => {
-                    // Calculate how many days are completed for this absolute habit
+                  {absoluteHabits.map(habit => {
                     const completedDaysCount = countCompletedDaysInWeek(habit.id);
                     const allDaysCompleted = completedDaysCount === 7;
                     
                     return (
-                      <TableSortableItem key={habit.id} habit={habit}>
+                      <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
                         <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                           <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                             <div className="flex-shrink-0">
@@ -241,17 +244,11 @@ export function WeeklyTableViewImproved({
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => {
-                                  console.log("Edit clicked for habit:", habit);
-                                  handleEditHabit && handleEditHabit(habit);
-                                }}>
+                                <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
                                   <Pencil className="mr-2 h-4 w-4" />
                                   Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => {
-                                  console.log("Delete clicked for habit ID:", habit.id);
-                                  handleDeleteHabit && handleDeleteHabit(habit.id);
-                                }}>
+                                <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
                                   <Trash2 className="mr-2 h-4 w-4" />
                                   Delete
                                 </DropdownMenuItem>
@@ -266,14 +263,15 @@ export function WeeklyTableViewImproved({
                             
                             return (
                               <div 
-                                key={`${habit.id}-date-${i}`} 
-                                className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                key={`${habit.id}-day-${i}`} 
+                                className={`text-center h-full flex items-center justify-center p-1 ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
                                   isCompleted={completed}
                                   date={date}
                                   habitId={habit.id}
                                   onToggle={onToggleHabit}
+                                  size="md"
                                 />
                               </div>
                             );
@@ -286,123 +284,139 @@ export function WeeklyTableViewImproved({
               </div>
             )}
             
-            {/* Frequency-based habits section */}
-            {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
+            {/* Frequency-based habits */}
+            {frequencyHabits.length > 0 && (
               <div className="border-t border-gray-100 pt-4 mt-4">
                 <div className="px-4 py-2 text-sm font-medium text-green-700 bg-green-50 rounded-md mb-2">
                   Frequency-based Habits
                 </div>
+                
                 <SortableContext 
-                  items={filteredHabits.filter(h => !h.isAbsolute).map(h => h.id)}
+                  items={frequencyHabits.map(h => h.id)}
                   strategy={verticalListSortingStrategy}
                 >
-                {filteredHabits.filter(h => !h.isAbsolute).map(habit => {
-                  const completedDays = countCompletedDaysInWeek(habit.id);
-                  const targetDays = getTargetDays(habit);
-                  const hasMetFrequency = completedDays >= targetDays;
-                  const isExceeding = completedDays > targetDays;
-                  const progressPercent = Math.min(100, (completedDays / targetDays) * 100);
-                  
-                  return (
-                    <TableSortableItem key={habit.id} habit={habit}>
-                      <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
-                          <div className="flex-shrink-0">
-                            {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium flex items-center text-gray-900 dark:text-white">
-                              {habit.title}
-                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
-                                {getFrequencyText(habit.frequency)}
-                              </Badge>
-                              {habit.streak > 0 && (
-                                <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
-                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
-                                </Badge>
-                              )}
+                  {frequencyHabits.map(habit => {
+                    const completedDays = countCompletedDaysInWeek(habit.id);
+                    const targetDays = getTargetDays(habit);
+                    const hasMetFrequency = completedDays >= targetDays;
+                    const isExceeding = completedDays > targetDays;
+                    const progressPercent = Math.min(100, (completedDays / targetDays) * 100);
+                    
+                    return (
+                      <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
+                        <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
+                          <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
+                            <div className="flex-shrink-0">
+                              {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                             </div>
-
-                            {/* Enhanced progress visualization */}
-                            <div className="text-xs mt-1">
-                              <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center">
-                                  <span className={`font-medium ${hasMetFrequency ? 'text-blue-600 dark:text-blue-300' : 'text-slate-600 dark:text-gray-300'}`}>
-                                    {completedDays}/{targetDays} days
-                                  </span>
-                                  {isExceeding && (
-                                    <span className="text-blue-600 dark:text-blue-300 ml-1">
-                                      (+{completedDays - targetDays} extra)
-                                    </span>
-                                  )}
-                                </div>
-                                
-                                {hasMetFrequency && (
-                                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-[10px] text-white font-medium px-1.5 py-0 h-4">
-                                    <CheckIcon className="h-3 w-3 mr-0.5" /> Target Met
+                            <div className="flex-1">
+                              <div className="font-medium flex items-center text-gray-900 dark:text-white">
+                                {habit.title}
+                                <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
+                                  {getFrequencyText(habit.frequency)}
+                                </Badge>
+                                {habit.streak > 0 && (
+                                  <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                    <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                                   </Badge>
                                 )}
                               </div>
-                              
-                              {/* Progress bar */}
-                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-1">
-                                <div 
-                                  className={`h-1.5 rounded-full ${
-                                    hasMetFrequency 
-                                      ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
-                                      : 'bg-blue-400'
-                                  } ${hasMetFrequency ? 'animate-pulse' : ''}`}
-                                  style={{ width: `${progressPercent}%` }}
-                                ></div>
+
+                              {/* Enhanced progress visualization */}
+                              <div className="text-xs mt-1">
+                                <div className="flex items-center justify-between mb-1">
+                                  <div className="flex items-center">
+                                    <span className={`font-medium ${hasMetFrequency ? 'text-blue-600 dark:text-blue-300' : 'text-slate-600 dark:text-gray-300'}`}>
+                                      {completedDays}/{targetDays} days
+                                    </span>
+                                    {isExceeding && (
+                                      <span className="text-blue-600 dark:text-blue-300 ml-1">
+                                        (+{completedDays - targetDays} extra)
+                                      </span>
+                                    )}
+                                  </div>
+                                  
+                                  {hasMetFrequency && (
+                                    <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-[10px] text-white font-medium px-1.5 py-0 h-4">
+                                      <CheckIcon className="h-3 w-3 mr-0.5" /> Target Met
+                                    </Badge>
+                                  )}
+                                </div>
+                                
+                                {/* Progress bar */}
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-1">
+                                  <div 
+                                    className={`h-1.5 rounded-full ${
+                                      hasMetFrequency 
+                                        ? 'bg-gradient-to-r from-blue-500 to-blue-600' 
+                                        : 'bg-gray-400 dark:bg-gray-500'
+                                    }`}
+                                    style={{ width: `${progressPercent}%` }}
+                                  ></div>
+                                </div>
                               </div>
                             </div>
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-auto">
+                                  <MoreVertical className="h-4 w-4" />
+                                  <span className="sr-only">Open menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                                  <Pencil className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                           
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-auto">
-                                <MoreVertical className="h-4 w-4" />
-                                <span className="sr-only">Open menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                <Pencil className="mr-2 h-4 w-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                          {/* Days of the week */}
+                          {weekDates.map((date, i) => {
+                            const completed = isHabitCompletedOnDate(habit.id, date);
+                            const isCurrentDay = isSameDay(date, currentDay);
+                            
+                            return (
+                              <div 
+                                key={`${habit.id}-day-${i}`} 
+                                className={`text-center h-full flex items-center justify-center p-1 ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                              >
+                                <HabitButton
+                                  isCompleted={completed}
+                                  date={date}
+                                  habitId={habit.id}
+                                  onToggle={onToggleHabit}
+                                  size="md"
+                                />
+                              </div>
+                            );
+                          })}
                         </div>
-                        
-                        {/* Render a button for each day of the week */}
-                        {weekDates.map((date, i) => {
-                          const completed = isHabitCompletedOnDate(habit.id, date);
-                          const isCurrentDay = isSameDay(date, currentDay);
-                          
-                          return (
-                            <div 
-                              key={`${habit.id}-day-${i}`} 
-                              className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                            >
-                              <HabitButton
-                                isCompleted={completed}
-                                date={date}
-                                habitId={habit.id}
-                                onToggle={onToggleHabit}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </TableSortableItem>
-                  );
-                })}
-              </SortableContext>
-            </DndContext>
+                      </TableSortableItem>
+                    );
+                  })}
+                </SortableContext>
+              </div>
+            )}
+          </DndContext>
+          
+          {/* Add habit button */}
+          <div className="border-t p-4 flex justify-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleAddHabit}
+              className="group"
+            >
+              <PlusCircle className="mr-2 h-4 w-4 text-blue-500 group-hover:text-blue-600" />
+              Add New Habit
+            </Button>
           </div>
         </div>
       </div>
