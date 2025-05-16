@@ -20,7 +20,14 @@ import {
   BookOpenText,
   MessageSquare,
   Users,
-  Trophy
+  Trophy,
+  Heart,
+  Moon,
+  Utensils,
+  Lightbulb,
+  UserPlus,
+  DollarSign,
+  Zap
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
@@ -54,6 +61,45 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
     },
+    
+    // Six Habit Categories
+    { 
+      path: "/category/physical", 
+      name: "Physical Training", 
+      icon: <Dumbbell className="w-5 h-5 text-red-500" />,
+      description: "Strength, cardio, flexibility and athletic performance" 
+    },
+    { 
+      path: "/category/nutrition", 
+      name: "Nutrition & Fueling", 
+      icon: <Utensils className="w-5 h-5 text-orange-500" />,
+      description: "Diet, meal planning, and strategic nutrition"
+    },
+    { 
+      path: "/category/sleep", 
+      name: "Sleep & Hygiene", 
+      icon: <Moon className="w-5 h-5 text-indigo-500" />,
+      description: "Rest, recovery, and physical wellbeing"
+    },
+    { 
+      path: "/category/mental", 
+      name: "Mental Acuity & Growth", 
+      icon: <Lightbulb className="w-5 h-5 text-yellow-500" />,
+      description: "Learning, focus, cognition, and personal development"
+    },
+    { 
+      path: "/category/relationships", 
+      name: "Relationships & Community", 
+      icon: <UserPlus className="w-5 h-5 text-green-500" />,
+      description: "Social connections, networking, and relationships"
+    },
+    { 
+      path: "/category/financial", 
+      name: "Financial Habits", 
+      icon: <DollarSign className="w-5 h-5 text-emerald-500" />,
+      description: "Money management, investments, and wealth-building"
+    },
+    
     // Four Pillars of Maximum Performance
     { 
       path: "/principles", 
