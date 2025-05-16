@@ -179,8 +179,14 @@ export default function Dashboard() {
   };
   
   // Function to add a new habit
-  const addHabit = (habit: Habit) => {
-    setHabits([...habits, habit]);
+  const addHabit = (habit?: Habit) => {
+    if (habit) {
+      // If we have a habit object, add it directly
+      setHabits([...habits, habit]);
+    } else {
+      // If no habit provided, open the dialog for creating a new one
+      setShowCustomHabitDialog(true);
+    }
   };
   
   // Function to edit an existing habit

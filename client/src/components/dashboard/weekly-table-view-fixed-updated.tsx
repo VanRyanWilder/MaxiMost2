@@ -177,11 +177,15 @@ export function WeeklyTableViewFixedUpdated({
         break;
     }
     
-    // Create enriched habit with validated properties
+    // Ensure we have required fields for the enhanced dialog
     const enrichedHabit = {
       ...habit,
       iconColor,
-      icon
+      icon,
+      description: habit.description || "",
+      impact: habit.impact || 8,
+      effort: habit.effort || 4,
+      timeCommitment: habit.timeCommitment || "10 min"
     };
     
     console.log("Weekly table view - Calling onEditHabit with:", enrichedHabit);
