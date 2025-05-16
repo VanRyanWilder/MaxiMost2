@@ -27,7 +27,8 @@ import {
   Lightbulb,
   UserPlus,
   DollarSign,
-  Zap
+  Zap,
+  BadgeCheck
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
@@ -138,13 +139,27 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
-              <div className="rounded-md bg-secondary/30 p-2">
+              <div className="rounded-md bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 p-2">
                 <div className="flex justify-between mb-1">
-                  <span className="text-xs font-medium">Daily Habit Streak</span>
-                  <span className="text-xs font-medium">7 days</span>
+                  <span className="text-xs font-medium flex items-center gap-1">
+                    <CheckSquare className="h-3 w-3 text-blue-500" />
+                    Current Streak
+                  </span>
+                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+                    {user && user.streak ? user.streak : 7} days
+                  </span>
                 </div>
-                <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
-                  <div className="bg-primary h-1.5 rounded-full" style={{ width: "70%" }}></div>
+                <div className="w-full bg-blue-100 dark:bg-blue-900/30 h-2 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full" 
+                    style={{ width: `${Math.min(100, ((user && user.streak ? user.streak : 7) / 10) * 100)}%` }}
+                  ></div>
+                </div>
+                <div className="mt-1.5 flex justify-between">
+                  <span className="text-[10px] text-muted-foreground">Goal: 10 days</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {Math.max(0, 10 - (user && user.streak ? user.streak : 7))} days left
+                  </span>
                 </div>
               </div>
             </div>
