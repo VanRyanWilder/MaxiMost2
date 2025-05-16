@@ -117,6 +117,9 @@ function App() {
       <Route path="/habit-stacks">
         <PrivateRoute component={HabitStacks} />
       </Route>
+      <Route path="/ai-features">
+        <PrivateRoute component={AIFeatures} />
+      </Route>
       <Route path="/supplements">
         <PrivateRoute component={Supplements} />
       </Route>

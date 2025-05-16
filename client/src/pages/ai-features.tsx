@@ -53,7 +53,7 @@ export default function AIFeaturesPage() {
   }, [habits, completions]);
   
   const handleAddHabit = (newHabit: Partial<Habit>) => {
-    const habitToAdd: Habit = {
+    const habitToAdd = {
       id: `habit-${Date.now()}`,
       title: newHabit.title || 'New Habit',
       description: newHabit.description || '',
@@ -64,9 +64,8 @@ export default function AIFeaturesPage() {
       impact: newHabit.impact || 5,
       effort: newHabit.effort || 5,
       timeCommitment: newHabit.timeCommitment || '5 min',
-      reminderTime: '',
-      tags: [],
-      notes: '',
+      isAbsolute: newHabit.frequency === 'daily',
+      streak: 0,
       createdAt: new Date().toISOString(),
       order: habits.length
     };
