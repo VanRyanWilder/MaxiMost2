@@ -221,11 +221,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         </div>
 
         <div className="p-2 border-t border-border mt-auto">
-          <div className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-foreground hover:bg-muted cursor-pointer">
-            <Settings className="w-5 h-5" />
-            <span>Settings</span>
-            <SettingsPanel />
-          </div>
           <button 
             onClick={() => {
               logout();
