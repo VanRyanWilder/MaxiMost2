@@ -308,7 +308,18 @@ export function DailyViewFixedUpdated({
                             habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
                             'text-blue-600 dark:text-blue-400'
                           }`}>
-                            {habit.title}
+                            {/* Debugging to show character info */}
+                            {habit.title ? 
+                              habit.title.split('').map((char, i) => (
+                                <span key={i} className="inline-block" title={`Char code: ${char.charCodeAt(0)}`}>
+                                  {char}
+                                </span>
+                              ))
+                              : ''
+                            }
+                            <span className="block text-xs text-red-600">
+                              Last char: {habit.title ? `"${habit.title[habit.title.length-1]}" (${habit.title.charCodeAt(habit.title.length-1)})` : 'none'}
+                            </span>
                             {habit.streak && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
@@ -385,7 +396,18 @@ export function DailyViewFixedUpdated({
                         </div>
                         <div>
                           <div className="font-medium flex items-center">
-                            {habit.title}
+                            {/* Debugging to show character info */}
+                            {habit.title ? 
+                              habit.title.split('').map((char, i) => (
+                                <span key={i} className="inline-block" title={`Char code: ${char.charCodeAt(0)}`}>
+                                  {char}
+                                </span>
+                              ))
+                              : ''
+                            }
+                            <span className="block text-xs text-red-600">
+                              Last char: {habit.title ? `"${habit.title[habit.title.length-1]}" (${habit.title.charCodeAt(habit.title.length-1)})` : 'none'}
+                            </span>
                             <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
                               {getFrequencyText(habit.frequency)}
                             </Badge>
