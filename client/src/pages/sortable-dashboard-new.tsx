@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
 import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog';
+import { SimpleHabitEditor } from '@/components/dashboard/simple-habit-editor';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
@@ -768,33 +769,23 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog - Using FixedEditDialog which was working before */}
-      <FixedEditDialog 
+      {/* Edit Habit Dialog - Using our simple editor */}
+      <SimpleHabitEditor
         open={editHabitDialogOpen}
-        setOpen={setEditHabitDialogOpen}
+        onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("🔄 Dashboard received habit from dialog:", updatedHabit.title);
+          console.log("🔄 Dashboard received habit from NEW dialog:", updatedHabit.title);
           console.log("🔄 Color value being saved:", updatedHabit.iconColor);
           
-          // Close dialog first to avoid state conflicts
-          setEditHabitDialogOpen(false);
-          
-          // For editing, use our dedicated function with a small delay to ensure state is updated
-          setTimeout(() => {
-            editHabit(updatedHabit);
-          }, 50);
+          // For editing, use our dedicated function
+          editHabit(updatedHabit);
         }}
         onDelete={(habitId) => {
           console.log("🔄 Dashboard received delete request for habit ID:", habitId);
           
-          // Close dialog first to avoid state conflicts
-          setEditHabitDialogOpen(false);
-          
-          // Use our dedicated deletion function with a small delay
-          setTimeout(() => {
-            deleteHabit(habitId);
-          }, 50);
+          // Use our dedicated deletion function
+          deleteHabit(habitId);
         }}
       />
     </SettingsProvider>
