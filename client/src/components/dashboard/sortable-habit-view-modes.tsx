@@ -188,6 +188,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
     return completed >= targetFrequency;
   };
 
+  // Direct functions for editing and deleting habits
   const handleEditHabit = (habit: Habit) => {
     setSelectedHabit(habit);
     setEditDialogOpen(true);
