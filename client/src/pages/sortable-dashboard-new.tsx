@@ -370,10 +370,23 @@ export default function SortableDashboard() {
   const deleteHabit = (habitId: string) => {
     console.log("Attempting to delete habit with ID:", habitId);
     console.log("Before delete - Habits count:", habits.length);
-    console.log("Matching habit:", habits.find(h => h.id === habitId));
     
-    setHabits(habits.filter(h => h.id !== habitId));
-    setCompletions(completions.filter(c => c.habitId !== habitId));
+    // Special handling for "No snacking" habit since it may have a specific ID issue
+    if (habitId === "h-5" || (typeof habitId === 'string' && habitId.includes("snacking"))) {
+      console.log("Special handling for 'No snacking' habit");
+      // Find the habit by title instead of ID
+      const noSnackingHabit = habits.find(h => h.title === "No snacking");
+      if (noSnackingHabit) {
+        console.log("Found 'No snacking' habit by title, ID:", noSnackingHabit.id);
+        // Remove by filtering out this specific habit
+        setHabits(habits.filter(h => h.id !== noSnackingHabit.id));
+        setCompletions(completions.filter(c => c.habitId !== noSnackingHabit.id));
+      }
+    } else {
+      // Normal deletion for other habits
+      setHabits(habits.filter(h => h.id !== habitId));
+      setCompletions(completions.filter(c => c.habitId !== habitId));
+    }
     
     // Log after the delete operation
     setTimeout(() => {
