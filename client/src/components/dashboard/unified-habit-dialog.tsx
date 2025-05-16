@@ -207,10 +207,11 @@ export function UnifiedHabitDialog({
     setIsInitialized(true);
   }, [habit, open, isInitialized]);
 
-  // Update category color when category changes
+  // Update category color when category changes, but only on initialization
+  // to avoid infinite loop between state updates
   useEffect(() => {
-    if (editedHabit.category) {
-      const categoryKey = editedHabit.category as HabitCategory;
+    if (editedHabit.category && !editedHabit.iconColor) {
+      const categoryKey = editedHabit.category;
       if (CATEGORY_COLORS[categoryKey]) {
         setEditedHabit(prev => ({
           ...prev,
@@ -218,7 +219,7 @@ export function UnifiedHabitDialog({
         }));
       }
     }
-  }, [editedHabit.category]);
+  }, [editedHabit.category, editedHabit.iconColor]);
 
   const handleSave = () => {
     // Validate required fields
