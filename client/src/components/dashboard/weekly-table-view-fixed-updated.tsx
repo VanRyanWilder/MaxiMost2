@@ -220,14 +220,14 @@ export function WeeklyTableViewFixedUpdated({
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Day headers */}
-          <div className="grid grid-cols-[2fr_repeat(7,1fr)] border-b">
+          <div className="grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] border-b">
             <div className="p-2 font-medium text-sm"></div>
             {weekDates.map((date, i) => {
               const isCurrentDay = isSameDay(date, currentDay);
               return (
                 <div 
                   key={i} 
-                  className={`text-center p-2 flex flex-col items-center justify-center min-w-[40px] ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
+                  className={`text-center p-2 flex flex-col items-center justify-center ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
                 >
                   <div className="text-xs text-gray-500">{format(date, 'EEE')}</div>
                   <div className={`text-sm ${isCurrentDay ? 'text-blue-600 font-medium' : ''}`}>{format(date, 'd')}</div>
@@ -258,7 +258,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
+                        <div className="border-t py-2 grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] items-center">
                           <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
@@ -356,7 +356,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
+                        <div className="border-t py-2 grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] items-center">
                           <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
