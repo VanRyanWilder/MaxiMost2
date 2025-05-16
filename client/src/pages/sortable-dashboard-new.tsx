@@ -771,7 +771,7 @@ export default function SortableDashboard() {
       />
       
       {/* Edit Habit Dialog - Using our simple editor */}
-      <SimpleHabitEditor
+      <NewHabitEditor
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
