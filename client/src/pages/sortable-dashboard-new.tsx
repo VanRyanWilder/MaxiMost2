@@ -597,15 +597,14 @@ export default function SortableDashboard() {
       // Add all habits from the stack
       const habitsToAdd = [...habitTemplate.habits];
       
-      // Add all habits in the stack
-      for (let i = 0; i < habitsToAdd.length; i++) {
-        const habitItem = habitsToAdd[i];
-        
+      // Create all new habits from the stack
+      const newHabits = habitsToAdd.map((habitItem, i) => {
         // Generate a new unique ID for the habit
-        const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}-${i}`;
+        const timeStamp = Date.now();
+        const newId = `h-${timeStamp}-${Math.floor(Math.random() * 1000000)}-${i}`;
         
         // Create the new habit from the template
-        const newHabit = {
+        return {
           id: newId,
           title: habitItem.title,
           description: habitItem.description,
@@ -620,10 +619,10 @@ export default function SortableDashboard() {
           streak: 0,
           createdAt: new Date()
         };
-        
-        // Add it directly to the habits array
-        setHabits(prevHabits => [...prevHabits, newHabit]);
-      }
+      });
+      
+      // Add all habits at once to avoid state update issues
+      setHabits(prevHabits => [...prevHabits, ...newHabits]);
     } else {
       // It's a single habit, add it
       addHabitFromTemplate(habitTemplate);

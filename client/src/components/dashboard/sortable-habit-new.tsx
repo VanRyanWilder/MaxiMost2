@@ -109,7 +109,7 @@ export function SortableHabit({
       ref={setNodeRef} 
       style={style}
       className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
-        weeklyGoalMet ? 'bg-green-50 border border-green-100' : `${colorScheme?.lightBg || "bg-transparent"} ${colorScheme?.border || ""}`
+        weeklyGoalMet ? 'bg-green-50 border border-green-100' : `${colorScheme?.lightBg || "bg-transparent"} border ${colorScheme?.border || "border-gray-200"}`
       }`}
     >
       {/* Main habit info cell */}
@@ -206,15 +206,17 @@ export function SortableHabit({
                     : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
                 } w-full h-10 rounded-md`}
             >
-              {completed ? (
-                <div className="flex items-center justify-center h-5 w-5">
-                  <Check className="h-4 w-4" />
-                </div>
-              ) : (
-                <div className={`h-5 w-5 flex items-center justify-center`}>
-                  <div className={`h-4 w-4 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current hover:scale-110`}></div>
-                </div>
-              )}
+              <div className="flex items-center justify-center w-full h-full">
+                {completed ? (
+                  <div className="flex items-center justify-center h-5 w-5 border border-green-200 rounded-sm bg-green-100">
+                    <Check className="h-4 w-4 text-green-600" />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-5 w-5">
+                    <div className={`h-4 w-4 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current`}></div>
+                  </div>
+                )}
+              </div>
             </button>
           </div>
         );
