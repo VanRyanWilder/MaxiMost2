@@ -5,8 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
-import { SiSamsung } from "react-icons/si";
-import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithSamsung } from "@/lib/firebase";
+import { signInWithGoogle, signInWithFacebook, signInWithApple } from "@/lib/firebase";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -14,7 +13,7 @@ export default function Login() {
   const { login } = useUser();
   const [, setLocation] = useLocation();
 
-  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple' | 'samsung') => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
     setIsLoading(true);
     setError(null);
     
@@ -30,9 +29,6 @@ export default function Login() {
           break;
         case 'apple':
           user = await signInWithApple();
-          break;
-        case 'samsung':
-          user = await signInWithSamsung();
           break;
       }
       
@@ -132,15 +128,7 @@ export default function Login() {
             <span>Continue with Apple</span>
           </Button>
           
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center gap-2"
-            onClick={() => handleSocialLogin('samsung')}
-            disabled={isLoading}
-          >
-            <SiSamsung className="h-4 w-4" />
-            <span>Continue with Samsung</span>
-          </Button>
+
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
           <div className="text-sm text-muted-foreground">

@@ -27,7 +27,6 @@ export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 const appleProvider = new OAuthProvider('apple.com');
-const samsungProvider = new OAuthProvider('samsung.com');
 
 // Authentication functions
 export const signInWithGoogle = async () => {
@@ -60,15 +59,7 @@ export const signInWithApple = async () => {
   }
 };
 
-export const signInWithSamsung = async () => {
-  try {
-    const result = await signInWithPopup(auth, samsungProvider);
-    return result.user;
-  } catch (error) {
-    console.error("Error signing in with Samsung:", error);
-    throw error;
-  }
-};
+
 
 export const signOut = async () => {
   try {
