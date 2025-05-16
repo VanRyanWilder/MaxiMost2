@@ -356,7 +356,7 @@ export default function SortableDashboard() {
   };
 
   return (
-    <>
+    <SettingsProvider>
       <div className="flex min-h-screen bg-background">
         {/* Sidebar */}
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
@@ -364,8 +364,17 @@ export default function SortableDashboard() {
         {/* Main content area */}
         <main className="flex-1">
           <PageContainer>
-            {/* Mobile Header */}
-            <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
+            {/* Header with Settings */}
+            <HeaderWithSettings 
+              title="Habit Dashboard" 
+              subtitle="Track your habits and build consistency"
+              onMenuClick={() => setIsSidebarOpen(true)}
+              viewMode="weekly"
+              currentDay={currentDate}
+              onPreviousClick={goToPreviousDay}
+              onTodayClick={() => setCurrentDate(new Date())}
+              onNextClick={goToNextDay}
+            />
             
             {/* Two-column layout for desktop */}
             <div className="flex flex-col lg:flex-row gap-6">
@@ -507,6 +516,6 @@ export default function SortableDashboard() {
           }
         }}
       />
-    </>
+    </SettingsProvider>
   );
 }
