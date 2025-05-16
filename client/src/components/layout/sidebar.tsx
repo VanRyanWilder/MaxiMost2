@@ -28,6 +28,7 @@ import {
   UserPlus,
   DollarSign,
   Zap,
+  Sparkles,
   BadgeCheck,
   Mail,
   Skull
@@ -68,6 +69,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Habit Building", 
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
+    },
+    { 
+      path: "/ai-features", 
+      name: "AI Features", 
+      icon: <Sparkles className="w-5 h-5 text-amber-500" />,
+      description: "AI-powered habit suggestions and insights"
     },
 
     
