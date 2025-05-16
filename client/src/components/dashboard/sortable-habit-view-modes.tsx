@@ -212,41 +212,68 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
     // Make sure we have the required color and icon for MaxiMost categories
     let iconColor = updatedHabit.iconColor || "blue";
     let icon = updatedHabit.icon || "zap";
+    let category = updatedHabit.category;
+    
+    // Convert legacy categories to MaxiMost categories if needed
+    if (category === "health" || category === "fitness") {
+      category = "physical";
+    } else if (category === "mind") {
+      category = "mental";
+    } else if (category === "social") {
+      category = "relationships";
+    } else if (category === "finance" || category === "productivity") {
+      category = "financial";
+    }
     
     // Ensure appropriate colors for MaxiMost categories
-    switch (updatedHabit.category) {
+    switch (category) {
       case "physical": 
         iconColor = "red"; 
-        icon = icon === "zap" ? "dumbbell" : icon;
+        icon = "dumbbell";
         break;
       case "nutrition": 
         iconColor = "orange"; 
-        icon = icon === "zap" ? "utensils" : icon;
+        icon = "utensils";
         break;
       case "sleep": 
         iconColor = "indigo"; 
-        icon = icon === "zap" ? "moon" : icon;
+        icon = "moon";
         break;
       case "mental": 
         iconColor = "yellow"; 
-        icon = icon === "zap" ? "brain" : icon;
+        icon = "lightbulb";
         break;
       case "relationships": 
         iconColor = "green"; 
-        icon = icon === "zap" ? "users" : icon;
+        icon = "users";
         break;
       case "financial": 
         iconColor = "emerald"; 
-        icon = icon === "zap" ? "circleDollarSign" : icon;
+        icon = "dollar-sign";
         break;
     }
+    
+    // Force daily habits to be absolute
+    const isAbsolute = updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute;
     
     // Create final habit with validated properties
     const finalHabit = {
       ...updatedHabit,
       iconColor,
-      icon
+      icon,
+      category,
+      isAbsolute
     };
+    
+    console.log("SortableHabitViewModes - Final habit being saved:", {
+      id: finalHabit.id,
+      title: finalHabit.title,
+      category: finalHabit.category,
+      icon: finalHabit.icon,
+      iconColor: finalHabit.iconColor,
+      frequency: finalHabit.frequency,
+      isAbsolute: finalHabit.isAbsolute
+    });
     
     if (onUpdateHabit) {
       console.log("Calling onUpdateHabit with:", finalHabit);
