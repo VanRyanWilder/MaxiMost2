@@ -14,7 +14,7 @@ import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog'
 import { RobustHabitEditor } from '@/components/dashboard/robust-habit-editor';
 import { NewHabitEditor } from '@/components/dashboard/new-habit-editor';
 import { MaximostHabitEditor } from '@/components/dashboard/maximost-habit-editor';
-import { SortableHabit } from "@/components/dashboard/sortable-habit";
+import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
@@ -211,11 +211,11 @@ export default function SortableDashboard() {
   ]);
   
   const [completions, setCompletions] = useState<HabitCompletion[]>([
-    { id: "c-1", habitId: "h-1", date: new Date(), completed: true },
-    { id: "c-2", habitId: "h-2", date: new Date(), completed: true },
-    { id: "c-3", habitId: "h-3", date: subDays(new Date(), 1), completed: true },
-    { id: "c-4", habitId: "h-1", date: subDays(new Date(), 1), completed: true },
-    { id: "c-5", habitId: "h-2", date: subDays(new Date(), 1), completed: true }
+    { id: "c-1", habitId: "h-1", date: new Date().toISOString(), completed: true },
+    { id: "c-2", habitId: "h-2", date: new Date().toISOString(), completed: true },
+    { id: "c-3", habitId: "h-3", date: subDays(new Date(), 1).toISOString(), completed: true },
+    { id: "c-4", habitId: "h-1", date: subDays(new Date(), 1).toISOString(), completed: true },
+    { id: "c-5", habitId: "h-2", date: subDays(new Date(), 1).toISOString(), completed: true }
   ]);
   
   // Edit/Create habit dialog state
