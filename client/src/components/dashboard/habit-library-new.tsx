@@ -132,6 +132,32 @@ const habitSuggestions = {
       effort: 5,
       timeCommitment: '10 min',
       description: 'Log all food intake for awareness'
+    },
+    {
+      id: 'sl-h9',
+      title: 'Make Bed',
+      icon: 'sun',
+      iconColor: 'amber',
+      category: 'health',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: true,
+      impact: 6,
+      effort: 1,
+      timeCommitment: '1 min',
+      description: 'Start the day with a small accomplishment'
+    },
+    {
+      id: 'sl-h10',
+      title: 'Brush Teeth',
+      icon: 'zap',
+      iconColor: 'blue',
+      category: 'health',
+      frequency: '2x-day' as HabitFrequency,
+      isAbsolute: true,
+      impact: 7,
+      effort: 1,
+      timeCommitment: '3 min',
+      description: 'Maintain oral hygiene and health'
     }
   ],
   fitness: [
@@ -217,6 +243,19 @@ const habitSuggestions = {
     },
     {
       id: 'sl-m3',
+      title: 'Pray',
+      icon: 'star',
+      iconColor: 'amber',
+      category: 'mind',
+      frequency: 'daily' as HabitFrequency,
+      isAbsolute: true,
+      impact: 9,
+      effort: 2,
+      timeCommitment: '5 min',
+      description: 'Take time for spiritual reflection and gratitude'
+    },
+    {
+      id: 'sl-m4',
       title: 'Journal',
       icon: 'scroll-text',
       iconColor: 'yellow',
