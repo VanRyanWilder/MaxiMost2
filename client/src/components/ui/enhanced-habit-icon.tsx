@@ -39,8 +39,9 @@ import {
 
 interface EnhancedIconProps {
   icon: string;
-  category: string;
+  category?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
+  color?: string;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -247,11 +248,13 @@ const ICON_MAPPING: Record<string, LucideIcon> = {
 };
 
 // Advanced HabitIcon component with enhanced visual styling
-export function EnhancedHabitIcon({ icon, category, size = 'md', className = '' }: EnhancedIconProps) {
-  // Get style scheme based on either category or iconColor (supporting both approaches)
-  const styleScheme = CATEGORY_STYLES[category] || 
-                    (icon && CATEGORY_STYLES[icon.toLowerCase()]) || 
-                    CATEGORY_STYLES.blue;
+export function EnhancedHabitIcon({ icon, category, color, size = 'md', className = '' }: EnhancedIconProps) {
+  // Get style scheme based on color, category, or icon name (in order of priority)
+  const styleScheme = 
+    (color && typeof color === 'string' && CATEGORY_STYLES[color as keyof typeof CATEGORY_STYLES]) || 
+    (category && typeof category === 'string' && CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]) || 
+    (icon && CATEGORY_STYLES[icon.toLowerCase() as keyof typeof CATEGORY_STYLES]) || 
+    CATEGORY_STYLES.blue;
   
   // Get the correct icon component or fallback to Activity
   const IconComponent = ICON_MAPPING[icon?.toLowerCase()] || Activity;

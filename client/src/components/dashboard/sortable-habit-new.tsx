@@ -45,10 +45,35 @@ export function SortableHabit({
   };
   
   // Get appropriate color scheme for the habit icon
+  const getEnhancedColorScheme = (color: string) => {
+    const baseScheme = colorSchemes.find(c => c.id === color);
+    if (baseScheme) return baseScheme;
+    
+    // Fallback color schemes by color name
+    const enhancedSchemes: Record<string, any> = {
+      red: { id: 'red', primary: "text-red-600", bg: "bg-red-100", lightBg: "bg-red-50/50", border: "border-red-200", hover: "hover:bg-red-100/70" },
+      orange: { id: 'orange', primary: "text-orange-600", bg: "bg-orange-100", lightBg: "bg-orange-50/50", border: "border-orange-200", hover: "hover:bg-orange-100/70" },
+      amber: { id: 'amber', primary: "text-amber-600", bg: "bg-amber-100", lightBg: "bg-amber-50/50", border: "border-amber-200", hover: "hover:bg-amber-100/70" },
+      yellow: { id: 'yellow', primary: "text-yellow-600", bg: "bg-yellow-100", lightBg: "bg-yellow-50/50", border: "border-yellow-200", hover: "hover:bg-yellow-100/70" },
+      green: { id: 'green', primary: "text-green-600", bg: "bg-green-100", lightBg: "bg-green-50/50", border: "border-green-200", hover: "hover:bg-green-100/70" },
+      emerald: { id: 'emerald', primary: "text-emerald-600", bg: "bg-emerald-100", lightBg: "bg-emerald-50/50", border: "border-emerald-200", hover: "hover:bg-emerald-100/70" },
+      teal: { id: 'teal', primary: "text-teal-600", bg: "bg-teal-100", lightBg: "bg-teal-50/50", border: "border-teal-200", hover: "hover:bg-teal-100/70" },
+      cyan: { id: 'cyan', primary: "text-cyan-600", bg: "bg-cyan-100", lightBg: "bg-cyan-50/50", border: "border-cyan-200", hover: "hover:bg-cyan-100/70" },
+      blue: { id: 'blue', primary: "text-blue-600", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200", hover: "hover:bg-blue-100/70" },
+      indigo: { id: 'indigo', primary: "text-indigo-600", bg: "bg-indigo-100", lightBg: "bg-indigo-50/50", border: "border-indigo-200", hover: "hover:bg-indigo-100/70" },
+      violet: { id: 'violet', primary: "text-violet-600", bg: "bg-violet-100", lightBg: "bg-violet-50/50", border: "border-violet-200", hover: "hover:bg-violet-100/70" },
+      purple: { id: 'purple', primary: "text-purple-600", bg: "bg-purple-100", lightBg: "bg-purple-50/50", border: "border-purple-200", hover: "hover:bg-purple-100/70" },
+      pink: { id: 'pink', primary: "text-pink-600", bg: "bg-pink-100", lightBg: "bg-pink-50/50", border: "border-pink-200", hover: "hover:bg-pink-100/70" },
+      rose: { id: 'rose', primary: "text-rose-600", bg: "bg-rose-100", lightBg: "bg-rose-50/50", border: "border-rose-200", hover: "hover:bg-rose-100/70" },
+    };
+    
+    return enhancedSchemes[color] || 
+      { id: 'slate', primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200", hover: "hover:bg-slate-100/70" };
+  };
+  
   const colorScheme = habit.iconColor ? 
-    colorSchemes.find(c => c.id === habit.iconColor) || 
-    { primary: "text-blue-600", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200" } : 
-    { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200" };
+    getEnhancedColorScheme(habit.iconColor) : 
+    { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200", hover: "hover:bg-slate-100/70" };
 
   // Calculate statistics for the habit
   const today = new Date();
@@ -84,11 +109,11 @@ export function SortableHabit({
       ref={setNodeRef} 
       style={style}
       className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
-        weeklyGoalMet ? 'bg-green-50' : `${colorScheme?.lightBg || "bg-transparent"}`
+        weeklyGoalMet ? 'bg-green-50 border border-green-100' : `${colorScheme?.lightBg || "bg-transparent"} ${colorScheme?.border || ""}`
       }`}
     >
       {/* Main habit info cell */}
-      <div className="px-2 py-2 flex items-center relative">
+      <div className={`px-2 py-2 flex items-center relative rounded-md ${colorScheme?.bg || "bg-transparent"}`}>
         {/* Drag handle */}
         <button
           className="cursor-grab active:cursor-grabbing mr-2 touch-none"
