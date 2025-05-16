@@ -108,7 +108,7 @@ export function SortableHabit({
     <div 
       ref={setNodeRef} 
       style={style}
-      className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-0 mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
+      className={`grid grid-cols-[2fr_repeat(7,1fr)] mb-2 group rounded-md p-0.5 transition-all hover:shadow-sm ${
         weeklyGoalMet ? 'bg-green-50 border border-green-100' : `${colorScheme?.lightBg || "bg-transparent"} border ${colorScheme?.border || "border-gray-200"}`
       }`}
     >
@@ -193,31 +193,33 @@ export function SortableHabit({
         const isPast = isBefore(date, startOfToday());
         const isFuture = isAfter(date, endOfToday());
         
+        const uniformSquareStyle = "w-6 h-6 flex items-center justify-center"; 
+        
         return (
-          <div key={i} className="flex justify-center items-center px-1">
-            <button 
-              onClick={() => onToggleCompletion(habit.id, date)}
-              disabled={isFuture}
-              className={`flex items-center justify-center transition-all duration-200 ease-in-out
-                ${completed 
-                  ? 'bg-green-100 text-green-600 hover:bg-green-200 rounded-md' 
-                  : isPast 
-                    ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
-                    : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
-                } w-10 h-10 rounded-md`}
-            >
-              <div className="flex items-center justify-center">
+          <div key={i} className="h-10">
+            <div className="w-full h-full flex items-center justify-center">
+              <button 
+                onClick={() => onToggleCompletion(habit.id, date)}
+                disabled={isFuture}
+                className={`p-0 flex items-center justify-center transition duration-100 
+                  ${completed 
+                    ? 'bg-green-100 text-green-600 hover:bg-green-200' 
+                    : isPast 
+                      ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
+                      : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
+                  } w-7 h-7 rounded`}
+              >
                 {completed ? (
-                  <div className="flex items-center justify-center h-5 w-5 border border-green-200 rounded-sm bg-green-100">
-                    <Check className="h-4 w-4 text-green-600" />
+                  <div className={uniformSquareStyle}>
+                    <Check className="h-4 w-4" />
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center h-5 w-5">
-                    <div className={`h-4 w-4 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current`}></div>
+                  <div className={uniformSquareStyle}>
+                    <div className={`h-4 w-4 rounded-full border-2 ${colorScheme?.border || "border-gray-300"}`}></div>
                   </div>
                 )}
-              </div>
-            </button>
+              </button>
+            </div>
           </div>
         );
       })}
