@@ -202,9 +202,9 @@ export function SettingsPanel() {
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="dark" id="dark" />
-                      <Label htmlFor="dark" className="flex items-center">
-                        <Moon className="h-4 w-4 mr-1" /> Dark
+                      <RadioGroupItem value="dark" id="dark" disabled />
+                      <Label htmlFor="dark" className="flex items-center opacity-50">
+                        <Moon className="h-4 w-4 mr-1" /> Dark <Badge className="ml-2 text-[10px]">Coming Soon</Badge>
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -290,6 +290,59 @@ export function SettingsPanel() {
                       <SelectItem value="detailed">Detailed</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                
+                <Separator />
+
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Visualization Effects</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="enable-animations" className="flex items-center gap-2">
+                        Enable Animations
+                      </Label>
+                      <Switch
+                        id="enable-animations"
+                        checked={settings.animations?.enabled ?? true}
+                        onCheckedChange={(checked) => updateSettings({ 
+                          animations: { 
+                            ...settings.animations,
+                            enabled: checked 
+                          } 
+                        })}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="enable-confetti" className="flex items-center gap-2">
+                        Show Confetti on Completions
+                      </Label>
+                      <Switch
+                        id="enable-confetti"
+                        checked={settings.animations?.confetti ?? true}
+                        onCheckedChange={(checked) => updateSettings({ 
+                          animations: { 
+                            ...settings.animations,
+                            confetti: checked 
+                          } 
+                        })}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="enable-pulse" className="flex items-center gap-2">
+                        Show Pulsing Effect for Pending Habits
+                      </Label>
+                      <Switch
+                        id="enable-pulse"
+                        checked={settings.animations?.pulseEffect ?? true}
+                        onCheckedChange={(checked) => updateSettings({ 
+                          animations: { 
+                            ...settings.animations,
+                            pulseEffect: checked 
+                          } 
+                        })}
+                      />
+                    </div>
+                  </div>
 
                   <div className="mt-3 p-3 bg-muted/30 rounded-md">
                     <span className="text-xs text-muted-foreground">Preview:</span>
