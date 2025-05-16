@@ -163,15 +163,7 @@ export function WeeklyTableViewImproved({
       <div className="p-4 border-b flex justify-between items-center">
         <h3 className="font-medium text-lg">{format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}</h3>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleAddHabit}
-            className="flex items-center gap-1"
-          >
-            <PlusCircle className="h-4 w-4" />
-            Add Habit
-          </Button>
+          {/* Removed 'Add Habit' button from weekly view to avoid duplication */}
         </div>
       </div>
       

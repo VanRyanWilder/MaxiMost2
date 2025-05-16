@@ -443,11 +443,6 @@ export default function SortableDashboard() {
                       </svg>
                     </Button>
                   </div>
-                  
-                  <Button onClick={handleCreateHabit} size="sm">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Habit
-                  </Button>
                 </div>
                 
                 {/* Habits Section with View Modes (Daily, Weekly, Monthly) */}
