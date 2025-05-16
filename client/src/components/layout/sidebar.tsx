@@ -57,6 +57,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Your all-in-one habit tracking center"
     },
     { 
+      path: "/supplements", 
+      name: "Top Supplements", 
+      icon: <Trophy className="w-5 h-5 text-amber-500" />,
+      description: "Expert-recommended supplements with highest ROI"
+    },
+    { 
       path: "/habit-building", 
       name: "Habit Building", 
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
@@ -70,12 +76,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Stoic Principles", 
       icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
       description: "High ROI principles from top performers"
-    },
-    { 
-      path: "/supplements", 
-      name: "Top Supplements", 
-      icon: <Trophy className="w-5 h-5 text-amber-500" />,
-      description: "Expert-recommended supplements with highest ROI"
     },
     { 
       path: "/experts-unified", 
