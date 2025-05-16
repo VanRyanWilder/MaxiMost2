@@ -35,19 +35,19 @@ export function Logo({
       <div className="flex items-center">
         {!logoError ? (
           <img 
-            src="/images/maximost-logo-2.jpg" 
+            src="/images/maximost-alt-logo.png" 
             alt="MaxiMost Logo" 
             className={`${sizeClasses[size]} object-contain mr-2`}
             onError={(e) => {
               console.log("Primary logo failed to load, trying fallbacks");
               // Try fallback logos in sequence
               const target = e.target as HTMLImageElement;
-              target.src = "/maximost-logo-1.png";
+              target.src = "/images/maximost-alt-logo2.png";
               
               // If this also fails, try another fallback
               target.onerror = () => {
                 console.log("First fallback failed, trying second fallback");
-                target.src = "/maximost-logo-0.png";
+                target.src = "/images/maximost-logo-0.png";
                 
                 // If all image fallbacks fail, use the text logo
                 target.onerror = () => {

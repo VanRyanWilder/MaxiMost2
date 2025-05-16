@@ -640,7 +640,7 @@ export default function SortableDashboard() {
               <Button variant="ghost" onClick={() => setIsSidebarOpen(true)} className="lg:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
-              <h1 className="text-xl font-bold">MaxiMost</h1>
+              {/* Removed duplicate title here */}
               <div className="w-8"></div> {/* Empty space for alignment */}
             </div>
             
