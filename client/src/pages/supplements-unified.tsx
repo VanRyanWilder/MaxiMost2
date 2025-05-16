@@ -233,7 +233,7 @@ const SupplementsPage = () => {
           <TabsContent value="top10" className="mt-6">
             <div className="flex items-center gap-3 mb-4">
               <Trophy className="h-7 w-7 text-amber-500" />
-              <h2 className="text-2xl font-bold">Top 10 Supplements with Expert Insights</h2>
+              <h2 className="text-2xl font-bold">Top Supplements with Expert Insights</h2>
             </div>
             <p className="text-muted-foreground max-w-3xl mb-6">
               These are the highest-ROI supplements backed by scientific research and recommended by leading health experts. 
@@ -247,7 +247,16 @@ const SupplementsPage = () => {
                     {supplement.id}
                   </div>
                   <div className="pt-2">
-                    <h3 className="text-xl font-bold">{supplement.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-bold">{supplement.name}</h3>
+                      {supplement.amazonUrl && (
+                        <Button asChild variant="outline" className="ml-2">
+                          <a href={supplement.amazonUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                            View on Amazon <ExternalLink className="h-3.5 w-3.5 ml-2" />
+                          </a>
+                        </Button>
+                      )}
+                    </div>
                     
                     <div className="mt-4 flex flex-col gap-4">
                       <div className="bg-muted/50 rounded-lg p-4">
@@ -292,16 +301,6 @@ const SupplementsPage = () => {
                           ))}
                         </div>
                       </div>
-                      
-                      {supplement.amazonUrl && (
-                        <div className="flex justify-end">
-                          <Button asChild className="w-full" variant="outline">
-                            <a href={supplement.amazonUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                              View on Amazon <ExternalLink className="h-3.5 w-3.5 ml-2" />
-                            </a>
-                          </Button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>

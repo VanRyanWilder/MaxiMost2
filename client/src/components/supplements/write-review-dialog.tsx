@@ -1,96 +1,73 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { StarIcon } from "lucide-react";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface WriteReviewDialogProps {
+export interface WriteReviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   supplementId: number;
   userId: number;
-  supplementName: string;
 }
 
-export function WriteReviewDialog({
-  open,
-  onOpenChange,
-  supplementId,
-  userId,
-  supplementName,
-}: WriteReviewDialogProps) {
-  const [rating, setRating] = useState<number>(0);
-  const [hoverRating, setHoverRating] = useState<number>(0);
-  const [content, setContent] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  
-  const queryClient = useQueryClient();
+export function WriteReviewDialog({ open, onOpenChange, supplementId, userId }: WriteReviewDialogProps) {
+  const [rating, setRating] = useState(5);
+  const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
   const handleSubmit = async () => {
     if (rating === 0) {
       toast({
-        title: "Please select a rating",
-        description: "You must provide a star rating to submit a review.",
-        variant: "destructive",
+        title: "Rating Required",
+        description: "Please select a rating for this supplement",
+        variant: "destructive"
       });
       return;
     }
-    
-    if (!content.trim()) {
-      toast({
-        title: "Please add a review",
-        description: "Please share your experience with this supplement.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
+
     try {
-      const response = await apiRequest("POST", "/api/supplements/reviews", {
-        supplementId,
-        userId,
-        rating,
-        content,
-        isVerifiedPurchase: false // Default to false, could be updated with real purchase verification
+      setIsSubmitting(true);
+      
+      const response = await fetch(`/api/supplements/${supplementId}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          supplementId,
+          rating,
+          content,
+          isVerifiedPurchase: true
+        })
       });
       
-      if (!response.ok) {
-        throw new Error("Failed to submit review");
-      }
+      if (!response.ok) throw new Error("Failed to submit review");
       
-      // Success
       toast({
-        title: "Review submitted",
-        description: "Thank you for sharing your experience!",
+        title: "Review Submitted",
+        description: "Thank you for sharing your experience!"
       });
       
-      // Reset form and close dialog
-      setRating(0);
       setContent("");
+      setRating(5);
       onOpenChange(false);
-      
-      // Invalidate related queries to refresh the data
-      queryClient.invalidateQueries({ queryKey: ['/api/supplements', supplementId, 'reviews'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/supplements'] });
     } catch (error) {
+      console.error("Error submitting review:", error);
       toast({
-        title: "Failed to submit review",
-        description: "Please try again later.",
-        variant: "destructive",
+        title: "Submission Failed",
+        description: "There was an error submitting your review. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
@@ -101,54 +78,60 @@ export function WriteReviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Write a review</DialogTitle>
+          <DialogTitle>Write a Review</DialogTitle>
           <DialogDescription>
-            Share your experience with {supplementName}
+            Share your experience with this supplement to help others make informed decisions.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="py-4">
-          {/* Star rating selector */}
-          <div className="flex flex-col items-center mb-6">
-            <p className="text-sm text-gray-500 mb-2">Overall rating</p>
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  className="p-1"
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                >
-                  <StarIcon
-                    className={`h-8 w-8 ${
-                      star <= (hoverRating || rating)
-                        ? "text-amber-400 fill-amber-400"
-                        : "text-gray-300"
-                    }`}
-                  />
-                </button>
-              ))}
+        <div className="grid gap-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="rating" className="font-medium">
+              Rating
+            </Label>
+            <div className="flex items-center gap-4">
+              <RadioGroup
+                defaultValue="5"
+                value={rating.toString()}
+                onValueChange={(value) => setRating(Number(value))}
+                className="flex space-x-1"
+              >
+                {[1, 2, 3, 4, 5].map((value) => (
+                  <div key={value} className="flex flex-col items-center">
+                    <RadioGroupItem
+                      value={value.toString()}
+                      id={`rating-${value}`}
+                      className="sr-only"
+                    />
+                    <Label
+                      htmlFor={`rating-${value}`}
+                      className="cursor-pointer p-1"
+                    >
+                      <Star
+                        className={`h-8 w-8 ${
+                          value <= rating
+                            ? "fill-amber-500 text-amber-500"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    </Label>
+                    <span className="text-xs">{value}</span>
+                  </div>
+                ))}
+              </RadioGroup>
             </div>
-            <p className="text-sm font-medium mt-2">
-              {rating === 1 && "Poor - Not recommended"}
-              {rating === 2 && "Fair - Has issues"}
-              {rating === 3 && "Average - Met expectations"}
-              {rating === 4 && "Good - Recommended"}
-              {rating === 5 && "Excellent - Highly recommended"}
-            </p>
           </div>
           
-          {/* Review text area */}
           <div className="space-y-2">
-            <p className="text-sm text-gray-500">Your review</p>
+            <Label htmlFor="review" className="font-medium">
+              Your Review (Optional)
+            </Label>
             <Textarea
-              placeholder="What did you like or dislike? How effective was it?"
+              id="review"
+              placeholder="Share your thoughts about this supplement..."
+              rows={5}
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              rows={5}
-              className="resize-none"
             />
           </div>
         </div>
