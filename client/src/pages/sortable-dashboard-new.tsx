@@ -382,15 +382,29 @@ export default function SortableDashboard() {
       frequency: finalUpdatedHabit.frequency
     });
     
-    // Update the habits array
-    setHabits(habits.map(h => h.id === finalUpdatedHabit.id ? finalUpdatedHabit : h));
+    // Create a completely new array with the updated habit
+    const updatedHabits = habits.map(h => {
+      if (h.id === finalUpdatedHabit.id) {
+        return finalUpdatedHabit;
+      }
+      return h;
+    });
+    
+    // Update the state with the new array
+    setHabits(updatedHabits);
     
     // Log after update
-    setTimeout(() => {
-      console.log("After update - Updated habits:", 
-        habits.map(h => ({ id: h.id, title: h.title }))
-      );
-    }, 100);
+    console.log("Immediately after update - Updated habits array:", 
+      updatedHabits.map(h => ({ id: h.id, title: h.title }))
+    );
+    
+    // Save to localStorage to persist changes
+    try {
+      localStorage.setItem('maximost-habits', JSON.stringify(updatedHabits));
+      console.log("Habits saved to localStorage");
+    } catch (err) {
+      console.error("Failed to save habits to localStorage:", err);
+    }
   };
   
   // Delete a habit
