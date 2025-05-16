@@ -32,8 +32,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-import { EditHabitDialog } from "./edit-habit-dialog";
-
 // Types for habits
 type HabitFrequency = "daily" | "weekly" | "custom" | "2x-week" | "3x-week" | "4x-week";
 type HabitCategory = "health" | "fitness" | "mind" | "social" | "custom";
@@ -80,8 +78,7 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
 }) => {
   const [weekOffset, setWeekOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
+  // Removed edit dialog state as it's now managed in the dashboard component
   
   // Generate dates for the week
   const today = new Date();
@@ -121,16 +118,10 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
     }
   };
 
-  // Function to handle editing a habit
+  // Function to handle editing a habit - now uses parent component's edit function
   const handleEditHabit = (habit: Habit) => {
-    setSelectedHabit(habit);
-    setEditDialogOpen(true);
-  };
-  
-  // Function to save updated habit
-  const handleSaveHabit = (updatedHabit: Habit) => {
     if (onUpdateHabit) {
-      onUpdateHabit(updatedHabit);
+      onUpdateHabit(habit);
     }
   };
 
@@ -386,14 +377,7 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
         </div>
       </div>
       
-      {/* Edit Habit Dialog */}
-      <EditHabitDialog 
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        habit={selectedHabit}
-        onSave={handleSaveHabit}
-        onDelete={onDeleteHabit}
-      />
+      {/* Edit Habit Dialog moved to dashboard component */}
     </div>
   );
 };
