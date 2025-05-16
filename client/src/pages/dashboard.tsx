@@ -141,6 +141,7 @@ export default function Dashboard() {
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
   const [showCustomHabitDialog, setShowCustomHabitDialog] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const { user } = useUser();
   
   // Get selected date range for Weekly View - starts on Monday of current week
@@ -312,7 +313,7 @@ export default function Dashboard() {
                         onUpdateHabit={editHabit}
                         onDeleteHabit={deleteHabit}
                         onReorderHabits={(reorderedHabits) => setHabits(reorderedHabits)}
-                        onEditHabit={(habit) => editHabit(habit)}
+                        onEditHabit={(habit) => setEditingHabit(habit)}
                       />
                       
                       <div className="mt-8">
