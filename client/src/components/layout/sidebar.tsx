@@ -28,7 +28,8 @@ import {
   UserPlus,
   DollarSign,
   Zap,
-  BadgeCheck
+  BadgeCheck,
+  Mail
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
@@ -47,7 +48,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       path: "/home",
       name: "Home",
       icon: <Home className="w-5 h-5" />,
-      description: "Welcome to Maximus Gains"
+      description: "Welcome to MaxiMost"
     },
     { 
       path: "/dashboard", 
@@ -55,28 +56,25 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <CheckSquare className="w-5 h-5 text-green-500" />,
       description: "Your all-in-one habit tracking center"
     },
-    // Removed sortable dashboard option as it's now integrated into the main dashboard
     { 
       path: "/habit-building", 
       name: "Habit Building", 
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
     },
+    { 
+      path: "/habit-stacks", 
+      name: "Habit Stacks", 
+      icon: <Zap className="w-5 h-5 text-purple-500" />,
+      description: "Pre-built habit routines for optimal results"
+    },
     
-    // Top resources
-    
-    // Four Pillars of Maximum Performance
+    // Categories section
     { 
       path: "/principles", 
       name: "Stoic Principles", 
       icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
       description: "High ROI principles from top performers"
-    },
-    { 
-      path: "/sugar", 
-      name: "Sugar Education", 
-      icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
-      description: "Understanding sugar's health impacts" 
     },
     { 
       path: "/supplements", 
@@ -85,18 +83,43 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Expert-recommended supplements with highest ROI"
     },
     { 
+      path: "/experts-unified", 
+      name: "Health Experts", 
+      icon: <Users className="w-5 h-5 text-emerald-500" />,
+      description: "Follow the top evidence-based health experts"
+    },
+    { 
       path: "/research", 
       name: "Scientific Research", 
-      icon: <BookOpenText className="w-5 h-5 text-emerald-500" />,
+      icon: <BookOpenText className="w-5 h-5 text-indigo-500" />,
       description: "Evidence-based health & fitness research"
     },
+    
+    // Additional resources
     { 
       path: "/progress", 
       name: "Track Progress", 
-      icon: <BarChart3 className="w-5 h-5" />,
+      icon: <BarChart3 className="w-5 h-5 text-blue-500" />,
       description: "Monitor your body stats and health metrics"
     },
-    { path: "/community", name: "Community", icon: <MessageSquare className="w-5 h-5" /> }
+    { 
+      path: "/motivation", 
+      name: "Motivation", 
+      icon: <Heart className="w-5 h-5 text-red-500" />,
+      description: "Daily motivation and inspiration"
+    },
+    { 
+      path: "/community", 
+      name: "Community", 
+      icon: <MessageSquare className="w-5 h-5 text-purple-500" />,
+      description: "Connect with like-minded individuals"
+    },
+    { 
+      path: "/contact", 
+      name: "Contact Us", 
+      icon: <Mail className="w-5 h-5 text-blue-500" />,
+      description: "Get in touch with MaxiMost team"
+    }
   ];
 
   // Handle navigation using wouter (location/setLocation already defined above)

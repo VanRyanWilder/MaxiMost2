@@ -17,7 +17,7 @@ import IntegratedHabits from "@/pages/integrated-habits";
 import HabitTracker from "@/pages/habit-tracker"; // New weekly calendar habit tracker
 import HabitStacks from "@/pages/habit-stacks";
 // Individual pages for performance cornerstones (previously four pillars)
-import Supplements from "@/pages/supplements";
+import Supplements from "@/pages/supplements-unified";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
 import Principles from "@/pages/principles";
@@ -32,9 +32,10 @@ import Progress from "@/pages/progress";
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
 import Motivation from "@/pages/motivation";
-import Experts from "@/pages/experts";
+import Experts from "@/pages/experts-unified";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
+import Contact from "@/pages/contact";
 import HabitViewTest from "@/pages/habit-view-test";
 import SortableViewTest from "@/pages/sortable-view-test";
 
@@ -160,6 +161,10 @@ function App() {
       
       <Route path="/branding">
         <PrivateRoute component={Branding} />
+      </Route>
+      
+      <Route path="/contact">
+        <Route component={Contact} />
       </Route>
       
       <Route path="/pricing">
