@@ -7,7 +7,6 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
     if (typeof window === 'undefined') {
       return initialValue;
     }
-    
     try {
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
@@ -15,14 +14,14 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.error('Error reading from localStorage', error);
+      console.log(error);
       return initialValue;
     }
   });
-  
+
   // Return a wrapped version of useState's setter function that ...
   // ... persists the new value to localStorage.
-  const setValue = (value: T) => {
+  const setValue = (value: T | ((val: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
       const valueToStore =
@@ -35,28 +34,21 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
       }
     } catch (error) {
       // A more advanced implementation would handle the error case
-      console.error('Error writing to localStorage', error);
+      console.log(error);
     }
   };
-  
-  // Listen for changes to this local storage key in other tabs/windows
+
+  // Subscribe to changes in other tabs/windows
   useEffect(() => {
-    function handleStorageChange(e: StorageEvent) {
+    const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key && e.newValue) {
         setStoredValue(JSON.parse(e.newValue));
       }
-    }
+    };
     
-    // Subscribe to storage change events
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', handleStorageChange);
-      
-      // Cleanup
-      return () => {
-        window.removeEventListener('storage', handleStorageChange);
-      };
-    }
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [key]);
-  
+
   return [storedValue, setValue];
 }
