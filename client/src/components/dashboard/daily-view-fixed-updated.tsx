@@ -273,15 +273,43 @@ export function DailyViewFixedUpdated({
               <div className="space-y-2">
                 {displayedAbsoluteHabits.map(habit => (
                   <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                    <div className="flex justify-between p-3 rounded-lg border">
+                    <div className={`flex justify-between p-3 rounded-lg border ${
+                        habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
+                        habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
+                        habit.iconColor === 'amber' ? 'border-amber-200 dark:border-amber-900' :
+                        habit.iconColor === 'yellow' ? 'border-yellow-200 dark:border-yellow-900' :
+                        habit.iconColor === 'green' ? 'border-green-200 dark:border-green-900' :
+                        habit.iconColor === 'indigo' ? 'border-indigo-200 dark:border-indigo-900' :
+                        habit.iconColor === 'purple' ? 'border-purple-200 dark:border-purple-900' :
+                        'border-blue-200 dark:border-blue-900'
+                      }`}
+                      style={{
+                        backgroundColor: habit.iconColor === 'red' ? '#FEF2F2' :
+                                         habit.iconColor === 'orange' ? '#FFF7ED' :
+                                         habit.iconColor === 'amber' ? '#FFFBEB' :
+                                         habit.iconColor === 'yellow' ? '#FEFCE8' :
+                                         habit.iconColor === 'green' ? '#F0FDF4' :
+                                         habit.iconColor === 'indigo' ? '#EEF2FF' :
+                                         habit.iconColor === 'purple' ? '#FAF5FF' :
+                                         '#EFF6FF'
+                      }}>
                       <div className="flex items-center">
-                        <div className={`mr-3 p-1 rounded ${habit.iconColor ? `bg-${habit.iconColor}-100` : 'bg-blue-100'}`}>
-                          {getHabitIcon(habit.icon)}
+                        <div className="mr-3 p-1 rounded">
+                          {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
                         <div>
-                          <div className="font-medium flex items-center">
+                          <div className={`font-medium flex items-center ${
+                            habit.iconColor === 'red' ? 'text-red-600 dark:text-red-400' :
+                            habit.iconColor === 'orange' ? 'text-orange-600 dark:text-orange-400' :
+                            habit.iconColor === 'amber' ? 'text-amber-600 dark:text-amber-400' :
+                            habit.iconColor === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' :
+                            habit.iconColor === 'green' ? 'text-green-600 dark:text-green-400' :
+                            habit.iconColor === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' :
+                            habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
+                            'text-blue-600 dark:text-blue-400'
+                          }`}>
                             {habit.title}
-                            {habit.streak > 0 && (
+                            {habit.streak && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                               </Badge>
