@@ -24,6 +24,16 @@ const colorOptions = [
   { name: 'Purple', value: 'purple', bgClass: 'bg-purple-100', textClass: 'text-purple-500' },
 ];
 
+// Frequency options with labels
+const frequencyOptions = [
+  { value: 'daily', label: 'Daily' },
+  { value: '2x-week', label: '2x per week' },
+  { value: '3x-week', label: '3x per week' },
+  { value: '4x-week', label: '4x per week' },
+  { value: '5x-week', label: '5x per week' },
+  { value: '6x-week', label: '6x per week' },
+];
+
 export function SimpleHabitEditor({
   open,
   onOpenChange,
@@ -33,28 +43,26 @@ export function SimpleHabitEditor({
 }: SimpleHabitEditorProps) {
   // Form state
   const [title, setTitle] = useState('');
-  const [frequency, setFrequency] = useState<HabitFrequency>('daily');
+  const [frequency, setFrequency] = useState('daily');
   const [color, setColor] = useState('blue');
   const [id, setId] = useState('');
   
   // Load habit data when dialog opens
   useEffect(() => {
-    if (open) {
-      if (habit) {
-        // Editing existing habit
-        setTitle(habit.title);
-        setFrequency(habit.frequency);
-        setColor(habit.iconColor || 'blue');
-        setId(habit.id);
-        console.log('Loading habit for edit:', habit.title, habit.iconColor);
-      } else {
-        // Creating new habit
-        setTitle('');
-        setFrequency('daily');
-        setColor('blue');
-        setId(`habit-${Date.now()}`);
-        console.log('Creating new habit');
-      }
+    if (open && habit) {
+      // Editing existing habit
+      setTitle(habit.title);
+      setFrequency(typeof habit.frequency === 'string' ? habit.frequency : 'daily');
+      setColor(habit.iconColor || 'blue');
+      setId(habit.id);
+      console.log('Loading habit for edit:', habit.title, habit.iconColor);
+    } else if (open) {
+      // Creating new habit
+      setTitle('');
+      setFrequency('daily');
+      setColor('blue');
+      setId(`habit-${Date.now()}`);
+      console.log('Creating new habit');
     }
   }, [open, habit]);
   
@@ -75,23 +83,20 @@ export function SimpleHabitEditor({
       impact: 8,
       effort: 4,
       timeCommitment: '5 min',
-      frequency: frequency,
+      frequency: frequency as HabitFrequency,
       isAbsolute: frequency === 'daily',
-      category: 'health',
+      category: 'health' as HabitCategory,
       streak: habit?.streak || 0,
       createdAt: habit?.createdAt || new Date()
     };
     
-    console.log('Saving habit:', updatedHabit.title);
-    console.log('Color:', updatedHabit.iconColor);
+    console.log('Saving habit:', updatedHabit);
     
-    // Close dialog first to prevent state conflicts
+    // Close dialog first
     onOpenChange(false);
     
-    // Call parent save function with a small delay
-    setTimeout(() => {
-      onSave(updatedHabit);
-    }, 50);
+    // Call parent save function
+    onSave(updatedHabit);
   };
   
   // Handle delete
@@ -99,9 +104,7 @@ export function SimpleHabitEditor({
     if (window.confirm('Are you sure you want to delete this habit?')) {
       onOpenChange(false);
       
-      setTimeout(() => {
-        if (onDelete) onDelete(id);
-      }, 50);
+      if (onDelete) onDelete(id);
     }
   };
   
@@ -128,19 +131,18 @@ export function SimpleHabitEditor({
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="frequency" className="text-right">Frequency</Label>
             <Select 
-              value={frequency} 
-              onValueChange={(value: HabitFrequency) => setFrequency(value)}
+              value={frequency}
+              onValueChange={setFrequency}
             >
               <SelectTrigger className="col-span-3">
                 <SelectValue placeholder="Select frequency" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="2x-week">2x per week</SelectItem>
-                <SelectItem value="3x-week">3x per week</SelectItem>
-                <SelectItem value="4x-week">4x per week</SelectItem>
-                <SelectItem value="5x-week">5x per week</SelectItem>
-                <SelectItem value="6x-week">6x per week</SelectItem>
+                {frequencyOptions.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
