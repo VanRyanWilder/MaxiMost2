@@ -146,7 +146,63 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   
   // For edit habit dialog
   const handleEditHabit = (habit: Habit) => {
-    setSelectedHabit(habit);
+    console.log("SortableHabitViewModes - Edit habit clicked:", habit);
+    
+    // Make sure we're passing a fully populated habit with MaxiMost properties
+    let iconColor = habit.iconColor || "blue";
+    let icon = habit.icon || "zap";
+    let category = habit.category;
+    
+    // Convert legacy categories to MaxiMost categories if needed
+    if (category === "health" || category === "fitness") {
+      category = "physical";
+    } else if (category === "mind") {
+      category = "mental";
+    } else if (category === "social") {
+      category = "relationships";
+    } else if (category === "finance" || category === "productivity") {
+      category = "financial";
+    }
+    
+    // Ensure appropriate colors for MaxiMost categories
+    switch (category) {
+      case "physical": 
+        iconColor = "red"; 
+        icon = "dumbbell";
+        break;
+      case "nutrition": 
+        iconColor = "orange"; 
+        icon = "utensils";
+        break;
+      case "sleep": 
+        iconColor = "indigo"; 
+        icon = "moon";
+        break;
+      case "mental": 
+        iconColor = "yellow"; 
+        icon = "lightbulb";
+        break;
+      case "relationships": 
+        iconColor = "green"; 
+        icon = "users";
+        break;
+      case "financial": 
+        iconColor = "emerald"; 
+        icon = "dollar-sign";
+        break;
+    }
+    
+    // Create enriched habit with validated properties
+    const enrichedHabit = {
+      ...habit,
+      iconColor,
+      icon,
+      category
+    };
+    
+    console.log("SortableHabitViewModes - Opening edit dialog with:", enrichedHabit);
+    
+    setSelectedHabit(enrichedHabit);
     setEditDialogOpen(true);
   };
   
