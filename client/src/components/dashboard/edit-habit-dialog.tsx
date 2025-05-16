@@ -255,28 +255,53 @@ export function EditHabitDialog({
       // Make sure isAbsolute is set correctly based on frequency
       const isDaily = editedHabit.frequency === 'daily';
       
+      // Get the appropriate color for the category if it's a MaxiMost category
+      let iconColor = editedHabit.iconColor || "blue";
+      
+      switch (editedHabit.category) {
+        case "physical": iconColor = "red"; break;
+        case "nutrition": iconColor = "orange"; break; 
+        case "sleep": iconColor = "indigo"; break;
+        case "mental": iconColor = "yellow"; break;
+        case "relationships": iconColor = "green"; break;
+        case "financial": iconColor = "emerald"; break;
+      }
+      
+      // Get appropriate icon if needed
+      let icon = editedHabit.icon;
+      if (!icon || icon === "zap") {
+        switch (editedHabit.category) {
+          case "physical": icon = "dumbbell"; break;
+          case "nutrition": icon = "utensils"; break;
+          case "sleep": icon = "moon"; break;
+          case "mental": icon = "brain"; break;
+          case "relationships": icon = "users"; break;
+          case "financial": icon = "circleDollarSign"; break;
+          default: icon = "zap";
+        }
+      }
+      
       // Prepare the final habit with updated properties
       const finalHabit = {
         ...editedHabit,
         // Make sure daily habits are always absolute
         isAbsolute: isDaily,
+        // Use appropriate icon and color
+        icon: icon,
+        iconColor: iconColor,
         // If using a custom category, set the category
         ...(showCustomCategoryInput && customCategory ? { category: customCategory as HabitCategory } : {})
       };
       
-      console.log("SAVE BUTTON CLICKED - Preparing habit data:", { 
+      console.log("EDIT DIALOG - Saving habit with data:", { 
         id: finalHabit.id,
         title: finalHabit.title,
+        category: finalHabit.category,
+        icon: finalHabit.icon,
+        iconColor: finalHabit.iconColor,
         frequency: finalHabit.frequency,
-        iconColor: finalHabit.iconColor, 
         isAbsolute: finalHabit.isAbsolute
       });
-      
-      // Force finalHabit to have iconColor even if it's missing somehow
-      if (!finalHabit.iconColor) {
-        finalHabit.iconColor = "blue"; // Default fallback
-        console.log("WARNING: Had to add missing iconColor");
-      }
       
       // Call the parent's onSave function directly
       onSave(finalHabit);
@@ -455,31 +480,7 @@ export function EditHabitDialog({
                   </div>
                 </SelectItem>
                 
-                {/* Legacy categories for backward compatibility */}
-                <SelectItem value="health">
-                  <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-blue-500" />
-                    <span>Health (Legacy)</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="fitness">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4 text-blue-500" />
-                    <span>Fitness (Legacy)</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="mind">
-                  <div className="flex items-center gap-2">
-                    <Brain className="h-4 w-4 text-blue-500" />
-                    <span>Mind (Legacy)</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="social">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    <span>Social (Legacy)</span>
-                  </div>
-                </SelectItem>
+                {/* Legacy categories are hidden for clarity */}
               </SelectContent>
             </Select>
           </div>
