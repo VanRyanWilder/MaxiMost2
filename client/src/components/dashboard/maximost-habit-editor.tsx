@@ -61,6 +61,7 @@ export function MaximostHabitEditor({
   const [color, setColor] = useState('blue');
   const [id, setId] = useState('');
   const [isAbsolute, setIsAbsolute] = useState(true);
+  const [category, setCategory] = useState<HabitCategory>('physical');
   
   // Reset form when the dialog opens/closes or the habit changes
   useEffect(() => {
@@ -76,7 +77,8 @@ export function MaximostHabitEditor({
       setColor(habit.iconColor || 'blue');
       setId(habit.id);
       setIsAbsolute(habit.isAbsolute);
-      console.log('Editing habit:', habit.title, 'with color:', habit.iconColor);
+      setCategory(habit.category as HabitCategory || 'physical');
+      console.log('Editing habit:', habit.title, 'with color:', habit.iconColor, 'and category:', habit.category);
     } else {
       // Creating a new habit
       setTitle('');
@@ -85,6 +87,7 @@ export function MaximostHabitEditor({
       setColor('blue');
       setId(`habit-${Date.now()}`);
       setIsAbsolute(true);
+      setCategory('physical');
     }
   }, [open, habit]);
   
@@ -99,19 +102,19 @@ export function MaximostHabitEditor({
       return;
     }
     
-    // Create the habit object
+    // Create the habit object with our selected category
     const updatedHabit: Habit = {
       id: id,
       title: title,
       description: description,
-      icon: habit?.icon || 'check-square',
+      icon: getCategoryIcon(category), // Get icon based on category
       iconColor: color,
       impact: habit?.impact || 8,
       effort: habit?.effort || 4,
       timeCommitment: habit?.timeCommitment || '5 min',
       frequency: frequency as HabitFrequency,
       isAbsolute: frequency === 'daily',
-      category: habit?.category || 'health',
+      category: category, // Use the selected category 
       streak: habit?.streak || 0,
       createdAt: habit?.createdAt || new Date()
     };
@@ -123,6 +126,29 @@ export function MaximostHabitEditor({
     
     // Call parent's save function
     onSave(updatedHabit);
+  };
+  
+  // Get an appropriate icon based on category
+  const getCategoryIcon = (cat: HabitCategory): string => {
+    switch (cat) {
+      // MaxiMost categories
+      case 'physical': return 'dumbbell';
+      case 'nutrition': return 'utensils';
+      case 'sleep': return 'moon';
+      case 'mental': return 'lightbulb';
+      case 'relationships': return 'users';
+      case 'financial': return 'dollar-sign';
+      
+      // Legacy categories
+      case 'health': return 'droplets';
+      case 'fitness': return 'dumbbell';
+      case 'mind': return 'brain';
+      case 'social': return 'users';
+      case 'productivity': return 'zap';
+      case 'finance': return 'dollar-sign';
+      
+      default: return 'check-square';
+    }
   };
   
   const handleDelete = () => {
@@ -184,11 +210,14 @@ export function MaximostHabitEditor({
             </Select>
           </div>
           
-          {/* Category - disabled with "coming soon" */}
+          {/* Category selector */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">Category</Label>
-            <div className="col-span-3 flex items-center gap-2">
-              <Select disabled defaultValue="physical">
+            <div className="col-span-3">
+              <Select 
+                value={category}
+                onValueChange={(value) => setCategory(value as HabitCategory)}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
@@ -200,7 +229,6 @@ export function MaximostHabitEditor({
                   ))}
                 </SelectContent>
               </Select>
-              <span className="text-xs font-semibold text-amber-500">Coming Soon</span>
             </div>
           </div>
           
