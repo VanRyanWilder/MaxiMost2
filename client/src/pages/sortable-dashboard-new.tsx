@@ -368,8 +368,17 @@ export default function SortableDashboard() {
   
   // Delete a habit
   const deleteHabit = (habitId: string) => {
+    console.log("Attempting to delete habit with ID:", habitId);
+    console.log("Before delete - Habits count:", habits.length);
+    console.log("Matching habit:", habits.find(h => h.id === habitId));
+    
     setHabits(habits.filter(h => h.id !== habitId));
     setCompletions(completions.filter(c => c.habitId !== habitId));
+    
+    // Log after the delete operation
+    setTimeout(() => {
+      console.log("After delete - Habits count:", habits.length);
+    }, 100);
   };
   
   // Shortcut to open edit dialog for a habit
