@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Habit, HabitFrequency, HabitCategory } from '@/types/habit';
-import { Check } from 'lucide-react';
+import { Check, Trash2 } from 'lucide-react';
 
 type SimpleHabitEditorProps = {
   open: boolean;
@@ -15,7 +15,7 @@ type SimpleHabitEditorProps = {
   onDelete?: (habitId: string) => void;
 };
 
-// Color options
+// Color options with visual indicators
 const colorOptions = [
   { name: 'Blue', value: 'blue', bgClass: 'bg-blue-100', textClass: 'text-blue-500' },
   { name: 'Green', value: 'green', bgClass: 'bg-green-100', textClass: 'text-green-500' },
@@ -24,7 +24,7 @@ const colorOptions = [
   { name: 'Purple', value: 'purple', bgClass: 'bg-purple-100', textClass: 'text-purple-500' },
 ];
 
-// Frequency options with labels
+// Frequency options
 const frequencyOptions = [
   { value: 'daily', label: 'Daily' },
   { value: '2x-week', label: '2x per week' },
@@ -34,6 +34,19 @@ const frequencyOptions = [
   { value: '6x-week', label: '6x per week' },
 ];
 
+// Category options with descriptions
+const categoryOptions = [
+  { value: 'physical', label: 'Physical Training', icon: 'dumbbell', color: 'red' },
+  { value: 'nutrition', label: 'Nutrition & Fueling', icon: 'utensils', color: 'orange' },
+  { value: 'sleep', label: 'Sleep & Hygiene', icon: 'moon', color: 'indigo' },
+  { value: 'mental', label: 'Mental Acuity & Growth', icon: 'lightbulb', color: 'yellow' },
+  { value: 'relationships', label: 'Relationships & Community', icon: 'users', color: 'green' },
+  { value: 'financial', label: 'Financial Habits', icon: 'dollar-sign', color: 'emerald' },
+];
+
+/**
+ * A simplified habit editor dialog with improved state management
+ */
 export function SimpleHabitEditor({
   open,
   onOpenChange,
@@ -41,78 +54,114 @@ export function SimpleHabitEditor({
   onSave,
   onDelete
 }: SimpleHabitEditorProps) {
-  // Form state
-  const [title, setTitle] = useState('');
-  const [frequency, setFrequency] = useState('daily');
-  const [color, setColor] = useState('blue');
-  const [id, setId] = useState('');
+  // Create a local copy of the habit being edited
+  const [habitData, setHabitData] = useState<Habit | null>(null);
+  const [isNew, setIsNew] = useState(false);
   
-  // Load habit data when dialog opens
+  // Reset the form data when the dialog opens or habit changes
   useEffect(() => {
-    if (open && habit) {
-      // Editing existing habit
-      setTitle(habit.title);
-      setFrequency(typeof habit.frequency === 'string' ? habit.frequency : 'daily');
-      setColor(habit.iconColor || 'blue');
-      setId(habit.id);
-      console.log('Loading habit for edit:', habit.title, habit.iconColor);
-    } else if (open) {
-      // Creating new habit
-      setTitle('');
-      setFrequency('daily');
-      setColor('blue');
-      setId(`habit-${Date.now()}`);
-      console.log('Creating new habit');
+    if (!open) {
+      // Ensure we clear the state when dialog closes
+      return;
     }
+    
+    // Creating a new habit
+    if (!habit) {
+      const newId = `habit-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+      setHabitData({
+        id: newId,
+        title: '',
+        description: '',
+        icon: 'check-square',
+        iconColor: 'blue',
+        impact: 8,
+        effort: 4,
+        timeCommitment: '5 min',
+        frequency: 'daily' as HabitFrequency,
+        isAbsolute: true,
+        category: 'physical' as HabitCategory,
+        streak: 0,
+        createdAt: new Date()
+      });
+      setIsNew(true);
+      return;
+    }
+    
+    // Editing an existing habit - make a deep copy to avoid mutation
+    setHabitData({...habit});
+    setIsNew(false);
   }, [open, habit]);
+  
+  // Handle field updates
+  const updateField = <K extends keyof Habit>(field: K, value: Habit[K]) => {
+    if (!habitData) return;
+    
+    setHabitData(prev => {
+      if (!prev) return prev;
+      
+      // Special handling for frequency to update isAbsolute automatically
+      if (field === 'frequency') {
+        return {
+          ...prev,
+          [field]: value,
+          isAbsolute: value === 'daily'
+        };
+      }
+      
+      return {
+        ...prev,
+        [field]: value
+      };
+    });
+  };
   
   // Handle save
   const handleSave = () => {
-    if (!title.trim()) {
+    if (!habitData || !habitData.title.trim()) {
       alert('Please enter a habit title');
       return;
     }
     
-    // Create final habit object
-    const updatedHabit: Habit = {
-      id: id,
-      title: title,
-      description: '',
-      icon: 'check-square',
-      iconColor: color,
-      impact: 8,
-      effort: 4,
-      timeCommitment: '5 min',
-      frequency: frequency as HabitFrequency,
-      isAbsolute: frequency === 'daily',
-      category: 'health' as HabitCategory,
-      streak: habit?.streak || 0,
-      createdAt: habit?.createdAt || new Date()
+    // Create a clean copy of the habit data for saving
+    const habitToSave: Habit = {
+      ...habitData,
+      title: habitData.title.trim(),
+      // Ensure these related fields are consistent
+      isAbsolute: habitData.frequency === 'daily'
     };
     
-    console.log('Saving habit:', updatedHabit);
-    
-    // Close dialog first
+    // Close the dialog first
     onOpenChange(false);
     
-    // Call parent save function
-    onSave(updatedHabit);
+    // Add a small delay to ensure dialog is closed before state updates
+    setTimeout(() => {
+      onSave(habitToSave);
+    }, 50);
   };
   
   // Handle delete
   const handleDelete = () => {
+    if (!habitData || !onDelete) return;
+    
     if (window.confirm('Are you sure you want to delete this habit?')) {
+      // Close dialog first
       onOpenChange(false);
       
-      if (onDelete) onDelete(id);
+      // Small delay to prevent state update conflicts
+      setTimeout(() => {
+        onDelete(habitData.id);
+      }, 50);
     }
   };
+  
+  // Don't render anything if habit data is not loaded yet
+  if (!habitData) return null;
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{habit ? 'Edit Habit' : 'Create New Habit'}</DialogTitle>
+          <DialogTitle>{isNew ? 'Create New Habit' : 'Edit Habit'}</DialogTitle>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
@@ -121,9 +170,10 @@ export function SimpleHabitEditor({
             <Label htmlFor="title" className="text-right">Title</Label>
             <Input
               id="title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
+              value={habitData.title}
+              onChange={e => updateField('title', e.target.value)}
               className="col-span-3"
+              placeholder="Habit name"
             />
           </div>
           
@@ -131,10 +181,10 @@ export function SimpleHabitEditor({
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="frequency" className="text-right">Frequency</Label>
             <Select 
-              value={frequency}
-              onValueChange={setFrequency}
+              value={habitData.frequency}
+              onValueChange={val => updateField('frequency', val as HabitFrequency)}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger id="frequency" className="col-span-3">
                 <SelectValue placeholder="Select frequency" />
               </SelectTrigger>
               <SelectContent>
@@ -151,17 +201,16 @@ export function SimpleHabitEditor({
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">Category</Label>
             <div className="col-span-3 flex items-center gap-2">
-              <Select disabled value="health">
+              <Select disabled value={habitData.category}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="physical">Physical Training</SelectItem>
-                  <SelectItem value="nutrition">Nutrition & Fueling</SelectItem>
-                  <SelectItem value="sleep">Sleep & Hygiene</SelectItem>
-                  <SelectItem value="mental">Mental Acuity & Growth</SelectItem>
-                  <SelectItem value="relationships">Relationships & Community</SelectItem>
-                  <SelectItem value="financial">Financial Habits</SelectItem>
+                  {categoryOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <span className="text-xs font-semibold text-amber-500">Coming Soon</span>
@@ -177,11 +226,11 @@ export function SimpleHabitEditor({
                   key={option.value}
                   type="button"
                   className={`w-8 h-8 rounded-full ${option.bgClass} flex items-center justify-center
-                    ${color === option.value ? 'ring-2 ring-primary ring-offset-2' : ''}
+                    ${habitData.iconColor === option.value ? 'ring-2 ring-primary ring-offset-2' : ''}
                   `}
-                  onClick={() => setColor(option.value)}
+                  onClick={() => updateField('iconColor', option.value)}
                 >
-                  {color === option.value && (
+                  {habitData.iconColor === option.value && (
                     <Check className={`h-4 w-4 ${option.textClass}`} />
                   )}
                 </button>
@@ -191,8 +240,9 @@ export function SimpleHabitEditor({
         </div>
         
         <DialogFooter className="flex justify-between">
-          {habit && onDelete && (
-            <Button variant="destructive" onClick={handleDelete}>
+          {!isNew && onDelete && (
+            <Button variant="destructive" onClick={handleDelete} className="mr-auto">
+              <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
           )}
