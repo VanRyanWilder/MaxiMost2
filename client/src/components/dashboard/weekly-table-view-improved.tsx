@@ -3,6 +3,7 @@ import { format, isFuture, addDays, startOfWeek, endOfWeek, isSameDay, startOfDa
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf, CheckCircle, Check as CheckIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -175,9 +176,9 @@ export function WeeklyTableViewImproved({
               return (
                 <div 
                   key={i} 
-                  className={`text-center p-2 ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20 font-medium' : ''}`}
+                  className={`text-center p-2 ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
                 >
-                  <div className="text-xs text-muted-foreground">{format(date, 'EEE')}</div>
+                  <div className="text-xs text-gray-500">{format(date, 'EEE')}</div>
                   <div className={`text-sm ${isCurrentDay ? 'text-blue-600' : ''}`}>{format(date, 'd')}</div>
                 </div>
               );
@@ -201,13 +202,13 @@ export function WeeklyTableViewImproved({
                 
                 return (
                   <TableSortableItem key={habit.id} habit={habit}>
-                    <div className="border-t dark:border-gray-700 py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
+                    <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                       <div className="flex items-center gap-2 px-3 py-2">
                         <div className="flex-shrink-0">
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium text-foreground flex items-center">
+                          <div className="font-medium flex items-center">
                             {habit.title}
                             <div className="ml-2 flex items-center">
                               {habit.streak > 0 && (
@@ -279,8 +280,8 @@ export function WeeklyTableViewImproved({
           </DndContext>
           
           {/* Frequency-based habits section */}
-          <div className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-4">
-            <div className="px-4 py-2 text-sm font-medium text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-md mb-2">
+          <div className="border-t border-gray-100 pt-4 mt-4">
+            <div className="px-4 py-2 text-sm font-medium text-green-700 bg-green-50 rounded-md mb-2">
               Frequency-based Habits
             </div>
             <DndContext
@@ -301,13 +302,13 @@ export function WeeklyTableViewImproved({
                   
                   return (
                     <TableSortableItem key={habit.id} habit={habit}>
-                      <div className="border-t dark:border-gray-700 py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
+                      <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
                         <div className="flex items-center gap-2 px-3 py-2">
                           <div className="flex-shrink-0">
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium text-foreground flex items-center">
+                            <div className="font-medium flex items-center">
                               {habit.title}
                               <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4">
                                 {getFrequencyText(habit.frequency)}
