@@ -341,9 +341,6 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex flex-col">
                 <h3 className="text-lg font-medium">Weekly View</h3>
-                <div className="text-sm text-gray-500">
-                  {format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d')}
-                </div>
               </div>
               <div className="flex items-center space-x-2">
                 {/* Week navigation */}
