@@ -174,8 +174,8 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
     { id: "nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: "#f97316" }, // Orange
     { id: "sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: "#8b5cf6" }, // Indigo
     { id: "mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: "#facc15" }, // Yellow
-    { id: "relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: "#22c55e" }, // Green
-    { id: "financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: "#10b981" }, // Emerald
+    { id: "relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: "#0ea5e9" }, // Blue
+    { id: "financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: "#22c55e" }, // Green
   ];
 
   // Filter metrics based on selection

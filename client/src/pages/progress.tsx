@@ -60,23 +60,41 @@ export default function Progress() {
                       Use these insights to identify patterns, celebrate wins, and refine your approach.
                     </p>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                        <h3 className="font-medium text-blue-700 mb-2 text-sm">Consistency</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                      <div className="md:col-span-2 bg-red-50 border border-red-100 rounded-lg p-4">
+                        <h3 className="font-medium text-red-600 mb-2 text-sm">Physical Training</h3>
                         <p className="text-sm text-gray-600">
-                          Track how regularly you maintain your habits and routines over time.
+                          Track your workout consistency and strength progression.
                         </p>
                       </div>
-                      <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
-                        <h3 className="font-medium text-purple-700 mb-2 text-sm">Performance</h3>
+                      <div className="md:col-span-1 bg-orange-50 border border-orange-100 rounded-lg p-4">
+                        <h3 className="font-medium text-orange-600 mb-2 text-sm">Nutrition</h3>
                         <p className="text-sm text-gray-600">
-                          Measure your physical and mental metrics to track tangible progress.
+                          Monitor your eating habits and fueling patterns.
                         </p>
                       </div>
-                      <div className="bg-green-50 border border-green-100 rounded-lg p-4">
-                        <h3 className="font-medium text-green-700 mb-2 text-sm">Growth</h3>
+                      <div className="md:col-span-1 bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+                        <h3 className="font-medium text-indigo-600 mb-2 text-sm">Sleep</h3>
                         <p className="text-sm text-gray-600">
-                          Visualize your long-term improvement across all aspects of development.
+                          Track your sleep quality and hygiene routines.
+                        </p>
+                      </div>
+                      <div className="md:col-span-1 bg-amber-50 border border-amber-100 rounded-lg p-4">
+                        <h3 className="font-medium text-amber-600 mb-2 text-sm">Mental Growth</h3>
+                        <p className="text-sm text-gray-600">
+                          Measure your cognitive development and learning.
+                        </p>
+                      </div>
+                      <div className="md:col-span-1 bg-blue-50 border border-blue-100 rounded-lg p-4">
+                        <h3 className="font-medium text-blue-600 mb-2 text-sm">Relationships</h3>
+                        <p className="text-sm text-gray-600">
+                          Build and maintain meaningful connections.
+                        </p>
+                      </div>
+                      <div className="md:col-span-2 bg-green-50 border border-green-100 rounded-lg p-4">
+                        <h3 className="font-medium text-green-600 mb-2 text-sm">Financial Habits</h3>
+                        <p className="text-sm text-gray-600">
+                          Track your money management and financial growth routines.
                         </p>
                       </div>
                     </div>
