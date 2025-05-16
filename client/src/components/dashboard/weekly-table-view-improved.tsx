@@ -298,11 +298,20 @@ export function WeeklyTableViewImproved({
                             )}
                           </div>
                           <div className="text-xs text-slate-500 flex items-center">
-                            <span className={`font-medium ${hasMetWeeklyFrequency(habit) ? 'text-green-600' : ''}`}>
-                              {countCompletedDaysInWeek(habit.id)}/{getTargetDays(habit)}
-                            </span>
-                            <span className="text-slate-400 ml-1">days this week</span>
-                            {hasMetWeeklyFrequency(habit) && <span className="text-green-600 ml-1">✓</span>}
+                            {hasMetWeeklyFrequency(habit) ? (
+                              <div className="flex items-center bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2 py-0.5 rounded-md font-medium animate-pulse">
+                                <span className="mr-1">{countCompletedDaysInWeek(habit.id)}/{getTargetDays(habit)}</span>
+                                <span className="text-white">Complete!</span>
+                                <CheckCircle className="h-4 w-4 ml-1 text-white" />
+                              </div>
+                            ) : (
+                              <>
+                                <span className="font-medium">
+                                  {countCompletedDaysInWeek(habit.id)}/{getTargetDays(habit)}
+                                </span>
+                                <span className="text-slate-400 ml-1">days this week</span>
+                              </>
+                            )}
                           </div>
                         </div>
                         
