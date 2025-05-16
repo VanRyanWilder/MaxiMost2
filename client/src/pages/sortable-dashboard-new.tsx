@@ -363,7 +363,34 @@ export default function SortableDashboard() {
   
   // Edit an existing habit
   const editHabit = (updatedHabit: Habit) => {
-    setHabits(habits.map(h => h.id === updatedHabit.id ? updatedHabit : h));
+    console.log("Editing habit:", updatedHabit);
+    console.log("Current habits count:", habits.length);
+    
+    // Make sure updatedHabit.isAbsolute is correctly set based on frequency
+    const isDaily = updatedHabit.frequency === 'daily';
+    
+    // Update the habit with the correct isAbsolute value
+    const finalUpdatedHabit = {
+      ...updatedHabit,
+      isAbsolute: isDaily ? true : updatedHabit.isAbsolute
+    };
+    
+    console.log("Saving with final values:", { 
+      id: finalUpdatedHabit.id,
+      title: finalUpdatedHabit.title,
+      isAbsolute: finalUpdatedHabit.isAbsolute,
+      frequency: finalUpdatedHabit.frequency
+    });
+    
+    // Update the habits array
+    setHabits(habits.map(h => h.id === finalUpdatedHabit.id ? finalUpdatedHabit : h));
+    
+    // Log after update
+    setTimeout(() => {
+      console.log("After update - Updated habits:", 
+        habits.map(h => ({ id: h.id, title: h.title }))
+      );
+    }, 100);
   };
   
   // Delete a habit
