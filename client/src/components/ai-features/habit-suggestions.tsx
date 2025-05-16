@@ -297,7 +297,7 @@ const ATOMIC_HABITS: Record<string, Partial<Habit>[]> = {
   ],
   financial: [
     {
-      title: 'Track today's spending',
+      title: 'Track daily spending',
       description: 'Note any expenses to increase awareness',
       icon: 'dollar',
       iconColor: 'green',
@@ -424,7 +424,7 @@ export function HabitSuggestions({ userHabits, userGoals = [], onAddHabit }: Hab
     setSuggestions(prev => prev.filter(s => s.title !== habitTitle));
   };
 
-  const filteredSuggestions = suggestions.filter(s => !dismissed[s.title]);
+  const filteredSuggestions = suggestions.filter(s => s.title && !dismissed[s.title]);
 
   return (
     <div className="space-y-4">
@@ -455,7 +455,7 @@ export function HabitSuggestions({ userHabits, userGoals = [], onAddHabit }: Hab
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 rounded-full"
-                    onClick={() => handleDismiss(habit.title)}
+                    onClick={() => habit.title ? handleDismiss(habit.title) : null}
                   >
                     <X className="h-4 w-4" />
                   </Button>
