@@ -28,7 +28,10 @@ import {
   Trash,
   Sun,
   Clock,
-  CheckSquare
+  CheckSquare,
+  Pill,
+  Bed,
+  Utensils
 } from 'lucide-react';
 import {
   calculateCompletionRate,
