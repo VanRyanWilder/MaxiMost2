@@ -2,7 +2,7 @@ import React from "react";
 import { format, isFuture } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf } from "lucide-react";
+import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf, CheckCircle, Check as CheckIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
