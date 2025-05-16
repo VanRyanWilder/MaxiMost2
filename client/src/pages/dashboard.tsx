@@ -9,7 +9,8 @@ import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitViewModes } from "@/components/dashboard/habit-view-modes";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
-import { FixHabitDialog } from "@/components/dashboard/fix-habit-dialog";
+import { SortableHabitViewModesFixed } from "@/components/dashboard/sortable-habit-view-modes-fixed";
+import { UnifiedHabitDialog } from "@/components/dashboard/unified-habit-dialog";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
 import { 
@@ -773,7 +774,7 @@ export default function Dashboard() {
         </PageContainer>
         
         {/* Unified Habit Dialog for both adding and editing habits */}
-        <FixHabitDialog 
+        <UnifiedHabitDialog 
           open={!!editingHabit || showCustomHabitDialog} 
           onOpenChange={(open) => {
             if (!open) {
@@ -781,21 +782,7 @@ export default function Dashboard() {
               setShowCustomHabitDialog(false);
             }
           }}
-          habit={editingHabit || {
-            id: `h-${Date.now()}`,
-            title: "New Habit",
-            description: "Description of your new habit",
-            icon: "activity",
-            iconColor: "#3b82f6",
-            impact: 8,
-            effort: 4,
-            timeCommitment: '10 min',
-            frequency: 'daily' as HabitFrequency,
-            isAbsolute: true,
-            category: "health" as HabitCategory,
-            streak: 0,
-            createdAt: new Date()
-          }}
+          habit={editingHabit}
           onSave={(updatedHabit) => {
             if (editingHabit) {
               // If we're editing an existing habit
