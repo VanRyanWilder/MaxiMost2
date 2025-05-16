@@ -34,7 +34,11 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement
-
+    
+    // Add a class to disable transitions temporarily
+    root.classList.add("disable-transitions")
+    
+    // Remove existing theme classes
     root.classList.remove("light", "dark")
 
     if (theme === "system") {
@@ -44,10 +48,16 @@ export function ThemeProvider({
         : "light"
 
       root.classList.add(systemTheme)
-      return
+    } else {
+      root.classList.add(theme)
     }
-
-    root.classList.add(theme)
+    
+    // Re-enable transitions after a short delay to prevent flashing
+    const transitionTimeout = setTimeout(() => {
+      root.classList.remove("disable-transitions")
+    }, 100)
+    
+    return () => clearTimeout(transitionTimeout)
   }, [theme])
 
   const value = {
