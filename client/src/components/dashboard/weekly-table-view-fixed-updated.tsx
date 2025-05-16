@@ -215,7 +215,7 @@ export function WeeklyTableViewFixedUpdated({
         <div className="min-w-[800px]">
           {/* Day headers */}
           <div className="grid grid-cols-[2fr_repeat(7,1fr)] border-b">
-            <div className="p-2 font-medium text-sm">Habit</div>
+            <div className="p-2 font-medium text-sm"></div>
             {weekDates.map((date, i) => {
               const isCurrentDay = isSameDay(date, currentDay);
               return (
@@ -367,6 +367,12 @@ export function WeeklyTableViewFixedUpdated({
                                   </Badge>
                                 )}
                               </div>
+                              
+                              {habit.description && (
+                                <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                  {habit.description}
+                                </div>
+                              )}
 
                               {/* Enhanced progress visualization */}
                               <div className="text-xs mt-1">
