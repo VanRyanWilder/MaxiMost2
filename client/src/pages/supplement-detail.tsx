@@ -33,6 +33,8 @@ import {
   ExternalLink
 } from "lucide-react";
 import { ReviewList } from "@/components/supplements/review-list";
+import { RatingStars } from "@/components/supplements/rating-stars";
+import { ReviewSummary } from "@/components/supplements/review-summary";
 import {
   Accordion,
   AccordionContent,
@@ -424,13 +426,34 @@ export default function SupplementDetailPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    {/* Import and use the ReviewList component */}
-                    <ReviewList 
-                      supplementId={supplement.id}
-                      supplementName={supplement.name}
-                      overallRating={supplement.rating}
-                      reviewCount={supplement.reviewCount}
-                    />
+                    <div className="space-y-8">
+                      <ReviewSummary 
+                        rating={supplement.rating}
+                        reviewCount={supplement.reviewCount}
+                      />
+                      
+                      <div className="border-t pt-6">
+                        <div className="flex justify-between items-center mb-6">
+                          <h3 className="text-lg font-semibold">User Reviews</h3>
+                          <Button 
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => document.getElementById('write-review-button')?.click()}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                            <span>Write a Review</span>
+                          </Button>
+                        </div>
+                        
+                        {/* Import and use the ReviewList component */}
+                        <ReviewList 
+                          supplementId={supplement.id}
+                          supplementName={supplement.name}
+                          overallRating={supplement.rating}
+                          reviewCount={supplement.reviewCount}
+                        />
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

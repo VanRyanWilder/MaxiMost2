@@ -73,60 +73,13 @@ export function ReviewList({
   
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-end gap-2">
-          <span className="text-4xl font-bold">{overallRating.toFixed(1)}</span>
-          <div>
-            <div className="flex mb-1">
-              {[1, 2, 3, 4, 5].map(star => (
-                <Star 
-                  key={star} 
-                  className={`h-4 w-4 ${star <= Math.round(overallRating) ? 'text-amber-500 fill-amber-500' : 'text-muted-foreground'}`} 
-                />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              Based on {reviewCount} reviews
-            </span>
-          </div>
-        </div>
-        
-        <Button onClick={() => setShowReviewForm(true)}>
-          <MessageSquare className="mr-2 h-4 w-4" />
-          Write a Review
-        </Button>
-      </div>
-      
-      {/* Rating distribution */}
-      {reviews && reviews.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-sm font-medium mb-2">Rating Distribution</h3>
-          <div className="space-y-1.5">
-            {[5, 4, 3, 2, 1].map((rating, index) => {
-              const count = ratingCounts[5 - rating];
-              const percentage = reviewCount ? Math.round((count / reviewCount) * 100) : 0;
-              
-              return (
-                <div key={rating} className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 w-14">
-                    <span>{rating}</span>
-                    <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div
-                      className="bg-amber-500 h-2.5 rounded-full"
-                      style={{ width: `${percentage}%` }}
-                    ></div>
-                  </div>
-                  <div className="text-xs text-muted-foreground w-14 text-right">
-                    {count} ({percentage}%)
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <Button 
+        id="write-review-button"
+        className="hidden" 
+        onClick={() => setShowReviewForm(true)}
+      >
+        Write a Review
+      </Button>
       
       {/* Reviews list */}
       {isLoading ? (
