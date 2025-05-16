@@ -60,15 +60,25 @@ export function FixHabitDialog({
 }: FixHabitDialogProps) {
   const [editedHabit, setEditedHabit] = useState<Habit>(DEFAULT_HABIT);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // Reset form when habit changes or dialog opens/closes
+  // Added better state management to prevent infinite loops
   useEffect(() => {
-    if (!open) return;
+    // Only update if dialog is open and not yet initialized with current data
+    if (!open) {
+      setIsInitialized(false);
+      return;
+    }
     
+    // Skip if already initialized to prevent re-renders
+    if (isInitialized) return;
+    
+    // Now safe to initialize the form
     if (habit) {
       const habitToEdit = { ...habit };
       
-      // Ensure category is a MaxiMost category
+      // Ensure category is a MaxiMost category (mapping legacy categories)
       if (habitToEdit.category === "health" || habitToEdit.category === "fitness") {
         habitToEdit.category = "physical";
       } else if (habitToEdit.category === "mind") {
@@ -78,6 +88,8 @@ export function FixHabitDialog({
       } else if (habitToEdit.category === "finance" || habitToEdit.category === "productivity") {
         habitToEdit.category = "financial";
       }
+      
+      console.log("Initializing edit dialog with habit:", habitToEdit.title);
       
       // Set the edited habit with all default values if any are missing
       setEditedHabit({
@@ -94,10 +106,16 @@ export function FixHabitDialog({
       });
       setIsCreatingNew(true);
     }
-  }, [habit, open]);
+    
+    // Mark as initialized to prevent further re-renders
+    setIsInitialized(true);
+  }, [habit, open, isInitialized]);
   
   const handleSave = () => {
-    if (!editedHabit.title) return;
+    if (!editedHabit.title) {
+      alert('Please enter a habit title');
+      return;
+    }
 
     let iconColor = editedHabit.iconColor || "blue";
     let icon = editedHabit.icon || "zap";
@@ -133,29 +151,46 @@ export function FixHabitDialog({
     // Force daily habits to be absolute
     const isAbsolute = editedHabit.frequency === 'daily' ? true : editedHabit.isAbsolute;
     
-    // Create the final habit to save
+    // Create the final habit to save with all required fields guaranteed
     const finalHabit = {
       ...editedHabit,
+      id: editedHabit.id,
+      title: editedHabit.title.trim(),
+      description: editedHabit.description || '',
       iconColor,
       icon,
-      isAbsolute
+      isAbsolute,
+      impact: typeof editedHabit.impact === 'number' ? editedHabit.impact : 8,
+      effort: typeof editedHabit.effort === 'number' ? editedHabit.effort : 4,
+      timeCommitment: editedHabit.timeCommitment || '5 min',
+      category: editedHabit.category,
+      streak: typeof editedHabit.streak === 'number' ? editedHabit.streak : 0,
+      createdAt: editedHabit.createdAt || new Date(),
+      updatedAt: new Date()
     };
     
-    console.log("Saving habit:", finalHabit);
+    console.log("Saving habit:", finalHabit.title);
     
-    // We'll close the dialog first to prevent any state issues
+    // Close the dialog first to prevent any state issues
     onOpenChange(false);
     
     // Small delay to ensure the dialog is closed before saving
     setTimeout(() => {
       onSave(finalHabit);
-    }, 10);
+    }, 50);
   };
 
   const handleDelete = () => {
-    if (onDelete) {
-      onDelete(editedHabit.id);
+    if (!onDelete) return;
+    
+    if (window.confirm('Are you sure you want to delete this habit?')) {
+      // Close dialog first to prevent state issues
       onOpenChange(false);
+      
+      // Small delay to ensure the dialog is closed before deleting
+      setTimeout(() => {
+        onDelete(editedHabit.id);
+      }, 50);
     }
   };
 

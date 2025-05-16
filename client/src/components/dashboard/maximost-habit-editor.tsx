@@ -51,45 +51,53 @@ export function MaximostHabitEditor({
   onSave,
   onDelete
 }: HabitEditorProps) {
-  // Form state 
+  // Form state with better initialization
   const [formState, setFormState] = useState({
     title: '',
     frequency: 'daily',
     color: 'blue',
     id: '',
-    initDone: false
+    isInitialized: false
   });
+  
+  // Reset initialization flag when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setFormState(prev => ({...prev, isInitialized: false}));
+    }
+  }, [open]);
   
   // Initialize form only when dialog opens or habit changes
   useEffect(() => {
-    if (!open) return;
+    // Only process when dialog is open and not yet initialized
+    if (!open || formState.isInitialized) {
+      return;
+    }
     
-    // Skip if already initialized with current habit
-    if (formState.initDone && habit?.id === formState.id) return;
-    
+    // Now safe to initialize
     if (habit) {
       // Editing existing habit
+      console.log('Loading existing habit for editing:', habit.title);
       setFormState({
-        title: habit.title,
-        frequency: habit.frequency,
+        title: habit.title || '',
+        frequency: habit.frequency || 'daily',
         color: habit.iconColor || 'blue',
         id: habit.id,
-        initDone: true
+        isInitialized: true
       });
-      console.log('Loading existing habit for editing:', habit);
     } else {
       // Creating new habit
       const newId = `habit-${Date.now()}`;
+      console.log('Creating new habit with ID:', newId);
       setFormState({
         title: '',
         frequency: 'daily',
         color: 'blue',
         id: newId,
-        initDone: true
+        isInitialized: true
       });
-      console.log('Creating new habit');
     }
-  }, [open, habit, formState.initDone, formState.id]);
+  }, [open, habit, formState.isInitialized]);
   
   // Update form field handlers
   const updateTitle = (value: string) => {
@@ -110,7 +118,7 @@ export function MaximostHabitEditor({
       return;
     }
     
-    // Create the habit object
+    // Create the habit object with better defaults
     const updatedHabit: Habit = {
       id: formState.id,
       title: formState.title,
@@ -122,26 +130,33 @@ export function MaximostHabitEditor({
       timeCommitment: habit?.timeCommitment || '5 min',
       frequency: formState.frequency as HabitFrequency,
       isAbsolute: formState.frequency === 'daily',
-      category: habit?.category || 'health',
+      category: habit?.category || 'physical',
       streak: habit?.streak || 0,
       createdAt: habit?.createdAt || new Date()
     };
     
-    console.log('Saving habit with data:', updatedHabit);
+    console.log('Saving habit with data:', updatedHabit.title);
     
-    // Close dialog first
+    // Important: Close dialog BEFORE calling save to prevent re-renders
     onOpenChange(false);
     
-    // Call parent's save function
-    onSave(updatedHabit);
+    // Add a small delay to ensure state updates are processed
+    setTimeout(() => {
+      onSave(updatedHabit);
+    }, 50);
   };
   
   const handleDelete = () => {
     if (!formState.id) return;
     
     if (window.confirm('Are you sure you want to delete this habit?')) {
+      // First close the dialog to prevent state issues
       onOpenChange(false);
-      if (onDelete) onDelete(formState.id);
+      
+      // Then handle the delete with a small delay to avoid state conflicts
+      setTimeout(() => {
+        if (onDelete) onDelete(formState.id);
+      }, 50);
     }
   };
   

@@ -365,59 +365,69 @@ export default function SortableDashboard() {
     setHabits([...habits, habit]);
   };
   
-  // Simplified habit editing function for maximum reliability
+  // Improved habit editing function with better error handling and reliability
   const editHabit = (updatedHabit: Habit) => {
     console.log("⚡⚡ EDIT FUNCTION - START");
     console.log("Updating habit:", updatedHabit.title);
-    console.log("Color being saved:", updatedHabit.iconColor);
-    console.log("Icon being saved:", updatedHabit.icon);
     
-    // Force daily habits to be absolute
-    if (updatedHabit.frequency === 'daily') {
-      updatedHabit.isAbsolute = true;
+    // Ensure we have all required fields
+    if (!updatedHabit.id || !updatedHabit.title) {
+      console.error("❌ Missing required fields in habit");
+      return;
     }
     
+    // Force daily habits to be absolute
+    const finalHabit = {
+      ...updatedHabit,
+      isAbsolute: updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute,
+      // Ensure these fields have valid values
+      iconColor: updatedHabit.iconColor || 'blue',
+      icon: updatedHabit.icon || 'check-square',
+      updatedAt: new Date()
+    };
+    
+    console.log("Saving with color:", finalHabit.iconColor);
+    console.log("Saving with icon:", finalHabit.icon);
+    
     try {
-      // Create a simpler, more reliable update using map
-      const newHabitsArray = habits.map(habit => 
-        habit.id === updatedHabit.id 
-          ? { ...updatedHabit } // Return a copy of the updated habit
-          : habit                // Keep other habits unchanged
-      );
+      // Make a fresh copy of habits to avoid state mutation issues
+      const currentHabits = [...habits];
       
-      // If the habit wasn't found in the map, add it as new
-      if (!habits.some(habit => habit.id === updatedHabit.id)) {
-        console.log("➕ Adding as new habit:", updatedHabit.title);
-        newHabitsArray.push({ ...updatedHabit });
+      // Check if habit exists
+      const existingIndex = currentHabits.findIndex(h => h.id === finalHabit.id);
+      
+      // Create new habits array with updated or added habit
+      let newHabitsArray: Habit[];
+      
+      if (existingIndex >= 0) {
+        // Update existing habit
+        newHabitsArray = [
+          ...currentHabits.slice(0, existingIndex),
+          finalHabit,
+          ...currentHabits.slice(existingIndex + 1)
+        ];
+        console.log("✏️ Updated existing habit:", finalHabit.title);
       } else {
-        console.log("✏️ Updated existing habit:", updatedHabit.title);
+        // Add as new habit
+        newHabitsArray = [...currentHabits, finalHabit];
+        console.log("➕ Adding as new habit:", finalHabit.title);
       }
       
       console.log("📊 Total habits:", newHabitsArray.length);
       
-      // Save to localStorage first
+      // Save to localStorage first for reliability
       const saveData = JSON.stringify(newHabitsArray);
-      localStorage.setItem('maximost-habits', saveData);
-      console.log("💾 Successfully saved to localStorage");
+      try {
+        localStorage.setItem('maximost-habits', saveData);
+        console.log("💾 Successfully saved to localStorage");
+      } catch (storageError) {
+        console.error("❌ Error saving to localStorage:", storageError);
+      }
       
-      // Update state
+      // Update state with the new array
       setHabits(newHabitsArray);
       
-      // Verify the data was saved correctly
-      setTimeout(() => {
-        const verificationData = localStorage.getItem('maximost-habits');
-        if (verificationData) {
-          const savedHabits = JSON.parse(verificationData);
-          const savedHabit = savedHabits.find((h: Habit) => h.id === updatedHabit.id);
-          
-          if (savedHabit) {
-            console.log("✅ VERIFICATION - Saved correctly");
-            console.log("  - Title:", savedHabit.title);
-            console.log("  - Color:", savedHabit.iconColor);
-          }
-        }
-        console.log("⚡⚡ EDIT FUNCTION - COMPLETE");
-      }, 200);
+      console.log("⚡⚡ EDIT FUNCTION - COMPLETE");
       
     } catch (error) {
       console.error("❌ Error updating habit:", error);
