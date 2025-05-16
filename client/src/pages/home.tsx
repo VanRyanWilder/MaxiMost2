@@ -75,37 +75,37 @@ export default function Home() {
                   <Button 
                     size="lg" 
                     variant="outline"
-                    onClick={() => setLocation("/principles")}
+                    onClick={() => setLocation("/dashboard")}
                   >
-                    High ROI Principles
+                    Habit Building
                   </Button>
                 </div>
               </div>
             </div>
             <div className="mt-12 sm:mt-16 lg:mt-0 lg:col-span-6">
-              <div className="bg-gray-800/50 rounded-lg shadow-xl overflow-hidden backdrop-blur-sm border border-slate-700/50">
+              <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-indigo-800/50">
                 <div className="px-6 py-8 sm:p-10 sm:pb-6">
                   <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 rounded-full bg-indigo-500/30 flex items-center justify-center mr-3">
-                      <TrendingUp className="h-5 w-5 text-indigo-300" />
+                    <div className="w-10 h-10 rounded-full bg-indigo-600/60 flex items-center justify-center mr-3">
+                      <TrendingUp className="h-5 w-5 text-indigo-100" />
                     </div>
-                    <div className="font-semibold text-xl text-indigo-100">1% Better Every Day</div>
+                    <div className="font-semibold text-xl text-white">1% Better Every Day</div>
                   </div>
                   
                   <p className="text-gray-300 mb-6">Compound growth through small, consistent improvements:</p>
                   
-                  <div className="bg-gray-800/70 rounded-lg p-4 mb-4 border border-indigo-800/30">
+                  <div className="bg-gray-800 rounded-lg p-4 mb-4 border border-indigo-700/50">
                     <div className="flex items-start gap-3">
                       <Percent className="h-5 w-5 text-indigo-400 mt-0.5" />
                       <div>
-                        <div className="font-medium text-indigo-100">The Compound Effect</div>
-                        <p className="text-sm text-gray-400">1% improvement daily = 37.8x better in one year</p>
+                        <div className="font-medium text-white">The Compound Effect</div>
+                        <p className="text-sm text-gray-300">1% improvement daily = 37.8x better in one year</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="flex justify-center -mt-2 mb-4">
-                    <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                     </svg>
                   </div>
@@ -113,29 +113,29 @@ export default function Home() {
                   <p className="text-center text-sm font-medium text-indigo-300 mb-4">Focus only on what moves the needle</p>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-indigo-900/40 rounded-lg p-3 border border-indigo-800/30 flex items-center gap-2">
-                      <BarChart className="h-4 w-4 text-indigo-400" />
-                      <span className="text-sm text-indigo-200">Maximum ROI</span>
+                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
+                      <BarChart className="h-4 w-4 text-indigo-300" />
+                      <span className="text-sm text-white">Maximum ROI</span>
                     </div>
-                    <div className="bg-indigo-900/40 rounded-lg p-3 border border-indigo-800/30 flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-indigo-400" />
-                      <span className="text-sm text-indigo-200">Minimal Time</span>
+                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-indigo-300" />
+                      <span className="text-sm text-white">Minimal Time</span>
                     </div>
-                    <div className="bg-indigo-900/40 rounded-lg p-3 border border-indigo-800/30 flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-indigo-400" />
-                      <span className="text-sm text-indigo-200">Evidence-Based</span>
+                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-indigo-300" />
+                      <span className="text-sm text-white">Evidence-Based</span>
                     </div>
-                    <div className="bg-indigo-900/40 rounded-lg p-3 border border-indigo-800/30 flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-indigo-400" />
-                      <span className="text-sm text-indigo-200">Actionable Steps</span>
+                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-indigo-300" />
+                      <span className="text-sm text-white">Actionable Steps</span>
                     </div>
                   </div>
                 </div>
-                <div className="px-6 pt-4 pb-8 bg-gradient-to-r from-gray-800/80 to-gray-900/80 sm:p-10 sm:pt-6">
+                <div className="px-6 pt-4 pb-8 bg-gradient-to-r from-indigo-900/90 to-indigo-950 sm:p-10 sm:pt-6">
                   <div className="flex items-center justify-center">
                     <div className="flex items-center space-x-1">
                       <CheckCircle className="h-5 w-5 text-green-400" />
-                      <span className="text-sm text-gray-300">Science-backed approach to optimal health</span>
+                      <span className="text-sm text-white">Science-backed approach to optimal health</span>
                     </div>
                   </div>
                 </div>
@@ -153,8 +153,8 @@ export default function Home() {
                 <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <BookOpen className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-indigo-100 mb-3">High ROI Principles</h3>
-                <p className="text-gray-300 mb-4">Core philosophy from the world's top performers on how to achieve maximum results with minimal effort.</p>
+                <h3 className="text-xl font-bold text-indigo-100 mb-3">Habit Building</h3>
+                <p className="text-gray-300 mb-4">Core philosophy from the world's top performers on how to build lasting habits with minimal effort for maximum results.</p>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-indigo-400" />
@@ -173,9 +173,9 @@ export default function Home() {
                   <Button 
                     variant="link" 
                     className="text-indigo-400 pl-0 hover:text-indigo-300"
-                    onClick={() => setLocation("/principles")}
+                    onClick={() => setLocation("/dashboard")}
                   >
-                    Explore principles →
+                    Explore habit building →
                   </Button>
                 </div>
               </div>
