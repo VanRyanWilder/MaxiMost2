@@ -11,7 +11,27 @@ import {
   Users,
   CircleDollarSign,
   LucideIcon,
-  Bed
+  Bed,
+  HeartPulse,
+  Scale,
+  Apple,
+  Coffee,
+  Rocket,
+  Lightbulb,
+  BookText,
+  Timer,
+  Flame,
+  Laugh,
+  Laptop,
+  PenTool,
+  Smartphone,
+  ArrowUpRight,
+  HandCoins,
+  Receipt,
+  Wallet,
+  Landmark,
+  LineChart,
+  Heart
 } from 'lucide-react';
 
 interface HabitIconProps {
@@ -85,20 +105,53 @@ const CATEGORY_COLORS = {
   }
 };
 
-// Icon mapping
+// Icon mapping with categorized options for better organization
 const ICON_MAP: Record<string, LucideIcon> = {
+  // Physical category icons
   dumbbell: Dumbbell,
-  brain: Brain,
-  droplets: Droplets,
-  book: BookOpen,
-  pill: Pill,
+  activity: Activity,
+  heart: Heart,
+  heartpulse: HeartPulse,
+  flame: Flame,
+  
+  // Nutrition category icons
   utensils: Utensils,
+  apple: Apple,
+  coffee: Coffee,
+  
+  // Mind/mental category icons
+  brain: Brain,
+  book: BookOpen,
+  booktext: BookText,
+  lightbulb: Lightbulb,
+  rocket: Rocket,
+  
+  // Sleep category icons
   moon: MoonIcon,
   bed: Bed,
+  
+  // Relationship category icons
   users: Users,
+  laugh: Laugh,
+  
+  // Financial category icons
   dollar: CircleDollarSign,
-  activity: Activity,
-  // Add more icon mappings as needed
+  wallet: Wallet,
+  receipt: Receipt,
+  handcoins: HandCoins,
+  landmark: Landmark,
+  linechart: LineChart,
+  
+  // General purpose icons
+  droplets: Droplets,
+  pill: Pill,
+  timer: Timer,
+  scale: Scale,
+  laptop: Laptop,
+  smartphone: Smartphone,
+  pentool: PenTool,
+  arrowupright: ArrowUpRight,
+  whale: Whale
 };
 
 export function HabitIcon({ icon, category, size = 'md', className = '' }: HabitIconProps) {
