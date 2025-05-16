@@ -28,7 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { DailyViewFixedNew } from './daily-view-fixed-new';
+import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
   arrayMove,
   SortableContext,
@@ -320,7 +320,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <DailyViewFixedNew
+              <DailyViewFixedUpdated
                 habits={filteredHabits}
                 completions={completions}
                 currentDay={currentDay}

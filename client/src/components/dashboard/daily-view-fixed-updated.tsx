@@ -2,7 +2,7 @@ import React from "react";
 import { format, isSameDay } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Pencil, Trash2, MoreHorizontal } from "lucide-react";
+import { Check, Star, Pencil, Trash2, MoreHorizontal, PlusCircle, CheckSquare } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,7 +37,7 @@ interface DailyViewProps {
   filterCategory: string;
 }
 
-export function DailyViewFixedNew({
+export function DailyViewFixedUpdated({
   habits,
   completions,
   currentDay,
@@ -173,6 +173,25 @@ export function DailyViewFixedNew({
 
   return (
     <div className="space-y-4">
+      {/* No habits state */}
+      {filteredHabits.length === 0 && (
+        <div className="p-8 text-center">
+          <div className="flex justify-center mb-3 text-gray-400">
+            <CheckSquare className="h-12 w-12" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">No habits found</h3>
+          <p className="text-gray-500 mb-4">
+            {filterCategory === 'all' 
+              ? "You haven't created any habits yet." 
+              : `No habits found in the "${filterCategory}" category.`}
+          </p>
+          <Button onClick={onAddHabit}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add New Habit
+          </Button>
+        </div>
+      )}
+
       {/* Daily Absolute Habits section */}
       {absoluteHabits.length > 0 && (
         <>
@@ -198,7 +217,14 @@ export function DailyViewFixedNew({
                           {getHabitIcon(habit.icon)}
                         </div>
                         <div>
-                          <div className="font-medium">{habit.title}</div>
+                          <div className="font-medium flex items-center">
+                            {habit.title}
+                            {habit.streak > 0 && (
+                              <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
+                              </Badge>
+                            )}
+                          </div>
                           <div className="text-sm text-gray-500">
                             {habit.description}
                           </div>
@@ -268,7 +294,17 @@ export function DailyViewFixedNew({
                           {getHabitIcon(habit.icon)}
                         </div>
                         <div>
-                          <div className="font-medium">{habit.title}</div>
+                          <div className="font-medium flex items-center">
+                            {habit.title}
+                            <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
+                              {getFrequencyText(habit.frequency)}
+                            </Badge>
+                            {habit.streak > 0 && (
+                              <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
+                              </Badge>
+                            )}
+                          </div>
                           <div className="text-sm text-gray-500">
                             {habit.description}
                           </div>
@@ -314,11 +350,14 @@ export function DailyViewFixedNew({
       )}
 
       {/* Add habit button */}
-      <div className="flex justify-center mt-4">
-        <Button onClick={onAddHabit} variant="outline">
-          Add Habit
-        </Button>
-      </div>
+      {filteredHabits.length > 0 && (
+        <div className="flex justify-center mt-4">
+          <Button onClick={onAddHabit} variant="outline">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Add Habit
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
