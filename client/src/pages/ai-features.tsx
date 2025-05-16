@@ -1,108 +1,147 @@
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { HabitSuggestions } from '@/components/ai-features/habit-suggestions';
 import { StoicCoach } from '@/components/ai-features/stoic-coach';
 import { HabitJournal } from '@/components/ai-features/habit-journal';
-import { Habit } from '@/types/habit';
 import { PageHeader } from '@/components/ui/page-header';
+import { Sparkles, Leaf, BookText } from 'lucide-react';
+import { Habit, HabitCompletion } from '@/types/habit';
+
+// Sample data - in a real application this would come from the database
+const sampleHabits: Habit[] = [
+  {
+    id: 'habit-1',
+    title: 'Morning Cardio',
+    description: '30-minute cardio session',
+    icon: 'running',
+    iconColor: 'red',
+    category: 'physical',
+    frequency: '5x-week',
+    impact: 8,
+    effort: 7,
+    timeCommitment: '30 min',
+    isAbsolute: false,
+    streak: 5,
+    createdAt: new Date(Date.now() - 86400000 * 14).toISOString()
+  },
+  {
+    id: 'habit-2',
+    title: 'Daily Meditation',
+    description: '10-minute mindfulness practice',
+    icon: 'brain',
+    iconColor: 'amber',
+    category: 'mental',
+    frequency: 'daily',
+    impact: 9,
+    effort: 4,
+    timeCommitment: '10 min',
+    isAbsolute: true,
+    streak: 12,
+    createdAt: new Date(Date.now() - 86400000 * 30).toISOString()
+  },
+  {
+    id: 'habit-3',
+    title: 'Water Intake',
+    description: 'Drink 3L of water daily',
+    icon: 'droplet',
+    iconColor: 'blue',
+    category: 'nutrition',
+    frequency: 'daily',
+    impact: 8,
+    effort: 3,
+    timeCommitment: 'minimal',
+    isAbsolute: true,
+    streak: 2,
+    createdAt: new Date(Date.now() - 86400000 * 5).toISOString()
+  }
+];
+
+const sampleCompletions: HabitCompletion[] = [
+  {
+    id: 'completion-1',
+    habitId: 'habit-1',
+    date: new Date().toISOString(),
+    completed: true
+  },
+  {
+    id: 'completion-2',
+    habitId: 'habit-2',
+    date: new Date().toISOString(),
+    completed: true
+  },
+  {
+    id: 'completion-3',
+    habitId: 'habit-3',
+    date: new Date().toISOString(),
+    completed: false
+  }
+];
+
+const sampleStreaks: Record<string, number> = {
+  'habit-1': 5,
+  'habit-2': 12,
+  'habit-3': 2
+};
 
 export default function AIFeaturesPage() {
-  const [habits, setHabits] = useLocalStorage<Habit[]>('habits', []);
-  const [completions, setCompletions] = useLocalStorage('completions', []);
-  const [streaks, setStreaks] = useState<Record<string, number>>({});
+  const [userGoals] = useState<string[]>(['weight loss', 'improved sleep', 'stress reduction']);
+  const [userHabits, setUserHabits] = useState<Habit[]>(sampleHabits);
   
-  // Calculate streaks based on completions
-  useEffect(() => {
-    if (!habits || !completions) return;
-    
-    const calculateStreaks = () => {
-      const today = new Date();
-      const result: Record<string, number> = {};
-      
-      habits.forEach(habit => {
-        let streak = 0;
-        let currentDate = new Date(today);
-        
-        // Look back up to 30 days maximum
-        for (let i = 0; i < 30; i++) {
-          const dateString = currentDate.toISOString().split('T')[0];
-          
-          // Check if habit was completed on this date
-          const completedOnDate = completions.some(
-            (c: any) => c.habitId === habit.id && c.date.split('T')[0] === dateString
-          );
-          
-          if (completedOnDate) {
-            streak++;
-            // Move to previous day
-            currentDate.setDate(currentDate.getDate() - 1);
-          } else {
-            // Streak broken
-            break;
-          }
-        }
-        
-        result[habit.id] = streak;
-      });
-      
-      setStreaks(result);
-    };
-    
-    calculateStreaks();
-  }, [habits, completions]);
-  
-  const handleAddHabit = (newHabit: Partial<Habit>) => {
-    const habitToAdd = {
+  // Handle adding a new habit from suggestions
+  const handleAddHabit = (habit: Partial<Habit>) => {
+    const newHabit: Habit = {
       id: `habit-${Date.now()}`,
-      title: newHabit.title || 'New Habit',
-      description: newHabit.description || '',
-      icon: newHabit.icon || 'activity',
-      iconColor: newHabit.iconColor || 'blue',
-      category: newHabit.category || 'physical',
-      frequency: newHabit.frequency || 'daily',
-      impact: newHabit.impact || 5,
-      effort: newHabit.effort || 5,
-      timeCommitment: newHabit.timeCommitment || '5 min',
-      isAbsolute: newHabit.frequency === 'daily',
-      streak: 0,
-      createdAt: new Date().toISOString(),
-      order: habits.length
+      title: habit.title || 'New Habit',
+      description: habit.description || '',
+      icon: habit.icon || 'activity',
+      iconColor: habit.iconColor || 'gray',
+      category: habit.category || 'general',
+      frequency: habit.frequency || 'daily',
+      impact: habit.impact || 5,
+      effort: habit.effort || 5,
+      timeCommitment: habit.timeCommitment || 'minimal'
     };
     
-    setHabits([...habits, habitToAdd]);
+    setUserHabits([...userHabits, newHabit]);
   };
 
-  // Sample user goals for habit suggestions
-  const userGoals = ['weight loss', 'improved sleep', 'stress reduction'];
-  
   return (
-    <div className="container mx-auto py-6 space-y-8">
-      <PageHeader
-        title="AI Features"
-        description="Personalized AI tools to enhance your habit journey"
+    <div className="container mx-auto py-6 max-w-6xl">
+      <PageHeader 
+        title="AI Features" 
+        description="Tools powered by artificial intelligence to help you build and maintain better habits."
       />
       
-      <Tabs defaultValue="suggestions" className="w-full">
-        <TabsList className="grid grid-cols-3 max-w-md mx-auto mb-8">
-          <TabsTrigger value="suggestions">Habit Suggestions</TabsTrigger>
-          <TabsTrigger value="coach">Stoic Coach</TabsTrigger>
-          <TabsTrigger value="journal">Habit Journal</TabsTrigger>
+      <Tabs defaultValue="suggestions" className="mt-8">
+        <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsTrigger value="suggestions" className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            <span>Habit Suggestions</span>
+          </TabsTrigger>
+          <TabsTrigger value="coach" className="flex items-center gap-2">
+            <Leaf className="h-4 w-4" />
+            <span>Stoic Coach</span>
+          </TabsTrigger>
+          <TabsTrigger value="journal" className="flex items-center gap-2">
+            <BookText className="h-4 w-4" />
+            <span>Habit Journal</span>
+          </TabsTrigger>
         </TabsList>
         
-        <TabsContent value="suggestions" className="space-y-4">
+        <TabsContent value="suggestions">
           <HabitSuggestions 
-            userHabits={habits} 
+            userHabits={userHabits} 
             userGoals={userGoals}
             onAddHabit={handleAddHabit}
           />
         </TabsContent>
         
         <TabsContent value="coach">
-          <StoicCoach
-            habits={habits}
-            completions={completions}
-            streaks={streaks}
+          <StoicCoach 
+            habits={userHabits}
+            completions={sampleCompletions}
+            streaks={sampleStreaks}
           />
         </TabsContent>
         
