@@ -154,24 +154,24 @@ export default function Home() {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {/* Principles Section */}
-              <div className="bg-indigo-900/20 rounded-xl p-6 backdrop-blur-sm border border-indigo-800/40 hover:border-indigo-700/40 transition-all group">
+              <div className="bg-indigo-900/50 rounded-xl p-6 backdrop-blur-sm border border-indigo-800/40 hover:border-indigo-700/40 transition-all group">
                 <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <BookOpen className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-indigo-100 mb-3">Habit Building</h3>
-                <p className="text-gray-300 mb-4">Core philosophy from the world's top performers on how to build lasting habits with minimal effort for maximum results.</p>
+                <h3 className="text-xl font-bold text-white mb-3">Habit Building</h3>
+                <p className="text-white/80 mb-4">Core philosophy from the world's top performers on how to build lasting habits with minimal effort for maximum results.</p>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-gray-300">Discipline = Freedom</span>
+                    <span className="text-white/90">Discipline = Freedom</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-gray-300">The 1% Rule</span>
+                    <span className="text-white/90">The 1% Rule</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-gray-300">Atomic Habits</span>
+                    <span className="text-white/90">Atomic Habits</span>
                   </li>
                 </ul>
                 <div className="mt-4">
@@ -186,24 +186,24 @@ export default function Home() {
               </div>
               
               {/* Sugar Section */}
-              <div className="bg-rose-900/20 rounded-xl p-6 backdrop-blur-sm border border-rose-800/40 hover:border-rose-700/40 transition-all group">
+              <div className="bg-rose-900/50 rounded-xl p-6 backdrop-blur-sm border border-rose-800/40 hover:border-rose-700/40 transition-all group">
                 <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-rose-600 to-rose-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <AlertTriangle className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-rose-100 mb-3">Sugar: The Hidden Poison</h3>
-                <p className="text-gray-300 mb-4">Comprehensive breakdown of how sugar affects your health and practical steps to eliminate it.</p>
+                <h3 className="text-xl font-bold text-white mb-3">Sugar: The Hidden Poison</h3>
+                <p className="text-white/80 mb-4">Comprehensive breakdown of how sugar affects your health and practical steps to eliminate it.</p>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-gray-300">Inflammation pathways</span>
+                    <span className="text-white/90">Inflammation pathways</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-gray-300">Metabolic impacts</span>
+                    <span className="text-white/90">Metabolic impacts</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-gray-300">Sugar elimination guide</span>
+                    <span className="text-white/90">Sugar elimination guide</span>
                   </li>
                 </ul>
                 <div className="mt-4">
@@ -218,24 +218,24 @@ export default function Home() {
               </div>
               
               {/* Supplements Section */}
-              <div className="bg-amber-900/20 rounded-xl p-6 backdrop-blur-sm border border-amber-800/40 hover:border-amber-700/40 transition-all group">
+              <div className="bg-amber-900/50 rounded-xl p-6 backdrop-blur-sm border border-amber-800/40 hover:border-amber-700/40 transition-all group">
                 <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Pill className="h-7 w-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-amber-100 mb-3">Science-Backed Supplements</h3>
-                <p className="text-gray-300 mb-4">Evidence-based supplement rankings showing only the most effective options with the highest return.</p>
+                <h3 className="text-xl font-bold text-white mb-3">Science-Backed Supplements</h3>
+                <p className="text-white/80 mb-4">Evidence-based supplement rankings showing only the most effective options with the highest return.</p>
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-gray-300">Value rankings</span>
+                    <span className="text-white/90">Value rankings</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-gray-300">Verified efficacy</span>
+                    <span className="text-white/90">Verified efficacy</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-gray-300">Cost-effectiveness analysis</span>
+                    <span className="text-white/90">Cost-effectiveness analysis</span>
                   </li>
                 </ul>
                 <div className="mt-4">
