@@ -1134,36 +1134,15 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
             </h3>
             
             {/* 2x4 Grid Layout for Habit Stacks */}
-
+            
             {/* New 2x4 Grid Layout for Habit Stacks */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {habitSuggestions.stacks.map(stack => (
-                <div
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              {habitSuggestions.stacks.slice(0, 8).map(stack => (
+                <HabitStackCard
                   key={stack.id}
-                  className="p-3 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  onClick={() => {
-                    // Create the habits array
-                    const habitsToAdd = stack.habits;
-                    
-                    // For now, add all habits at once - we'll implement selective adding later
-                    habitsToAdd.forEach(habit => {
-                      onAddHabit?.(habit);
-                    });
-                  }}
-                >
-                  <div className="flex-shrink-0 mb-1">
-                    {renderIcon(stack.icon, stack.iconColor)}
-                  </div>
-                  <div className="w-full text-center">
-                    <p className="text-sm font-medium text-foreground">
-                      {stack.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground line-clamp-2 h-8">{stack.description}</p>
-                  </div>
-                  <Badge variant="outline" className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
-                    {stack.habits.length} habits
-                  </Badge>
-                </div>
+                  stack={stack}
+                  onAddHabit={onAddHabit}
+                />
               ))}
             </div>
           </div>
