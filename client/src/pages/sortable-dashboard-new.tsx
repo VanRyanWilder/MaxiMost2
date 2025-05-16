@@ -26,9 +26,14 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { Check } from 'lucide-react';
+import { 
+  Check, 
+  Moon, 
+  CircleDollarSign, 
+  Users 
+} from 'lucide-react';
 import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
-import { EnhancedHabitIcon } from "@/components/ui/enhanced-habit-icon";
+import { IconPicker } from "@/components/ui/icon-picker";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
@@ -882,34 +887,15 @@ export default function SortableDashboard() {
                 </div>
               </div>
               
-              {/* Icon selection */}
+              {/* Icon selection with improved picker */}
               <div className="grid grid-cols-4 items-start gap-4">
                 <Label className="text-right pt-2">Icon</Label>
-                <div className="col-span-3 grid grid-cols-4 gap-3">
-                  {['dumbbell', 'heart', 'activity', 'brain', 'droplets', 'moon', 'pill', 'utensils', 'book', 'users', 'dollar', 'flame'].map(iconType => (
-                    <button
-                      key={iconType}
-                      type="button"
-                      className={`h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center transition-all
-                        ${selectedHabit.icon === iconType ? 'ring-2 ring-offset-2 ring-offset-background ring-primary' : ''}`}
-                      onClick={() => setSelectedHabit({...selectedHabit, icon: iconType})}
-                    >
-                      <div className={`p-1 rounded-full bg-${selectedHabit.category || "blue"}-100`}>
-                        {/* Using a simpler approach for now */}
-                        {iconType === "dumbbell" && <Dumbbell className="h-4 w-4" />}
-                        {iconType === "brain" && <Brain className="h-4 w-4" />}
-                        {iconType === "activity" && <Activity className="h-4 w-4" />}
-                        {iconType === "droplets" && <Droplets className="h-4 w-4" />}
-                        {iconType === "book" && <BookOpen className="h-4 w-4" />}
-                        {iconType === "moon" && <Moon className="h-4 w-4" />}
-                        {iconType === "pill" && <Pill className="h-4 w-4" />}
-                        {iconType === "utensils" && <Utensils className="h-4 w-4" />}
-                        {iconType === "users" && <Users className="h-4 w-4" />}
-                        {iconType === "dollar" && <CircleDollarSign className="h-4 w-4" />}
-                        {iconType === "flame" && <Flame className="h-4 w-4" />}
-                      </div>
-                    </button>
-                  ))}
+                <div className="col-span-3">
+                  <IconPicker 
+                    selectedIcon={selectedHabit.icon} 
+                    category={selectedHabit.category}
+                    onChange={(icon) => setSelectedHabit({...selectedHabit, icon})}
+                  />
                 </div>
               </div>
             
