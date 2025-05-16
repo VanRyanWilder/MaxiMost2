@@ -572,8 +572,37 @@ export default function SortableDashboard() {
         setHabits(prevHabits => [...prevHabits, newHabit]);
       }
     } else if (habitTemplate.habits && Array.isArray(habitTemplate.habits)) {
-      // It's a stack but called from an individual habit in the stack
-      addHabitFromTemplate(habitTemplate);
+      // It's a stack but called differently
+      // Add all habits from the stack
+      const habitsToAdd = [...habitTemplate.habits];
+      
+      // Add all habits in the stack
+      for (let i = 0; i < habitsToAdd.length; i++) {
+        const habitItem = habitsToAdd[i];
+        
+        // Generate a new unique ID for the habit
+        const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}-${i}`;
+        
+        // Create the new habit from the template
+        const newHabit = {
+          id: newId,
+          title: habitItem.title,
+          description: habitItem.description,
+          icon: habitItem.icon,
+          iconColor: habitItem.iconColor,
+          impact: habitItem.impact,
+          effort: habitItem.effort,
+          timeCommitment: habitItem.timeCommitment,
+          frequency: habitItem.frequency,
+          isAbsolute: habitItem.isAbsolute,
+          category: habitItem.category,
+          streak: 0,
+          createdAt: new Date()
+        };
+        
+        // Add it directly to the habits array
+        setHabits(prevHabits => [...prevHabits, newHabit]);
+      }
     } else {
       // It's a single habit, add it
       addHabitFromTemplate(habitTemplate);
