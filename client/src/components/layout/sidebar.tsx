@@ -43,7 +43,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [location, setLocation] = useLocation();
-  const { user, userLoading } = useUser();
+  const { user, userLoading, logout } = useUser();
 
   const navItems = [
     {
@@ -167,7 +167,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-medium text-sm">MaxiMost User</h3>
+                  <h3 className="font-medium text-sm">{user?.name || "MaxiMost User"}</h3>
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
@@ -227,7 +227,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <Settings className="w-5 h-5" />
             <span>Settings</span>
           </div>
-          <button className="flex w-full items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 text-left">
+          <button 
+            onClick={() => {
+              logout();
+              navigateTo("/");
+            }}
+            className="flex w-full items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-destructive hover:bg-destructive/10 text-left"
+          >
             <LogOut className="w-5 h-5" />
             <span>Logout</span>
           </button>
