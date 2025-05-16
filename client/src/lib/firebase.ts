@@ -10,13 +10,13 @@ import {
   User
 } from "firebase/auth";
 
-// Firebase configuration (will be populated with environment variables)
+// Firebase configuration with actual values
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "your-project-id"}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "your-project-id",
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "your-project-id"}.appspot.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "YOUR_APP_ID",
+  apiKey: "AIzaSyCh7wIPAQrncK-kbierYcUjfRFW2A09MOc",
+  authDomain: "maximost-cf6e6.firebaseapp.com",
+  projectId: "maximost-cf6e6",
+  storageBucket: "maximost-cf6e6.appspot.com",
+  appId: "1:413156369520:web:2120fdcdb298257bf380b5",
 };
 
 // Initialize Firebase
