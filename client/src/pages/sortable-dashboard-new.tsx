@@ -648,57 +648,7 @@ export default function SortableDashboard() {
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Left column - Main content */}
               <div className="flex-1">
-                {/* Progress Summary */}
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
-                  {/* Progress Cards */}
-                  <div className="bg-white rounded-lg shadow p-4 border">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Day Streak</p>
-                        <p className="text-2xl font-bold">28</p>
-                      </div>
-                      <div className="bg-yellow-100 p-2 rounded-full">
-                        <Zap className="h-4 w-4 text-yellow-500" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-lg shadow p-4 border">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Completion %</p>
-                        <p className="text-2xl font-bold">75</p>
-                      </div>
-                      <div className="bg-green-100 p-2 rounded-full">
-                        <CheckSquare className="h-4 w-4 text-green-500" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-lg shadow p-4 border">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Active Habits</p>
-                        <p className="text-2xl font-bold">{habits.length}</p>
-                      </div>
-                      <div className="bg-blue-100 p-2 rounded-full">
-                        <Activity className="h-4 w-4 text-blue-500" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white rounded-lg shadow p-4 border">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Weekly Streak</p>
-                        <p className="text-2xl font-bold">4</p>
-                      </div>
-                      <div className="bg-orange-100 p-2 rounded-full">
-                        <Flame className="h-4 w-4 text-orange-500" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Progress Summary Cards removed for cleaner UI */}
                 
                 {/* Date selector and add habit button */}
                 <div className="flex justify-between items-center mb-4">
