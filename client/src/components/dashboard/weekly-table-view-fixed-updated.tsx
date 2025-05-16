@@ -220,7 +220,7 @@ export function WeeklyTableViewFixedUpdated({
       <div className="overflow-x-auto">
         <div className="min-w-[800px]">
           {/* Day headers */}
-          <div className="grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] border-b">
+          <div className="grid grid-cols-[1.2fr,60px,60px,60px,60px,60px,60px,60px] border-b">
             <div className="p-2 font-medium text-sm"></div>
             {weekDates.map((date, i) => {
               const isCurrentDay = isSameDay(date, currentDay);
@@ -258,7 +258,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] items-center">
+                        <div className="border-t py-2 grid grid-cols-[1.2fr,60px,60px,60px,60px,60px,60px,60px] items-center">
                           <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
@@ -356,7 +356,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[2fr,40px,40px,40px,40px,40px,40px,40px] items-center">
+                        <div className="border-t py-2 grid grid-cols-[1.2fr,60px,60px,60px,60px,60px,60px,60px] items-center">
                           <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}

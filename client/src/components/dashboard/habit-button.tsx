@@ -25,7 +25,7 @@ export const HabitButton: React.FC<HabitButtonProps> = ({
       variant={isCompleted ? "default" : "outline"}
       size={size === 'md' ? 'default' : 'sm'}
       onClick={() => !isFutureDate && onToggle(habitId, date)}
-      className={`min-w-[40px] ${size === 'md' ? 'h-[36px]' : 'h-[30px]'} p-1 
+      className={`min-w-[50px] ${size === 'md' ? 'h-[40px]' : 'h-[34px]'} p-1 
         ${isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}
         ${isCompleted ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-md scale-105 transition-all' : ''}
         ${isToday && !isCompleted ? 'border-2 border-dashed border-blue-300 hover:border-blue-500' : ''}
@@ -44,11 +44,11 @@ export const HabitButton: React.FC<HabitButtonProps> = ({
     >
       {isCompleted ? (
         <div className="flex items-center justify-center animate-pulse">
-          <Check className="h-4 w-4" />
+          <Check className="h-5 w-5" />
         </div>
       ) : isToday ? (
         <div className="flex items-center justify-center">
-          <div className="h-2 w-2 rounded-full bg-blue-400 animate-ping"></div>
+          <div className="h-3 w-3 rounded-full bg-blue-400 animate-ping"></div>
         </div>
       ) : null}
     </Button>
