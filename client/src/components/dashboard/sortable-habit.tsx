@@ -49,22 +49,17 @@ export function SortableHabit({
     { primary: "text-blue-600", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200" } : 
     { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200" };
 
+  // Import our enhanced icon component
+  import { EnhancedHabitIcon } from "@/components/ui/habit-icon";
+  
   // Render appropriate icon based on the habit's icon property
   const renderIcon = () => {
-    if (iconMap[habit.icon]) {
-      const IconComponent = iconMap[habit.icon].component;
-      return (
-        <div className={`p-1.5 rounded-full ${colorScheme?.bg || "bg-blue-100"} shadow-sm`}>
-          <IconComponent className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
-        </div>
-      );
-    }
-    
-    // Default icon if no match found
     return (
-      <div className={`p-1.5 rounded-full ${colorScheme?.bg || "bg-blue-100"} shadow-sm`}>
-        <div className={`h-4 w-4 ${colorScheme?.primary || "text-blue-600"}`} />
-      </div>
+      <EnhancedHabitIcon 
+        icon={habit.icon} 
+        category={habit.category}
+        size="sm"
+      />
     );
   };
 
