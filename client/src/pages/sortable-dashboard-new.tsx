@@ -361,50 +361,64 @@ export default function SortableDashboard() {
     setHabits([...habits, habit]);
   };
   
-  // Edit an existing habit
+  // Edit an existing habit - completely rewritten for reliability
   const editHabit = (updatedHabit: Habit) => {
-    console.log("Editing habit:", updatedHabit);
-    console.log("Current habits count:", habits.length);
+    console.log("EDITING HABIT - START", {
+      id: updatedHabit.id,
+      title: updatedHabit.title
+    });
     
-    // Make sure updatedHabit.isAbsolute is correctly set based on frequency
+    // Force daily habits to be absolute
     const isDaily = updatedHabit.frequency === 'daily';
-    
-    // Update the habit with the correct isAbsolute value
-    const finalUpdatedHabit = {
+    const finalHabit = {
       ...updatedHabit,
       isAbsolute: isDaily ? true : updatedHabit.isAbsolute
     };
     
-    console.log("Saving with final values:", { 
-      id: finalUpdatedHabit.id,
-      title: finalUpdatedHabit.title,
-      isAbsolute: finalUpdatedHabit.isAbsolute,
-      frequency: finalUpdatedHabit.frequency
-    });
+    // Create a brand new array replacing the matching habit
+    const newHabitsArray = [];
     
-    // Create a completely new array with the updated habit
-    const updatedHabits = habits.map(h => {
-      if (h.id === finalUpdatedHabit.id) {
-        return finalUpdatedHabit;
+    // Track if we found the habit to update
+    let habitFound = false;
+    
+    // Manually build a new array with the updated habit
+    for (const habit of habits) {
+      if (habit.id === finalHabit.id) {
+        // Found the habit to update
+        habitFound = true;
+        newHabitsArray.push(finalHabit);
+        console.log("Updated habit:", finalHabit.title);
+      } else {
+        // Keep existing habit
+        newHabitsArray.push(habit);
       }
-      return h;
-    });
+    }
     
-    // Update the state with the new array
-    setHabits(updatedHabits);
+    if (!habitFound) {
+      console.warn("Habit not found for editing:", finalHabit.id);
+      // If we didn't find the habit, add it as a new one
+      newHabitsArray.push(finalHabit);
+    }
     
-    // Log after update
-    console.log("Immediately after update - Updated habits array:", 
-      updatedHabits.map(h => ({ id: h.id, title: h.title }))
+    console.log("FINAL HABITS ARRAY:", 
+      newHabitsArray.map(h => `${h.id}: ${h.title}`).join(", ")
     );
     
-    // Save to localStorage to persist changes
+    // Update state with the new array
+    setHabits(newHabitsArray);
+    
+    // Persist immediately to localStorage
     try {
-      localStorage.setItem('maximost-habits', JSON.stringify(updatedHabits));
-      console.log("Habits saved to localStorage");
+      localStorage.setItem('maximost-habits', JSON.stringify(newHabitsArray));
+      console.log("✅ Habits saved to localStorage, total count:", newHabitsArray.length);
     } catch (err) {
-      console.error("Failed to save habits to localStorage:", err);
+      console.error("❌ Error saving to localStorage:", err);
     }
+    
+    // Force refresh local storage for backup purposes
+    window.localStorage.setItem('maximost-habits-backup', JSON.stringify(newHabitsArray));
+    
+    console.log("EDITING HABIT - COMPLETE");
   };
   
   // Delete a habit
