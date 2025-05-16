@@ -267,9 +267,16 @@ export function EditHabitDialog({
       console.log("SAVE BUTTON CLICKED - Preparing habit data:", { 
         id: finalHabit.id,
         title: finalHabit.title,
-        frequency: finalHabit.frequency, 
+        frequency: finalHabit.frequency,
+        iconColor: finalHabit.iconColor, 
         isAbsolute: finalHabit.isAbsolute
       });
+      
+      // Force finalHabit to have iconColor even if it's missing somehow
+      if (!finalHabit.iconColor) {
+        finalHabit.iconColor = "blue"; // Default fallback
+        console.log("WARNING: Had to add missing iconColor");
+      }
       
       // Call the parent's onSave function directly
       onSave(finalHabit);
@@ -458,7 +465,12 @@ export function EditHabitDialog({
                     variant="outline"
                     size="icon"
                     className={`p-2 ${editedHabit.iconColor === scheme.id ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
-                    onClick={() => setEditedHabit({...editedHabit, iconColor: scheme.id})}
+                    onClick={() => {
+                      console.log(`Color button clicked: ${scheme.id}`);
+                      const updatedHabit = {...editedHabit, iconColor: scheme.id};
+                      console.log("Updated habit:", updatedHabit);
+                      setEditedHabit(updatedHabit);
+                    }}
                   >
                     <div className={`h-5 w-5 rounded-full ${scheme.bg} flex items-center justify-center`}>
                       <div className={`h-3 w-3 rounded-full ${scheme.primary}`}></div>
