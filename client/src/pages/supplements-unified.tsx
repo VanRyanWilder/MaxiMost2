@@ -50,7 +50,7 @@ const topSupplements = [
     ],
     dosage: "1-3g daily (combined EPA/DHA) with meals",
     considerations: "Look for high-quality, tested products with minimal oxidation. Higher doses need physician oversight.",
-    amazonUrl: "https://www.amazon.com/s?k=omega+3+epa+dha&tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/Nordic-Naturals-Ultimate-Lemon-softgels/dp/B002CQU53K?tag=maximost-20"
   },
   {
     id: 2,
@@ -68,7 +68,7 @@ const topSupplements = [
     ],
     dosage: "1,000-5,000 IU daily with fat-containing meal",
     considerations: "Test levels first. Take with K2 for optimal calcium regulation. Morning dosing may be beneficial for circadian rhythm.",
-    amazonUrl: "https://www.amazon.com/s?k=vitamin+d3+k2&tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/Thorne-Research-Vitamin-K2-Liquid/dp/B0797ND64V?tag=maximost-20"
   },
   {
     id: 3,
@@ -86,7 +86,133 @@ const topSupplements = [
     ],
     dosage: "200-400mg elemental magnesium daily (divided doses)",
     considerations: "Different forms have different effects: glycinate for sleep/relaxation, threonate for cognitive benefits, malate for energy.",
-    amazonUrl: "https://www.amazon.com/s?k=magnesium+glycinate+threonate&tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/Pure-Encapsulations-Magnesium-Glycinate-Capsules/dp/B0058HWM9S?tag=maximost-20"
+  },
+  {
+    id: 4,
+    name: "Creatine Monohydrate",
+    benefits: "Muscle strength, power output, cognitive function, cellular energy.",
+    expertInsights: [
+      {
+        expert: "Layne Norton",
+        insight: "One of the most well-researched supplements with proven benefits for strength, recovery, and even cognitive performance."
+      },
+      {
+        expert: "Andy Galpin",
+        insight: "Recommends for both athletes and general health as it's safe, effective, and supports muscle health."
+      }
+    ],
+    dosage: "3-5g daily, timing doesn't matter",
+    considerations: "No loading phase needed. Micronized form may reduce digestive discomfort. Benefit accumulates over time.",
+    amazonUrl: "https://www.amazon.com/Optimum-Nutrition-Micronized-Monohydrate-Creatine/dp/B002DYIZEO?tag=maximost-20"
+  },
+  {
+    id: 5,
+    name: "Protein Powder (Whey/Plant)",
+    benefits: "Muscle recovery, appetite control, convenient nutrition, immune support.",
+    expertInsights: [
+      {
+        expert: "Stuart Phillips",
+        insight: "Whey protein provides optimal amino acid profile for muscle protein synthesis – ideal for recovery timing."
+      },
+      {
+        expert: "Gabrielle Lyon",
+        insight: "Emphasizes protein's critical role for muscle maintenance, especially as we age."
+      }
+    ],
+    dosage: "20-40g per serving as needed to meet daily protein targets",
+    considerations: "Whey isolate for lactose sensitivity, plant blend for vegetarians. Look for third-party tested products with minimal additives.",
+    amazonUrl: "https://www.amazon.com/Optimum-Nutrition-Standard-Protein-Chocolate/dp/B000QSNYGI?tag=maximost-20"
+  },
+  {
+    id: 6,
+    name: "Vitamin K2 (MK-7)",
+    benefits: "Calcium regulation, cardiovascular health, bone strength, dental health.",
+    expertInsights: [
+      {
+        expert: "Chris Masterjohn",
+        insight: "K2 directs calcium to bones instead of arteries; often deficient in modern diets yet crucial for D3 balance."
+      },
+      {
+        expert: "Rhonda Patrick",
+        insight: "Always pairs D3 with K2 to prevent calcium dysregulation and optimize cardiovascular health."
+      }
+    ],
+    dosage: "100-200mcg daily with fat-containing meal",
+    considerations: "Take with vitamin D3. MK-7 form has longer half-life than MK-4. May interact with blood thinners.",
+    amazonUrl: "https://www.amazon.com/Life-Extension-Super-Complex-Softgels/dp/B004GW4S0G?tag=maximost-20"
+  },
+  {
+    id: 7,
+    name: "Zinc",
+    benefits: "Immune function, testosterone production, wound healing, enzyme reactions.",
+    expertInsights: [
+      {
+        expert: "Rhonda Patrick",
+        insight: "Critical for immune cell function and DNA repair mechanisms; deficiency is common during stress."
+      },
+      {
+        expert: "Stacy Sims",
+        insight: "Notes its importance for hormone production and metabolic health in both men and women."
+      }
+    ],
+    dosage: "15-30mg daily with food",
+    considerations: "Zinc picolinate or zinc bisglycinate have better absorption. Long-term use requires copper balance. Take with food to reduce nausea.",
+    amazonUrl: "https://www.amazon.com/Thorne-Research-Picolinate-Metabolism-Support/dp/B004O9ESUO?tag=maximost-20"
+  },
+  {
+    id: 8,
+    name: "L-Theanine",
+    benefits: "Stress reduction, focus enhancement, sleep quality, cognitive performance.",
+    expertInsights: [
+      {
+        expert: "Andrew Huberman",
+        insight: "Combines well with caffeine for 'calm-alert' state; also excellent for stress management and sleep quality."
+      },
+      {
+        expert: "Matthew Walker",
+        insight: "Can improve sleep onset without sedation; helps quiet an active mind."
+      }
+    ],
+    dosage: "200-400mg as needed or daily",
+    considerations: "Synergistic with caffeine (2:1 theanine:caffeine ratio). Can be taken multiple times per day safely. Particularly useful during stressful periods.",
+    amazonUrl: "https://www.amazon.com/Sports-Research-Suntheanine-L-Theanine-Gluten-Free/dp/B01D1YQBOK?tag=maximost-20"
+  },
+  {
+    id: 9,
+    name: "Ashwagandha (KSM-66)",
+    benefits: "Stress reduction, hormone balance, recovery enhancement, immune modulation.",
+    expertInsights: [
+      {
+        expert: "Andrew Huberman",
+        insight: "Particularly effective for sleep and HPA-axis regulation; one of the most well-studied adaptogens."
+      },
+      {
+        expert: "Examine.com",
+        insight: "Research shows consistent benefits for stress reduction, modest testosterone support, and recovery enhancement."
+      }
+    ],
+    dosage: "600mg daily (standardized extract)",
+    considerations: "KSM-66 or Sensoril extracts have best research. Take consistently for 4-8 weeks for full effects. May be best avoided with autoimmune thyroid conditions.",
+    amazonUrl: "https://www.amazon.com/Organic-Ashwagandha-Anxiety-Thyroid-Cortisol/dp/B07N13YMK1?tag=maximost-20"
+  },
+  {
+    id: 10,
+    name: "Berberine",
+    benefits: "Blood sugar regulation, lipid management, gut health, metabolic health.",
+    expertInsights: [
+      {
+        expert: "Peter Attia",
+        insight: "Often compares its metabolic benefits to metformin; particularly useful for those struggling with insulin sensitivity."
+      },
+      {
+        expert: "Rhonda Patrick",
+        insight: "Highlights both the metabolic and longevity potential, while noting GI adjustment period."
+      }
+    ],
+    dosage: "500mg 1-3 times daily with meals",
+    considerations: "Start with lower dose to assess tolerance. May interact with certain medications. Taking with meals reduces GI discomfort.",
+    amazonUrl: "https://www.amazon.com/Thorne-Research-Berberine-Botanical-Supplement/dp/B096X3JJ2V?tag=maximost-20"
   }
 ];
 

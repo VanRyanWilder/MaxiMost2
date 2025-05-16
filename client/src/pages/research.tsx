@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModernLayout } from "@/components/layout/modern-layout";
+import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,7 +143,7 @@ export default function ResearchPage() {
   const regularPapers = filteredPapers.filter(p => !p.featured);
   
   return (
-    <ModernLayout pageTitle="Scientific Research">
+    <PageContainer title="Scientific Research">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="flex flex-col">
           {/* Header */}
@@ -289,7 +289,7 @@ export default function ResearchPage() {
           </Card>
         </div>
       </div>
-    </ModernLayout>
+    </PageContainer>
   );
 }
 
