@@ -414,11 +414,28 @@ export class DatabaseStorage implements IStorage {
 
   // Supplement Review methods
   async getSupplementReviews(supplementId: number): Promise<(SupplementReview & { user: User })[]> {
-    const reviews = await db
-      .select()
-      .from(supplementReviews)
-      .where(eq(supplementReviews.supplementId, supplementId))
-      .orderBy(desc(supplementReviews.createdAt));
+    // Use raw SQL to get only the columns that exist in the database
+    const rawReviews = await db.execute(sql`
+      SELECT 
+        id, 
+        supplement_id as "supplementId", 
+        user_id as "userId", 
+        rating, 
+        content, 
+        created_at as "createdAt", 
+        updated_at as "updatedAt"
+      FROM supplement_reviews
+      WHERE supplement_id = ${supplementId}
+      ORDER BY created_at DESC
+    `);
+    
+    const reviews = rawReviews.map(row => ({
+      ...row,
+      // Add default values for missing columns
+      helpfulVotes: 0,
+      unhelpfulVotes: 0,
+      isVerifiedPurchase: false
+    }));
     
     // Fetch users for the reviews
     const userIds = reviews.map(review => review.userId);
@@ -437,8 +454,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSupplementReview(id: number): Promise<SupplementReview | undefined> {
-    const [review] = await db.select().from(supplementReviews).where(eq(supplementReviews.id, id));
-    return review;
+    // Use raw SQL to get only the columns that exist in the database
+    const rawReviews = await db.execute(sql`
+      SELECT 
+        id, 
+        supplement_id as "supplementId", 
+        user_id as "userId", 
+        rating, 
+        content, 
+        created_at as "createdAt", 
+        updated_at as "updatedAt"
+      FROM supplement_reviews
+      WHERE id = ${id}
+    `);
+    
+    if (rawReviews.length === 0) {
+      return undefined;
+    }
+    
+    // Add default values for missing columns
+    return {
+      ...rawReviews[0],
+      helpfulVotes: 0,
+      unhelpfulVotes: 0,
+      isVerifiedPurchase: false
+    };
   }
 
   async createSupplementReview(insertReview: InsertSupplementReview): Promise<SupplementReview> {
