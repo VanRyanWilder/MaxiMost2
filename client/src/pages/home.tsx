@@ -28,11 +28,15 @@ export default function Home() {
             <span className="text-xs bg-purple-700 px-1 py-0.5 rounded text-white align-top mt-2">ALPHA</span>
           </div>
           <div className="space-x-4">
-            <Button variant="outline" onClick={() => setLocation("/login")}>
+            <Button 
+              variant="outline" 
+              className="text-white hover:text-white border-white hover:border-white"
+              onClick={() => setLocation("/login")}
+            >
               Log in
             </Button>
             <Button 
-              className="bg-gradient-to-r from-indigo-500 to-purple-600"
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:text-white"
               onClick={() => setLocation("/signup")}
             >
               Sign up
@@ -75,6 +79,7 @@ export default function Home() {
                   <Button 
                     size="lg" 
                     variant="outline"
+                    className="text-white hover:text-white border-white hover:border-white"
                     onClick={() => setLocation("/dashboard")}
                   >
                     Habit Building
