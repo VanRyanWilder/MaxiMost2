@@ -213,9 +213,9 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               <Button 
                 onClick={() => {
                   setViewMode("daily");
-                  // Reset offsets when changing view mode for consistent behavior
-                  setDayOffset(0);
-                  setWeekOffset(0);
+                  // Don't reset offsets when changing view mode to maintain day consistency
+                  // This way, if user navigated to a specific day in weekly view
+                  // then switches to daily view, they'll see the same day
                 }} 
                 variant={viewMode === "daily" ? "default" : "outline"}
                 className="rounded-none"
@@ -226,8 +226,9 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               <Button 
                 onClick={() => {
                   setViewMode("weekly");
-                  setDayOffset(0);
-                  setWeekOffset(0);
+                  // Keep the current day offset to maintain consistency
+                  // This allows us to switch back and forth between views
+                  // while maintaining the same day context
                 }} 
                 variant={viewMode === "weekly" ? "default" : "outline"}
                 className="rounded-none"
@@ -238,8 +239,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               <Button 
                 onClick={() => {
                   setViewMode("monthly");
-                  setDayOffset(0);
-                  setWeekOffset(0);
+                  // Keep the current day offset for consistency across all views
+                  // This ensures a seamless transition between different view modes
                 }} 
                 variant={viewMode === "monthly" ? "default" : "outline"}
                 className="rounded-none"
