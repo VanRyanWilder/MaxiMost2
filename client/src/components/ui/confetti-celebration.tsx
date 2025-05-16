@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
+// Using TypeScript declaration file in types/canvas-confetti.d.ts
 
 interface ConfettiCelebrationProps {
   trigger: boolean;
