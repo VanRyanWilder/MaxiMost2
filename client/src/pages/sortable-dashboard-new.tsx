@@ -881,6 +881,28 @@ export default function SortableDashboard() {
                 </div>
               </div>
               
+              {/* Icon selection */}
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">Icon</Label>
+                <div className="col-span-3 grid grid-cols-4 gap-3">
+                  {['dumbbell', 'heart', 'activity', 'brain', 'droplets', 'moon', 'pill', 'utensils', 'book', 'users', 'dollar', 'flame'].map(iconType => (
+                    <button
+                      key={iconType}
+                      type="button"
+                      className={`h-9 w-9 rounded-full bg-gray-100 flex items-center justify-center transition-all
+                        ${selectedHabit.icon === iconType ? 'ring-2 ring-offset-2 ring-offset-background ring-primary' : ''}`}
+                      onClick={() => setSelectedHabit({...selectedHabit, icon: iconType})}
+                    >
+                      <EnhancedHabitIcon 
+                        icon={iconType} 
+                        category={selectedHabit.category}
+                        size="xs"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            
               {/* Color selection */}
               <div className="grid grid-cols-4 items-start gap-4">
                 <Label className="text-right pt-2">Color</Label>

@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { format, isSameDay, isBefore, isAfter, startOfToday, endOfToday } from 'date-fns';
 import { Habit, HabitCompletion } from '@/types/habit';
 import { iconMap, colorSchemes } from './edit-habit-dialog';
-import { EnhancedHabitIcon } from "@/components/ui/habit-icon";
+import { EnhancedHabitIcon } from "@/components/ui/enhanced-habit-icon";
 
 interface SortableHabitProps {
   habit: Habit;
