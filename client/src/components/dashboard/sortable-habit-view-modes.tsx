@@ -25,7 +25,7 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
-import { WeeklyTableViewImproved } from './weekly-table-view-improved';
+import { WeeklyTableViewFixedNew } from './weekly-table-view-fixed-new';
 import { DailyViewFixed } from './daily-view-fixed';
 import {
   arrayMove,
@@ -393,7 +393,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </div>
             </div>
             
-            <WeeklyTableViewImproved
+            <WeeklyTableViewFixedNew
               habits={filteredHabits}
               completions={completions}
               weekDates={weekDates}
