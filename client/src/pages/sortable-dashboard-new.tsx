@@ -635,13 +635,10 @@ export default function SortableDashboard() {
         {/* Main content area */}
         <main className="flex-1">
           <PageContainer>
-            {/* Mobile menu button only */}
-            <div className="flex justify-between items-center mb-4">
-              <Button variant="ghost" onClick={() => setIsSidebarOpen(true)} className="lg:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-              {/* Removed duplicate title here */}
-              <div className="w-8"></div> {/* Empty space for alignment */}
+            {/* Adding settings button at the top right */}
+            <div className="flex justify-end items-center mb-4">
+              {/* Add settings button where the original settings UI was */}
+              <HeaderWithSettings />
             </div>
             
             {/* Two-column layout for desktop */}
