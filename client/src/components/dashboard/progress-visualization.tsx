@@ -62,84 +62,98 @@ const COLORS = {
   ]
 };
 
-// Mock data - in a real application, this would come from the user's actual metrics
-const mockWeightData = [
-  { date: "2023-01-01", value: 205 },
-  { date: "2023-01-08", value: 203 },
-  { date: "2023-01-15", value: 201 },
-  { date: "2023-01-22", value: 200 },
-  { date: "2023-01-29", value: 198 },
-  { date: "2023-02-05", value: 199 },
-  { date: "2023-02-12", value: 197 },
-  { date: "2023-02-19", value: 196 },
-  { date: "2023-02-26", value: 194 },
-  { date: "2023-03-05", value: 192 },
+// Sample habit completion data by date
+const mockPhysicalHabitData = [
+  { date: "2023-01-01", value: 65 },
+  { date: "2023-01-08", value: 70 },
+  { date: "2023-01-15", value: 75 },
+  { date: "2023-01-22", value: 80 },
+  { date: "2023-01-29", value: 85 },
+  { date: "2023-02-05", value: 82 },
+  { date: "2023-02-12", value: 88 },
+  { date: "2023-02-19", value: 90 },
+  { date: "2023-02-26", value: 85 },
+  { date: "2023-03-05", value: 92 },
 ];
 
-const mockBodyFatData = [
-  { date: "2023-01-01", value: 25 },
-  { date: "2023-01-08", value: 24.5 },
-  { date: "2023-01-15", value: 24.3 },
-  { date: "2023-01-22", value: 24.0 },
-  { date: "2023-01-29", value: 23.8 },
-  { date: "2023-02-05", value: 23.5 },
-  { date: "2023-02-12", value: 23.2 },
-  { date: "2023-02-19", value: 22.8 },
-  { date: "2023-02-26", value: 22.5 },
-  { date: "2023-03-05", value: 22.1 },
+const mockNutritionHabitData = [
+  { date: "2023-01-01", value: 55 },
+  { date: "2023-01-08", value: 60 },
+  { date: "2023-01-15", value: 65 },
+  { date: "2023-01-22", value: 70 },
+  { date: "2023-01-29", value: 75 },
+  { date: "2023-02-05", value: 72 },
+  { date: "2023-02-12", value: 78 },
+  { date: "2023-02-19", value: 80 },
+  { date: "2023-02-26", value: 82 },
+  { date: "2023-03-05", value: 85 },
 ];
 
-const mockWorkoutData = [
-  { date: "2023-01-01", value: 2 },
-  { date: "2023-01-08", value: 3 },
-  { date: "2023-01-15", value: 2 },
-  { date: "2023-01-22", value: 4 },
-  { date: "2023-01-29", value: 2 },
-  { date: "2023-02-05", value: 3 },
-  { date: "2023-02-12", value: 5 },
-  { date: "2023-02-19", value: 4 },
-  { date: "2023-02-26", value: 5 },
-  { date: "2023-03-05", value: 5 },
+const mockSleepHabitData = [
+  { date: "2023-01-01", value: 70 },
+  { date: "2023-01-08", value: 72 },
+  { date: "2023-01-15", value: 75 },
+  { date: "2023-01-22", value: 80 },
+  { date: "2023-01-29", value: 82 },
+  { date: "2023-02-05", value: 85 },
+  { date: "2023-02-12", value: 88 },
+  { date: "2023-02-19", value: 90 },
+  { date: "2023-02-26", value: 85 },
+  { date: "2023-03-05", value: 92 },
 ];
 
-const mockSleepData = [
-  { date: "2023-01-01", value: 6.5 },
-  { date: "2023-01-08", value: 6.8 },
-  { date: "2023-01-15", value: 7.0 },
-  { date: "2023-01-22", value: 6.7 },
-  { date: "2023-01-29", value: 7.2 },
-  { date: "2023-02-05", value: 7.5 },
-  { date: "2023-02-12", value: 7.3 },
-  { date: "2023-02-19", value: 7.8 },
-  { date: "2023-02-26", value: 7.5 },
-  { date: "2023-03-05", value: 8.0 },
+const mockMentalHabitData = [
+  { date: "2023-01-01", value: 60 },
+  { date: "2023-01-08", value: 65 },
+  { date: "2023-01-15", value: 70 },
+  { date: "2023-01-22", value: 72 },
+  { date: "2023-01-29", value: 75 },
+  { date: "2023-02-05", value: 78 },
+  { date: "2023-02-12", value: 80 },
+  { date: "2023-02-19", value: 82 },
+  { date: "2023-02-26", value: 85 },
+  { date: "2023-03-05", value: 88 },
 ];
 
-const mockMeditationData = [
-  { date: "2023-01-01", value: 5 },
-  { date: "2023-01-08", value: 8 },
-  { date: "2023-01-15", value: 10 },
-  { date: "2023-01-22", value: 12 },
-  { date: "2023-01-29", value: 15 },
-  { date: "2023-02-05", value: 10 },
-  { date: "2023-02-12", value: 15 },
-  { date: "2023-02-19", value: 20 },
-  { date: "2023-02-26", value: 15 },
-  { date: "2023-03-05", value: 20 },
+const mockRelationshipHabitData = [
+  { date: "2023-01-01", value: 50 },
+  { date: "2023-01-08", value: 55 },
+  { date: "2023-01-15", value: 60 },
+  { date: "2023-01-22", value: 65 },
+  { date: "2023-01-29", value: 70 },
+  { date: "2023-02-05", value: 75 },
+  { date: "2023-02-12", value: 80 },
+  { date: "2023-02-19", value: 78 },
+  { date: "2023-02-26", value: 82 },
+  { date: "2023-03-05", value: 85 },
+];
+
+const mockFinancialHabitData = [
+  { date: "2023-01-01", value: 45 },
+  { date: "2023-01-08", value: 50 },
+  { date: "2023-01-15", value: 55 },
+  { date: "2023-01-22", value: 60 },
+  { date: "2023-01-29", value: 65 },
+  { date: "2023-02-05", value: 70 },
+  { date: "2023-02-12", value: 75 },
+  { date: "2023-02-19", value: 80 },
+  { date: "2023-02-26", value: 82 },
+  { date: "2023-03-05", value: 85 },
 ];
 
 const mockHabitCompletionData = [
-  { name: "Workout", value: 80 },
-  { name: "Meditation", value: 65 },
-  { name: "Reading", value: 45 },
-  { name: "Journaling", value: 90 },
-  { name: "Nutrition", value: 60 },
+  { name: "Physical", value: 85 },
+  { name: "Nutrition", value: 75 },
+  { name: "Sleep", value: 82 },
+  { name: "Mental", value: 78 },
+  { name: "Relationships", value: 70 },
+  { name: "Financial", value: 65 },
 ];
 
 export function ProgressVisualization({ className }: ProgressVisualizationProps) {
   const [timeRange, setTimeRange] = useState<string>("10w");
   const [chartType, setChartType] = useState<string>("line");
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["weight", "workouts"]);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>(["physical", "mental"]);
   const [insights, setInsights] = useState<{
     summary: string;
     observations: string[];
@@ -156,11 +170,12 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
   ];
 
   const metricOptions = [
-    { id: "weight", name: "Weight", unit: "lbs", data: mockWeightData, color: COLORS.chart[0] },
-    { id: "bodyfat", name: "Body Fat", unit: "%", data: mockBodyFatData, color: COLORS.chart[1] },
-    { id: "workouts", name: "Workouts", unit: "sessions", data: mockWorkoutData, color: COLORS.chart[2] },
-    { id: "sleep", name: "Sleep", unit: "hours", data: mockSleepData, color: COLORS.chart[3] },
-    { id: "meditation", name: "Meditation", unit: "minutes", data: mockMeditationData, color: COLORS.chart[4] },
+    { id: "physical", name: "Physical", unit: "%", data: mockPhysicalHabitData, color: "#ef4444" }, // Red
+    { id: "nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: "#f97316" }, // Orange
+    { id: "sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: "#8b5cf6" }, // Indigo
+    { id: "mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: "#facc15" }, // Yellow
+    { id: "relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: "#22c55e" }, // Green
+    { id: "financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: "#10b981" }, // Emerald
   ];
 
   // Filter metrics based on selection
@@ -242,7 +257,7 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
           <p className="text-xs text-gray-500">{label ? formatDate(label) : ""}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm font-medium">
-              {entry.name}: {entry.value} {metricOptions.find(m => m.name === entry.name)?.unit}
+              {entry.name}: {entry.value}% completion
             </p>
           ))}
         </div>
@@ -316,16 +331,16 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               {chartType === "line" ? (
-                <LineChart data={mockWeightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <LineChart margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                   <XAxis 
                     dataKey="date" 
                     tickFormatter={formatDate} 
                     minTickGap={30}
                   />
-                  <YAxis yAxisId="left" orientation="left" stroke={COLORS.chart[0]} />
+                  <YAxis yAxisId="left" orientation="left" stroke={filteredMetrics[0]?.color || COLORS.chart[0]} domain={[0, 100]} />
                   {filteredMetrics.length > 1 && (
-                    <YAxis yAxisId="right" orientation="right" stroke={COLORS.chart[1]} />
+                    <YAxis yAxisId="right" orientation="right" stroke={filteredMetrics[1]?.color || COLORS.chart[1]} domain={[0, 100]} />
                   )}
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
@@ -344,16 +359,16 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
                   ))}
                 </LineChart>
               ) : chartType === "area" ? (
-                <AreaChart data={mockWeightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <AreaChart margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                   <XAxis 
                     dataKey="date" 
                     tickFormatter={formatDate}
                     minTickGap={30}
                   />
-                  <YAxis yAxisId="left" orientation="left" stroke={COLORS.chart[0]} />
+                  <YAxis yAxisId="left" orientation="left" stroke={filteredMetrics[0]?.color || COLORS.chart[0]} domain={[0, 100]} />
                   {filteredMetrics.length > 1 && (
-                    <YAxis yAxisId="right" orientation="right" stroke={COLORS.chart[1]} />
+                    <YAxis yAxisId="right" orientation="right" stroke={filteredMetrics[1]?.color || COLORS.chart[1]} domain={[0, 100]} />
                   )}
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
@@ -373,16 +388,16 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
                   ))}
                 </AreaChart>
               ) : (
-                <BarChart data={mockWeightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                <BarChart margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                   <XAxis 
                     dataKey="date" 
                     tickFormatter={formatDate}
                     minTickGap={30}
                   />
-                  <YAxis yAxisId="left" orientation="left" stroke={COLORS.chart[0]} />
+                  <YAxis yAxisId="left" orientation="left" stroke={filteredMetrics[0]?.color || COLORS.chart[0]} domain={[0, 100]} />
                   {filteredMetrics.length > 1 && (
-                    <YAxis yAxisId="right" orientation="right" stroke={COLORS.chart[1]} />
+                    <YAxis yAxisId="right" orientation="right" stroke={filteredMetrics[1]?.color || COLORS.chart[1]} domain={[0, 100]} />
                   )}
                   <Tooltip content={<CustomTooltip />} />
                   <Legend />
