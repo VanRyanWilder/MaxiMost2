@@ -124,7 +124,7 @@ export default function SortableDashboard() {
       createdAt: new Date()
     },
     {
-      id: "h-5",
+      id: "h-no-snacking",
       title: "No snacking",
       description: "Avoid between-meal snacks",
       icon: "apple",
@@ -184,7 +184,7 @@ export default function SortableDashboard() {
       createdAt: new Date(2023, 0, 15)
     },
     {
-      id: "h-5",
+      id: "h-stretch-routine",
       title: "Stretch",
       description: "Morning stretching routine",
       icon: "activity",
@@ -193,7 +193,7 @@ export default function SortableDashboard() {
       effort: 3,
       timeCommitment: "5 min",
       frequency: "daily",
-      isAbsolute: false,
+      isAbsolute: true,
       category: "fitness",
       streak: 0,
       createdAt: new Date(2023, 0, 20)
