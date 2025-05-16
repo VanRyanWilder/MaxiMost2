@@ -9,7 +9,6 @@ import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitViewModes } from "@/components/dashboard/habit-view-modes";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
-import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog";
 import { FixHabitDialog } from "@/components/dashboard/fix-habit-dialog";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
@@ -798,27 +797,41 @@ export default function Dashboard() {
           </div>
         </PageContainer>
         
-        {/* Custom Habit Dialog */}
-        {showCustomHabitDialog && (
-          <EditHabitDialog
-            open={showCustomHabitDialog}
-            onOpenChange={setShowCustomHabitDialog}
-            habit={null}  // Passing null creates a new habit
-            onSave={(newHabit) => {
-              setHabits([...habits, newHabit]);
-              setShowCustomHabitDialog(false);
-            }}
-          />
-        )}
-        
-        {/* Fix Habit Dialog for editing existing habits */}
+        {/* Unified Habit Dialog for both adding and editing habits */}
         <FixHabitDialog 
-          open={!!editingHabit} 
+          open={!!editingHabit || showCustomHabitDialog} 
           onOpenChange={(open) => {
-            if (!open) setEditingHabit(null);
+            if (!open) {
+              setEditingHabit(null);
+              setShowCustomHabitDialog(false);
+            }
           }}
-          habit={editingHabit}
-          onSave={editHabit}
+          habit={editingHabit || {
+            id: `h-${Date.now()}`,
+            title: "New Habit",
+            description: "Description of your new habit",
+            icon: "activity",
+            iconColor: "#3b82f6",
+            impact: 8,
+            effort: 4,
+            timeCommitment: '10 min',
+            frequency: 'daily' as HabitFrequency,
+            isAbsolute: true,
+            category: "health" as HabitCategory,
+            streak: 0,
+            createdAt: new Date()
+          }}
+          onSave={(updatedHabit) => {
+            if (editingHabit) {
+              // If we're editing an existing habit
+              editHabit(updatedHabit);
+            } else {
+              // If we're adding a new habit
+              addHabit(updatedHabit);
+            }
+            setEditingHabit(null);
+            setShowCustomHabitDialog(false);
+          }}
           onDelete={deleteHabit}
         />
       </div>
