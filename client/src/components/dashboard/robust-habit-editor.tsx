@@ -73,10 +73,10 @@ export function RobustHabitEditor({
         title: habit.title,
         frequency: habit.frequency as HabitFrequency,
         category: habit.category as HabitCategory,
-        iconColor: habit.iconColor,
+        iconColor: habit.iconColor || 'blue',
         isNew: false
       });
-    } else if (open) {
+    } else if (open && !habit) {
       // Creating new habit
       const newId = `habit-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
       setFormState({
@@ -111,12 +111,12 @@ export function RobustHabitEditor({
     const habitToSave: Habit = {
       id: formState.id,
       title: formState.title.trim(),
-      description: '',
-      icon: 'check-square',
+      description: habit?.description || '',
+      icon: habit?.icon || 'check-square',
       iconColor: formState.iconColor,
-      impact: 8,
-      effort: 4,
-      timeCommitment: '5 min',
+      impact: habit?.impact || 8,
+      effort: habit?.effort || 4,
+      timeCommitment: habit?.timeCommitment || '5 min',
       frequency: formState.frequency,
       isAbsolute: formState.frequency === 'daily',
       category: formState.category,
