@@ -143,8 +143,51 @@ export function WeeklyTableViewFixedUpdated({
   };
   
   const handleEditHabit = (habit: Habit) => {
+    console.log("Weekly table view - Edit habit clicked:", habit);
+    
+    // Make sure we have the required color and icon for MaxiMost categories
+    let iconColor = habit.iconColor || "blue";
+    let icon = habit.icon || "zap";
+    
+    // Ensure appropriate colors for MaxiMost categories
+    switch (habit.category) {
+      case "physical": 
+        iconColor = "red"; 
+        icon = icon === "zap" ? "dumbbell" : icon;
+        break;
+      case "nutrition": 
+        iconColor = "orange"; 
+        icon = icon === "zap" ? "utensils" : icon;
+        break;
+      case "sleep": 
+        iconColor = "indigo"; 
+        icon = icon === "zap" ? "moon" : icon;
+        break;
+      case "mental": 
+        iconColor = "yellow"; 
+        icon = icon === "zap" ? "brain" : icon;
+        break;
+      case "relationships": 
+        iconColor = "green"; 
+        icon = icon === "zap" ? "users" : icon;
+        break;
+      case "financial": 
+        iconColor = "emerald"; 
+        icon = icon === "zap" ? "circleDollarSign" : icon;
+        break;
+    }
+    
+    // Create enriched habit with validated properties
+    const enrichedHabit = {
+      ...habit,
+      iconColor,
+      icon
+    };
+    
+    console.log("Weekly table view - Calling onEditHabit with:", enrichedHabit);
+    
     if (onEditHabit) {
-      onEditHabit(habit);
+      onEditHabit(enrichedHabit);
     }
   };
   
