@@ -268,22 +268,8 @@ export default function Dashboard() {
                       </CardTitle>
                       <Button 
                         onClick={() => {
-                          const newHabit = {
-                            id: `h-${Date.now()}`,
-                            title: "New Habit",
-                            description: "Description of your new habit",
-                            icon: "activity",
-                            iconColor: "#3b82f6",
-                            impact: 8,
-                            effort: 4,
-                            timeCommitment: '10 min',
-                            frequency: 'daily' as HabitFrequency,
-                            isAbsolute: true,
-                            category: "health" as HabitCategory,
-                            streak: 0,
-                            createdAt: new Date()
-                          };
-                          addHabit(newHabit);
+                          // Open the enhanced dialog
+                          setShowCustomHabitDialog(true);
                         }}
                         className="bg-blue-500 hover:bg-blue-600"
                         size="sm"
@@ -299,22 +285,8 @@ export default function Dashboard() {
                         completions={completions}
                         onToggleHabit={toggleCompletion}
                         onAddHabit={() => {
-                          const newHabit = {
-                            id: `h-${Date.now()}`,
-                            title: "New Habit",
-                            description: "Description of your new habit",
-                            icon: "activity",
-                            iconColor: "#3b82f6", // Add this field
-                            impact: 8,
-                            effort: 4,
-                            timeCommitment: '10 min',
-                            frequency: 'daily' as HabitFrequency,
-                            isAbsolute: true,
-                            category: "health" as HabitCategory,
-                            streak: 0,
-                            createdAt: new Date()
-                          };
-                          addHabit(newHabit);
+                          // This should open the enhanced dialog without passing a habit
+                          setShowCustomHabitDialog(true);
                         }}
                         onUpdateHabit={editHabit}
                         onDeleteHabit={deleteHabit}
@@ -327,7 +299,7 @@ export default function Dashboard() {
                           habits={habits}
                           completions={completions.filter(c => isSameDay(c.date, new Date()))}
                           onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
-                          onAddHabit={addHabit}
+                          onAddHabit={() => setShowCustomHabitDialog(true)}
                           onEditHabit={setEditingHabit}
                           onDeleteHabit={deleteHabit}
                         />
