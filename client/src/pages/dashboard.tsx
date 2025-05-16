@@ -225,37 +225,7 @@ export default function Dashboard() {
               </p>
             </div>
             
-            {/* Progress Cards Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              <ProgressCard 
-                title="Completion Rate" 
-                value={calculateCompletionRate(habits, completions)} 
-                trend={getCompletionTrend(habits, completions)}
-                description="Last 7 days"
-                icon={<CheckSquare className="h-5 w-5 text-blue-500" />}
-              />
-              
-              <ProgressCard 
-                title="Current Streak" 
-                value={calculateCurrentStreak(habits, completions)} 
-                description="Days in a row"
-                icon={<Activity className="h-5 w-5 text-green-500" />}
-              />
-              
-              <ProgressCard 
-                title="Active Habits" 
-                value={habits.length} 
-                description="Total habits"
-                icon={<Zap className="h-5 w-5 text-amber-500" />}
-              />
-              
-              <ProgressCard 
-                title="Consistency Score" 
-                value={calculateConsistencyScore(habits, completions)} 
-                description="Based on activity"
-                icon={<Activity className="h-5 w-5 text-purple-500" />}
-              />
-            </div>
+            {/* Progress Cards removed for cleaner UI */}
             
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

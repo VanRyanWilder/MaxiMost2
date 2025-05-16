@@ -24,32 +24,24 @@ export function Logo({
     navigate('/home');
   };
 
+  // Logo fallback - let's hardcode a text-based logo as ultimate fallback
+  const TextLogo = () => (
+    <div className="flex items-center justify-center h-8 w-8 rounded-md bg-blue-600 font-bold text-white">
+      M
+    </div>
+  );
+
   return (
     <div 
       className={`flex items-center ${className} cursor-pointer`}
       onClick={handleClick}
     >
       <div className="flex items-center">
-        <img 
-          src="/maximost-logo-1.png" 
-          alt="MaxiMost Logo" 
-          className={`${sizeClasses[size]} object-contain mr-1`}
-          onError={(e) => {
-            // Log the error for debugging
-            console.log("Logo load error, trying fallback path");
-            
-            // If the image fails to load, try multiple fallback paths
-            const target = e.target as HTMLImageElement;
-            
-            if (target.src.includes('maximost-logo-1.png')) {
-              // Try the other logo variant that we know exists
-              target.src = `${window.location.origin}/maximost-logo-0.png`;
-              console.log("Trying alternate logo:", target.src);
-            }
-          }}
-        />
+        <div className="mr-2">
+          <TextLogo />
+        </div>
         {textVisible && (
-          <span className="ml-1 font-bold text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          <span className="font-bold text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             MaxiMost
           </span>
         )}
