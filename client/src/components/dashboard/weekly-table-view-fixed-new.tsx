@@ -177,7 +177,7 @@ export function WeeklyTableViewFixedNew({
               return (
                 <div 
                   key={i} 
-                  className={`text-center p-2 ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
+                  className={`text-center p-2 flex flex-col items-center justify-center ${isCurrentDay ? 'bg-blue-50 font-medium' : ''}`}
                 >
                   <div className="text-xs text-gray-500">{format(date, 'EEE')}</div>
                   <div className={`text-sm ${isCurrentDay ? 'text-blue-600' : ''}`}>{format(date, 'd')}</div>

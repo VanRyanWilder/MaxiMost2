@@ -337,7 +337,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "weekly" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">{format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d')}</h3>
+              <div className="flex flex-col">
+                <h3 className="text-lg font-medium">Weekly View</h3>
+                <div className="text-sm text-gray-500">
+                  {format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d')}
+                </div>
+              </div>
               <div className="flex items-center space-x-2">
                 {/* Week navigation */}
                 <Button 
@@ -345,51 +350,21 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                   size="sm" 
                   onClick={() => setWeekOffset(prev => prev - 1)}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Week
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setWeekOffset(0)}
                 >
-                  Current Week
+                  This Week
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setWeekOffset(prev => prev + 1)}
                 >
-                  Week <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            </div>
-            
-            {/* Day navigation */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm text-gray-500">
-                Current Day: {format(currentDay, 'EEEE, MMMM d')}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(prev => prev - 1)}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Day
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(0)}
-                >
-                  Today
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(prev => prev + 1)}
-                >
-                  Day <ChevronRight className="h-4 w-4 ml-1" />
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
             </div>
