@@ -50,7 +50,6 @@ import { ChevronLeft, ChevronRight, Plus, Pencil, Trash2, MoreHorizontal, Calend
 import { Habit } from '@/types/habit';
 import { getHabitIcon } from '@/components/ui/icons';
 import { PlusCircle } from 'lucide-react';
-import { FixHabitDialog } from './fix-habit-dialog';
 
 interface SortableHabitViewProps {
   habits: Habit[];
@@ -78,8 +77,6 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const [weekOffset, setWeekOffset] = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState('all');
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   
   // Calculate current date based on offsets
   const today = new Date();
@@ -148,23 +145,10 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   const handleEditHabit = (habit: Habit) => {
     console.log("SortableHabitViewModes - Edit habit clicked:", habit);
     
-    // Simply store the original habit - our FixHabitDialog component
-    // will handle the category mapping and enrichment
-    setSelectedHabit(habit);
-    setEditDialogOpen(true);
-  };
-  
-  const handleSaveHabit = (updatedHabit: Habit) => {
-    console.log("SortableHabitViewModes - Saving habit:", updatedHabit);
-    
-    // The FixHabitDialog component now handles category mapping and icon assignments
-    // We directly pass the updated habit to the parent component
-    if (onUpdateHabit) {
-      console.log("Calling onUpdateHabit with:", updatedHabit);
-      onUpdateHabit(updatedHabit);
+    // Use the parent component's edit handler
+    if (onEditHabit) {
+      onEditHabit(habit);
     }
-    
-    setEditDialogOpen(false);
   };
   
   const handleDeleteHabit = (habitId: string) => {
@@ -518,15 +502,6 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
           </div>
         )}
       </div>
-      
-      {/* Edit Habit Dialog */}
-      <FixHabitDialog 
-        open={editDialogOpen} 
-        onOpenChange={setEditDialogOpen}
-        habit={selectedHabit}
-        onSave={handleSaveHabit}
-        onDelete={handleDeleteHabit}
-      />
     </div>
   );
 };
