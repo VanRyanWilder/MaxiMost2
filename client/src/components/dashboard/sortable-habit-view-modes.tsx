@@ -25,7 +25,7 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
-import { WeeklyTableViewFixedNew } from './weekly-table-view-fixed-new';
+import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
 import { DailyViewFixedNew } from './daily-view-fixed-new';
@@ -366,7 +366,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </div>
             </div>
             
-            <WeeklyTableViewImproved
+            <WeeklyTableViewFixedUpdated
               habits={filteredHabits}
               completions={completions}
               weekDates={weekDates}
