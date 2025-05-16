@@ -155,6 +155,10 @@ function App() {
         <PrivateRoute component={Experts} />
       </Route>
       
+      <Route path="/experts-unified">
+        <PrivateRoute component={Experts} />
+      </Route>
+      
       <Route path="/habit-building">
         <PrivateRoute component={HabitBuilding} />
       </Route>
