@@ -10,6 +10,7 @@ import { HabitViewModes } from "@/components/dashboard/habit-view-modes";
 import { ProgressCard } from "@/components/dashboard/progress-card";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog";
+import { FixHabitDialog } from "@/components/dashboard/fix-habit-dialog";
 import { useUser } from "@/context/user-context";
 import { format, addDays, startOfWeek, subDays, isSameDay } from 'date-fns';
 import { 
@@ -322,7 +323,7 @@ export default function Dashboard() {
                           completions={completions.filter(c => isSameDay(c.date, new Date()))}
                           onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
                           onAddHabit={addHabit}
-                          onEditHabit={editHabit}
+                          onEditHabit={setEditingHabit}
                           onDeleteHabit={deleteHabit}
                         />
                       </div>
@@ -809,6 +810,17 @@ export default function Dashboard() {
             }}
           />
         )}
+        
+        {/* Fix Habit Dialog for editing existing habits */}
+        <FixHabitDialog 
+          open={!!editingHabit} 
+          onOpenChange={(open) => {
+            if (!open) setEditingHabit(null);
+          }}
+          habit={editingHabit}
+          onSave={editHabit}
+          onDelete={deleteHabit}
+        />
       </div>
     </>
   );
