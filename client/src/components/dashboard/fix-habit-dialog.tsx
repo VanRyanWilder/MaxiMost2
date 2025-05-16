@@ -1,0 +1,318 @@
+import { useState, useEffect } from "react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Brain, 
+  Dumbbell, 
+  Users, 
+  Moon,
+  Utensils,
+  CircleDollarSign,
+  Trash2,
+  Lightbulb
+} from "lucide-react";
+
+// Import shared types
+import { Habit, HabitFrequency, HabitCategory } from "@/types/habit";
+
+type FixHabitDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  habit: Habit | null;
+  onSave: (habit: Habit) => void;
+  onDelete?: (habitId: string) => void;
+};
+
+// Default habit template
+const DEFAULT_HABIT: Habit = {
+  id: `h-${Date.now()}`,
+  title: "",
+  description: "",
+  icon: "dumbbell",
+  iconColor: "red",
+  impact: 8,
+  effort: 4,
+  timeCommitment: "10 min",
+  frequency: "daily",
+  isAbsolute: true,
+  category: "physical",
+  streak: 0,
+  createdAt: new Date()
+};
+
+export function FixHabitDialog({
+  open,
+  onOpenChange,
+  habit,
+  onSave,
+  onDelete
+}: FixHabitDialogProps) {
+  const [editedHabit, setEditedHabit] = useState<Habit>(DEFAULT_HABIT);
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
+  
+  // Reset form when habit changes or dialog opens/closes
+  useEffect(() => {
+    if (!open) return;
+    
+    if (habit) {
+      const habitToEdit = { ...habit };
+      
+      // Ensure category is a MaxiMost category
+      if (habitToEdit.category === "health" || habitToEdit.category === "fitness") {
+        habitToEdit.category = "physical";
+      } else if (habitToEdit.category === "mind") {
+        habitToEdit.category = "mental";
+      } else if (habitToEdit.category === "social") {
+        habitToEdit.category = "relationships";
+      } else if (habitToEdit.category === "finance" || habitToEdit.category === "productivity") {
+        habitToEdit.category = "financial";
+      }
+      
+      // Set the edited habit with all default values if any are missing
+      setEditedHabit({
+        ...DEFAULT_HABIT,
+        ...habitToEdit,
+      });
+      setIsCreatingNew(false);
+    } else {
+      // Create a new habit with a unique ID
+      const newId = `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
+      setEditedHabit({
+        ...DEFAULT_HABIT,
+        id: newId
+      });
+      setIsCreatingNew(true);
+    }
+  }, [habit, open]);
+  
+  const handleSave = () => {
+    if (!editedHabit.title) return;
+
+    let iconColor = editedHabit.iconColor || "blue";
+    let icon = editedHabit.icon || "zap";
+    
+    // Ensure we have the correct icon and color for MaxiMost categories
+    switch (editedHabit.category) {
+      case "physical": 
+        iconColor = "red"; 
+        icon = "dumbbell";
+        break;
+      case "nutrition": 
+        iconColor = "orange"; 
+        icon = "utensils";
+        break;
+      case "sleep": 
+        iconColor = "indigo"; 
+        icon = "moon";
+        break;
+      case "mental": 
+        iconColor = "yellow"; 
+        icon = "lightbulb";
+        break;
+      case "relationships": 
+        iconColor = "green"; 
+        icon = "users";
+        break;
+      case "financial": 
+        iconColor = "emerald"; 
+        icon = "dollar-sign";
+        break;
+    }
+    
+    // Force daily habits to be absolute
+    const isAbsolute = editedHabit.frequency === 'daily' ? true : editedHabit.isAbsolute;
+    
+    // Create the final habit to save
+    const finalHabit = {
+      ...editedHabit,
+      iconColor,
+      icon,
+      isAbsolute
+    };
+    
+    console.log("Saving habit:", finalHabit);
+    onSave(finalHabit);
+    onOpenChange(false);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(editedHabit.id);
+      onOpenChange(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>
+            {isCreatingNew ? "Create New Habit" : "Edit Habit"}
+          </DialogTitle>
+          <DialogDescription>
+            {isCreatingNew 
+              ? "Define a new habit to add to your dashboard."
+              : "Refine this habit to maximize your success and consistency."}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="grid gap-4 py-4">
+          {/* Habit Name */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="title" className="text-right">
+              Name
+            </Label>
+            <Input
+              id="title"
+              value={editedHabit.title}
+              onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value})}
+              className="col-span-3"
+              placeholder="Habit name"
+            />
+          </div>
+          
+          {/* Description */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right">
+              Description
+            </Label>
+            <Textarea
+              id="description"
+              value={editedHabit.description}
+              onChange={(e) => setEditedHabit({...editedHabit, description: e.target.value})}
+              className="col-span-3"
+              placeholder="Brief description"
+            />
+          </div>
+          
+          {/* Category */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="category" className="text-right">
+              Category
+            </Label>
+            <Select 
+              value={editedHabit.category} 
+              onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {/* MaxiMost primary categories */}
+                <SelectItem value="physical">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="h-4 w-4 text-red-500" />
+                    <span>Physical Training</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="nutrition">
+                  <div className="flex items-center gap-2">
+                    <Utensils className="h-4 w-4 text-orange-500" />
+                    <span>Nutrition & Fueling</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="sleep">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-4 w-4 text-indigo-500" />
+                    <span>Sleep & Hygiene</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="mental">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    <span>Mental Acuity & Growth</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="relationships">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-green-500" />
+                    <span>Relationships & Community</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="financial">
+                  <div className="flex items-center gap-2">
+                    <CircleDollarSign className="h-4 w-4 text-emerald-500" />
+                    <span>Financial Habits</span>
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Frequency */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="frequency" className="text-right">
+              Frequency
+            </Label>
+            <Select 
+              value={editedHabit.frequency} 
+              onValueChange={(value: HabitFrequency) => setEditedHabit({...editedHabit, frequency: value})}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select frequency" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">Daily (7 days/week)</SelectItem>
+                <SelectItem value="6x-week">6 times per week</SelectItem>
+                <SelectItem value="5x-week">5 times per week</SelectItem>
+                <SelectItem value="4x-week">4 times per week</SelectItem>
+                <SelectItem value="3x-week">3 times per week</SelectItem>
+                <SelectItem value="2x-week">2 times per week</SelectItem>
+                <SelectItem value="1x-week">1 time per week</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Time Commitment */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="timeCommitment" className="text-right">
+              Time
+            </Label>
+            <Input
+              id="timeCommitment"
+              value={editedHabit.timeCommitment}
+              onChange={(e) => setEditedHabit({...editedHabit, timeCommitment: e.target.value})}
+              className="col-span-3"
+              placeholder="e.g. 5 min"
+            />
+          </div>
+        </div>
+        
+        <DialogFooter className="flex justify-between">
+          {!isCreatingNew && onDelete && (
+            <Button 
+              variant="destructive" 
+              onClick={handleDelete}
+              className="mr-auto"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          )}
+          <div>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              className="mr-2"
+            >
+              Cancel
+            </Button>
+            <Button type="submit" onClick={handleSave}>Save</Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
