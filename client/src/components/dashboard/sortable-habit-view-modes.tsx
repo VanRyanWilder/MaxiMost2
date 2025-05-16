@@ -287,14 +287,14 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "daily" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Daily Habits</h3>
+              <h3 className="text-lg font-medium">Daily View</h3>
               <div className="flex items-center space-x-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => setDayOffset(prev => prev - 1)}
                 >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous Day
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
                 </Button>
                 <Button 
                   variant="outline" 
@@ -308,12 +308,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                   size="sm" 
                   onClick={() => setDayOffset(prev => prev + 1)}
                 >
-                  Next Day <ChevronRight className="h-4 w-4 ml-1" />
+                  Next <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
             </div>
             <div className="text-sm text-gray-500 mb-4">
-              {format(currentDay, 'EEEE, MMMM d, yyyy')}
+              {format(currentDay, 'MMM d, yyyy')}
             </div>
             {habits.length === 0 ? (
               <div className="p-6 text-center">
@@ -339,9 +339,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "weekly" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <div className="flex flex-col">
-                <h3 className="text-lg font-medium">Weekly View</h3>
-              </div>
+              <h3 className="text-lg font-medium">Weekly View</h3>
               <div className="flex items-center space-x-2">
                 {/* Week navigation */}
                 <Button 
