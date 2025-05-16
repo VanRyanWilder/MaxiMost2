@@ -473,18 +473,15 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         {viewMode === "weekly" && (
           <WeeklyTableView
             habits={filteredHabits}
+            completions={completions}
             weekDates={weekDates}
-            weekOffset={weekOffset}
-            dayOffset={dayOffset}
-            filterCategory={filterCategory}
-            isHabitCompletedOnDate={isHabitCompletedOnDate}
-            countCompletedDaysInWeek={countCompletedDaysInWeek}
             onToggleHabit={onToggleHabit}
-            onChangeWeek={handleWeekChange}
-            onChangeDay={handleDayChange}
+            onAddHabit={onAddHabit}
+            onEditHabit={onEditHabit}
+            onDeleteHabit={onDeleteHabit}
             onReorderHabits={onReorderHabits}
-            onEditHabit={handleEditHabit}
-            onDeleteHabit={handleDeleteHabit}
+            selectedCategory={filterCategory}
+            currentDay={today}
           />
         )}
       
