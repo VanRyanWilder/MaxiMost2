@@ -171,8 +171,8 @@ export function DailyViewFixedUpdated({
       const overHabitId = String(over.id);
       
       // Only allow reordering within absolute habits
-      const activeIndex = absoluteHabits.findIndex(h => h.id === activeHabitId);
-      const overIndex = absoluteHabits.findIndex(h => h.id === overHabitId);
+      const activeIndex = displayedAbsoluteHabits.findIndex(h => h.id === activeHabitId);
+      const overIndex = displayedAbsoluteHabits.findIndex(h => h.id === overHabitId);
       
       if (activeIndex !== -1 && overIndex !== -1) {
         // Create a map of habit positions in the overall array
@@ -203,8 +203,8 @@ export function DailyViewFixedUpdated({
       const overHabitId = String(over.id);
       
       // Only allow reordering within frequency habits
-      const activeIndex = frequencyHabits.findIndex(h => h.id === activeHabitId);
-      const overIndex = frequencyHabits.findIndex(h => h.id === overHabitId);
+      const activeIndex = displayedFrequencyHabits.findIndex(h => h.id === activeHabitId);
+      const overIndex = displayedFrequencyHabits.findIndex(h => h.id === overHabitId);
       
       if (activeIndex !== -1 && overIndex !== -1) {
         // Create a map of habit positions in the overall array
