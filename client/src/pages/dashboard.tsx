@@ -760,7 +760,24 @@ export default function Dashboard() {
                                     }
                                   ];
                                   
-                                  setHabits([...habits, ...fitnessHabits]);
+                                  // Clone current habits array to prevent reference issues
+                                  const updatedHabits = [...habits];
+                                  
+                                  // Add each habit individually to ensure they all get added
+                                  fitnessHabits.forEach(habit => {
+                                    updatedHabits.push({
+                                      ...habit,
+                                      // Ensure iconColor is set based on category
+                                      iconColor: habit.category === 'physical' ? '#ef4444' : 
+                                               habit.category === 'mental' ? '#eab308' : 
+                                               habit.category === 'nutrition' ? '#f97316' : 
+                                               habit.category === 'sleep' ? '#a855f7' : 
+                                               habit.category === 'relationships' ? '#3b82f6' : '#22c55e'
+                                    });
+                                  });
+                                  
+                                  // Update the habits state with all new habits
+                                  setHabits(updatedHabits);
                                   alert("Added 3 fitness habits successfully!");
                                 }}
                               >
