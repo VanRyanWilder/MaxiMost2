@@ -469,7 +469,17 @@ export default function SupplementDetailPage() {
                 <CardDescription>Best value options from trusted suppliers</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <a href={supplement.amazonUrl} target="_blank" rel="noopener noreferrer">
+                {/* Ensure Amazon links always work with affiliate tag */}
+                <a 
+                  href={supplement.amazonUrl && supplement.amazonUrl.includes('amazon.com') 
+                    ? supplement.amazonUrl.includes('tag=') 
+                      ? supplement.amazonUrl 
+                      : `${supplement.amazonUrl}${supplement.amazonUrl.includes('?') ? '&' : '?'}tag=maximost-20`
+                    : `https://www.amazon.com/s?k=${encodeURIComponent(supplement.name)}&tag=maximost-20`
+                  } 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
                   <Button className="w-full gap-2">
                     <ShoppingCart className="h-4 w-4" />
                     <span>View on Amazon</span>
