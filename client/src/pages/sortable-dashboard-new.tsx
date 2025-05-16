@@ -8,6 +8,7 @@ import { SettingsProvider } from "@/components/settings/settings-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
 import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog';
 import { RobustHabitEditor } from '@/components/dashboard/robust-habit-editor';
@@ -53,7 +54,8 @@ import {
   Brain,
   Droplets,
   BookOpen,
-  Pill
+  Pill,
+  TrendingUp
 } from 'lucide-react';
 
 // Import shared types
@@ -722,37 +724,58 @@ export default function SortableDashboard() {
                   </div>
                 </div>
                 
-                {/* Habits Section with View Modes (Daily, Weekly, Monthly) */}
+                {/* Habits Section with Tabs for Tracking and Progress */}
                 <Card className="mb-8">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-lg font-semibold">
-                      Habit Tracker
-                      <Badge variant="outline" className="ml-2 font-normal">
-                        {habits.length} habits
-                      </Badge>
-                    </CardTitle>
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <CardTitle className="text-lg font-semibold">
+                        Habit Dashboard
+                        <Badge variant="outline" className="ml-2 font-normal">
+                          {habits.length} habits
+                        </Badge>
+                      </CardTitle>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <SortableHabitViewModes
-                      habits={habits}
-                      completions={completions}
-                      onToggleHabit={toggleCompletion}
-                      onAddHabit={handleCreateHabit}
-                      onEditHabit={handleEditHabit}
-                      onUpdateHabit={handleEditHabit}
-                      onDeleteHabit={deleteHabit}
-                      onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits)}
-                    />
-                    
-                    {habits.length === 0 && (
-                      <div className="text-center py-8 text-muted-foreground">
-                        <p>No habits added yet.</p>
-                        <Button onClick={handleCreateHabit} variant="outline" size="sm" className="mt-2">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Your First Habit
-                        </Button>
-                      </div>
-                    )}
+                    <Tabs defaultValue="tracker" className="w-full">
+                      <TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2">
+                        <TabsTrigger value="tracker" className="flex items-center gap-1">
+                          <CheckSquare className="h-4 w-4" />
+                          <span>Habit Tracker</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="progress" className="flex items-center gap-1">
+                          <TrendingUp className="h-4 w-4" />
+                          <span>Progress Visualization</span>
+                        </TabsTrigger>
+                      </TabsList>
+                      
+                      <TabsContent value="tracker" className="mt-0">
+                        <SortableHabitViewModes
+                          habits={habits}
+                          completions={completions}
+                          onToggleHabit={toggleCompletion}
+                          onAddHabit={handleCreateHabit}
+                          onEditHabit={handleEditHabit}
+                          onUpdateHabit={handleEditHabit}
+                          onDeleteHabit={deleteHabit}
+                          onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits)}
+                        />
+                        
+                        {habits.length === 0 && (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <p>No habits added yet.</p>
+                            <Button onClick={handleCreateHabit} variant="outline" size="sm" className="mt-2">
+                              <Plus className="h-4 w-4 mr-1" />
+                              Add Your First Habit
+                            </Button>
+                          </div>
+                        )}
+                      </TabsContent>
+                      
+                      <TabsContent value="progress" className="mt-0">
+                        <HabitProgressVisualization />
+                      </TabsContent>
+                    </Tabs>
                   </CardContent>
                 </Card>
               </div>
