@@ -1,5 +1,5 @@
-import React from "react";
-import { format, isFuture } from "date-fns";
+import React, { useState } from "react";
+import { format, isFuture, addDays, startOfWeek, endOfWeek, isSameDay, startOfDay, startOfToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, PlusCircle, Pencil, Trash2, MoreVertical, Star, StarHalf, CheckCircle, Check as CheckIcon } from "lucide-react";
@@ -51,6 +51,7 @@ export function WeeklyTableViewImproved({
   selectedCategory,
   currentDay
 }: WeeklyTableViewProps) {
+  const today = startOfToday();
   const filteredHabits = selectedCategory === 'all' 
     ? habits 
     : selectedCategory === 'absolute'
@@ -162,9 +163,6 @@ export function WeeklyTableViewImproved({
     <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
       <div className="p-4 border-b flex justify-between items-center">
         <h3 className="font-medium text-lg">{format(weekDates[0], 'MMMM d')} - {format(weekDates[6], 'MMMM d, yyyy')}</h3>
-        <div className="flex items-center gap-2">
-          {/* Removed 'Add Habit' button from weekly view to avoid duplication */}
-        </div>
       </div>
       
       <div className="overflow-x-auto">
