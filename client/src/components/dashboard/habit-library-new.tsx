@@ -938,14 +938,14 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
             {visibleHabits.map(habit => (
               <div 
                 key={habit.id}
-                className="p-2 rounded-md bg-gray-50 shadow-sm flex flex-col items-center gap-1 cursor-pointer hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 onClick={() => onAddHabit?.(habit)}
               >
                 <div className="flex-shrink-0 mb-1">
                   {renderIcon(habit.icon, habit.iconColor)}
                 </div>
                 <div className="w-full text-center">
-                  <p className="text-sm font-medium truncate" style={{color: `var(--${habit.iconColor}-600, #4B5563)`}}>
+                  <p className="text-sm font-medium truncate text-foreground">
                     {habit.title}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
@@ -977,14 +977,14 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
               {habitSuggestions.stacks.map(stack => (
                 <div 
                   key={stack.id}
-                  className="bg-gray-50 rounded-md p-3 shadow-sm"
+                  className="bg-gray-50 dark:bg-gray-800 rounded-md p-3 shadow-sm"
                 >
                   <div className="flex items-center gap-2 cursor-pointer mb-1" onClick={() => {}}>
                     <div className="flex-shrink-0">
                       {renderIcon(stack.icon, stack.iconColor)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate" style={{color: `var(--${stack.iconColor}-600, #4B5563)`}}>
+                      <p className="text-sm font-medium truncate text-foreground">
                         {stack.title}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">{stack.description}</p>
