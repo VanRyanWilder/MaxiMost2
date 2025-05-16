@@ -18,6 +18,15 @@ export const ConfettiCelebration = ({
 
   useEffect(() => {
     if (trigger && !hasPlayedRef.current && confettiRef.current) {
+      // Position the canvas in the center of the viewport
+      if (confettiRef.current) {
+        confettiRef.current.style.position = 'fixed';
+        confettiRef.current.style.top = '50%';
+        confettiRef.current.style.left = '50%';
+        confettiRef.current.style.transform = 'translate(-50%, -50%)';
+        confettiRef.current.style.zIndex = '1000';
+      }
+      
       const myConfetti = confetti.create(confettiRef.current as HTMLCanvasElement, {
         resize: true,
         useWorker: true

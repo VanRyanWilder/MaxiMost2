@@ -208,7 +208,7 @@ export function WeeklyTableViewImproved({
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium flex items-center">
+                          <div className="font-medium flex items-center text-foreground">
                             {habit.title}
                             <div className="ml-2 flex items-center">
                               {habit.streak > 0 && (
@@ -308,14 +308,14 @@ export function WeeklyTableViewImproved({
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium flex items-center">
+                            <div className="font-medium flex items-center text-foreground dark:text-white">
                               {habit.title}
-                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4">
+                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 dark:text-slate-200 dark:border-slate-600">
                                 {getFrequencyText(habit.frequency)}
                               </Badge>
                               {habit.streak > 0 && (
-                                <Badge variant="outline" className="text-amber-500 text-[10px] font-medium px-1 py-0 h-4 ml-1">
-                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500" /> {habit.streak}
+                                <Badge variant="outline" className="text-amber-500 dark:text-amber-400 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400" /> {habit.streak}
                                 </Badge>
                               )}
                             </div>
@@ -324,11 +324,11 @@ export function WeeklyTableViewImproved({
                             <div className="text-xs mt-1">
                               <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center">
-                                  <span className={`font-medium ${hasMetFrequency ? 'text-blue-600' : 'text-slate-600'}`}>
+                                  <span className={`font-medium ${hasMetFrequency ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`}>
                                     {completedDays}/{targetDays} days
                                   </span>
                                   {isExceeding && (
-                                    <span className="text-blue-600 ml-1">
+                                    <span className="text-blue-600 dark:text-blue-400 ml-1">
                                       (+{completedDays - targetDays} extra)
                                     </span>
                                   )}
