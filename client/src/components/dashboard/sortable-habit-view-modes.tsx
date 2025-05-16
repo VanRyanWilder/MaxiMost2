@@ -26,7 +26,7 @@ import {
   DragEndEvent
 } from '@dnd-kit/core';
 import { WeeklyTableViewFixedNew } from './weekly-table-view-fixed-new';
-import { DailyViewFixed } from './daily-view-fixed';
+import { DailyViewFixedNew } from './daily-view-fixed-new';
 import {
   arrayMove,
   SortableContext,
@@ -318,11 +318,12 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <DailyViewFixed
+              <DailyViewFixedNew
                 habits={filteredHabits}
                 completions={completions}
-                today={currentDay}
+                currentDay={currentDay}
                 onToggleHabit={onToggleHabit}
+                onAddHabit={onAddHabit}
                 onEditHabit={handleEditHabit}
                 onDeleteHabit={handleDeleteHabit}
                 onReorderHabits={onReorderHabits}
