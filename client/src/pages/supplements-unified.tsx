@@ -104,7 +104,7 @@ const topSupplements = [
     ],
     dosage: "3-5g daily, timing doesn't matter",
     considerations: "No loading phase needed. Micronized form may reduce digestive discomfort. Benefit accumulates over time.",
-    amazonUrl: "https://www.amazon.com/Optimum-Nutrition-Micronized-Monohydrate-Creatine/dp/B002DYIZEO?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B002DYIZEO?tag=maximost-20"
   },
   {
     id: 5,
@@ -122,7 +122,7 @@ const topSupplements = [
     ],
     dosage: "20-40g per serving as needed to meet daily protein targets",
     considerations: "Whey isolate for lactose sensitivity, plant blend for vegetarians. Look for third-party tested products with minimal additives.",
-    amazonUrl: "https://www.amazon.com/Optimum-Nutrition-Standard-Protein-Chocolate/dp/B000QSNYGI?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B000QSNYGI?tag=maximost-20"
   },
   {
     id: 6,
@@ -140,7 +140,7 @@ const topSupplements = [
     ],
     dosage: "100-200mcg daily with fat-containing meal",
     considerations: "Take with vitamin D3. MK-7 form has longer half-life than MK-4. May interact with blood thinners.",
-    amazonUrl: "https://www.amazon.com/Life-Extension-Super-Complex-Softgels/dp/B004GW4S0G?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B004GW4S0G?tag=maximost-20"
   },
   {
     id: 7,
@@ -158,7 +158,7 @@ const topSupplements = [
     ],
     dosage: "15-30mg daily with food",
     considerations: "Zinc picolinate or zinc bisglycinate have better absorption. Long-term use requires copper balance. Take with food to reduce nausea.",
-    amazonUrl: "https://www.amazon.com/Thorne-Research-Picolinate-Metabolism-Support/dp/B004O9ESUO?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B004O9ESUO?tag=maximost-20"
   },
   {
     id: 8,
@@ -176,7 +176,7 @@ const topSupplements = [
     ],
     dosage: "200-400mg as needed or daily",
     considerations: "Synergistic with caffeine (2:1 theanine:caffeine ratio). Can be taken multiple times per day safely. Particularly useful during stressful periods.",
-    amazonUrl: "https://www.amazon.com/Sports-Research-Suntheanine-L-Theanine-Gluten-Free/dp/B01D1YQBOK?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B01D1YQBOK?tag=maximost-20"
   },
   {
     id: 9,
@@ -194,7 +194,7 @@ const topSupplements = [
     ],
     dosage: "600mg daily (standardized extract)",
     considerations: "KSM-66 or Sensoril extracts have best research. Take consistently for 4-8 weeks for full effects. May be best avoided with autoimmune thyroid conditions.",
-    amazonUrl: "https://www.amazon.com/Organic-Ashwagandha-Anxiety-Thyroid-Cortisol/dp/B07N13YMK1?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B07N13YMK1?tag=maximost-20"
   },
   {
     id: 10,
@@ -212,7 +212,7 @@ const topSupplements = [
     ],
     dosage: "500mg 1-3 times daily with meals",
     considerations: "Start with lower dose to assess tolerance. May interact with certain medications. Taking with meals reduces GI discomfort.",
-    amazonUrl: "https://www.amazon.com/Thorne-Research-Berberine-Botanical-Supplement/dp/B096X3JJ2V?tag=maximost-20"
+    amazonUrl: "https://www.amazon.com/dp/B096X3JJ2V?tag=maximost-20"
   }
 ];
 
