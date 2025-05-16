@@ -147,14 +147,14 @@ const DEFAULT_NEW_HABIT: Habit = {
   id: `h-${Date.now()}`,
   title: "",
   description: "",
-  icon: "zap",
-  iconColor: "blue", // Default color scheme
+  icon: "dumbbell",
+  iconColor: "red", // Default color scheme matching the Physical Training category
   impact: 8,
   effort: 4,
   timeCommitment: "10 min",
   frequency: "daily", // Default frequency
-  isAbsolute: false,
-  category: "health",
+  isAbsolute: true, // Daily habits are absolute
+  category: "physical", // Default to Physical Training
   streak: 0,
   createdAt: new Date()
 };
@@ -304,7 +304,37 @@ export function EditHabitDialog({
     
     // Set both category and relevant icon based on selection
     let icon = "zap";
+    let color = "blue";
+    
+    // Handle both MaxiMost and legacy categories
     switch (value) {
+      // MaxiMost categories with their specific colors
+      case "physical": 
+        icon = "dumbbell"; 
+        color = "red";
+        break;
+      case "nutrition": 
+        icon = "utensils"; 
+        color = "orange";
+        break;
+      case "sleep": 
+        icon = "moon"; 
+        color = "indigo";
+        break;
+      case "mental": 
+        icon = "brain"; 
+        color = "yellow";
+        break;
+      case "relationships": 
+        icon = "users"; 
+        color = "green";
+        break;
+      case "financial": 
+        icon = "circleDollarSign"; 
+        color = "emerald";
+        break;
+        
+      // Legacy categories
       case "health": icon = "heart"; break;
       case "fitness": icon = "dumbbell"; break;
       case "mind": icon = "brain"; break;
@@ -312,7 +342,14 @@ export function EditHabitDialog({
       default: icon = "zap";
     }
     
-    setEditedHabit({...editedHabit, category: value as HabitCategory, icon: icon});
+    setEditedHabit({
+      ...editedHabit, 
+      category: value as HabitCategory, 
+      icon: icon,
+      iconColor: color
+    });
+    
+    console.log(`Category changed to ${value}, setting icon: ${icon}, color: ${color}`);
   };
   
   // Handle dialog close properly
@@ -380,28 +417,67 @@ export function EditHabitDialog({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
+                {/* MaxiMost primary categories */}
+                <SelectItem value="physical">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="h-4 w-4 text-red-500" />
+                    <span>Physical Training</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="nutrition">
+                  <div className="flex items-center gap-2">
+                    <Utensils className="h-4 w-4 text-orange-500" />
+                    <span>Nutrition & Fueling</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="sleep">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-4 w-4 text-indigo-500" />
+                    <span>Sleep & Hygiene</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="mental">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 text-yellow-500" />
+                    <span>Mental Acuity & Growth</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="relationships">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-green-500" />
+                    <span>Relationships & Community</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="financial">
+                  <div className="flex items-center gap-2">
+                    <CircleDollarSign className="h-4 w-4 text-emerald-500" />
+                    <span>Financial Habits</span>
+                  </div>
+                </SelectItem>
+                
+                {/* Legacy categories for backward compatibility */}
                 <SelectItem value="health">
                   <div className="flex items-center gap-2">
                     <Heart className="h-4 w-4 text-blue-500" />
-                    <span>Health</span>
+                    <span>Health (Legacy)</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="fitness">
                   <div className="flex items-center gap-2">
                     <Dumbbell className="h-4 w-4 text-blue-500" />
-                    <span>Fitness</span>
+                    <span>Fitness (Legacy)</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="mind">
                   <div className="flex items-center gap-2">
                     <Brain className="h-4 w-4 text-blue-500" />
-                    <span>Mind</span>
+                    <span>Mind (Legacy)</span>
                   </div>
                 </SelectItem>
                 <SelectItem value="social">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-blue-500" />
-                    <span>Social</span>
+                    <span>Social (Legacy)</span>
                   </div>
                 </SelectItem>
               </SelectContent>
