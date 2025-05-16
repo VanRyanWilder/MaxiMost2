@@ -127,6 +127,7 @@ export function SortableHabit({
           <EnhancedHabitIcon 
             icon={habit.icon || "activity"} 
             category={habit.category || "health"}
+            color={habit.iconColor}
             size="sm"
           />
           
@@ -162,18 +163,18 @@ export function SortableHabit({
           <div className="flex items-center gap-1">
             <button
               onClick={() => onEdit(habit)}
-              className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+              className={`w-6 h-6 rounded-full ${colorScheme.bg} flex items-center justify-center`}
             >
               <span className="sr-only">Edit</span>
-              <Pencil className="h-3 w-3 text-gray-500" />
+              <Pencil className={`h-3 w-3 ${colorScheme.primary}`} />
             </button>
             {onDelete && (
               <button
                 onClick={() => onDelete(habit.id)}
-                className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center"
+                className={`w-6 h-6 rounded-full ${colorScheme.bg} flex items-center justify-center`}
               >
                 <span className="sr-only">Delete</span>
-                <X className="h-3 w-3 text-gray-500" />
+                <X className={`h-3 w-3 ${colorScheme.primary}`} />
               </button>
             )}
           </div>
@@ -203,12 +204,12 @@ export function SortableHabit({
                   : isPast 
                     ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
                     : `text-muted-foreground/50 hover:${colorScheme?.primary || "text-blue-500"} hover:${colorScheme?.bg || "bg-blue-50"}`
-                } w-full h-10`}
+                } w-full h-10 rounded-md`}
             >
               {completed ? (
                 <Check className="h-5 w-5" />
               ) : (
-                <div className={`h-5 w-5 rounded-full border-2 ${colorScheme?.border || "border-current"}`}></div>
+                <div className={`h-5 w-5 rounded-full border-2 ${colorScheme?.border || "border-current"} transition-all hover:border-current hover:scale-110`}></div>
               )}
             </button>
           </div>
