@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent flashing during theme changes */
+html {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Disable transitions during theme changes */
+.disable-transitions * {
+  transition: none !important;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 20 14.3% 4.1%;
