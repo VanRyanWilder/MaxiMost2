@@ -274,6 +274,54 @@ export function FixHabitDialog({
             </Select>
           </div>
           
+          {/* Impact Rating */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="impact" className="text-right">
+              Impact (1-10)
+            </Label>
+            <div className="col-span-3 flex items-center gap-2">
+              <Select 
+                value={editedHabit.impact.toString()} 
+                onValueChange={(value) => setEditedHabit({...editedHabit, impact: parseInt(value)})}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select impact" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                    <SelectItem key={value} value={value.toString()}>
+                      {value} - {value <= 3 ? 'Low' : value <= 7 ? 'Medium' : 'High'} Impact
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          {/* Effort Rating */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="effort" className="text-right">
+              Effort (1-10)
+            </Label>
+            <div className="col-span-3 flex items-center gap-2">
+              <Select 
+                value={editedHabit.effort.toString()} 
+                onValueChange={(value) => setEditedHabit({...editedHabit, effort: parseInt(value)})}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select effort required" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                    <SelectItem key={value} value={value.toString()}>
+                      {value} - {value <= 3 ? 'Easy' : value <= 7 ? 'Moderate' : 'Difficult'}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
           {/* Time Commitment */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="timeCommitment" className="text-right">
