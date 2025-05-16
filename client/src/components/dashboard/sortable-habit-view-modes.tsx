@@ -50,7 +50,7 @@ import { ChevronLeft, ChevronRight, Plus, Pencil, Trash2, MoreHorizontal, Calend
 import { Habit } from '@/types/habit';
 import { getHabitIcon } from '@/components/ui/icons';
 import { PlusCircle } from 'lucide-react';
-import { EditHabitDialog } from './edit-habit-dialog';
+import { MaxiMostEditDialog } from './maximost-edit-dialog';
 
 interface SortableHabitViewProps {
   habits: Habit[];
@@ -635,9 +635,9 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
       </div>
       
       {/* Edit Habit Dialog */}
-      <EditHabitDialog 
+      <MaxiMostEditDialog 
         open={editDialogOpen} 
-        setOpen={setEditDialogOpen}
+        onOpenChange={setEditDialogOpen}
         habit={selectedHabit}
         onSave={handleSaveHabit}
         onDelete={handleDeleteHabit}
