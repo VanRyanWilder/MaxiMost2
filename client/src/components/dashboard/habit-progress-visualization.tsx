@@ -31,7 +31,9 @@ import { Habit, HabitCompletion } from "@/types/habit";
 import { 
   CATEGORY_COLORS,
   calculateTrend,
-  formatDate
+  formatDate,
+  calculateCompletionRateByCategory,
+  getLatestCompletionsByCategory
 } from "@/utils/habit-progress-utils";
 
 interface HabitProgressVisualizationProps {
@@ -147,35 +149,60 @@ export function HabitProgressVisualization({
     return { startDate, endDate: today };
   };
   
+  // Default mock data function
+  const defaultMockData = () => [
+    { id: "Physical", name: "Physical", unit: "%", data: mockPhysicalHabitData, color: CATEGORY_COLORS.Physical },
+    { id: "Nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: CATEGORY_COLORS.Nutrition },
+    { id: "Sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: CATEGORY_COLORS.Sleep },
+    { id: "Mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: CATEGORY_COLORS.Mental },
+    { id: "Relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: CATEGORY_COLORS.Relationships },
+    { id: "Financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: CATEGORY_COLORS.Financial },
+  ];
+  
   // Get real data if available
   const getCategoryData = () => {
-    if (useRealData) {
+    if (useRealData && habits.length > 0) {
       const { startDate, endDate } = getDateRange();
       
-      // Use utilities to calculate real data
-      const realData = getLatestCompletionsByCategory(
-        habits,
-        completions
-      );
-      
-      return [
-        { id: "Physical", name: "Physical", unit: "%", data: realData["Physical"] || [], color: CATEGORY_COLORS.Physical },
-        { id: "Nutrition", name: "Nutrition", unit: "%", data: realData["Nutrition"] || [], color: CATEGORY_COLORS.Nutrition },
-        { id: "Sleep", name: "Sleep", unit: "%", data: realData["Sleep"] || [], color: CATEGORY_COLORS.Sleep },
-        { id: "Mental", name: "Mental", unit: "%", data: realData["Mental"] || [], color: CATEGORY_COLORS.Mental },
-        { id: "Relationships", name: "Relationships", unit: "%", data: realData["Relationships"] || [], color: CATEGORY_COLORS.Relationships },
-        { id: "Financial", name: "Financial", unit: "%", data: realData["Financial"] || [], color: CATEGORY_COLORS.Financial },
-      ];
+      try {
+        // Use utilities to calculate real data from actual habits and completions
+        const completionRateData = calculateCompletionRateByCategory(
+          habits,
+          completions,
+          startDate,
+          endDate
+        );
+        
+        // Convert the completionRateData to our expected format
+        const categories = ["Physical", "Nutrition", "Sleep", "Mental", "Relationships", "Financial"];
+        return categories.map(category => {
+          const mockDataMap: {[key: string]: any} = {
+            "Physical": mockPhysicalHabitData,
+            "Nutrition": mockNutritionHabitData,
+            "Sleep": mockSleepHabitData,
+            "Mental": mockMentalHabitData,
+            "Relationships": mockRelationshipHabitData,
+            "Financial": mockFinancialHabitData
+          };
+          
+          return {
+            id: category,
+            name: category,
+            unit: "%",
+            data: (completionRateData[category] && completionRateData[category].length > 0) 
+              ? completionRateData[category] 
+              : mockDataMap[category],
+            color: CATEGORY_COLORS[category as keyof typeof CATEGORY_COLORS]
+          };
+        });
+      } catch (error) {
+        console.error("Error processing habit data:", error);
+        // Fallback to mock data on error
+        return defaultMockData();
+      }
     } else {
       // Use mock data
-      return [
-        { id: "Physical", name: "Physical", unit: "%", data: mockPhysicalHabitData, color: CATEGORY_COLORS.Physical },
-        { id: "Nutrition", name: "Nutrition", unit: "%", data: mockNutritionHabitData, color: CATEGORY_COLORS.Nutrition },
-        { id: "Sleep", name: "Sleep", unit: "%", data: mockSleepHabitData, color: CATEGORY_COLORS.Sleep },
-        { id: "Mental", name: "Mental", unit: "%", data: mockMentalHabitData, color: CATEGORY_COLORS.Mental },
-        { id: "Relationships", name: "Relationships", unit: "%", data: mockRelationshipHabitData, color: CATEGORY_COLORS.Relationships },
-        { id: "Financial", name: "Financial", unit: "%", data: mockFinancialHabitData, color: CATEGORY_COLORS.Financial },
-      ];
+      return defaultMockData();
     }
   };
   
@@ -186,8 +213,6 @@ export function HabitProgressVisualization({
   const filteredCategories = categoryOptions.filter(category => 
     selectedCategories.includes(category.id)
   );
-
-  // Using the utility functions from habit-progress-utils.ts
 
   // Custom tooltip for charts
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -426,77 +451,37 @@ export function HabitProgressVisualization({
             </Card>
           );
         })}
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Habit Completion Chart */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <PieChartIcon className="h-5 w-5 text-primary" />
-              Habit Completion Rate
-            </CardTitle>
-            <CardDescription>
-              Current completion percentage by category
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={mockHabitCompletionData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {mockHabitCompletionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={CATEGORY_COLORS[entry.name as keyof typeof CATEGORY_COLORS]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
         
-        {/* Insights */}
-        <Card>
+        {/* Insights Card */}
+        <Card className="md:col-span-3">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <Info className="h-5 w-5 text-primary" />
-              Progress Insights
+              Habits Insights
             </CardTitle>
             <CardDescription>
-              Analysis of your habit data
+              Based on your habit tracking data
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            <div className="space-y-4">
-              <p className="font-medium">{insights.summary}</p>
+            <div className="text-sm">
+              <p className="mb-3">{insights.summary}</p>
               
-              <div>
-                <h4 className="text-sm font-medium mb-2">Key Observations:</h4>
-                <ul className="text-sm space-y-1 list-disc pl-5">
-                  {insights.observations.map((item, i) => (
-                    <li key={i}>{item}</li>
+              <div className="mb-3">
+                <h4 className="font-semibold mb-1">Key Observations:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {insights.observations.map((observation, index) => (
+                    <li key={index}>{observation}</li>
                   ))}
                 </ul>
               </div>
               
               <div>
-                <h4 className="text-sm font-medium mb-2">Recommendations:</h4>
-                <ul className="text-sm space-y-1 list-disc pl-5">
-                  {insights.recommendations.map((item, i) => (
-                    <li key={i}>{item}</li>
+                <h4 className="font-semibold mb-1">Recommendations:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {insights.recommendations.map((recommendation, index) => (
+                    <li key={index}>{recommendation}</li>
                   ))}
                 </ul>
               </div>
