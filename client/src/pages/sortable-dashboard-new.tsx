@@ -490,7 +490,20 @@ export default function SortableDashboard() {
       console.log("📊 Total habits:", newHabitsArray.length);
       
       // Save to localStorage first for reliability
+      // Debug habit data to find the issue
+      console.log("🔍 First few habits to be saved:", 
+        newHabitsArray.slice(0, 3).map(h => ({
+          id: h.id,
+          title: h.title,
+          keys: Object.keys(h),
+          valuesForTitle: Object.entries(h)
+            .filter(([key]) => key.toLowerCase().includes('title'))
+            .map(([key, value]) => `${key}: ${value}`)
+        }))
+      );
+      
       const saveData = JSON.stringify(newHabitsArray);
+      console.log("💾 Data length:", saveData.length);
       try {
         localStorage.setItem('maximost-habits', saveData);
         console.log("💾 Successfully saved to localStorage");
