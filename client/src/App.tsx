@@ -38,6 +38,7 @@ import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
 import HabitViewTest from "@/pages/habit-view-test";
 import SortableViewTest from "@/pages/sortable-view-test";
+import AIFeatures from "@/pages/ai-features";
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
