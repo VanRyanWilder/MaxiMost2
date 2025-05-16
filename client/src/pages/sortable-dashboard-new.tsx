@@ -55,7 +55,10 @@ import {
   Droplets,
   BookOpen,
   Pill,
-  TrendingUp
+  TrendingUp,
+  Menu,
+  Utensils,
+  Moon as BedIcon
 } from 'lucide-react';
 
 // Import shared types
@@ -632,17 +635,14 @@ export default function SortableDashboard() {
         {/* Main content area */}
         <main className="flex-1">
           <PageContainer>
-            {/* Header with Settings */}
-            <HeaderWithSettings 
-              title="Habit Dashboard" 
-              subtitle="Track your habits and build consistency"
-              onMenuClick={() => setIsSidebarOpen(true)}
-              viewMode="weekly"
-              currentDay={currentDate}
-              onPreviousClick={goToPreviousDay}
-              onTodayClick={() => setCurrentDate(new Date())}
-              onNextClick={goToNextDay}
-            />
+            {/* Mobile menu button only */}
+            <div className="flex justify-between items-center mb-4">
+              <Button variant="ghost" onClick={() => setIsSidebarOpen(true)} className="lg:hidden">
+                <Menu className="h-5 w-5" />
+              </Button>
+              <h1 className="text-xl font-bold">MaxiMost</h1>
+              <div className="w-8"></div> {/* Empty space for alignment */}
+            </div>
             
             {/* Two-column layout for desktop */}
             <div className="flex flex-col lg:flex-row gap-6">
@@ -650,29 +650,7 @@ export default function SortableDashboard() {
               <div className="flex-1">
                 {/* Progress Summary Cards removed for cleaner UI */}
                 
-                {/* Date selector and add habit button */}
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={goToPreviousDay}>
-                      <span className="sr-only">Previous day</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                        <path d="M15 18l-6-6 6-6" />
-                      </svg>
-                    </Button>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
-                      <span className="font-medium">
-                        {format(currentDate, 'EEEE, MMMM d')}
-                      </span>
-                    </div>
-                    <Button variant="outline" size="icon" onClick={goToNextDay}>
-                      <span className="sr-only">Next day</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
-                    </Button>
-                  </div>
-                </div>
+                {/* Removed duplicate date selector */}
                 
                 {/* Habits Section with Tabs for Tracking and Progress */}
                 <Card className="mb-8">
