@@ -37,7 +37,7 @@ export function HeaderWithSettings({
   onWeeklyViewClick,
 }: HeaderWithSettingsProps) {
   return (
-    <div className="border-b sticky top-0 z-10 bg-white">
+    <div className="border-b sticky top-0 z-10 bg-background">
       <div className="px-4 sm:px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
@@ -56,7 +56,7 @@ export function HeaderWithSettings({
           <div className="flex items-center gap-2">
             {/* View mode toggle */}
             {onDailyViewClick && onWeeklyViewClick && (
-              <div className="bg-gray-100 rounded-md p-0.5 flex mr-1 hidden sm:flex">
+              <div className="bg-muted rounded-md p-0.5 flex mr-1 hidden sm:flex">
                 <Button 
                   variant={viewMode === "daily" ? "default" : "ghost"} 
                   size="sm" 
@@ -80,7 +80,7 @@ export function HeaderWithSettings({
             
             {/* Date navigation */}
             {(onPreviousClick || onNextClick) && (
-              <div className="flex items-center bg-gray-100 rounded-md mr-1">
+              <div className="flex items-center bg-muted rounded-md mr-1">
                 {onPreviousClick && (
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onPreviousClick}>
                     <ChevronLeft className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function HeaderWithSettings({
         
         {/* Current date display */}
         {currentDay && (
-          <div className="text-sm text-gray-500 mt-1">
+          <div className="text-sm text-muted-foreground mt-1">
             {format(currentDay, 'EEEE, MMMM d, yyyy')}
           </div>
         )}
