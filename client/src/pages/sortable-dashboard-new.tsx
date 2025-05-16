@@ -12,6 +12,7 @@ import { FixedEditDialog } from '@/components/dashboard/fixed-edit-dialog';
 import { UltimateEditDialog } from '@/components/dashboard/ultimate-edit-dialog';
 import { SimpleHabitEditor } from '@/components/dashboard/simple-habit-editor';
 import { NewHabitEditor } from '@/components/dashboard/new-habit-editor';
+import { MaximostHabitEditor } from '@/components/dashboard/maximost-habit-editor';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
