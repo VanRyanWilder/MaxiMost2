@@ -317,7 +317,7 @@ export function WeeklyTableViewFixedUpdated({
                             return (
                               <div 
                                 key={`${habit.id}-day-${i}`} 
-                                className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                className={`text-center h-full flex items-center justify-center min-w-[40px] ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
                                   isCompleted={completed}
@@ -460,7 +460,7 @@ export function WeeklyTableViewFixedUpdated({
                             return (
                               <div 
                                 key={`${habit.id}-day-${i}`} 
-                                className={`text-center h-full flex items-center justify-center ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                className={`text-center h-full flex items-center justify-center min-w-[40px] ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
                                   isCompleted={completed}
