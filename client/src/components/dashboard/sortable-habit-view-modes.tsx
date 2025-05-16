@@ -25,7 +25,7 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
-import { WeeklyTableView } from './weekly-table-view-new';
+import { WeeklyTableView } from './weekly-table-view-fixed';
 import {
   arrayMove,
   SortableContext,
