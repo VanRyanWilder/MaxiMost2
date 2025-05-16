@@ -28,6 +28,90 @@ import { TableSortableItem } from './table-sortable-item';
 import { HabitButton } from "./habit-button";
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 
+// Color utility functions for habits
+const getColorStyle = (color: string, type: 'text' | 'bg' | 'border' | 'textMuted' = 'text') => {
+  const colorMap: Record<string, Record<string, string>> = {
+    red: { 
+      text: 'text-red-600 dark:text-red-400', 
+      bg: 'bg-red-100 dark:bg-red-950/30', 
+      border: 'border-red-200 dark:border-red-900',
+      textMuted: 'text-red-700/80 dark:text-red-400/80'
+    },
+    orange: { 
+      text: 'text-orange-600 dark:text-orange-400', 
+      bg: 'bg-orange-100 dark:bg-orange-950/30', 
+      border: 'border-orange-200 dark:border-orange-900',
+      textMuted: 'text-orange-700/80 dark:text-orange-400/80'
+    },
+    amber: { 
+      text: 'text-amber-600 dark:text-amber-400', 
+      bg: 'bg-amber-100 dark:bg-amber-950/30', 
+      border: 'border-amber-200 dark:border-amber-900',
+      textMuted: 'text-amber-700/80 dark:text-amber-400/80'
+    },
+    yellow: { 
+      text: 'text-yellow-600 dark:text-yellow-400', 
+      bg: 'bg-yellow-100 dark:bg-yellow-950/30', 
+      border: 'border-yellow-200 dark:border-yellow-900',
+      textMuted: 'text-yellow-700/80 dark:text-yellow-400/80'
+    },
+    green: { 
+      text: 'text-green-600 dark:text-green-400', 
+      bg: 'bg-green-100 dark:bg-green-950/30', 
+      border: 'border-green-200 dark:border-green-900',
+      textMuted: 'text-green-700/80 dark:text-green-400/80'
+    },
+    blue: { 
+      text: 'text-blue-600 dark:text-blue-400', 
+      bg: 'bg-blue-100 dark:bg-blue-950/30', 
+      border: 'border-blue-200 dark:border-blue-900',
+      textMuted: 'text-blue-700/80 dark:text-blue-400/80'
+    },
+    indigo: { 
+      text: 'text-indigo-600 dark:text-indigo-400', 
+      bg: 'bg-indigo-100 dark:bg-indigo-950/30', 
+      border: 'border-indigo-200 dark:border-indigo-900',
+      textMuted: 'text-indigo-700/80 dark:text-indigo-400/80'
+    },
+    purple: { 
+      text: 'text-purple-600 dark:text-purple-400', 
+      bg: 'bg-purple-100 dark:bg-purple-950/30', 
+      border: 'border-purple-200 dark:border-purple-900',
+      textMuted: 'text-purple-700/80 dark:text-purple-400/80'
+    }
+  };
+  
+  // Default color if not found
+  if (!color || !colorMap[color]) {
+    return colorMap.blue[type];
+  }
+  
+  return colorMap[color][type];
+};
+
+// Get background color style for habits
+const getColorBgStyle = (color: string) => {
+  // Safer approach that works in both browser and SSR
+  const prefersDark = false; // Default to light mode
+  
+  const colorMap: Record<string, { light: string, dark: string }> = {
+    red: { light: '#FEF2F2', dark: '#450A0A' },
+    orange: { light: '#FFF7ED', dark: '#431407' },
+    amber: { light: '#FFFBEB', dark: '#451A03' },
+    yellow: { light: '#FEFCE8', dark: '#422006' },
+    green: { light: '#F0FDF4', dark: '#052E16' },
+    blue: { light: '#EFF6FF', dark: '#172554' },
+    indigo: { light: '#EEF2FF', dark: '#1E1B4B' },
+    purple: { light: '#FAF5FF', dark: '#3B0764' }
+  };
+  
+  if (!color || !colorMap[color]) {
+    return prefersDark ? '#0F172A' : '#FFFFFF';
+  }
+  
+  return prefersDark ? colorMap[color].dark : colorMap[color].light;
+};
+
 interface WeeklyTableViewProps {
   habits: Habit[];
   completions: any[]; // Replace with proper type
@@ -257,15 +341,43 @@ export function WeeklyTableViewFixedUpdated({
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
                         <div className="border-t py-2 grid grid-cols-[1.2fr,80px,80px,80px,80px,80px,80px,80px] items-center">
-                          <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
+                          <div className={`flex items-center gap-2 px-3 py-2 rounded-md shadow-sm mx-1 min-h-[80px] border ${
+                            habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
+                            habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
+                            habit.iconColor === 'amber' ? 'border-amber-200 dark:border-amber-900' :
+                            habit.iconColor === 'yellow' ? 'border-yellow-200 dark:border-yellow-900' :
+                            habit.iconColor === 'green' ? 'border-green-200 dark:border-green-900' :
+                            habit.iconColor === 'indigo' ? 'border-indigo-200 dark:border-indigo-900' :
+                            habit.iconColor === 'purple' ? 'border-purple-200 dark:border-purple-900' :
+                            'border-blue-200 dark:border-blue-900'
+                          }`} 
+                          style={{
+                            backgroundColor: habit.iconColor === 'red' ? '#FEF2F2' :
+                                             habit.iconColor === 'orange' ? '#FFF7ED' :
+                                             habit.iconColor === 'amber' ? '#FFFBEB' :
+                                             habit.iconColor === 'yellow' ? '#FEFCE8' :
+                                             habit.iconColor === 'green' ? '#F0FDF4' :
+                                             habit.iconColor === 'indigo' ? '#EEF2FF' :
+                                             habit.iconColor === 'purple' ? '#FAF5FF' :
+                                             '#EFF6FF'
+                          }}>
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium flex items-center text-gray-900 dark:text-white">
+                              <div className={`font-medium flex items-center ${
+                                habit.iconColor === 'red' ? 'text-red-600 dark:text-red-400' :
+                                habit.iconColor === 'orange' ? 'text-orange-600 dark:text-orange-400' :
+                                habit.iconColor === 'amber' ? 'text-amber-600 dark:text-amber-400' :
+                                habit.iconColor === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' :
+                                habit.iconColor === 'green' ? 'text-green-600 dark:text-green-400' :
+                                habit.iconColor === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' :
+                                habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
+                                'text-blue-600 dark:text-blue-400'
+                              }`}>
                                 {habit.title}
                                 <div className="ml-2 flex items-center">
-                                  {habit.streak > 0 && (
+                                  {habit.streak && habit.streak > 0 && (
                                     <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                       <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                                     </Badge>
@@ -278,7 +390,16 @@ export function WeeklyTableViewFixedUpdated({
                                 </div>
                               </div>
                               <div className="text-xs flex items-center">
-                                <span className="text-gray-600 dark:text-gray-300 truncate max-w-[150px]">
+                                <span className={`truncate max-w-[150px] ${
+                                  habit.iconColor === 'red' ? 'text-red-700/80 dark:text-red-400/80' :
+                                  habit.iconColor === 'orange' ? 'text-orange-700/80 dark:text-orange-400/80' :
+                                  habit.iconColor === 'amber' ? 'text-amber-700/80 dark:text-amber-400/80' :
+                                  habit.iconColor === 'yellow' ? 'text-yellow-700/80 dark:text-yellow-400/80' :
+                                  habit.iconColor === 'green' ? 'text-green-700/80 dark:text-green-400/80' :
+                                  habit.iconColor === 'indigo' ? 'text-indigo-700/80 dark:text-indigo-400/80' :
+                                  habit.iconColor === 'purple' ? 'text-purple-700/80 dark:text-purple-400/80' :
+                                  'text-blue-700/80 dark:text-blue-400/80'
+                                }`}>
                                   {habit.description}
                                 </span>
                                 {completedDaysCount > 0 && !allDaysCompleted && (
@@ -355,17 +476,45 @@ export function WeeklyTableViewFixedUpdated({
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
                         <div className="border-t py-2 grid grid-cols-[1.2fr,80px,80px,80px,80px,80px,80px,80px] items-center">
-                          <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-md shadow-sm mx-1 min-h-[80px] border border-gray-100 dark:border-gray-700">
+                          <div className={`flex items-center gap-2 px-3 py-2 rounded-md shadow-sm mx-1 min-h-[80px] border ${
+                            habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
+                            habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
+                            habit.iconColor === 'amber' ? 'border-amber-200 dark:border-amber-900' :
+                            habit.iconColor === 'yellow' ? 'border-yellow-200 dark:border-yellow-900' :
+                            habit.iconColor === 'green' ? 'border-green-200 dark:border-green-900' :
+                            habit.iconColor === 'indigo' ? 'border-indigo-200 dark:border-indigo-900' :
+                            habit.iconColor === 'purple' ? 'border-purple-200 dark:border-purple-900' :
+                            'border-blue-200 dark:border-blue-900'
+                          }`} 
+                          style={{
+                            backgroundColor: habit.iconColor === 'red' ? '#FEF2F2' :
+                                            habit.iconColor === 'orange' ? '#FFF7ED' :
+                                            habit.iconColor === 'amber' ? '#FFFBEB' :
+                                            habit.iconColor === 'yellow' ? '#FEFCE8' :
+                                            habit.iconColor === 'green' ? '#F0FDF4' :
+                                            habit.iconColor === 'indigo' ? '#EEF2FF' :
+                                            habit.iconColor === 'purple' ? '#FAF5FF' :
+                                            '#EFF6FF'
+                          }}>
                             <div className="flex-shrink-0">
                               {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                             </div>
                             <div className="flex-1">
-                              <div className="font-medium flex items-center text-gray-900 dark:text-white">
+                              <div className={`font-medium flex items-center ${
+                                habit.iconColor === 'red' ? 'text-red-600 dark:text-red-400' :
+                                habit.iconColor === 'orange' ? 'text-orange-600 dark:text-orange-400' :
+                                habit.iconColor === 'amber' ? 'text-amber-600 dark:text-amber-400' :
+                                habit.iconColor === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' :
+                                habit.iconColor === 'green' ? 'text-green-600 dark:text-green-400' :
+                                habit.iconColor === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' :
+                                habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
+                                'text-blue-600 dark:text-blue-400'
+                              }`}>
                                 {habit.title}
                                 <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
                                   {getFrequencyText(habit.frequency)}
                                 </Badge>
-                                {habit.streak > 0 && (
+                                {habit.streak && habit.streak > 0 && (
                                   <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                     <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                                   </Badge>
@@ -373,7 +522,16 @@ export function WeeklyTableViewFixedUpdated({
                               </div>
                               
                               {habit.description && (
-                                <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                                <div className={`text-xs mt-1 line-clamp-2 ${
+                                  habit.iconColor === 'red' ? 'text-red-700/80 dark:text-red-400/80' :
+                                  habit.iconColor === 'orange' ? 'text-orange-700/80 dark:text-orange-400/80' :
+                                  habit.iconColor === 'amber' ? 'text-amber-700/80 dark:text-amber-400/80' :
+                                  habit.iconColor === 'yellow' ? 'text-yellow-700/80 dark:text-yellow-400/80' :
+                                  habit.iconColor === 'green' ? 'text-green-700/80 dark:text-green-400/80' :
+                                  habit.iconColor === 'indigo' ? 'text-indigo-700/80 dark:text-indigo-400/80' :
+                                  habit.iconColor === 'purple' ? 'text-purple-700/80 dark:text-purple-400/80' :
+                                  'text-blue-700/80 dark:text-blue-400/80'
+                                }`}>
                                   {habit.description}
                                 </div>
                               )}
