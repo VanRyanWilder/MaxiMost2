@@ -766,51 +766,17 @@ export default function SortableDashboard() {
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("EDIT DIALOG - Received habit update for:", updatedHabit.title, "with color:", updatedHabit.iconColor);
+          console.log("👍 Dashboard received habit from dialog:", updatedHabit.title);
+          console.log("👍 Color value:", updatedHabit.iconColor);
           
-          // Create a completely new habits array
-          let newHabitsArray = [...habits];
-          
-          // Find if this habit already exists
-          const existingIndex = newHabitsArray.findIndex(h => h.id === updatedHabit.id);
-          
-          if (existingIndex >= 0) {
-            // This is an edit of an existing habit
-            console.log("EDIT - Replacing habit at index:", existingIndex);
-            
-            // Directly replace the habit at that index
-            newHabitsArray[existingIndex] = {...updatedHabit};
-          } else {
-            // This is a new habit
-            console.log("ADD - Adding new habit");
-            newHabitsArray.push({...updatedHabit});
-          }
-          
-          // Save to localStorage first
-          try {
-            localStorage.setItem('maximost-habits', JSON.stringify(newHabitsArray));
-            console.log("✅ Saved habits to localStorage, count:", newHabitsArray.length);
-            
-            // Update state after successful localStorage save
-            setHabits(newHabitsArray);
-          } catch (err) {
-            console.error("❌ Error saving to localStorage:", err);
-          }
+          // For editing, use our dedicated function to ensure consistent behavior
+          editHabit(updatedHabit);
         }}
         onDelete={(habitId) => {
-          // Filter out the habit to be deleted
-          const filteredHabits = habits.filter(h => h.id !== habitId);
+          console.log("👍 Dashboard received delete request for habit ID:", habitId);
           
-          // Save to localStorage
-          try {
-            localStorage.setItem('maximost-habits', JSON.stringify(filteredHabits));
-            console.log("✅ Saved habits after deletion, count:", filteredHabits.length);
-            
-            // Update state
-            setHabits(filteredHabits);
-          } catch (err) {
-            console.error("❌ Error saving to localStorage:", err);
-          }
+          // Use our dedicated deletion function
+          deleteHabit(habitId);
         }}
       />
     </SettingsProvider>

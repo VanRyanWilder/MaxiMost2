@@ -106,7 +106,17 @@ export function SimpleEditDialog({
       iconColor: finalHabit.iconColor
     });
     
+    // Add validation to ensure we have at least a title
+    if (!finalHabit.title.trim()) {
+      alert("Please add a title for your habit");
+      return;
+    }
+    
+    // Send the finalized habit to the parent component for saving
+    console.log("⚡ SENDING FINAL HABIT TO PARENT:", JSON.stringify(finalHabit, null, 2));
     onSave(finalHabit);
+    
+    // Close the dialog
     setOpen(false);
   };
   
