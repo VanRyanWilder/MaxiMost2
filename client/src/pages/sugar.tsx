@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ModernLayout } from "@/components/layout/modern-layout";
+import { Sidebar } from "@/components/layout/sidebar";
+import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -168,6 +169,91 @@ const categories = [
   "Practical Tips"
 ];
 
+// Resource Card Component
+interface ResourceCardProps {
+  resource: typeof sugarResources[0];
+  isSaved: boolean;
+  onToggleSave: () => void;
+}
+
+function ResourceCard({ resource, isSaved, onToggleSave }: ResourceCardProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Card>
+      <CardHeader className="pb-0">
+        <div className="flex justify-between gap-4">
+          <div>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <Badge variant="outline">{resource.category}</Badge>
+              {resource.tags.slice(0, 2).map(tag => (
+                <Badge key={tag} variant="secondary" className="bg-muted">{tag}</Badge>
+              ))}
+            </div>
+            <CardTitle className="text-xl">{resource.title}</CardTitle>
+          </div>
+          
+          <div className="flex items-start gap-2">
+            <Badge variant="outline" className="gap-1.5 mt-1">
+              <Clock className="h-3 w-3" />
+              <span>{resource.readTime}</span>
+            </Badge>
+          </div>
+        </div>
+        <CardDescription className="mt-2">{resource.description}</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <div className="mb-4">
+          <div className={`text-sm ${expanded ? '' : 'line-clamp-3'}`}>
+            {resource.content}
+          </div>
+          {!expanded && resource.content.length > 240 && (
+            <Button 
+              variant="link" 
+              className="p-0 h-auto mt-1"
+              onClick={() => setExpanded(!expanded)}
+            >
+              Show more
+            </Button>
+          )}
+          {expanded && (
+            <Button 
+              variant="link" 
+              className="p-0 h-auto mt-1"
+              onClick={() => setExpanded(!expanded)}
+            >
+              Show less
+            </Button>
+          )}
+        </div>
+        
+        <div className="flex justify-between">
+          <Button variant="outline" className="gap-2" size="sm">
+            <ArrowRight className="h-4 w-4" />
+            <span>Read Full Article</span>
+          </Button>
+          
+          <div className="flex gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-1" 
+              onClick={onToggleSave}
+            >
+              <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
+              <span>{isSaved ? 'Saved' : 'Save'}</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1">
+              <Share2 className="h-4 w-4" />
+              <span>Share</span>
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SugarPage() {
   const [activeCategory, setActiveCategory] = useState("All Categories");
   const [searchQuery, setSearchQuery] = useState("");
@@ -206,365 +292,284 @@ export default function SugarPage() {
   const regularResources = filteredResources.filter(r => !r.featured);
   
   return (
-    <ModernLayout pageTitle="Sugar Dangers">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <div className="flex flex-col">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">Sugar Dangers</h1>
-                <p className="text-muted-foreground mt-1 text-lg">
-                  Understanding the hidden impact of sugar on health and performance
-                </p>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="search"
-                    placeholder="Search resources..."
-                    className="pl-9 h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+    <div className="relative flex min-h-screen">
+      <Sidebar />
+      <div className="flex-1">
+        <main className="flex-1">
+          <PageContainer>
+            <div className="container mx-auto px-4 py-6 max-w-7xl">
+              <div className="flex flex-col">
+                {/* Header */}
+                <div className="mb-8">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div>
+                      <h1 className="text-3xl font-bold tracking-tight">Sugar Dangers</h1>
+                      <p className="text-muted-foreground mt-1 text-lg">
+                        Understanding the hidden impact of sugar on health and performance
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <div className="relative w-full sm:w-64">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <input
+                          type="search"
+                          placeholder="Search resources..."
+                          className="pl-9 h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                      </div>
+                      
+                      <Button variant="outline" size="icon" title="Filter resources">
+                        <Filter className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
                 
-                <Button variant="outline" size="icon" title="Filter resources">
-                  <Filter className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Category Filters */}
-          <div className="mb-8 overflow-x-auto pb-2">
-            <div className="flex gap-2 min-w-max">
-              {categories.map(category => (
-                <Button
-                  key={category}
-                  variant={activeCategory === category ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setActiveCategory(category)}
-                  className="whitespace-nowrap"
-                >
-                  {category}
-                </Button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Key Effects Section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-bold mb-4">Key Effects of Sugar</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-b from-rose-50 to-white dark:from-rose-950/50 dark:to-background border-rose-200 dark:border-rose-800">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-rose-100 dark:bg-rose-900 p-3 rounded-full mb-1">
-                      <Brain className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                    </div>
-                    <h3 className="font-semibold">Cognitive Decline</h3>
-                    <p className="text-sm text-muted-foreground">Impairs memory, focus, and may increase risk of neurodegenerative disorders</p>
+                {/* Category Filters */}
+                <div className="mb-8 overflow-x-auto pb-2">
+                  <div className="flex gap-2 min-w-max">
+                    {categories.map(category => (
+                      <Button
+                        key={category}
+                        variant={activeCategory === category ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setActiveCategory(category)}
+                        className="whitespace-nowrap"
+                      >
+                        {category}
+                      </Button>
+                    ))}
                   </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-b from-orange-50 to-white dark:from-orange-950/50 dark:to-background border-orange-200 dark:border-orange-800">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-full mb-1">
-                      <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                    </div>
-                    <h3 className="font-semibold">Chronic Inflammation</h3>
-                    <p className="text-sm text-muted-foreground">Triggers inflammatory responses linked to chronic diseases and pain</p>
+                </div>
+                
+                {/* Key Effects Section */}
+                <div className="mb-10">
+                  <h2 className="text-xl font-bold mb-4">Key Effects of Sugar</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <Card className="bg-gradient-to-b from-rose-50 to-white dark:from-rose-950/50 dark:to-background border-rose-200 dark:border-rose-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-rose-100 dark:bg-rose-900 p-3 rounded-full mb-1">
+                            <Brain className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                          </div>
+                          <h3 className="font-semibold">Cognitive Decline</h3>
+                          <p className="text-sm text-muted-foreground">Impairs memory, focus, and may increase risk of neurodegenerative disorders</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-b from-orange-50 to-white dark:from-orange-950/50 dark:to-background border-orange-200 dark:border-orange-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-full mb-1">
+                            <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                          </div>
+                          <h3 className="font-semibold">Chronic Inflammation</h3>
+                          <p className="text-sm text-muted-foreground">Triggers inflammatory responses linked to chronic diseases and pain</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-b from-amber-50 to-white dark:from-amber-950/50 dark:to-background border-amber-200 dark:border-amber-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mb-1">
+                            <Scale className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                          </div>
+                          <h3 className="font-semibold">Metabolic Dysfunction</h3>
+                          <p className="text-sm text-muted-foreground">Disrupts hormones, contributes to insulin resistance and weight gain</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-b from-red-50 to-white dark:from-red-950/50 dark:to-background border-red-200 dark:border-red-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-red-100 dark:bg-red-900 p-3 rounded-full mb-1">
+                            <HeartPulse className="h-5 w-5 text-red-600 dark:text-red-400" />
+                          </div>
+                          <h3 className="font-semibold">Cardiovascular Risk</h3>
+                          <p className="text-sm text-muted-foreground">Increases blood pressure, triglycerides, and risk of heart disease</p>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-b from-amber-50 to-white dark:from-amber-950/50 dark:to-background border-amber-200 dark:border-amber-800">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mb-1">
-                      <Scale className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                    </div>
-                    <h3 className="font-semibold">Metabolic Dysfunction</h3>
-                    <p className="text-sm text-muted-foreground">Disrupts hormones, contributes to insulin resistance and weight gain</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="bg-gradient-to-b from-red-50 to-white dark:from-red-950/50 dark:to-background border-red-200 dark:border-red-800">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-red-100 dark:bg-red-900 p-3 rounded-full mb-1">
-                      <HeartPulse className="h-5 w-5 text-red-600 dark:text-red-400" />
-                    </div>
-                    <h3 className="font-semibold">Cardiovascular Risk</h3>
-                    <p className="text-sm text-muted-foreground">Increases blood pressure, triglycerides, and risk of heart disease</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-          
-          {/* Featured Resources Section */}
-          {featuredResources.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <CandyCane className="h-5 w-5 text-rose-500" />
-                Essential Reading
-              </h2>
-              
-              <div className="grid grid-cols-1 gap-6">
-                {featuredResources.map(resource => (
-                  <ResourceCard 
-                    key={resource.id} 
-                    resource={resource} 
-                    isSaved={savedResources.includes(resource.id)} 
-                    onToggleSave={() => toggleSave(resource.id)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* All Resources Section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-bold mb-4">All Resources</h2>
-            
-            {regularResources.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6">
-                {regularResources.map(resource => (
-                  <ResourceCard 
-                    key={resource.id} 
-                    resource={resource} 
-                    isSaved={savedResources.includes(resource.id)} 
-                    onToggleSave={() => toggleSave(resource.id)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <Card className="bg-muted/40">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-muted-foreground">No resources found matching your criteria.</p>
-                  <Button 
-                    variant="link" 
-                    onClick={() => {
-                      setActiveCategory("All Categories");
-                      setSearchQuery("");
-                    }}
-                  >
-                    Clear filters
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-          
-          {/* Hidden Sugar Sources Section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-bold mb-4">Hidden Sugar Sources</h2>
-            <p className="text-muted-foreground mb-4">
-              Sugar hides in many unexpected places. Here are some common foods that contain surprising amounts of added sugar.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {hiddenSugarSources.map((source, index) => (
-                <Card key={index} className="overflow-hidden border-red-100 dark:border-red-900">
-                  <div className="flex">
-                    <div className="bg-red-50 dark:bg-red-950 p-4 flex items-center justify-center">
-                      <CandyCane className="h-10 w-10 text-red-400 dark:text-red-500" />
-                    </div>
-                    <div className="p-4 flex-1">
-                      <h3 className="font-semibold">{source.name}</h3>
-                      <p className="text-sm text-rose-600 dark:text-rose-400 font-medium">{source.sugarContent}</p>
-                      <p className="text-xs text-muted-foreground mt-1">Alternative: {source.alternative}</p>
+                </div>
+                
+                {/* Featured Resources Section */}
+                {featuredResources.length > 0 && (
+                  <div className="mb-10">
+                    <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                      <CandyCane className="h-5 w-5 text-rose-500" />
+                      Essential Reading
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 gap-6">
+                      {featuredResources.map(resource => (
+                        <ResourceCard 
+                          key={resource.id} 
+                          resource={resource} 
+                          isSaved={savedResources.includes(resource.id)} 
+                          onToggleSave={() => toggleSave(resource.id)}
+                        />
+                      ))}
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-          
-          {/* Sugar Quiz Section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-bold mb-4">Sugar Dependency Quiz</h2>
-            <p className="text-muted-foreground mb-4">
-              Answer these questions honestly to assess your relationship with sugar.
-            </p>
-            
-            <Accordion type="single" collapsible className="w-full">
-              {sugarQuizQuestions.map((q) => (
-                <AccordionItem key={q.id} value={`q-${q.id}`}>
-                  <AccordionTrigger className="hover:no-underline">
-                    <div className="flex items-start gap-2 text-left">
-                      <div className="bg-orange-100 dark:bg-orange-900 p-1.5 rounded-full mt-0.5">
-                        <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                )}
+                
+                {/* All Resources Section */}
+                <div className="mb-10">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Leaf className="h-5 w-5 text-emerald-500" />
+                    All Resources
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 gap-6">
+                    {regularResources.length > 0 ? (
+                      regularResources.map(resource => (
+                        <ResourceCard 
+                          key={resource.id} 
+                          resource={resource} 
+                          isSaved={savedResources.includes(resource.id)} 
+                          onToggleSave={() => toggleSave(resource.id)}
+                        />
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <p>No resources match your current filters.</p>
+                        <Button variant="link" onClick={() => { 
+                          setActiveCategory("All Categories");
+                          setSearchQuery("");
+                        }}>
+                          Clear all filters
+                        </Button>
                       </div>
-                      <div>
-                        <span>{q.question}</span>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Hidden Sources Section */}
+                <div className="mb-10">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Coffee className="h-5 w-5 text-amber-700" />
+                    Hidden Sugar Sources
+                  </h2>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Foods with Surprising Sugar Content</CardTitle>
+                      <CardDescription>
+                        Many "healthy" foods contain significant amounts of added sugar
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {hiddenSugarSources.map((source, idx) => (
+                          <div key={idx} className="border rounded-md p-4 shadow-sm">
+                            <div className="flex items-center gap-2 mb-2">
+                              <UtensilsCrossed className="h-4 w-4 text-rose-500" />
+                              <h4 className="font-medium">{source.name}</h4>
+                            </div>
+                            <p className="text-sm font-semibold text-rose-600 mb-1">{source.sugarContent}</p>
+                            <p className="text-xs text-muted-foreground">Better choice: {source.alternative}</p>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="pl-8 pr-4 pb-2">
-                      <p className="text-sm text-muted-foreground">{q.why}</p>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-            
-            <div className="mt-4 text-sm text-muted-foreground">
-              <p>If you answered "yes" to 3 or more questions, you may have developed a sugar dependency.</p>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Sugar Addiction Quiz */}
+                <div className="mb-10">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Apple className="h-5 w-5 text-red-500" />
+                    Sugar Dependence Quiz
+                  </h2>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">Do You Have a Sugar Dependency?</CardTitle>
+                      <CardDescription>
+                        Answer these questions honestly to assess your relationship with sugar
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Accordion type="single" collapsible className="w-full">
+                        {sugarQuizQuestions.map((question) => (
+                          <AccordionItem key={question.id} value={`question-${question.id}`}>
+                            <AccordionTrigger className="text-left">
+                              {question.question}
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              <p className="text-muted-foreground">{question.why}</p>
+                            </AccordionContent>
+                          </AccordionItem>
+                        ))}
+                      </Accordion>
+                      
+                      <div className="mt-6 bg-muted/40 p-4 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          If you answered "yes" to 3 or more questions, you may have a sugar dependency.
+                          This quiz is for educational purposes only and not a medical diagnosis.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Breaking the Sugar Habit */}
+                <div className="mb-10">
+                  <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Dumbbell className="h-5 w-5 text-purple-500" />
+                    Breaking the Habit
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <Card className="bg-gradient-to-b from-blue-50 to-white dark:from-blue-950/50 dark:to-background border-blue-200 dark:border-blue-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mb-1">
+                            <Scale className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <h3 className="font-semibold">Gradual Reduction</h3>
+                          <p className="text-sm text-muted-foreground">Cut back sugar intake slowly to avoid withdrawal symptoms</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-b from-emerald-50 to-white dark:from-emerald-950/50 dark:to-background border-emerald-200 dark:border-emerald-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-emerald-100 dark:bg-emerald-900 p-3 rounded-full mb-1">
+                            <Leaf className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                          </div>
+                          <h3 className="font-semibold">Whole Foods Focus</h3>
+                          <p className="text-sm text-muted-foreground">Shift to unprocessed foods with natural sweetness from fruits</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-b from-purple-50 to-white dark:from-purple-950/50 dark:to-background border-purple-200 dark:border-purple-800">
+                      <CardContent className="pt-6">
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-full mb-1">
+                            <Coffee className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <h3 className="font-semibold">Palate Retraining</h3>
+                          <p className="text-sm text-muted-foreground">Gradually reduce sweetness preference by cutting back slowly</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Sugar Alternatives Section */}
-          <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4">Healthier Alternatives</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-green-100 dark:bg-green-900 p-3 rounded-full mb-1">
-                      <Apple className="h-5 w-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <h3 className="font-semibold">Whole Fruit</h3>
-                    <p className="text-sm text-muted-foreground">Contains fiber, slowing sugar absorption and providing nutrients</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-emerald-100 dark:bg-emerald-900 p-3 rounded-full mb-1">
-                      <Leaf className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <h3 className="font-semibold">Stevia & Monk Fruit</h3>
-                    <p className="text-sm text-muted-foreground">Natural zero-calorie sweeteners that don't affect blood sugar</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-amber-100 dark:bg-amber-900 p-3 rounded-full mb-1">
-                      <UtensilsCrossed className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                    </div>
-                    <h3 className="font-semibold">Spices & Extracts</h3>
-                    <p className="text-sm text-muted-foreground">Cinnamon, vanilla, and nutmeg enhance sweetness perception naturally</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center gap-2">
-                    <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mb-1">
-                      <Coffee className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <h3 className="font-semibold">Palate Retraining</h3>
-                    <p className="text-sm text-muted-foreground">Gradually reduce sweetness preference by cutting back slowly</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
+          </PageContainer>
+        </main>
       </div>
-    </ModernLayout>
-  );
-}
-
-// Resource Card Component
-interface ResourceCardProps {
-  resource: {
-    id: number;
-    title: string;
-    description: string;
-    category: string;
-    tags: string[];
-    readTime: string;
-    featured: boolean;
-    content: string;
-  };
-  isSaved: boolean;
-  onToggleSave: () => void;
-}
-
-function ResourceCard({ resource, isSaved, onToggleSave }: ResourceCardProps) {
-  const [expanded, setExpanded] = useState(false);
-  
-  return (
-    <Card className="overflow-hidden hover:shadow-md transition-all">
-      <CardHeader>
-        <div className="flex items-start justify-between mb-1">
-          <Badge variant="outline" className="mb-2 border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950/50 dark:text-rose-400">
-            {resource.category}
-          </Badge>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground whitespace-nowrap">
-            <Clock className="h-4 w-4" />
-            <span>{resource.readTime}</span>
-          </div>
-        </div>
-        <CardTitle className="text-xl">{resource.title}</CardTitle>
-        <CardDescription className="text-base mt-1">{resource.description}</CardDescription>
-        
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {resource.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="font-normal">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardHeader>
-      
-      <CardContent>
-        <div className="mb-4">
-          <p className={`text-sm text-muted-foreground ${expanded ? '' : 'line-clamp-3'}`}>
-            {resource.content}
-          </p>
-          
-          {resource.content.length > 240 && (
-            <Button 
-              variant="link" 
-              className="p-0 h-auto text-sm mt-1" 
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? 'Show less' : 'Show more'}
-            </Button>
-          )}
-        </div>
-        
-        <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          <Button variant="outline" className="gap-2" size="sm">
-            <ArrowRight className="h-4 w-4" />
-            <span>Read Full Article</span>
-          </Button>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="gap-1" 
-              onClick={onToggleSave}
-            >
-              <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
-              <span>{isSaved ? 'Saved' : 'Save'}</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="gap-1">
-              <Share2 className="h-4 w-4" />
-              <span>Share</span>
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
