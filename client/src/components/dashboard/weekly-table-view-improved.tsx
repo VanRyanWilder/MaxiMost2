@@ -203,17 +203,17 @@ export function WeeklyTableViewImproved({
                 return (
                   <TableSortableItem key={habit.id} habit={habit}>
                     <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                      <div className="flex items-center gap-2 px-3 py-2">
+                      <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-md shadow-sm mx-1">
                         <div className="flex-shrink-0">
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                         </div>
                         <div className="flex-1">
-                          <div className="font-medium flex items-center text-foreground">
+                          <div className="font-medium flex items-center text-foreground dark:text-gray-100">
                             {habit.title}
                             <div className="ml-2 flex items-center">
                               {habit.streak > 0 && (
-                                <Badge variant="outline" className="text-amber-500 text-[10px] font-medium px-1 py-0 h-4 ml-1">
-                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500" /> {habit.streak}
+                                <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                                 </Badge>
                               )}
                               {allDaysCompleted && (
@@ -224,11 +224,11 @@ export function WeeklyTableViewImproved({
                             </div>
                           </div>
                           <div className="text-xs flex items-center">
-                            <span className="text-muted-foreground truncate max-w-[150px]">
+                            <span className="text-muted-foreground dark:text-gray-300 truncate max-w-[150px]">
                               {habit.description}
                             </span>
                             {completedDaysCount > 0 && !allDaysCompleted && (
-                              <span className="ml-2 text-blue-500 font-medium">{completedDaysCount}/7 days</span>
+                              <span className="ml-2 text-blue-500 dark:text-blue-300 font-medium">{completedDaysCount}/7 days</span>
                             )}
                           </div>
                         </div>
@@ -303,19 +303,19 @@ export function WeeklyTableViewImproved({
                   return (
                     <TableSortableItem key={habit.id} habit={habit}>
                       <div className="border-t py-2 grid grid-cols-[2fr_repeat(7,1fr)] items-center">
-                        <div className="flex items-center gap-2 px-3 py-2">
+                        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-md shadow-sm mx-1">
                           <div className="flex-shrink-0">
                             {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
                           </div>
                           <div className="flex-1">
-                            <div className="font-medium flex items-center text-foreground dark:text-white">
+                            <div className="font-medium flex items-center text-foreground dark:text-gray-100">
                               {habit.title}
-                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 dark:text-slate-200 dark:border-slate-600">
+                              <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 dark:text-white dark:border-slate-500">
                                 {getFrequencyText(habit.frequency)}
                               </Badge>
                               {habit.streak > 0 && (
-                                <Badge variant="outline" className="text-amber-500 dark:text-amber-400 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
-                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-400 dark:text-amber-400" /> {habit.streak}
+                                <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
+                                  <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                                 </Badge>
                               )}
                             </div>
@@ -324,11 +324,11 @@ export function WeeklyTableViewImproved({
                             <div className="text-xs mt-1">
                               <div className="flex items-center justify-between mb-1">
                                 <div className="flex items-center">
-                                  <span className={`font-medium ${hasMetFrequency ? 'text-blue-600 dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`}>
+                                  <span className={`font-medium ${hasMetFrequency ? 'text-blue-600 dark:text-blue-300' : 'text-slate-600 dark:text-gray-300'}`}>
                                     {completedDays}/{targetDays} days
                                   </span>
                                   {isExceeding && (
-                                    <span className="text-blue-600 dark:text-blue-400 ml-1">
+                                    <span className="text-blue-600 dark:text-blue-300 ml-1">
                                       (+{completedDays - targetDays} extra)
                                     </span>
                                   )}
@@ -342,7 +342,7 @@ export function WeeklyTableViewImproved({
                               </div>
                               
                               {/* Progress bar */}
-                              <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-1">
                                 <div 
                                   className={`h-1.5 rounded-full ${
                                     hasMetFrequency 

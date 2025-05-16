@@ -22,9 +22,168 @@ import {
   Activity,
   CheckSquare,
   Zap,
-  Library
+  Library,
+  X
 } from 'lucide-react';
 import { HabitFrequency, HabitCategory } from "@/types/habit";
+
+// HabitStackCard Component - separated to avoid React Hooks errors
+interface HabitStackCardProps {
+  stack: any;
+  onAddHabit: (habit: any) => void;
+}
+
+function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedHabits, setSelectedHabits] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    stack.habits.forEach((habit: any) => {
+      initial[habit.id] = true;
+    });
+    return initial;
+  });
+  
+  const toggleHabitSelection = (habitId: string) => {
+    setSelectedHabits(prev => ({
+      ...prev,
+      [habitId]: !prev[habitId]
+    }));
+  };
+  
+  const addSelectedHabits = () => {
+    const habitsToAdd = stack.habits.filter((habit: any) => selectedHabits[habit.id]);
+    habitsToAdd.forEach((habit: any) => {
+      onAddHabit?.(habit);
+    });
+    setIsOpen(false);
+  };
+  
+  // Helper function to render icons
+  const renderIcon = (icon: string, color: string = 'blue') => {
+    const iconMap: Record<string, React.ReactNode> = {
+      dumbbell: <Dumbbell className={`text-${color}-500 h-5 w-5`} />,
+      brain: <Brain className={`text-${color}-500 h-5 w-5`} />,
+      droplets: <Droplets className={`text-${color}-500 h-5 w-5`} />,
+      book: <BookOpen className={`text-${color}-500 h-5 w-5`} />,
+      pill: <Pill className={`text-${color}-500 h-5 w-5`} />,
+      sun: <Sun className={`text-${color}-500 h-5 w-5`} />,
+      moon: <Moon className={`text-${color}-500 h-5 w-5`} />,
+      coffee: <Coffee className={`text-${color}-500 h-5 w-5`} />,
+      apple: <Apple className={`text-${color}-500 h-5 w-5`} />,
+      food: <Utensils className={`text-${color}-500 h-5 w-5`} />,
+      bed: <BedIcon className={`text-${color}-500 h-5 w-5`} />,
+      phone: <Smartphone className={`text-${color}-500 h-5 w-5`} />,
+      timer: <Timer className={`text-${color}-500 h-5 w-5`} />,
+      scroll: <ScrollText className={`text-${color}-500 h-5 w-5`} />,
+      smile: <Smile className={`text-${color}-500 h-5 w-5`} />,
+      activity: <Activity className={`text-${color}-500 h-5 w-5`} />,
+      check: <CheckSquare className={`text-${color}-500 h-5 w-5`} />,
+      zap: <Zap className={`text-${color}-500 h-5 w-5`} />,
+      library: <Library className={`text-${color}-500 h-5 w-5`} />,
+    };
+    
+    return iconMap[icon] || <Activity className={`text-${color}-500 h-5 w-5`} />;
+  };
+  
+  return (
+    <React.Fragment>
+      {/* Stack Card */}
+      <div 
+        className="p-3 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        onClick={() => setIsOpen(true)}
+      >
+        <div className="flex-shrink-0 mb-1">
+          {renderIcon(stack.icon, stack.iconColor)}
+        </div>
+        <div className="w-full text-center">
+          <p className="text-sm font-medium text-foreground dark:text-gray-100">
+            {stack.title}
+          </p>
+          <p className="text-xs text-muted-foreground dark:text-gray-300 line-clamp-2 h-8">{stack.description}</p>
+        </div>
+        <Badge variant="outline" className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
+          {stack.habits.length} habits
+        </Badge>
+      </div>
+      
+      {/* Detailed Stack Dialog */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-900 rounded-lg w-full max-w-md mx-4 p-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2 dark:text-gray-100">
+                {renderIcon(stack.icon, stack.iconColor)}
+                {stack.title}
+              </h3>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 w-8 p-0 rounded-full"
+                onClick={() => setIsOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <p className="text-sm mb-4 dark:text-gray-300">{stack.description}</p>
+            
+            <div className="space-y-2 mb-4">
+              <h4 className="text-sm font-medium dark:text-gray-200">Select habits to add:</h4>
+              {stack.habits.map((habit: any) => (
+                <div 
+                  key={habit.id}
+                  className="flex items-start p-2 rounded border border-gray-200 dark:border-gray-700"
+                >
+                  <div className="flex items-center h-5 mr-2 mt-0.5">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300"
+                      checked={selectedHabits[habit.id]}
+                      onChange={() => toggleHabitSelection(habit.id)}
+                    />
+                  </div>
+                  <div className="flex flex-1 items-center gap-2">
+                    {renderIcon(habit.icon, habit.iconColor)}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium dark:text-gray-100">{habit.title}</p>
+                      <p className="text-xs text-muted-foreground dark:text-gray-400">{habit.description}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-[10px] dark:text-gray-300 dark:border-gray-600">
+                          Effort: {habit.effort}/10
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] dark:text-gray-300 dark:border-gray-600">
+                          Impact: {habit.impact}/10
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] dark:text-gray-300 dark:border-gray-600">
+                          {habit.timeCommitment}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={addSelectedHabits}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Selected
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </React.Fragment>
+  );
+}
 
 // A comprehensive list of suggested habits organized by category
 const habitSuggestions = {
