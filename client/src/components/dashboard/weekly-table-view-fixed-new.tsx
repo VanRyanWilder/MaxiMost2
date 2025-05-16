@@ -195,6 +195,9 @@ export function WeeklyTableViewFixedNew({
             {/* Absolute habits */}
             {absoluteHabits.length > 0 && (
               <div className="mb-4">
+                <div className="font-medium text-sm mb-2 px-4 py-2 bg-blue-50 rounded-md text-blue-700">
+                  Absolute Habits (Daily)
+                </div>
                 <SortableContext 
                   items={absoluteHabits.map(h => h.id)}
                   strategy={verticalListSortingStrategy}
@@ -287,7 +290,7 @@ export function WeeklyTableViewFixedNew({
             {frequencyHabits.length > 0 && (
               <div className="border-t border-gray-100 pt-4 mt-4">
                 <div className="px-4 py-2 text-sm font-medium text-green-700 bg-green-50 rounded-md mb-2">
-                  Frequency-based Habits
+                  Frequency-based Habits (Weekly Target)
                 </div>
                 
                 <SortableContext 
