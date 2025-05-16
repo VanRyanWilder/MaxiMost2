@@ -77,7 +77,13 @@ export function MaximostHabitEditor({
       setColor(habit.iconColor || 'blue');
       setId(habit.id);
       setIsAbsolute(habit.isAbsolute);
-      setCategory(habit.category as HabitCategory || 'physical');
+      // Ensure we properly set the category for existing habits
+      // Default to 'physical' if no category exists
+      if (habit.category) {
+        setCategory(habit.category as HabitCategory);
+      } else {
+        setCategory('physical');
+      }
       console.log('Editing habit:', habit.title, 'with color:', habit.iconColor, 'and category:', habit.category);
     } else {
       // Creating a new habit
@@ -119,7 +125,12 @@ export function MaximostHabitEditor({
       createdAt: habit?.createdAt || new Date()
     };
     
-    console.log('Saving habit with data:', updatedHabit);
+    console.log('MAXIMOST EDITOR - Saving habit:', {
+      title: updatedHabit.title,
+      category: updatedHabit.category,
+      icon: updatedHabit.icon,
+      iconColor: updatedHabit.iconColor
+    });
     
     // Close dialog first
     onOpenChange(false);
