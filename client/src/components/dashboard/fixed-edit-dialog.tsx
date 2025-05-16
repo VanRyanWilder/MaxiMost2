@@ -126,11 +126,21 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
   // Get an appropriate icon based on category
   const getCategoryIcon = (cat: HabitCategory): string => {
     switch (cat) {
+      // Original categories
       case 'health': return 'droplets';
       case 'fitness': return 'dumbbell';
       case 'mind': return 'brain';
       case 'social': return 'users';
       case 'productivity': return 'zap';
+      
+      // New MaxiMost categories
+      case 'physical': return 'dumbbell';
+      case 'nutrition': return 'utensils';
+      case 'sleep': return 'moon';
+      case 'mental': return 'lightbulb';
+      case 'relationships': return 'users';
+      case 'financial': return 'dollar-sign';
+      
       default: return 'check-square';
     }
   };
@@ -219,7 +229,7 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
             </Select>
           </div>
 
-          {/* Category selection - disabled with "coming soon" message */}
+          {/* Category selection with MaxiMost categories */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">
               Category
@@ -228,22 +238,29 @@ export function FixedEditDialog({ open, setOpen, habit, onSave, onDelete }: Fixe
               <div className="flex items-center gap-2">
                 <Select 
                   value={category}
-                  disabled
                   onValueChange={(value: HabitCategory) => setCategory(value)}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="health">Health</SelectItem>
-                    <SelectItem value="fitness">Fitness</SelectItem>
-                    <SelectItem value="mind">Mind</SelectItem>
-                    <SelectItem value="social">Social</SelectItem>
-                    <SelectItem value="productivity">Productivity</SelectItem>
-                    <SelectItem value="finance">Finance</SelectItem>
+                    {/* MaxiMost primary categories */}
+                    <SelectItem value="physical">Physical Training</SelectItem>
+                    <SelectItem value="nutrition">Nutrition & Fueling</SelectItem>
+                    <SelectItem value="sleep">Sleep & Hygiene</SelectItem>
+                    <SelectItem value="mental">Mental Acuity & Growth</SelectItem>
+                    <SelectItem value="relationships">Relationships & Community</SelectItem>
+                    <SelectItem value="financial">Financial Habits</SelectItem>
+                    
+                    {/* Original categories kept for backward compatibility */}
+                    <SelectItem value="health">Health (Legacy)</SelectItem>
+                    <SelectItem value="fitness">Fitness (Legacy)</SelectItem>
+                    <SelectItem value="mind">Mind (Legacy)</SelectItem>
+                    <SelectItem value="social">Social (Legacy)</SelectItem>
+                    <SelectItem value="productivity">Productivity (Legacy)</SelectItem>
+                    <SelectItem value="finance">Finance (Legacy)</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-xs text-amber-600 font-semibold">Coming Soon</span>
               </div>
             </div>
           </div>
