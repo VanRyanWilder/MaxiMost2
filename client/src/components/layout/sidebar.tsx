@@ -98,8 +98,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       description: "Evidence-based health & fitness research"
     },
     { 
-      path: "/sugar-danger", 
-      name: "Sugar Danger", 
+      path: "/sugar", 
+      name: "Sugar Dangers", 
       icon: <Skull className="w-5 h-5 text-red-500" />,
       description: "The harmful effects of sugar on health"
     },
