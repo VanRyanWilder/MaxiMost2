@@ -29,7 +29,8 @@ import {
   DollarSign,
   Zap,
   BadgeCheck,
-  Mail
+  Mail,
+  Skull
 } from "lucide-react";
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
@@ -88,6 +89,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Scientific Research", 
       icon: <BookOpenText className="w-5 h-5 text-indigo-500" />,
       description: "Evidence-based health & fitness research"
+    },
+    { 
+      path: "/sugar-danger", 
+      name: "Sugar Danger", 
+      icon: <Skull className="w-5 h-5 text-red-500" />,
+      description: "The harmful effects of sugar on health"
     },
     
     // Additional resources
