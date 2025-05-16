@@ -51,53 +51,77 @@ export function MaximostHabitEditor({
   onSave,
   onDelete
 }: HabitEditorProps) {
-  // Form state
-  const [title, setTitle] = useState('');
-  const [frequency, setFrequency] = useState('daily');
-  const [color, setColor] = useState('blue');
-  const [id, setId] = useState('');
+  // Form state 
+  const [formState, setFormState] = useState({
+    title: '',
+    frequency: 'daily',
+    color: 'blue',
+    id: '',
+    initDone: false
+  });
   
-  // Clear form state when dialog closes
+  // Initialize form only when dialog opens or habit changes
   useEffect(() => {
-    if (!open) {
-      return;
-    }
+    if (!open) return;
+    
+    // Skip if already initialized with current habit
+    if (formState.initDone && habit?.id === formState.id) return;
     
     if (habit) {
-      // We're editing an existing habit
-      setTitle(habit.title);
-      setFrequency(habit.frequency as string);
-      setColor(habit.iconColor || 'blue');
-      setId(habit.id);
+      // Editing existing habit
+      setFormState({
+        title: habit.title,
+        frequency: habit.frequency,
+        color: habit.iconColor || 'blue',
+        id: habit.id,
+        initDone: true
+      });
       console.log('Loading existing habit for editing:', habit);
     } else {
-      // Creating a new habit
-      setTitle('');
-      setFrequency('daily');
-      setColor('blue');
-      setId(`habit-${Date.now()}`);
+      // Creating new habit
+      const newId = `habit-${Date.now()}`;
+      setFormState({
+        title: '',
+        frequency: 'daily',
+        color: 'blue',
+        id: newId,
+        initDone: true
+      });
       console.log('Creating new habit');
     }
-  }, [open, habit]);
+  }, [open, habit, formState.initDone, formState.id]);
+  
+  // Update form field handlers
+  const updateTitle = (value: string) => {
+    setFormState(prev => ({ ...prev, title: value }));
+  };
+  
+  const updateFrequency = (value: string) => {
+    setFormState(prev => ({ ...prev, frequency: value }));
+  };
+  
+  const updateColor = (value: string) => {
+    setFormState(prev => ({ ...prev, color: value }));
+  };
   
   const handleSave = () => {
-    if (!title.trim()) {
+    if (!formState.title.trim()) {
       alert('Please enter a habit title');
       return;
     }
     
     // Create the habit object
     const updatedHabit: Habit = {
-      id: id,
-      title: title,
+      id: formState.id,
+      title: formState.title,
       description: habit?.description || '',
       icon: habit?.icon || 'check-square',
-      iconColor: color,
+      iconColor: formState.color,
       impact: habit?.impact || 8,
       effort: habit?.effort || 4,
       timeCommitment: habit?.timeCommitment || '5 min',
-      frequency: frequency as HabitFrequency,
-      isAbsolute: frequency === 'daily',
+      frequency: formState.frequency as HabitFrequency,
+      isAbsolute: formState.frequency === 'daily',
       category: habit?.category || 'health',
       streak: habit?.streak || 0,
       createdAt: habit?.createdAt || new Date()
@@ -113,11 +137,11 @@ export function MaximostHabitEditor({
   };
   
   const handleDelete = () => {
-    if (!id) return;
+    if (!formState.id) return;
     
     if (window.confirm('Are you sure you want to delete this habit?')) {
       onOpenChange(false);
-      if (onDelete) onDelete(id);
+      if (onDelete) onDelete(formState.id);
     }
   };
   
@@ -134,8 +158,8 @@ export function MaximostHabitEditor({
             <Label htmlFor="title" className="text-right">Title</Label>
             <Input
               id="title"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
+              value={formState.title}
+              onChange={e => updateTitle(e.target.value)}
               className="col-span-3"
             />
           </div>
@@ -144,8 +168,8 @@ export function MaximostHabitEditor({
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="frequency" className="text-right">Frequency</Label>
             <Select 
-              value={frequency}
-              onValueChange={setFrequency}
+              value={formState.frequency}
+              onValueChange={updateFrequency}
             >
               <SelectTrigger id="frequency" className="col-span-3">
                 <SelectValue placeholder="Select frequency" />
@@ -189,11 +213,11 @@ export function MaximostHabitEditor({
                   key={option.value}
                   type="button"
                   className={`w-8 h-8 rounded-full ${option.bgClass} flex items-center justify-center
-                    ${color === option.value ? 'ring-2 ring-primary ring-offset-2' : ''}
+                    ${formState.color === option.value ? 'ring-2 ring-primary ring-offset-2' : ''}
                   `}
-                  onClick={() => setColor(option.value)}
+                  onClick={() => updateColor(option.value)}
                 >
-                  {color === option.value && (
+                  {formState.color === option.value && (
                     <Check className={`h-4 w-4 ${option.textClass}`} />
                   )}
                 </button>
