@@ -157,8 +157,8 @@ export function SettingsPanel() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Settings">
-          <Settings className="h-5 w-5" />
+        <Button variant="outline" size="icon" className="h-9 w-9 border-muted-foreground" aria-label="Settings">
+          <Settings className="h-5 w-5 text-primary" />
         </Button>
       </SheetTrigger>
       <SheetContent className="sm:max-w-md">
@@ -291,10 +291,10 @@ export function SettingsPanel() {
                     </SelectContent>
                   </Select>
 
-                  <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-                    <span className="text-xs text-gray-500">Preview:</span>
+                  <div className="mt-3 p-3 bg-muted/30 rounded-md">
+                    <span className="text-xs text-muted-foreground">Preview:</span>
                     {settings.habitDisplayMode === 'compact' ? (
-                      <div className="flex items-center mt-2 p-2 border rounded-md bg-white dark:bg-gray-900">
+                      <div className="flex items-center mt-2 p-2 border border-border rounded-md bg-background">
                         <div className="h-3 w-3 rounded-full mr-2" style={{ 
                           backgroundColor: settings.habitColors.completed === 'blue' ? '#3b82f6' : 
                                            settings.habitColors.completed === 'green' ? '#22c55e' : 
@@ -305,7 +305,7 @@ export function SettingsPanel() {
                         <span className="text-sm font-medium">Habit Name</span>
                       </div>
                     ) : (
-                      <div className="flex flex-col mt-2 p-2 border rounded-md bg-white dark:bg-gray-900">
+                      <div className="flex flex-col mt-2 p-2 border border-border rounded-md bg-background">
                         <div className="flex items-center">
                           <div className="h-3 w-3 rounded-full mr-2" style={{ 
                             backgroundColor: settings.habitColors.completed === 'blue' ? '#3b82f6' : 
@@ -317,7 +317,7 @@ export function SettingsPanel() {
                           <span className="text-sm font-medium">Habit Name</span>
                           <Badge className="ml-auto text-[10px]">Daily</Badge>
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Habit description goes here</p>
+                        <p className="text-xs text-muted-foreground mt-1">Habit description goes here</p>
                       </div>
                     )}
                   </div>
