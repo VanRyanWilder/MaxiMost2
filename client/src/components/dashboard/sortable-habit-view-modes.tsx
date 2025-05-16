@@ -25,7 +25,7 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
-import { WeeklyTableView } from './weekly-table-view';
+import { WeeklyTableView } from './weekly-table-view-new';
 import {
   arrayMove,
   SortableContext,
@@ -33,6 +33,7 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { SortableHabit } from './sortable-habit';
+import { TableSortableItem } from './table-sortable-item';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -361,7 +362,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                     )}
                     
                     {filteredHabits.filter(h => h.isAbsolute).map(habit => (
-                      <SortableHabit key={habit.id} habit={habit}>
+                      <TableSortableItem key={habit.id} habit={habit}>
                         <div className="flex justify-between p-3 rounded-lg border">
                           <div className="flex items-center">
                             <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
@@ -403,7 +404,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                             </DropdownMenu>
                           </div>
                         </div>
-                      </SortableHabit>
+                      </TableSortableItem>
                     ))}
                     
                     {filteredHabits.filter(h => !h.isAbsolute).length > 0 && (
@@ -413,7 +414,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                     )}
                     
                     {filteredHabits.filter(h => !h.isAbsolute).map(habit => (
-                      <SortableHabit key={habit.id} habit={habit}>
+                      <TableSortableItem key={habit.id} habit={habit}>
                         <div className="flex justify-between p-3 rounded-lg border">
                           <div className="flex items-center">
                             <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
@@ -458,7 +459,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                             </DropdownMenu>
                           </div>
                         </div>
-                      </SortableHabit>
+                      </TableSortableItem>
                     ))}
                   </div>
                 </SortableContext>

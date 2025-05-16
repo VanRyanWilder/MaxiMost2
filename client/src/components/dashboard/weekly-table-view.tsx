@@ -23,7 +23,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { SortableHabit } from './table-sortable-item';
+import { TableSortableItem } from './table-sortable-item';
 import { HabitButton } from "./habit-button";
 
 interface WeeklyTableViewProps {
