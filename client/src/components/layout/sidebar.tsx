@@ -57,25 +57,25 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     // Four Pillars of Maximum Performance
     { 
       path: "/principles", 
-      name: "Pillar 1: Core Principles", 
+      name: "Stoic Principles", 
       icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
       description: "High ROI principles from top performers"
     },
     { 
       path: "/sugar", 
-      name: "Pillar 2: Sugar Dangers", 
+      name: "Sugar Education", 
       icon: <AlertTriangle className="w-5 h-5 text-red-500" />,
       description: "Understanding sugar's health impacts" 
     },
     { 
       path: "/supplements", 
-      name: "Pillar 3: Top Supplements", 
+      name: "Top Supplements", 
       icon: <Trophy className="w-5 h-5 text-amber-500" />,
       description: "Expert-recommended supplements with highest ROI"
     },
     { 
       path: "/research", 
-      name: "Pillar 4: Research", 
+      name: "Scientific Research", 
       icon: <BookOpenText className="w-5 h-5 text-emerald-500" />,
       description: "Evidence-based health & fitness research"
     },
