@@ -171,7 +171,7 @@ export function WeeklyTableViewImproved({
           <div className="grid grid-cols-[2fr_repeat(7,1fr)] border-b">
             <div className="p-2 font-medium text-sm">Habit</div>
             {weekDates.map((date, i) => {
-              const isCurrentDay = date.toDateString() === currentDay.toDateString();
+              const isCurrentDay = isSameDay(date, currentDay);
               return (
                 <div 
                   key={i} 
@@ -240,7 +240,7 @@ export function WeeklyTableViewImproved({
                     {/* Render a button for each day of the week */}
                     {weekDates.map((date, i) => {
                       const completed = isHabitCompletedOnDate(habit.id, date);
-                      const isCurrentDay = date.toDateString() === currentDay.toDateString();
+                      const isCurrentDay = isSameDay(date, currentDay);
                       
                       return (
                         <div 

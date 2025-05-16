@@ -81,13 +81,15 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   
   // Calculate current date based on offsets
   const today = new Date();
+  
+  // Calculate current day (affected by dayOffset)
   const currentDay = dayOffset === 0 
     ? today 
     : dayOffset > 0 
       ? addDays(today, dayOffset)
       : subDays(today, Math.abs(dayOffset));
       
-  // Calculate current week
+  // Calculate current week (affected by weekOffset)
   const startOfCurrentWeek = startOfWeek(addDays(today, weekOffset * 7), { weekStartsOn: 1 });
   const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfCurrentWeek, i));
   
