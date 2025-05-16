@@ -62,6 +62,8 @@ export function MaximostHabitEditor({
   const [id, setId] = useState('');
   const [isAbsolute, setIsAbsolute] = useState(true);
   const [category, setCategory] = useState<HabitCategory>('physical');
+  const [impact, setImpact] = useState(8); // Default high impact
+  const [effort, setEffort] = useState(4); // Default medium effort
   
   // Reset form when the dialog opens/closes or the habit changes
   useEffect(() => {
@@ -77,6 +79,8 @@ export function MaximostHabitEditor({
       setColor(habit.iconColor || 'blue');
       setId(habit.id);
       setIsAbsolute(habit.isAbsolute);
+      setImpact(habit.impact || 8);
+      setEffort(habit.effort || 4);
       // Ensure we properly set the category for existing habits
       // Default to 'physical' if no category exists
       if (habit.category) {
@@ -94,6 +98,8 @@ export function MaximostHabitEditor({
       setId(`habit-${Date.now()}`);
       setIsAbsolute(true);
       setCategory('physical');
+      setImpact(8);
+      setEffort(4);
     }
   }, [open, habit]);
   
@@ -108,13 +114,17 @@ export function MaximostHabitEditor({
       return;
     }
     
-    // Create the habit object with our selected category
+    // Ensure we have the correct icon and color
+    const selectedIcon = getCategoryIcon(category);
+    const selectedColor = color || 'blue';
+    
+    // Create the habit object with our selected category, icon, and color
     const updatedHabit: Habit = {
       id: id,
       title: title,
       description: description,
-      icon: getCategoryIcon(category), // Get icon based on category
-      iconColor: color,
+      icon: selectedIcon, // Get icon based on category
+      iconColor: selectedColor,
       impact: habit?.impact || 8,
       effort: habit?.effort || 4,
       timeCommitment: habit?.timeCommitment || '5 min',
@@ -125,18 +135,23 @@ export function MaximostHabitEditor({
       createdAt: habit?.createdAt || new Date()
     };
     
-    console.log('MAXIMOST EDITOR - Saving habit:', {
+    console.log('MAXIMOST EDITOR - Saving habit with details:', {
       title: updatedHabit.title,
       category: updatedHabit.category,
       icon: updatedHabit.icon,
-      iconColor: updatedHabit.iconColor
+      iconColor: updatedHabit.iconColor,
+      impact: updatedHabit.impact,
+      effort: updatedHabit.effort
     });
     
-    // Close dialog first
+    // First close the dialog to prevent state interference
     onOpenChange(false);
     
-    // Call parent's save function
-    onSave(updatedHabit);
+    // Then use setTimeout to ensure dialog closing completes before saving
+    setTimeout(() => {
+      // Call parent's save function
+      onSave(updatedHabit);
+    }, 50);
   };
   
   // Get an appropriate icon based on category
@@ -257,6 +272,50 @@ export function MaximostHabitEditor({
                   <span className="text-sm font-medium">Frequency-based</span>
                 </div>
               )}
+            </div>
+          </div>
+          
+          {/* Impact Rating */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="impact" className="text-right">Impact</Label>
+            <div className="col-span-3">
+              <div className="grid gap-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Low</span>
+                  <span className="text-sm font-medium">{impact}/10</span>
+                  <span className="text-sm text-muted-foreground">High</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="10" 
+                  value={impact} 
+                  onChange={(e) => setImpact(parseInt(e.target.value))} 
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Effort Rating */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="effort" className="text-right">Effort</Label>
+            <div className="col-span-3">
+              <div className="grid gap-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Low</span>
+                  <span className="text-sm font-medium">{effort}/10</span>
+                  <span className="text-sm text-muted-foreground">High</span>
+                </div>
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="10" 
+                  value={effort} 
+                  onChange={(e) => setEffort(parseInt(e.target.value))} 
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
             </div>
           </div>
           
