@@ -61,7 +61,12 @@ function HabitStackCard({ stack, onAddHabit }: HabitStackCardProps) {
     const habitsToAdd = stack.habits.filter((habit: any) => selectedHabits[habit.id]);
     if (habitsToAdd.length > 0) {
       habitsToAdd.forEach((habit: any) => {
-        onAddHabit?.(habit);
+        // Create a new habit with a unique ID to prevent duplicates
+        const uniqueHabit = {
+          ...habit,
+          id: `${habit.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+        };
+        onAddHabit?.(uniqueHabit);
       });
     }
     setIsOpen(false);
