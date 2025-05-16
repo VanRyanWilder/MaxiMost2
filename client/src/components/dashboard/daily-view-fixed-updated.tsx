@@ -255,7 +255,7 @@ export function DailyViewFixedUpdated({
       )}
 
       {/* Daily Absolute Habits section */}
-      {absoluteHabits.length > 0 && (
+      {displayedAbsoluteHabits.length > 0 && (
         <>
           <div className="font-medium text-sm mb-2 px-4 py-2 bg-blue-50 rounded-md text-blue-700">
             Absolute Habits (Daily)
@@ -267,11 +267,11 @@ export function DailyViewFixedUpdated({
             onDragEnd={handleAbsoluteDragEnd}
           >
             <SortableContext 
-              items={absoluteHabits.map(h => h.id)}
+              items={displayedAbsoluteHabits.map(h => h.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                {absoluteHabits.map(habit => (
+                {displayedAbsoluteHabits.map(habit => (
                   <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
                     <div className="flex justify-between p-3 rounded-lg border">
                       <div className="flex items-center">
@@ -332,7 +332,7 @@ export function DailyViewFixedUpdated({
       )}
       
       {/* Frequency-based Habits section */}
-      {frequencyHabits.length > 0 && (
+      {displayedFrequencyHabits.length > 0 && (
         <>
           <div className="font-medium text-sm mb-2 px-4 py-2 bg-green-50 rounded-md text-green-700 mt-6">
             Frequency-based Habits (Weekly Target)
@@ -344,11 +344,11 @@ export function DailyViewFixedUpdated({
             onDragEnd={handleFrequencyDragEnd}
           >
             <SortableContext 
-              items={frequencyHabits.map(h => h.id)}
+              items={displayedFrequencyHabits.map(h => h.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                {frequencyHabits.map(habit => (
+                {displayedFrequencyHabits.map(habit => (
                   <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
                     <div className="flex justify-between p-3 rounded-lg border">
                       <div className="flex items-center">
