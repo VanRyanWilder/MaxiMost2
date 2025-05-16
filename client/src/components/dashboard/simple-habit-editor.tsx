@@ -158,7 +158,10 @@ export function SimpleHabitEditor({
                 <SelectContent>
                   <SelectItem value="health">Health</SelectItem>
                   <SelectItem value="fitness">Fitness</SelectItem>
-                  <SelectItem value="mind">Mind</SelectItem>
+                  <SelectItem value="mindset">Mindset</SelectItem>
+                  <SelectItem value="productivity">Productivity</SelectItem>
+                  <SelectItem value="energy">Energy</SelectItem>
+                  <SelectItem value="focus">Focus</SelectItem>
                 </SelectContent>
               </Select>
               <span className="text-xs font-semibold text-amber-500">Coming Soon</span>
