@@ -973,52 +973,37 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
               <Zap className="h-3.5 w-3.5 mr-1 text-yellow-500" />
               Habit Stacks
             </h3>
-            <div className="grid grid-cols-1 gap-2">
+            
+            {/* 2x4 Grid Layout for Habit Stacks */}
+
+            {/* New 2x4 Grid Layout for Habit Stacks */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
               {habitSuggestions.stacks.map(stack => (
-                <div 
+                <div
                   key={stack.id}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-md p-3 shadow-sm"
+                  className="p-3 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => {
+                    // Create the habits array
+                    const habitsToAdd = stack.habits;
+                    
+                    // For now, add all habits at once - we'll implement selective adding later
+                    habitsToAdd.forEach(habit => {
+                      onAddHabit?.(habit);
+                    });
+                  }}
                 >
-                  <div className="flex items-center gap-2 cursor-pointer mb-1" onClick={() => {}}>
-                    <div className="flex-shrink-0">
-                      {renderIcon(stack.icon, stack.iconColor)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate text-foreground">
-                        {stack.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground truncate">{stack.description}</p>
-                    </div>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-8 flex-shrink-0 text-xs"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent parent click
-                        // Send the entire stack object to be handled by the parent component
-                        onAddHabit?.({...stack, isStack: true});
-                      }}
-                    >
-                      <Plus className="h-3.5 w-3.5 mr-1" />
-                      Add All
-                    </Button>
+                  <div className="flex-shrink-0 mb-1">
+                    {renderIcon(stack.icon, stack.iconColor)}
                   </div>
-                  
-                  <div className="pl-6 mt-1">
-                    <div className="text-xs text-muted-foreground mb-1">Contains {stack.habits.length} habits:</div>
-                    <div className="grid grid-cols-1 gap-1 mt-2">
-                      {stack.habits.map(habit => (
-                        <div key={habit.id} className="flex items-center text-xs">
-                          <div className="flex-shrink-0 mr-1 w-4 h-4">
-                            {renderIcon(habit.icon, habit.iconColor)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="truncate text-foreground">{habit.title}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="w-full text-center">
+                    <p className="text-sm font-medium text-foreground">
+                      {stack.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 h-8">{stack.description}</p>
                   </div>
+                  <Badge variant="outline" className="text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700">
+                    {stack.habits.length} habits
+                  </Badge>
                 </div>
               ))}
             </div>
