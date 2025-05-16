@@ -29,7 +29,7 @@ export const HabitButton: React.FC<HabitButtonProps> = ({
         ${isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}
         ${isCompleted ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-md scale-105 transition-all' : ''}
         ${isToday && !isCompleted ? 'border-2 border-dashed border-blue-300 hover:border-blue-500' : ''}
-        ${isCompleted ? 'transform transition-transform hover:scale-110 duration-150' : ''}
+        ${isCompleted ? 'transform transition-transform hover:scale-110 duration-150 text-white' : ''}
         transition-all duration-200
       `}
       disabled={isFutureDate}
