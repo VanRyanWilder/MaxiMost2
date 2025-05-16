@@ -9,7 +9,7 @@ import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
-import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes-fixed";
+import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
 import { 
   DndContext, 
   closestCenter,
