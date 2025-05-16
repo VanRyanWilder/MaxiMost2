@@ -241,11 +241,17 @@ export function WeeklyTableViewImproved({
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                            <DropdownMenuItem onClick={() => {
+                              console.log("Edit clicked for habit:", habit);
+                              handleEditHabit && handleEditHabit(habit);
+                            }}>
                               <Pencil className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                            <DropdownMenuItem onClick={() => {
+                              console.log("Delete clicked for habit ID:", habit.id);
+                              handleDeleteHabit && handleDeleteHabit(habit.id);
+                            }}>
                               <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
