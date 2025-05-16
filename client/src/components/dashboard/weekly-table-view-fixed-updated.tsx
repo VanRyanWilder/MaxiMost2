@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { format, isFuture, addDays, startOfWeek, endOfWeek, isSameDay, startOfDay, startOfToday } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,7 @@ import {
 } from "@dnd-kit/sortable";
 import { TableSortableItem } from './table-sortable-item';
 import { HabitButton } from "./habit-button";
+import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 
 interface WeeklyTableViewProps {
   habits: Habit[];
