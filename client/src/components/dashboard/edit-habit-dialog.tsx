@@ -264,14 +264,26 @@ export function EditHabitDialog({
         ...(showCustomCategoryInput && customCategory ? { category: customCategory as HabitCategory } : {})
       };
       
-      console.log("Saving habit with:", { 
+      console.log("Saving habit with details:", { 
+        id: finalHabit.id,
+        title: finalHabit.title,
+        description: finalHabit.description,
         frequency: finalHabit.frequency, 
         isAbsolute: finalHabit.isAbsolute,
-        iconColor: finalHabit.iconColor 
+        iconColor: finalHabit.iconColor,
+        icon: finalHabit.icon
       });
       
-      onSave(finalHabit);
-      handleOpenChange(false);
+      // Force a small delay to ensure state updates properly
+      setTimeout(() => {
+        // Call the parent's onSave function with our finalized habit data
+        onSave(finalHabit);
+        // Then close the dialog
+        handleOpenChange(false);
+        
+        // Log confirmation of the save action
+        console.log("Edit dialog: Save completed, dialog closing");
+      }, 50);
     }
   };
   

@@ -752,10 +752,26 @@ export default function SortableDashboard() {
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
+          console.log("Dashboard received updated habit:", updatedHabit.title);
+          
           if (habits.some(h => h.id === updatedHabit.id)) {
+            console.log("Editing existing habit with ID:", updatedHabit.id);
             editHabit(updatedHabit);
           } else {
+            console.log("Adding new habit:", updatedHabit.title);
             addHabit(updatedHabit);
+          }
+          
+          // Force a save to localStorage
+          const updatedHabits = habits.some(h => h.id === updatedHabit.id)
+            ? habits.map(h => h.id === updatedHabit.id ? updatedHabit : h)
+            : [...habits, updatedHabit];
+            
+          try {
+            localStorage.setItem('maximost-habits', JSON.stringify(updatedHabits));
+            console.log("Saved updated habits to localStorage");
+          } catch (err) {
+            console.error("Error saving to localStorage:", err);
           }
         }}
       />
