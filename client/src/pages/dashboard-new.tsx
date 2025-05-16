@@ -817,6 +817,9 @@ export default function Dashboard() {
                             <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7, "60 min", "daily", true, "red")}>
                               <Zap className="mr-2 h-4 w-4 text-red-500" /> Digital Detox
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily", true, "amber")}>
+                              <Star className="mr-2 h-4 w-4 text-amber-500" /> Pray
+                            </DropdownMenuItem>
                           </DropdownMenuGroup>
                           
                           <DropdownMenuSeparator />
@@ -834,6 +837,12 @@ export default function Dashboard() {
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "pill", "health", "Supplement with necessary micronutrients", 6, 2, "1 min", "daily", true, "purple")}>
                               <Pill className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1, "2 min", "daily", true, "amber")}>
+                              <Sun className="mr-2 h-4 w-4 text-amber-500" /> Make Bed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day", true, "blue")}>
+                              <Zap className="mr-2 h-4 w-4 text-blue-500" /> Brush Teeth
                             </DropdownMenuItem>
                           </DropdownMenuGroup>
                           
