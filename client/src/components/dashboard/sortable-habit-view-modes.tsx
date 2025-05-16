@@ -25,7 +25,8 @@ import {
   useSensors,
   DragEndEvent
 } from '@dnd-kit/core';
-import { WeeklyTableView } from './weekly-table-view-fixed';
+import { WeeklyTableViewImproved } from './weekly-table-view-improved';
+import { DailyViewFixed } from './daily-view-fixed';
 import {
   arrayMove,
   SortableContext,
@@ -341,31 +342,21 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 {format(today, 'EEEE, MMMM d, yyyy')}
               </div>
             </div>
-            
             {habits.length === 0 ? (
               <div className="p-6 text-center">
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <DndContext 
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext 
-                  items={filteredHabits.map(habit => habit.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-4">
-                    {filteredHabits.filter(h => h.isAbsolute).length > 0 && (
-                      <div className="font-medium text-sm mb-2 px-2 py-1 bg-blue-50 rounded-md text-blue-700">
-                        Absolute Daily Habits
-                      </div>
-                    )}
-                    
-                    {filteredHabits.filter(h => h.isAbsolute).map(habit => (
-                      <TableSortableItem key={habit.id} habit={habit}>
-                        <div className="flex justify-between p-3 rounded-lg border">
+              <DailyViewFixed
+                habits={filteredHabits}
+                completions={completions}
+                today={today}
+                onToggleHabit={onToggleHabit}
+                onEditHabit={handleEditHabit}
+                onDeleteHabit={handleDeleteHabit}
+                onReorderHabits={onReorderHabits}
+                filterCategory={filterCategory}
+              />
                           <div className="flex items-center">
                             <div className={`mr-3 p-1 rounded ${habit.iconColor || 'bg-blue-100'}`}>
                               {getHabitIcon(habit.icon)}
@@ -472,7 +463,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
       
         {/* Weekly view */}
         {viewMode === "weekly" && (
-          <WeeklyTableView
+          <WeeklyTableViewImproved
             habits={filteredHabits}
             completions={completions}
             weekDates={weekDates}
