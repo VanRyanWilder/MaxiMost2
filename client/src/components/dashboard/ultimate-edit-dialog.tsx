@@ -146,6 +146,34 @@ export function UltimateEditDialog({ open, setOpen, habit, onSave, onDelete }: U
               placeholder="Habit name"
             />
           </div>
+          
+          {/* Description field */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="description" className="text-right">
+              Description
+            </Label>
+            <Input
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleChange('description', e.target.value)}
+              className="col-span-3"
+              placeholder="Brief description"
+            />
+          </div>
+
+          {/* Time Commitment field */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="timeCommitment" className="text-right">
+              Time
+            </Label>
+            <Input
+              id="timeCommitment"
+              value={formData.timeCommitment}
+              onChange={(e) => handleChange('timeCommitment', e.target.value)}
+              className="col-span-3"
+              placeholder="e.g. 5 min, 30 min"
+            />
+          </div>
 
           {/* Frequency selection */}
           <div className="grid grid-cols-4 items-center gap-4">
@@ -168,6 +196,61 @@ export function UltimateEditDialog({ open, setOpen, habit, onSave, onDelete }: U
                 <SelectItem value="6x-week">6x per week</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          
+          {/* Impact field */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="impact" className="text-right">
+              Impact (1-10)
+            </Label>
+            <div className="col-span-3 flex items-center">
+              <input
+                type="range"
+                id="impact"
+                min="1"
+                max="10"
+                value={formData.impact}
+                onChange={(e) => handleChange('impact', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="ml-2 text-sm font-medium">{formData.impact}</span>
+            </div>
+          </div>
+          
+          {/* Effort field */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="effort" className="text-right">
+              Effort (1-10)
+            </Label>
+            <div className="col-span-3 flex items-center">
+              <input
+                type="range"
+                id="effort"
+                min="1"
+                max="10"
+                value={formData.effort}
+                onChange={(e) => handleChange('effort', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="ml-2 text-sm font-medium">{formData.effort}</span>
+            </div>
+          </div>
+
+          {/* Is Absolute (must-do) switch */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="isAbsolute" className="text-right">
+              Must-do
+            </Label>
+            <div className="col-span-3 flex items-center">
+              <input
+                type="checkbox"
+                id="isAbsolute"
+                checked={formData.isAbsolute}
+                onChange={(e) => handleChange('isAbsolute', e.target.checked)}
+                className="mr-2"
+              />
+              <span className="text-sm">Mark as must-do (highest priority)</span>
+            </div>
           </div>
 
           {/* Category selection - disabled with "coming soon" message */}
