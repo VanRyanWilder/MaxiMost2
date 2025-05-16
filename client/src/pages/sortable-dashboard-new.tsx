@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/select';
 import { Check } from 'lucide-react';
 import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
+import { EnhancedHabitIcon } from "@/components/ui/enhanced-habit-icon";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 import { HabitLibrary } from "@/components/dashboard/habit-library-new";
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
