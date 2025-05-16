@@ -36,6 +36,7 @@ import {
 import { useUser } from "@/context/user-context";
 import { analyzeProgress } from "@/lib/gemini";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CATEGORY_COLORS } from "@/utils/habit-progress-utils";
 
 interface ProgressVisualizationProps {
   className?: string;
@@ -50,13 +51,13 @@ const COLORS = {
   danger: "#ef4444",
   info: "#3b82f6",
   chart: [
-    "#6366f1",
-    "#8b5cf6",
-    "#ec4899",
-    "#f43f5e",
-    "#f97316",
-    "#f59e0b",
-    "#10b981",
+    "#ef4444", // Physical (Red)
+    "#f97316", // Nutrition (Orange)  
+    "#8b5cf6", // Sleep (Indigo)
+    "#facc15", // Mental (Yellow)
+    "#0ea5e9", // Relationships (Blue)
+    "#22c55e", // Financial (Green)
+    "#10b981", 
     "#3b82f6",
     "#a855f7"
   ]
@@ -504,8 +505,8 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
                     nameKey="name"
                     label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   >
-                    {mockHabitCompletionData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS.chart[index % COLORS.chart.length]} />
+                    {mockHabitCompletionData.map((entry) => (
+                      <Cell key={`cell-${entry.name}`} fill={CATEGORY_COLORS[entry.name]} />
                     ))}
                   </Pie>
                   <Tooltip />
