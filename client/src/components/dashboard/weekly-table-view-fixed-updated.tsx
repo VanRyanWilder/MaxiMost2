@@ -339,16 +339,24 @@ export function WeeklyTableViewFixedUpdated({
                                   </div>
                                   
                                   {hasMetFrequency && (
-                                    <Badge className="bg-white text-[10px] px-1 py-0 h-4 border border-red-500">
+                                    <Badge className="bg-white px-1.5 py-0.5 h-5 border-2 border-red-600">
                                       {isExceeding ? (
                                         <>
-                                          <Target className="h-3 w-3 text-red-500" />
+                                          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <circle cx="12" cy="12" r="6"></circle>
+                                            <circle cx="12" cy="12" r="2"></circle>
+                                          </svg>
                                           {completedDays > targetDays && (
-                                            <span className="text-xs text-red-500 font-medium ml-0.5">+{completedDays - targetDays}</span>
+                                            <span className="text-xs text-red-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
                                           )}
                                         </>
                                       ) : (
-                                        <Target className="h-3 w-3 text-red-500" />
+                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
+                                          <circle cx="12" cy="12" r="10"></circle>
+                                          <circle cx="12" cy="12" r="6"></circle>
+                                          <circle cx="12" cy="12" r="2"></circle>
+                                        </svg>
                                       )}
                                     </Badge>
                                   )}

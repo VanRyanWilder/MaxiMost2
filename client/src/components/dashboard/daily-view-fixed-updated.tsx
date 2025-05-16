@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { format, isSameDay } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { TableSortableItem } from './table-sortable-item';
+import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 
 interface DailyViewProps {
   habits: Habit[];
@@ -49,6 +50,7 @@ export function DailyViewFixedUpdated({
   filterCategory
 }: DailyViewProps) {
   const today = currentDay;
+  const [showConfetti, setShowConfetti] = useState(false);
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,6 +68,34 @@ export function DailyViewFixedUpdated({
         completion.completed
     );
   };
+  
+  // Helper function to check if all absolute habits are completed
+  const checkAllAbsoluteHabitsCompleted = () => {
+    // Only check absolute habits that match the current filter
+    const filteredAbsoluteHabits = absoluteHabits.filter(h => 
+      filterCategory === 'all' || 
+      filterCategory === 'absolute' || 
+      h.category === filterCategory
+    );
+    
+    // If there are no absolute habits to track, return false
+    if (filteredAbsoluteHabits.length === 0) return false;
+    
+    // Check if all absolute habits are completed for today
+    const allCompleted = filteredAbsoluteHabits.every(habit => 
+      isHabitCompletedOnDate(habit.id, today)
+    );
+    
+    return allCompleted;
+  };
+  
+  // Handle confetti celebration after completing all absolute habits
+  useEffect(() => {
+    const allAbsoluteCompleted = checkAllAbsoluteHabitsCompleted();
+    if (allAbsoluteCompleted) {
+      setShowConfetti(true);
+    }
+  }, [completions, absoluteHabits, filterCategory]);
   
   // Get target days from frequency
   const getTargetDays = (habit: Habit): number => {
@@ -331,16 +361,24 @@ export function DailyViewFixedUpdated({
                               const isExceeding = completedDays > targetDays;
                               
                               return hasMetFrequency && (
-                                <Badge className="bg-white text-[10px] px-1 py-0 h-4 border border-red-500 ml-1">
+                                <Badge className="bg-white px-1.5 py-0.5 h-5 border-2 border-red-600 ml-1">
                                   {isExceeding ? (
                                     <>
-                                      <Target className="h-3 w-3 text-red-500" />
+                                      <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <circle cx="12" cy="12" r="6"></circle>
+                                        <circle cx="12" cy="12" r="2"></circle>
+                                      </svg>
                                       {completedDays > targetDays && (
-                                        <span className="text-xs text-red-500 font-medium ml-0.5">+{completedDays - targetDays}</span>
+                                        <span className="text-xs text-red-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
                                       )}
                                     </>
                                   ) : (
-                                    <Target className="h-3 w-3 text-red-500" />
+                                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
+                                      <circle cx="12" cy="12" r="10"></circle>
+                                      <circle cx="12" cy="12" r="6"></circle>
+                                      <circle cx="12" cy="12" r="2"></circle>
+                                    </svg>
                                   )}
                                 </Badge>
                               );
