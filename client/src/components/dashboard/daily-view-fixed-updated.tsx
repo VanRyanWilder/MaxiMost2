@@ -69,33 +69,36 @@ export function DailyViewFixedUpdated({
     );
   };
   
-  // Helper function to check if all absolute habits are completed
-  const checkAllAbsoluteHabitsCompleted = () => {
-    // Only check absolute habits that match the current filter
-    const filteredAbsoluteHabits = absoluteHabits.filter(h => 
-      filterCategory === 'all' || 
-      filterCategory === 'absolute' || 
-      h.category === filterCategory
-    );
+  // Handle confetti celebration after completing all absolute habits
+  useEffect(() => {
+    // Get absolute habits based on the filter
+    const absoluteHabitsToCheck = habits
+      .filter(h => h.isAbsolute)
+      .filter(h => 
+        filterCategory === 'all' || 
+        filterCategory === 'absolute' || 
+        h.category === filterCategory
+      );
     
-    // If there are no absolute habits to track, return false
-    if (filteredAbsoluteHabits.length === 0) return false;
+    // If there are no absolute habits to track, don't show confetti
+    if (absoluteHabitsToCheck.length === 0) return;
     
     // Check if all absolute habits are completed for today
-    const allCompleted = filteredAbsoluteHabits.every(habit => 
+    const allCompleted = absoluteHabitsToCheck.every(habit => 
       isHabitCompletedOnDate(habit.id, today)
     );
     
-    return allCompleted;
-  };
-  
-  // Handle confetti celebration after completing all absolute habits
-  useEffect(() => {
-    const allAbsoluteCompleted = checkAllAbsoluteHabitsCompleted();
-    if (allAbsoluteCompleted) {
+    if (allCompleted) {
       setShowConfetti(true);
+      
+      // Reset confetti after 3 seconds
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
     }
-  }, [completions, absoluteHabits, filterCategory]);
+  }, [habits, completions, filterCategory, today]);
   
   // Get target days from frequency
   const getTargetDays = (habit: Habit): number => {
@@ -155,9 +158,9 @@ export function DailyViewFixedUpdated({
         ? habits.filter(h => !h.isAbsolute)
         : habits.filter(h => h.category === filterCategory);
   
-  // Separate absolute and frequency-based habits
-  const absoluteHabits = filteredHabits.filter(h => h.isAbsolute);
-  const frequencyHabits = filteredHabits.filter(h => !h.isAbsolute);
+  // Separate absolute and frequency-based habits from filtered habits
+  const displayedAbsoluteHabits = filteredHabits.filter(h => h.isAbsolute);
+  const displayedFrequencyHabits = filteredHabits.filter(h => !h.isAbsolute);
   
   // Create separate handlers for each section
   const handleAbsoluteDragEnd = (event: DragEndEvent) => {
@@ -226,6 +229,12 @@ export function DailyViewFixedUpdated({
 
   return (
     <div className="space-y-4">
+      {/* Confetti celebration when all absolute habits are completed */}
+      <ConfettiCelebration 
+        trigger={showConfetti} 
+        type="perfectDay"
+        onComplete={() => setShowConfetti(false)}
+      />
       {/* No habits state */}
       {filteredHabits.length === 0 && (
         <div className="p-8 text-center">
