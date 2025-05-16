@@ -223,16 +223,16 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
 
   // Fallback content for when the AI is not available
   const fallbackInsights = {
-    summary: "Your progress is showing positive trends across key metrics. Continue to focus on consistency and gradual improvements for best results.",
+    summary: "Your habit consistency is showing positive trends across key categories. Continue focusing on daily habits for best results.",
     observations: [
-      "Your workout consistency has improved over the last two weeks.",
-      "Sleep quality shows a correlation with your meditation practice.",
-      "Body metrics are trending in a positive direction."
+      "Your Physical and Mental habit categories show the strongest adherence.",
+      "Sleep habits are consistently performed at a high rate.",
+      "Financial habits show the most room for improvement."
     ],
     recommendations: [
-      "Consider adding 5 more minutes to your meditation sessions to further improve sleep quality.",
-      "Maintain your current workout frequency but consider increasing intensity gradually.",
-      "Track your nutrition more consistently to identify patterns that may impact your progress."
+      "Try stacking your financial habits with existing physical habits for better consistency.",
+      "Maintain your current sleep routine - it's a foundation for other categories.",
+      "Focus on one new habit at a time to avoid overwhelm and ensure consistent progress."
     ]
   };
 
@@ -241,7 +241,8 @@ export function ProgressVisualization({ className }: ProgressVisualizationProps)
       console.log("Attempting to get AI insights...");
       getAIInsights();
     }
-  }, [selectedMetrics, timeRange, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Format date for display
   const formatDate = (dateString: string) => {
