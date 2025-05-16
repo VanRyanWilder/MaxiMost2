@@ -41,15 +41,8 @@ export function ThemeProvider({
     // Remove existing theme classes
     root.classList.remove("light", "dark")
 
-    // Always use light mode for now to simplify and fix issues
-    // We'll re-enable dark mode in a future update
+    // Use light mode always for now
     root.classList.add("light")
-    
-    // Store the selected theme for future reference when we re-enable dark mode
-    if (theme !== "light") {
-      localStorage.setItem(storageKey, "light")
-      setTheme("light")
-    }
     
     // Re-enable transitions after a short delay to prevent flashing
     const transitionTimeout = setTimeout(() => {
@@ -57,7 +50,7 @@ export function ThemeProvider({
     }, 100)
     
     return () => clearTimeout(transitionTimeout)
-  }, [theme, storageKey])
+  }, [])
 
   const value = {
     theme,
