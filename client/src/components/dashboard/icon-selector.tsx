@@ -116,7 +116,6 @@ import {
   Pizza,
   Dessert,
   Cherry,
-  Lemon,
   Calculator,
   Clock,
   AlarmClock
@@ -211,7 +210,7 @@ export const iconMap: Record<string, LucideIcon> = {
   umbrella: Umbrella,
   flower: Flower,
   leaf: Leaf,
-  tree: Tree,
+  tree: Trees,
   sprout: Sprout,
   globe: Globe,
   
@@ -227,7 +226,7 @@ export const iconMap: Record<string, LucideIcon> = {
   
   // Work/office
   briefcase: Briefcase,
-  suitcase: Suitcase,
+  suitcase: Luggage,
   folderarchive: FolderArchive,
   filetext: FileText,
   clipboard: Clipboard,
