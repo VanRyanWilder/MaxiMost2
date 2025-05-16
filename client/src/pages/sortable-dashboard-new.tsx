@@ -772,12 +772,12 @@ export default function SortableDashboard() {
       />
       
       {/* Edit Habit Dialog - Using our simple editor */}
-      <NewHabitEditor
+      <MaximostHabitEditor
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("🔄 Dashboard received habit from NEW dialog:", updatedHabit.title);
+          console.log("🔄 Dashboard received habit from MAXIMOST dialog:", updatedHabit.title);
           console.log("🔄 Color value being saved:", updatedHabit.iconColor);
           
           // For editing, use our dedicated function
