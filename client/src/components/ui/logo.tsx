@@ -33,18 +33,23 @@ export function Logo({
         <img 
           src="/maximost-logo-1.png" 
           alt="MaxiMost Logo" 
-          className={`${sizeClasses[size]} object-contain`}
+          className={`${sizeClasses[size]} object-contain mr-1`}
           onError={(e) => {
-            // If the image fails to load, retry with an absolute path
+            // Log the error for debugging
+            console.log("Logo load error, trying fallback path");
+            
+            // If the image fails to load, try multiple fallback paths
             const target = e.target as HTMLImageElement;
-            if (!target.src.includes('https://')) {
-              // Try a different approach with the public path
-              target.src = `${window.location.origin}/maximost-logo-1.png`;
+            
+            if (target.src.includes('maximost-logo-1.png')) {
+              // Try the other logo variant that we know exists
+              target.src = `${window.location.origin}/maximost-logo-0.png`;
+              console.log("Trying alternate logo:", target.src);
             }
           }}
         />
         {textVisible && (
-          <span className="ml-2 font-bold text-lg bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">
+          <span className="ml-1 font-bold text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             MaxiMost
           </span>
         )}
