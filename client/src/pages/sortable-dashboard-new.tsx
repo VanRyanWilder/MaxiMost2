@@ -257,7 +257,7 @@ export default function SortableDashboard() {
       isAbsolute: false,
       category: "fitness",
       streak: 2,
-      createdAt: new Date(2023, 0, 15)
+      createdAt: new Date(2023, 0, 15).toISOString()
     },
     {
       id: "h-stretch-routine",
@@ -272,7 +272,7 @@ export default function SortableDashboard() {
       isAbsolute: true,
       category: "fitness",
       streak: 0,
-      createdAt: new Date(2023, 0, 20)
+      createdAt: new Date(2023, 0, 20).toISOString()
     }
   ]);
   
@@ -324,7 +324,9 @@ export default function SortableDashboard() {
   };
   
   // Toggle habit completion for a specific date
-  const toggleCompletion = (habitId: string, date: Date) => {
+  const toggleCompletion = (habitId: string, date: Date | string) => {
+    // Ensure date is a Date object
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
     const existingCompletionIndex = completions.findIndex(
       c => c.habitId === habitId && isSameDay(new Date(c.date), date)
     );
@@ -346,7 +348,7 @@ export default function SortableDashboard() {
       const newCompletion: HabitCompletion = {
         id: `c-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
         habitId,
-        date,
+        date: date.toISOString(),
         completed: true
       };
       updatedCompletions = [...completions, newCompletion];
