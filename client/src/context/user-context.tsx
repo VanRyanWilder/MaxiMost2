@@ -5,10 +5,10 @@ import { queryClient } from "@/lib/queryClient";
 // Create a static mock user for development
 const mockUser: User = {
   id: 1,
-  username: "beastmode_user",
+  username: "maximost_user",
   password: "password123",
-  name: "John Doe",
-  email: "john@example.com",
+  name: "MaxiMost User",
+  email: "user@maximost.com",
   currentProgramId: 3,
   programStartDate: new Date("2023-04-15"),
   programProgress: 32,
