@@ -21,7 +21,8 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
   const [location] = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     main: true,
-    health: true,
+    'habit-categories': true,
+    health: false,
     resources: true
   });
   
@@ -33,6 +34,7 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
   };
   
   const mainLinks = sidebarLinks.filter(link => link.section === 'main');
+  const habitCategoryLinks = sidebarLinks.filter(link => link.section === 'habit-categories');
   const healthLinks = sidebarLinks.filter(link => link.section === 'health');
   const resourceLinks = sidebarLinks.filter(link => link.section === 'resources');
   
@@ -180,6 +182,7 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
         <ScrollArea className="flex-1 pb-4">
           <div className="px-2 py-4">
             {renderSection("Main", mainLinks, "main")}
+            {renderSection("Habit Categories", habitCategoryLinks, "habit-categories")}
             {renderSection("Health & Wellness", healthLinks, "health")}
             {renderSection("Resources", resourceLinks, "resources")}
           </div>
