@@ -362,9 +362,9 @@ export default function SortableDashboard() {
     setHabits([...habits, habit]);
   };
   
-  // Completely rewritten habit editing function for maximum reliability
+  // Simplified habit editing function for maximum reliability
   const editHabit = (updatedHabit: Habit) => {
-    console.log("⚡⚡ DIRECT EDIT FUNCTION - START");
+    console.log("⚡⚡ EDIT FUNCTION - START");
     console.log("Updating habit:", updatedHabit.title);
     console.log("Color being saved:", updatedHabit.iconColor);
     console.log("Icon being saved:", updatedHabit.icon);
@@ -374,61 +374,51 @@ export default function SortableDashboard() {
       updatedHabit.isAbsolute = true;
     }
     
-    // Create completely new array to avoid reference issues
-    const newHabitsArray: Habit[] = [];
-    
-    // Track if we found the habit to update
-    let habitUpdated = false;
-    
-    // Loop through existing habits and replace the matching one
-    for (let i = 0; i < habits.length; i++) {
-      const currentHabit = habits[i];
-      
-      // If this is the habit to update
-      if (currentHabit.id === updatedHabit.id) {
-        habitUpdated = true;
-        // Create a deep copy of the updated habit to avoid reference issues
-        const updatedCopy = JSON.parse(JSON.stringify(updatedHabit));
-        newHabitsArray.push(updatedCopy);
-        console.log(`✅ Replaced habit at index ${i}: ${updatedHabit.title}`);
-      } else {
-        // Just add the existing habit to the new array
-        newHabitsArray.push({...currentHabit});
-      }
-    }
-    
-    // If we didn't find the habit to update, add it as new
-    if (!habitUpdated) {
-      console.log("Adding as new habit:", updatedHabit.title);
-      newHabitsArray.push({...updatedHabit});
-    }
-    
-    console.log("New habits array length:", newHabitsArray.length);
-    
-    // First save to localStorage
     try {
+      // Create a simpler, more reliable update using map
+      const newHabitsArray = habits.map(habit => 
+        habit.id === updatedHabit.id 
+          ? { ...updatedHabit } // Return a copy of the updated habit
+          : habit                // Keep other habits unchanged
+      );
+      
+      // If the habit wasn't found in the map, add it as new
+      if (!habits.some(habit => habit.id === updatedHabit.id)) {
+        console.log("➕ Adding as new habit:", updatedHabit.title);
+        newHabitsArray.push({ ...updatedHabit });
+      } else {
+        console.log("✏️ Updated existing habit:", updatedHabit.title);
+      }
+      
+      console.log("📊 Total habits:", newHabitsArray.length);
+      
+      // Save to localStorage first
       const saveData = JSON.stringify(newHabitsArray);
       localStorage.setItem('maximost-habits', saveData);
-      console.log("✅ Successfully saved to localStorage");
+      console.log("💾 Successfully saved to localStorage");
       
-      // Next update the state
-      console.log("Updating state with new habits array");
+      // Update state
       setHabits(newHabitsArray);
       
-      // Double-check one of the habits after update for debugging
+      // Verify the data was saved correctly
       setTimeout(() => {
-        if (newHabitsArray.length > 0) {
-          const sampleHabit = newHabitsArray[0];
-          console.log("Sample habit after update - title:", sampleHabit.title);
-          console.log("Sample habit after update - color:", sampleHabit.iconColor);
+        const verificationData = localStorage.getItem('maximost-habits');
+        if (verificationData) {
+          const savedHabits = JSON.parse(verificationData);
+          const savedHabit = savedHabits.find((h: Habit) => h.id === updatedHabit.id);
+          
+          if (savedHabit) {
+            console.log("✅ VERIFICATION - Saved correctly");
+            console.log("  - Title:", savedHabit.title);
+            console.log("  - Color:", savedHabit.iconColor);
+          }
         }
-      }, 100);
+        console.log("⚡⚡ EDIT FUNCTION - COMPLETE");
+      }, 200);
       
     } catch (error) {
-      console.error("❌ Error saving to localStorage:", error);
+      console.error("❌ Error updating habit:", error);
     }
-    
-    console.log("⚡⚡ DIRECT EDIT FUNCTION - COMPLETE");
   };
   
   // Delete a habit - completely rewritten for reliability
