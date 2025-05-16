@@ -465,9 +465,10 @@ export default function SortableDashboard() {
                       habits={habits}
                       completions={completions}
                       onToggleHabit={toggleCompletion}
+                      onAddHabit={handleCreateHabit}
                       onEditHabit={handleEditHabit}
                       onDeleteHabit={deleteHabit}
-                      onChangeHabitOrder={(newOrderedHabits) => setHabits(newOrderedHabits)}
+                      onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits)}
                     />
                     
                     {habits.length === 0 && (
