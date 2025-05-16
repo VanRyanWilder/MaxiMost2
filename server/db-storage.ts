@@ -333,13 +333,55 @@ export class DatabaseStorage implements IStorage {
 
   // Supplement methods
   async getSupplements(): Promise<Supplement[]> {
-    return await db.select().from(supplements).orderBy(desc(supplements.upvotes));
+    return await db.select({
+      id: supplements.id,
+      name: supplements.name,
+      description: supplements.description,
+      benefits: supplements.benefits,
+      dosage: supplements.dosage,
+      sideEffects: supplements.sideEffects,
+      interactions: supplements.interactions,
+      categories: supplements.categories,
+      upvotes: supplements.upvotes,
+      downvotes: supplements.downvotes,
+      totalReviews: supplements.totalReviews,
+      averageRating: supplements.averageRating,
+      valueRating: supplements.valueRating,
+      monthlyCostEstimate: supplements.monthlyCostEstimate,
+      bestValue: supplements.bestValue,
+      imageUrl: supplements.imageUrl,
+      amazonUrl: supplements.amazonUrl,
+      createdAt: supplements.createdAt,
+      updatedAt: supplements.updatedAt
+    })
+    .from(supplements)
+    .orderBy(desc(supplements.upvotes));
   }
 
   async getSupplementsByCategory(category: string): Promise<Supplement[]> {
     // Get all supplements and filter by category manually
     const allSupplements = await db
-      .select()
+      .select({
+        id: supplements.id,
+        name: supplements.name,
+        description: supplements.description,
+        benefits: supplements.benefits,
+        dosage: supplements.dosage,
+        sideEffects: supplements.sideEffects,
+        interactions: supplements.interactions,
+        categories: supplements.categories,
+        upvotes: supplements.upvotes,
+        downvotes: supplements.downvotes,
+        totalReviews: supplements.totalReviews,
+        averageRating: supplements.averageRating,
+        valueRating: supplements.valueRating,
+        monthlyCostEstimate: supplements.monthlyCostEstimate,
+        bestValue: supplements.bestValue,
+        imageUrl: supplements.imageUrl,
+        amazonUrl: supplements.amazonUrl,
+        createdAt: supplements.createdAt,
+        updatedAt: supplements.updatedAt
+      })
       .from(supplements)
       .orderBy(desc(supplements.upvotes))
       .execute();
