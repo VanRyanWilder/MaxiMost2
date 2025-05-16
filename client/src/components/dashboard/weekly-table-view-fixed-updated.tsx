@@ -202,6 +202,8 @@ export function WeeklyTableViewFixedUpdated({
   };
   
   const handleAddHabit = () => {
+    console.log("Weekly table view - Triggering add habit dialog");
+    // Call onAddHabit with no parameters to trigger enhanced dialog
     onAddHabit();
   };
 

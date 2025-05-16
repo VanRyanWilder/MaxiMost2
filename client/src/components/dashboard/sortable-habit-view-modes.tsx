@@ -158,7 +158,9 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   };
   
   const handleCreateHabit = () => {
+    // Call onAddHabit with no parameters to trigger the enhanced dialog
     onAddHabit();
+    console.log("Triggering add habit dialog from sortable habit view");
   };
   
   // DnD handlers
