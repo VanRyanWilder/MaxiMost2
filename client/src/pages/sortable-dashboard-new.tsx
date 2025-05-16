@@ -782,13 +782,13 @@ export default function SortableDashboard() {
         onComplete={() => setShowPerfectWeekConfetti(false)}
       />
       
-      {/* Edit Habit Dialog - Using our simple editor */}
-      <MaximostHabitEditor
+      {/* Edit Habit Dialog - Using our reliable SimpleHabitEditor */}
+      <SimpleHabitEditor
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
         onSave={(updatedHabit) => {
-          console.log("🔄 Dashboard received habit from MAXIMOST dialog:", updatedHabit.title);
+          console.log("🔄 Dashboard received habit from SimpleHabitEditor:", updatedHabit.title);
           console.log("🔄 Color value being saved:", updatedHabit.iconColor);
           
           // For editing, use our dedicated function
