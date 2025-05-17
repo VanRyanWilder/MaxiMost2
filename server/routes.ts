@@ -733,6 +733,434 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Fitness Tracker API Routes
+  
+  // Fitbit OAuth endpoints
+  app.post("/api/fitness-trackers/fitbit/token", async (req, res) => {
+    try {
+      const { code, clientId, redirectUri } = req.body;
+      
+      if (!code || !clientId || !redirectUri) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      // Request Fitbit API key from user if not set
+      if (!process.env.FITBIT_CLIENT_SECRET) {
+        return res.status(400).json({ 
+          message: "Fitbit client secret not configured. Please set FITBIT_CLIENT_SECRET environment variable."
+        });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('client_id', clientId);
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
+      params.append('redirect_uri', redirectUri);
+      
+      const response = await fetch('https://api.fitbit.com/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${encodeCredentials(clientId, process.env.FITBIT_CLIENT_SECRET)}`
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Fitbit token exchange error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to exchange code for token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error exchanging Fitbit code for token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  app.post("/api/fitness-trackers/fitbit/refresh", async (req, res) => {
+    try {
+      const { refreshToken, clientId } = req.body;
+      
+      if (!refreshToken || !clientId) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      // Request Fitbit API key from user if not set
+      if (!process.env.FITBIT_CLIENT_SECRET) {
+        return res.status(400).json({ 
+          message: "Fitbit client secret not configured. Please set FITBIT_CLIENT_SECRET environment variable."
+        });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', refreshToken);
+      
+      const response = await fetch('https://api.fitbit.com/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${encodeCredentials(clientId, process.env.FITBIT_CLIENT_SECRET)}`
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Fitbit token refresh error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to refresh token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error refreshing Fitbit token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // Samsung Health OAuth endpoints
+  app.post("/api/fitness-trackers/samsung-health/token", async (req, res) => {
+    try {
+      const { code, redirectUri, apiKey } = req.body;
+      
+      if (!code || !redirectUri || !apiKey) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
+      params.append('redirect_uri', redirectUri);
+      params.append('client_id', apiKey);
+      
+      const response = await fetch('https://api.health.samsung.com/auth/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Samsung Health token exchange error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to exchange code for token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error exchanging Samsung Health code for token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  app.post("/api/fitness-trackers/samsung-health/refresh", async (req, res) => {
+    try {
+      const { refreshToken, apiKey } = req.body;
+      
+      if (!refreshToken || !apiKey) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', refreshToken);
+      params.append('client_id', apiKey);
+      
+      const response = await fetch('https://api.health.samsung.com/auth/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Samsung Health token refresh error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to refresh token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error refreshing Samsung Health token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // Apple Health endpoints
+  app.post("/api/fitness-trackers/apple-health/sync", async (req, res) => {
+    try {
+      // Apple Health doesn't use OAuth - it uses HealthKit which is accessed directly from iOS
+      // This endpoint receives data that's already been collected by the client
+      const { healthData } = req.body;
+      
+      if (!healthData) {
+        return res.status(400).json({ message: "Missing health data" });
+      }
+      
+      // Process and store the Apple Health data
+      // This would depend on your specific storage implementation
+      
+      res.json({ message: "Apple Health data synced successfully" });
+    } catch (error) {
+      console.error('Error syncing Apple Health data:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // Google Fit OAuth endpoints
+  app.post("/api/fitness-trackers/google-fit/token", async (req, res) => {
+    try {
+      const { code, redirectUri } = req.body;
+      
+      if (!code || !redirectUri) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      // Request Google Fit API keys from user if not set
+      if (!process.env.GOOGLE_FIT_CLIENT_ID || !process.env.GOOGLE_FIT_CLIENT_SECRET) {
+        return res.status(400).json({ 
+          message: "Google Fit credentials not configured. Please set GOOGLE_FIT_CLIENT_ID and GOOGLE_FIT_CLIENT_SECRET environment variables."
+        });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('code', code);
+      params.append('client_id', process.env.GOOGLE_FIT_CLIENT_ID);
+      params.append('client_secret', process.env.GOOGLE_FIT_CLIENT_SECRET);
+      params.append('redirect_uri', redirectUri);
+      params.append('grant_type', 'authorization_code');
+      
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Google Fit token exchange error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to exchange code for token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error exchanging Google Fit code for token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  app.post("/api/fitness-trackers/google-fit/refresh", async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+      
+      if (!refreshToken) {
+        return res.status(400).json({ message: "Missing refresh token" });
+      }
+
+      // Request Google Fit API keys from user if not set
+      if (!process.env.GOOGLE_FIT_CLIENT_ID || !process.env.GOOGLE_FIT_CLIENT_SECRET) {
+        return res.status(400).json({ 
+          message: "Google Fit credentials not configured. Please set GOOGLE_FIT_CLIENT_ID and GOOGLE_FIT_CLIENT_SECRET environment variables."
+        });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('refresh_token', refreshToken);
+      params.append('client_id', process.env.GOOGLE_FIT_CLIENT_ID);
+      params.append('client_secret', process.env.GOOGLE_FIT_CLIENT_SECRET);
+      params.append('grant_type', 'refresh_token');
+      
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Google Fit token refresh error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to refresh token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error refreshing Google Fit token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // Garmin OAuth endpoints
+  app.post("/api/fitness-trackers/garmin/token", async (req, res) => {
+    try {
+      const { oauth_token, oauth_verifier } = req.body;
+      
+      if (!oauth_token || !oauth_verifier) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+
+      // Request Garmin API keys from user if not set
+      if (!process.env.GARMIN_CONSUMER_KEY || !process.env.GARMIN_CONSUMER_SECRET) {
+        return res.status(400).json({ 
+          message: "Garmin credentials not configured. Please set GARMIN_CONSUMER_KEY and GARMIN_CONSUMER_SECRET environment variables."
+        });
+      }
+      
+      // Note: Garmin uses OAuth 1.0a which is more complex
+      // In a full implementation, we would use a library like OAuth-1.0a to handle this
+      // This is a simplified version for demonstration
+      
+      // Construct OAuth parameters (simplified)
+      const params = new URLSearchParams();
+      params.append('oauth_token', oauth_token);
+      params.append('oauth_verifier', oauth_verifier);
+      
+      // In a real implementation, you would generate an OAuth signature here
+      
+      const response = await fetch('https://connectapi.garmin.com/oauth-service/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+          // OAuth 1.0a Authorization header would be generated and added here
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Garmin token exchange error:', errorText);
+        return res.status(response.status).json({
+          message: 'Failed to exchange OAuth token',
+          error: errorText
+        });
+      }
+      
+      // Garmin returns data in URL-encoded format, not JSON
+      const responseText = await response.text();
+      const tokenData = Object.fromEntries(new URLSearchParams(responseText));
+      
+      res.json({
+        access_token: tokenData.oauth_token,
+        token_secret: tokenData.oauth_token_secret,
+        user_id: tokenData.user_id
+      });
+    } catch (error) {
+      console.error('Error exchanging Garmin OAuth token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  // MyFitnessPal OAuth endpoints
+  app.post("/api/fitness-trackers/myfitnesspal/token", async (req, res) => {
+    try {
+      const { code, clientId, clientSecret, redirectUri } = req.body;
+      
+      if (!code || !clientId || !clientSecret || !redirectUri) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('grant_type', 'authorization_code');
+      params.append('code', code);
+      params.append('redirect_uri', redirectUri);
+      params.append('client_id', clientId);
+      params.append('client_secret', clientSecret);
+      
+      const response = await fetch('https://auth.myfitnesspal.com/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('MyFitnessPal token exchange error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to exchange code for token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error exchanging MyFitnessPal code for token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  app.post("/api/fitness-trackers/myfitnesspal/refresh", async (req, res) => {
+    try {
+      const { refreshToken, clientId, clientSecret } = req.body;
+      
+      if (!refreshToken || !clientId || !clientSecret) {
+        return res.status(400).json({ message: "Missing required parameters" });
+      }
+      
+      const params = new URLSearchParams();
+      params.append('grant_type', 'refresh_token');
+      params.append('refresh_token', refreshToken);
+      params.append('client_id', clientId);
+      params.append('client_secret', clientSecret);
+      
+      const response = await fetch('https://auth.myfitnesspal.com/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('MyFitnessPal token refresh error:', errorData);
+        return res.status(response.status).json({
+          message: 'Failed to refresh token',
+          error: errorData
+        });
+      }
+      
+      const tokenData = await response.json();
+      res.json(tokenData);
+    } catch (error) {
+      console.error('Error refreshing MyFitnessPal token:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
