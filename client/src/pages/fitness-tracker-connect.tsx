@@ -179,6 +179,169 @@ export default function FitnessTrackerConnect() {
               </CardFooter>
             </Card>
             
+            {/* Google Fit */}
+            <Card className={!status?.googleFit.configured ? "opacity-60" : ""}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Google_Fit_icon_%282018%29.svg" 
+                      alt="Google Fit" className="w-6 h-6" />
+                  Google Fit
+                </CardTitle>
+                <CardDescription>
+                  Connect to sync workout, steps, and heart rate data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-24 flex flex-col justify-center">
+                  {status?.googleFit.authenticated ? (
+                    <div className="flex items-center text-sm text-green-600 dark:text-green-500">
+                      <Check className="mr-1 h-4 w-4" />
+                      <span>Connected to Google Fit</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Sync your Google Fit activity data, workout sessions, and health metrics with MaxiMost for comprehensive habit tracking.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                {status?.googleFit.authenticated ? (
+                  <Button variant="outline" onClick={() => handleDisconnect('googleFit')}>
+                    Disconnect
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => handleConnect('googleFit')}
+                    disabled={!status?.googleFit.configured}
+                  >
+                    Connect <ExternalLink className="ml-1 h-4 w-4" />
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+            
+            {/* Apple Health */}
+            <Card className={!status?.appleHealth.supported ? "opacity-60" : ""}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <img src="https://developer.apple.com/assets/elements/icons/healthkit/healthkit-128x128.png" 
+                      alt="Apple Health" className="w-6 h-6" />
+                  Apple Health
+                </CardTitle>
+                <CardDescription>
+                  Sync your Apple Health data from your iOS device
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-24 flex flex-col justify-center">
+                  {status?.appleHealth.lastSynced ? (
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center text-sm text-green-600 dark:text-green-500">
+                        <Check className="mr-1 h-4 w-4" />
+                        <span>Data synced from Apple Health</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Last synced: {status.appleHealth.lastSynced.toLocaleString()}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {status?.appleHealth.supported 
+                        ? "Sync data from your iPhone's Apple Health app, including workouts, steps, and health metrics."
+                        : "Apple Health sync is only available on iOS devices."}
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                {status?.appleHealth.lastSynced ? (
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => {
+                        const today = new Date();
+                        const thirtyDaysAgo = new Date();
+                        thirtyDaysAgo.setDate(today.getDate() - 30);
+                        fitnessTrackerService.syncAppleHealthData(
+                          thirtyDaysAgo.toISOString().split('T')[0],
+                          today.toISOString().split('T')[0]
+                        );
+                        // Update status after sync
+                        setStatus(fitnessTrackerService.getStatus());
+                      }}
+                    >
+                      Sync Again
+                    </Button>
+                    <Button variant="outline" onClick={() => handleDisconnect('appleHealth')}>
+                      Clear Data
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={() => {
+                      // For Apple Health we do a direct sync rather than an OAuth flow
+                      if (status?.appleHealth.supported) {
+                        const today = new Date();
+                        const thirtyDaysAgo = new Date();
+                        thirtyDaysAgo.setDate(today.getDate() - 30);
+                        fitnessTrackerService.syncAppleHealthData(
+                          thirtyDaysAgo.toISOString().split('T')[0],
+                          today.toISOString().split('T')[0]
+                        );
+                        // Update status after sync
+                        setStatus(fitnessTrackerService.getStatus());
+                      }
+                    }}
+                    disabled={!status?.appleHealth.supported}
+                  >
+                    Sync Data
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+            
+            {/* Garmin */}
+            <Card className={!status?.garmin.configured ? "opacity-60" : ""}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Garmin_logo.svg" 
+                      alt="Garmin" className="w-6 h-6" />
+                  Garmin Connect
+                </CardTitle>
+                <CardDescription>
+                  Connect to sync your Garmin watch and device data
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-24 flex flex-col justify-center">
+                  {status?.garmin.authenticated ? (
+                    <div className="flex items-center text-sm text-green-600 dark:text-green-500">
+                      <Check className="mr-1 h-4 w-4" />
+                      <span>Connected to Garmin Connect</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Import your training data, workouts, and activity metrics from Garmin watches and other Garmin devices.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                {status?.garmin.authenticated ? (
+                  <Button variant="outline" onClick={() => handleDisconnect('garmin')}>
+                    Disconnect
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => handleConnect('garmin')}
+                    disabled={!status?.garmin.configured}
+                  >
+                    Connect <ExternalLink className="ml-1 h-4 w-4" />
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+            
             {/* MyFitnessPal */}
             <Card className={!status?.myFitnessPal.configured ? "opacity-60" : ""}>
               <CardHeader>
