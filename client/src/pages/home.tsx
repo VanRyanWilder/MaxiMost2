@@ -13,11 +13,28 @@ import {
   HeartPulse,
   Percent,
   Clock,
-  Zap
+  Zap,
+  LogIn
 } from "lucide-react";
+import { FirebaseUser } from "@/components/auth/firebase-user";
+import { useState, useEffect } from "react";
+import { onAuthStateChange } from "@/lib/firebase";
 
 export default function Home() {
   const [, setLocation] = useLocation();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Listen for Firebase auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    
+    // Clean up subscription
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 text-white">
@@ -28,19 +45,28 @@ export default function Home() {
             <span className="text-xs bg-purple-700 px-1 py-0.5 rounded text-white align-top mt-2">ALPHA</span>
           </div>
           <div className="space-x-4">
-            <Button 
-              variant="outline" 
-              className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
-              onClick={() => setLocation("/login")}
-            >
-              Log in
-            </Button>
-            <Button 
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:text-white"
-              onClick={() => setLocation("/signup")}
-            >
-              Sign up
-            </Button>
+            {loading ? (
+              <div className="h-10 w-20 animate-pulse bg-gray-800/70 rounded-md"></div>
+            ) : user ? (
+              <FirebaseUser />
+            ) : (
+              <>
+                <Button 
+                  variant="outline" 
+                  className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
+                  onClick={() => setLocation("/login")}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Log in
+                </Button>
+                <Button 
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:text-white"
+                  onClick={() => setLocation("/signup")}
+                >
+                  Sign up
+                </Button>
+              </>
+            )}
           </div>
         </header>
         
@@ -69,13 +95,23 @@ export default function Home() {
               </div>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left">
                 <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600"
-                    onClick={() => setLocation("/signup")}
-                  >
-                    Get Started
-                  </Button>
+                  {user ? (
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                      onClick={() => setLocation("/dashboard")}
+                    >
+                      Go to Dashboard
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600"
+                      onClick={() => setLocation("/signup")}
+                    >
+                      Get Started
+                    </Button>
+                  )}
                   <Button 
                     size="lg" 
                     variant="outline"

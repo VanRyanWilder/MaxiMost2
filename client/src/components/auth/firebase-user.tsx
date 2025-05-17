@@ -15,11 +15,11 @@ import {
   signInWithApple,
   signOut 
 } from "@/lib/firebase";
-import { User } from "firebase/auth";
+import { User as FirebaseUser } from "firebase/auth";
 import { useLocation } from "wouter";
 
 export function FirebaseUser() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [, setLocation] = useLocation();
