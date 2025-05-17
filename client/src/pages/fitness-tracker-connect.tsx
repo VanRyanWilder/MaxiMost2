@@ -19,9 +19,9 @@ export default function FitnessTrackerConnect() {
   }, []);
   
   // Generate OAuth URLs
-  const authUrls = status ? fitnessTrackerService.getAuthUrls() : { fitbit: null, samsungHealth: null, myFitnessPal: null };
+  const authUrls = status ? fitnessTrackerService.getAuthUrls() : { fitbit: null, samsungHealth: null, myFitnessPal: null, googleFit: null, garmin: null };
   
-  const handleConnect = (tracker: 'fitbit' | 'samsungHealth' | 'myFitnessPal') => {
+  const handleConnect = (tracker: 'fitbit' | 'samsungHealth' | 'myFitnessPal' | 'googleFit' | 'garmin') => {
     const url = authUrls[tracker];
     if (url) {
       // Open OAuth flow in a popup window
@@ -44,15 +44,38 @@ export default function FitnessTrackerConnect() {
     }
   };
   
-  const handleDisconnect = (tracker: 'fitbit' | 'samsungHealth' | 'myFitnessPal') => {
-    fitnessTrackerService.logout(tracker === 'samsungHealth' ? 'samsung_health' : 
-                               tracker === 'myFitnessPal' ? 'myfitnesspal' : 'fitbit');
+  const handleDisconnect = (tracker: 'fitbit' | 'samsungHealth' | 'myFitnessPal' | 'googleFit' | 'garmin' | 'appleHealth') => {
+    let logoutTracker: 'fitbit' | 'samsung_health' | 'myfitnesspal' | 'google_fit' | 'garmin' | 'apple_health';
+    
+    // Map the UI tracker names to the service tracker names
+    switch (tracker) {
+      case 'samsungHealth':
+        logoutTracker = 'samsung_health';
+        break;
+      case 'myFitnessPal':
+        logoutTracker = 'myfitnesspal';
+        break;
+      case 'googleFit':
+        logoutTracker = 'google_fit';
+        break;
+      case 'garmin':
+        logoutTracker = 'garmin';
+        break;
+      case 'appleHealth':
+        logoutTracker = 'apple_health';
+        break;
+      default:
+        logoutTracker = 'fitbit';
+    }
+    
+    fitnessTrackerService.logout(logoutTracker);
+    
     // Update status
     setStatus(fitnessTrackerService.getStatus());
     
     toast({
       title: "Disconnected",
-      description: `Successfully disconnected from ${tracker}.`,
+      description: `Successfully disconnected from ${displayNames[tracker] || tracker}.`,
     });
   };
 
@@ -60,7 +83,10 @@ export default function FitnessTrackerConnect() {
   const displayNames = {
     fitbit: "Fitbit",
     samsungHealth: "Samsung Health",
-    myFitnessPal: "MyFitnessPal"
+    myFitnessPal: "MyFitnessPal",
+    googleFit: "Google Fit",
+    garmin: "Garmin Connect",
+    appleHealth: "Apple Health"
   };
   
   if (loading) {
