@@ -28,7 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { MonthlyCalendarGrid } from './monthly-calendar-grid';
+import { HabitCalendarView } from './habit-calendar-view';
 import { WeeklyTableViewColor } from './weekly-table-view-color';
 import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
@@ -406,7 +406,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <MonthlyCalendarGrid
+              <HabitCalendarView
                 habits={filteredHabits}
                 completions={completions}
                 currentMonth={currentMonth}
