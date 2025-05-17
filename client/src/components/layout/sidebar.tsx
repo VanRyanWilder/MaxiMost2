@@ -36,6 +36,9 @@ import {
 import { useUser } from "@/context/user-context";
 import { Logo } from "@/components/ui/logo";
 import { SettingsPanel } from "@/components/settings/settings-panel";
+import { useState, useEffect } from "react";
+import { onAuthStateChange } from "@/lib/firebase";
+import { User as FirebaseUser } from "firebase/auth";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -45,6 +48,18 @@ interface SidebarProps {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [location, setLocation] = useLocation();
   const { user, userLoading, logout } = useUser();
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [firebaseLoading, setFirebaseLoading] = useState(true);
+
+  // Listen for Firebase auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((currentUser) => {
+      setFirebaseUser(currentUser);
+      setFirebaseLoading(false);
+    });
+    
+    return () => unsubscribe();
+  }, []);
 
   const navItems = [
     {
@@ -159,16 +174,30 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             </button>
           </div>
 
-          {!userLoading && (
+          {!firebaseLoading && (
             <div className="mt-4">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
+                {firebaseUser?.photoURL ? (
+                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                    <img 
+                      src={firebaseUser.photoURL} 
+                      alt={firebaseUser.displayName || "User"} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                )}
                 <div>
-                  <h3 className="font-medium text-sm">{user?.name || "MaxiMost User"}</h3>
+                  <h3 className="font-medium text-sm">
+                    {firebaseUser ? 
+                      (firebaseUser.displayName || firebaseUser.email || "MaxiMost User") : 
+                      (user?.name || "MaxiMost User")}
+                  </h3>
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
