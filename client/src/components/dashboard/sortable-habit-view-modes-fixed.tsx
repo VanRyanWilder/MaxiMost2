@@ -28,7 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { SimpleMonthView } from './simple-month-view';
+
 import { WeeklyTableViewColor } from './weekly-table-view-color';
 import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
@@ -48,7 +48,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronLeft, ChevronRight, Plus, Pencil, Trash2, MoreHorizontal, Calendar, CalendarDays, Grid, Grid3X3, Filter, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Pencil, Trash2, MoreHorizontal, Calendar, CalendarDays, Grid, Grid3X3, Filter, Check, Circle, CheckCircle2 } from "lucide-react";
 import { Habit } from '@/types/habit';
 import { getHabitIcon } from '@/components/ui/icons';
 import { PlusCircle } from 'lucide-react';
@@ -406,12 +406,154 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <SimpleMonthView 
-                habits={filteredHabits}
-                completions={completions}
-                currentMonth={currentMonth}
-                onToggleHabit={onToggleHabit}
-              />
+              <div className="space-y-6">
+                {/* Calendar Grid */}
+                <div className="calendar-grid">
+                  {/* Weekday headers */}
+                  <div className="grid grid-cols-7 mb-2">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, i) => (
+                      <div 
+                        key={day} 
+                        className={`text-center py-2 font-medium text-sm
+                          ${i === 0 || i === 6 ? 'text-red-500' : 'text-gray-600'}
+                        `}
+                      >
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Calendar days grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {(() => {
+                      // Get all days in the current month
+                      const monthStart = startOfMonth(currentMonth);
+                      const monthEnd = endOfMonth(currentMonth);
+                      const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+                      
+                      // Calculate empty cells before the first day
+                      const firstDayOfWeek = monthStart.getDay();
+                      const blanks = Array(firstDayOfWeek).fill(null).map((_, i) => (
+                        <div key={`blank-${i}`} className="h-24 bg-gray-50 rounded border border-gray-100"></div>
+                      ));
+                      
+                      // Create cells for each day
+                      const dayCells = days.map(day => {
+                        const isCurrentDay = isSameDay(day, new Date());
+                        
+                        return (
+                          <div 
+                            key={day.toString()} 
+                            className={`
+                              h-24 p-1 rounded border border-gray-200 overflow-y-auto
+                              ${isCurrentDay ? 'bg-blue-50 border-blue-200' : 'bg-white'}
+                            `}
+                          >
+                            <div className={`text-right text-sm font-medium mb-1 ${isCurrentDay ? 'text-blue-600' : 'text-gray-700'}`}>
+                              {format(day, 'd')}
+                            </div>
+                            
+                            <div className="space-y-1">
+                              {filteredHabits.slice(0, 3).map(habit => (
+                                <div 
+                                  key={habit.id}
+                                  className="flex items-center text-xs cursor-pointer"
+                                  onClick={() => onToggleHabit(habit.id, day)}
+                                >
+                                  {completions.some(c => 
+                                    c.habitId === habit.id && 
+                                    isSameDay(new Date(c.date), day) &&
+                                    c.completed
+                                  ) 
+                                    ? <div className="h-3 w-3 mr-1 rounded-full" 
+                                        style={{ 
+                                          backgroundColor: habit.iconColor === 'red' ? '#ef4444' : 
+                                                         habit.iconColor === 'orange' ? '#f97316' : 
+                                                         habit.iconColor === 'yellow' ? '#eab308' : 
+                                                         habit.iconColor === 'green' ? '#22c55e' : 
+                                                         habit.iconColor === 'blue' ? '#3b82f6' : 
+                                                         habit.iconColor === 'indigo' ? '#6366f1' : '#a855f7'
+                                        }}
+                                      />
+                                    : <div className="h-3 w-3 mr-1 rounded-full border border-gray-300" />
+                                  }
+                                  <span className="truncate">{habit.title}</span>
+                                </div>
+                              ))}
+                              
+                              {filteredHabits.length > 3 && (
+                                <div className="text-xs text-gray-500 italic">+{filteredHabits.length - 3} more</div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      });
+                      
+                      return [...blanks, ...dayCells];
+                    })()}
+                  </div>
+                </div>
+                
+                {/* Monthly Progress */}
+                <div className="monthly-progress">
+                  <h4 className="text-base font-medium mb-3">Monthly Progress</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {filteredHabits.map(habit => {
+                      // Calculate completion rate
+                      const daysInMonth = new Date(
+                        currentMonth.getFullYear(),
+                        currentMonth.getMonth() + 1,
+                        0
+                      ).getDate();
+                      
+                      const completedDays = completions.filter(
+                        c => c.habitId === habit.id && 
+                        new Date(c.date).getMonth() === currentMonth.getMonth() &&
+                        new Date(c.date).getFullYear() === currentMonth.getFullYear() &&
+                        c.completed
+                      ).length;
+                      
+                      // Handle frequency calculation
+                      let expectedDays = daysInMonth;
+                      if (!habit.isAbsolute) {
+                        if (habit.frequency === '2x-week') expectedDays = 8;
+                        else if (habit.frequency === '3x-week') expectedDays = 12;
+                        else if (habit.frequency === '4x-week') expectedDays = 16;
+                        else if (habit.frequency === '5x-week') expectedDays = 20;
+                        else if (habit.frequency === 'weekly') expectedDays = 4;
+                      }
+                      
+                      const progressPercent = Math.min(100, (completedDays / expectedDays) * 100);
+                      
+                      return (
+                        <Card key={habit.id} className="p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center">
+                              <div className={`w-2 h-2 rounded-full bg-${habit.iconColor}-500 mr-2`}></div>
+                              <span className="font-medium text-sm">{habit.title}</span>
+                            </div>
+                            <span className="text-xs">{Math.round(progressPercent)}%</span>
+                          </div>
+                          <div className="w-full bg-gray-100 rounded-full h-2">
+                            <div 
+                              className="h-full rounded-full" 
+                              style={{ 
+                                width: `${progressPercent}%`,
+                                backgroundColor: habit.iconColor === 'red' ? '#ef4444' : 
+                                                 habit.iconColor === 'orange' ? '#f97316' : 
+                                                 habit.iconColor === 'yellow' ? '#eab308' : 
+                                                 habit.iconColor === 'green' ? '#22c55e' : 
+                                                 habit.iconColor === 'blue' ? '#3b82f6' : 
+                                                 habit.iconColor === 'indigo' ? '#6366f1' : '#a855f7'
+                              }}
+                            ></div>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         )}
