@@ -30,6 +30,7 @@ export interface Habit {
   isAbsolute?: boolean;
   streak?: number;
   createdAt?: string;
+  userChangedColor?: boolean;
 }
 
 export interface HabitCompletion {
