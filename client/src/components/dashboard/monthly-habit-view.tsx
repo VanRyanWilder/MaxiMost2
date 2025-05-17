@@ -17,19 +17,19 @@ import { CheckCircle2, Circle, AlertCircle } from "lucide-react";
 
 // Define the types needed for the component
 interface Habit {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   category: string;
   icon?: string;
   isAbsolute?: boolean;
-  frequency?: number;
+  frequency?: string;
   streak?: number;
 }
 
 interface HabitCompletion {
   id?: number;
-  habitId: number;
+  habitId: string;
   date: string;
   completed: boolean;
 }
@@ -58,7 +58,7 @@ interface MonthlyHabitViewProps {
   habits: Habit[];
   completions: HabitCompletion[];
   currentMonth: Date;
-  onToggleHabit: (habitId: number, date: Date) => void;
+  onToggleHabit: (habitId: string, date: Date) => void;
 }
 
 export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
@@ -81,7 +81,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
   });
   
   // Check if habit is completed on a specific date
-  const isHabitCompletedOnDate = (habitId: number, date: Date): boolean => {
+  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
     return completions.some(
       (completion) => 
         completion.habitId === habitId && 
@@ -90,7 +90,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
   };
   
   // Calculate completion rate for each habit in the current month
-  const getMonthlyCompletionRate = (habitId: number): { completed: number, total: number } => {
+  const getMonthlyCompletionRate = (habitId: string): { completed: number, total: number } => {
     const daysInMonth = monthDays.length;
     const completedDays = monthDays.filter(date => 
       isHabitCompletedOnDate(habitId, date)
@@ -110,7 +110,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
     if (!isSameMonth(date, currentMonth)) return null;
     
     // Check if habit is completed on this date
-    const isCompleted = isHabitCompletedOnDate(habit.id, date);
+    const isCompleted = isHabitCompletedOnDate(habit.id.toString(), date);
     
     // Get category color
     const categoryColor = getHabitCategoryColor(habit.category);
@@ -193,7 +193,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
                         <TooltipContent side="top">
                           <p className="font-medium">{habit.title}</p>
                           <p className="text-xs text-gray-500">
-                            {isHabitCompletedOnDate(habit.id, day) ? "Completed" : "Not completed"}
+                            {isHabitCompletedOnDate(habit.id.toString(), day) ? "Completed" : "Not completed"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
