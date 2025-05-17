@@ -38,7 +38,6 @@ import {
   Pill,
   BarChart,
   Leaf,
-  Lightbulb,
   CircleDollarSign,
   PenTool,
   Mic,
@@ -50,7 +49,6 @@ import {
   Footprints,
   Check,
   Timer,
-  CircleDollarSign,
   ThumbsUp,
   Music,
   LucideIcon,
@@ -420,7 +418,7 @@ export function EditHabitDialog({
                 </SelectItem>
                 <SelectItem value="mental">
                   <div className="flex items-center gap-2">
-                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    <Zap className="h-4 w-4 text-yellow-500" />
                     <span>Mental Acuity & Growth</span>
                   </div>
                 </SelectItem>
