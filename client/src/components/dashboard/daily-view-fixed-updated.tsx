@@ -324,7 +324,7 @@ export function DailyViewFixedUpdated({
                             'text-blue-600 dark:text-blue-400'
                           }`}>
                             {habit.title}
-                            {typeof habit.streak === "number" habit.streak && habit.streak > 0habit.streak && habit.streak > 0 habit.streak > 0 && (
+{typeof habit.streak === "number" && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                               </Badge>
@@ -430,7 +430,7 @@ export function DailyViewFixedUpdated({
                                 </Badge>
                               );
                             })()}
-                            {habit.streak && habit.streak > 0 && (
+{typeof habit.streak === "number" && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                               </Badge>
