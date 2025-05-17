@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { cleanHabitTitle } from '@/utils/clean-habit-title';
 import { Sidebar } from "@/components/layout/sidebar";
 import { useTheme } from "@/components/theme-provider";
 import { MobileHeader } from "@/components/layout/mobile-header";
