@@ -556,7 +556,7 @@ export function WeeklyTableViewFixedUpdated({
                                       {isExceeding ? (
                                         <>
                                           <div className="flex items-center">
-                                            <Check className="h-3.5 w-3.5 text-green-600" />
+                                            <CheckIcon className="h-3.5 w-3.5 text-green-600" />
                                             {completedDays > targetDays && (
                                               <span className="text-xs text-green-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
                                             )}
@@ -564,7 +564,7 @@ export function WeeklyTableViewFixedUpdated({
                                         </>
                                       ) : (
                                         <div className="flex items-center">
-                                          <Check className="h-3.5 w-3.5 text-green-600" />
+                                          <CheckIcon className="h-3.5 w-3.5 text-green-600" />
                                           <span className="text-xs text-green-600 font-semibold ml-0.5">Done</span>
                                         </div>
                                       )}
