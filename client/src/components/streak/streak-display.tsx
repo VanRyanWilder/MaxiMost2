@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { addDays, differenceInDays, format, isToday, parseISO, startOfDay, subDays } from "date-fns";
 
 interface StreakDisplayProps {
   userId?: number | string;
@@ -11,6 +12,78 @@ interface StreakDisplayProps {
 interface HabitCompletion {
   date: string;
   completed: boolean;
+}
+
+/**
+ * Calculate streak based on habit completion data
+ */
+function calculateStreak(completions: HabitCompletion[]): number {
+  if (!completions || completions.length === 0) return 0;
+
+  // Sort completions by date (latest first)
+  const sortedCompletions = [...completions].sort((a, b) => {
+    return parseISO(b.date).getTime() - parseISO(a.date).getTime();
+  });
+  
+  // Check if the most recent day has a completion
+  const mostRecentCompletion = sortedCompletions[0];
+  const mostRecentDate = parseISO(mostRecentCompletion.date);
+  const today = startOfDay(new Date());
+  const yesterday = startOfDay(subDays(today, 1));
+  
+  // If the most recent day doesn't have a completion on either today or yesterday,
+  // the streak is broken
+  if (!mostRecentCompletion.completed || 
+      (differenceInDays(today, mostRecentDate) > 1 && 
+       !isToday(mostRecentDate) && 
+       differenceInDays(yesterday, mostRecentDate) !== 0)) {
+    return 0;
+  }
+  
+  // Count consecutive days with completions
+  let streak = mostRecentCompletion.completed ? 1 : 0;
+  let currentDate = mostRecentDate;
+  
+  // Look through the rest of the days
+  for (let i = 1; i < sortedCompletions.length; i++) {
+    const previousDay = parseISO(sortedCompletions[i].date);
+    const dayDifference = differenceInDays(currentDate, previousDay);
+    
+    // Check if days are consecutive and the habit was completed
+    if (dayDifference === 1 && sortedCompletions[i].completed) {
+      streak++;
+      currentDate = previousDay;
+    } else if (dayDifference === 1 && !sortedCompletions[i].completed) {
+      // Day was tracked but habit wasn't completed - break in streak
+      break;
+    } else if (dayDifference > 1) {
+      // Gap in days - break in streak
+      break;
+    }
+  }
+  
+  return streak;
+}
+
+/**
+ * Calculate progress toward next milestone
+ */
+function calculateProgress(currentStreak: number): number {
+  // Define milestone thresholds
+  const milestones = [3, 7, 14, 30, 60, 90, 180, 365];
+  
+  // Find the next milestone
+  const nextMilestone = milestones.find(m => m > currentStreak) || (currentStreak + 7);
+  
+  // Find the previous milestone
+  const prevMilestoneIndex = milestones.findIndex(m => m > currentStreak) - 1;
+  const prevMilestone = prevMilestoneIndex >= 0 ? milestones[prevMilestoneIndex] : 0;
+  
+  // Calculate progress percentage
+  const range = nextMilestone - prevMilestone;
+  const progress = ((currentStreak - prevMilestone) / range) * 100;
+  
+  return Math.min(Math.max(progress, 0), 100);
 }
 
 export function StreakDisplay({ userId, className }: StreakDisplayProps) {
@@ -30,18 +103,13 @@ export function StreakDisplay({ userId, className }: StreakDisplayProps) {
       return;
     }
     
-    // Get days with completed habits
-    const completedDays = completionData.filter(day => day.completed);
-    if (completedDays.length === 0) {
-      setCurrentStreak(0);
-      setProgressPercent(0);
-      return;
-    }
+    // Calculate the current streak
+    const streak = calculateStreak(completionData);
+    setCurrentStreak(streak);
     
-    // For now, set a simple placeholder streak 
-    // In a real implementation, we'd calculate consecutive days
-    setCurrentStreak(7);
-    setProgressPercent(70);
+    // Calculate progress toward next milestone
+    const progress = calculateProgress(streak);
+    setProgressPercent(progress);
   }, [completionData]);
 
   return (
