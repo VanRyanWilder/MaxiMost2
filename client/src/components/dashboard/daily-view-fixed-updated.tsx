@@ -122,6 +122,11 @@ export function DailyViewFixedUpdated({
         completion.completed
     ).length;
   };
+  
+  // This is the same function but renamed to match what's used in the component
+  const completedDaysInCurrentWeek = (habitId: string): number => {
+    return countCompletedDaysInWeek(habitId);
+  };
 
   // Get appropriate frequency text
   const getFrequencyText = (frequency: string) => {
@@ -385,18 +390,13 @@ export function DailyViewFixedUpdated({
                         </div>
                         <div>
                           <div className="font-medium flex items-center">
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
                             {habit.title}
+                            {(() => {
+                              const hasMetFrequency = habit.frequency && habit.frequency !== 'daily' && hasMetWeeklyFrequency(habit);
+                              const targetDays = getTargetDays(habit);
+                              const completedDays = completedDaysInCurrentWeek(habit.id);
+                              const isExceeding = completedDays > targetDays;
+                              
                               return hasMetFrequency && (
                                 <Badge className="bg-white px-1.5 py-0.5 h-5 border-2 border-red-600 ml-1">
                                   {isExceeding ? (
