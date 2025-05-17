@@ -91,7 +91,8 @@ export const MonthlyCalendarView: React.FC<MonthlyCalendarViewProps> = ({
     let expectedCompletions = daysInMonth.length; // Default for daily
     
     if (habit && !habit.isAbsolute) {
-      const frequencyMap = {
+      // Create frequency map with proper typing
+      const frequencyMap: Record<string, number> = {
         '2x-week': 2 * Math.ceil(daysInMonth.length / 7),
         '3x-week': 3 * Math.ceil(daysInMonth.length / 7),
         '4x-week': 4 * Math.ceil(daysInMonth.length / 7),
@@ -101,7 +102,10 @@ export const MonthlyCalendarView: React.FC<MonthlyCalendarViewProps> = ({
         'monthly': 1
       };
       
-      expectedCompletions = frequencyMap[habit.frequency] || daysInMonth.length;
+      // Safely access the frequency map with fallback
+      expectedCompletions = habit.frequency in frequencyMap 
+        ? frequencyMap[habit.frequency] 
+        : daysInMonth.length;
     }
     
     // Cap the rate at 100%
@@ -199,7 +203,9 @@ export const MonthlyCalendarView: React.FC<MonthlyCalendarViewProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {habits.map(habit => {
             const completionRate = getMonthlyCompletionRate(habit.id);
-            const colorClass = getCategoryColor(habit.category).split(' ')[0].replace('text-', 'bg-');
+            // Get the category color class
+            const [textClass] = getCategoryColor(habit.category).split(' ');
+            const bgClass = textClass.replace('text-', 'bg-');
             
             return (
               <Card key={habit.id} className="p-3 flex flex-col">
@@ -207,11 +213,12 @@ export const MonthlyCalendarView: React.FC<MonthlyCalendarViewProps> = ({
                   <span className="text-sm font-medium">{habit.title}</span>
                   <span className="text-xs">{Math.round(completionRate)}%</span>
                 </div>
-                <Progress 
-                  value={completionRate} 
-                  className="h-2"
-                  indicatorClassName={colorClass.replace('bg-', '')} 
-                />
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div 
+                    className={`${bgClass} h-full rounded-full`}
+                    style={{ width: `${completionRate}%` }}
+                  />
+                </div>
               </Card>
             );
           })}
