@@ -16,9 +16,10 @@ import {
   signOut 
 } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
+// Temporary type fix to handle TypeScript errors
 import { useLocation } from "wouter";
 
-export function FirebaseUser() {
+export function FirebaseUserComponent() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
