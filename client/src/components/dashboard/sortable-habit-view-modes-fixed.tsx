@@ -401,9 +401,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
               </div>
             </div>
             
-            <div className="text-sm text-gray-500 mb-4">
-              {format(currentMonth, 'MMMM yyyy')}
-            </div>
+            {/* Month info is included in the title now */}
             
             {habits.length === 0 ? (
               <div className="p-6 text-center">
