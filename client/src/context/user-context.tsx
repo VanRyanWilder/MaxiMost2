@@ -57,6 +57,7 @@ interface UserContextType {
 // Create context with a default value to avoid undefined checks
 const defaultUserContext: UserContextType = {
   user: mockUser,
+  firebaseUser: null,
   userLoading: false,
   userError: null,
   login: async () => {},

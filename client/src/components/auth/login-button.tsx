@@ -9,11 +9,24 @@ import {
 import { LogIn, LogOut, User as UserIcon } from "lucide-react";
 import { signInWithGoogle, signOut } from "@/lib/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useEffect } from 'react';
+import { onAuthStateChange } from '@/lib/firebase';
 
 export function LoginButton() {
-  const { user, loading } = useAuth();
+  const [user, setUser] = useState(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  // Listen for Firebase auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    
+    // Clean up subscription
+    return () => unsubscribe();
+  }, []);
 
   const handleLogin = async () => {
     try {

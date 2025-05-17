@@ -13,6 +13,7 @@ import {
 import { ModernSidebar } from "./modern-sidebar";
 import { Link } from "wouter";
 import { Bell, LogOut, Settings, User } from "lucide-react";
+import { FirebaseUser } from "@/components/auth/firebase-user";
 
 interface ModernLayoutProps {
   children: ReactNode;
