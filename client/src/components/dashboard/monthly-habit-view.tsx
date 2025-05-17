@@ -15,23 +15,21 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CheckCircle2, Circle, AlertCircle } from "lucide-react";
 
-// Import the actual types from the application to ensure compatibility
+// Import the actual types from the application
 import { Habit, HabitCompletion, HabitCategory } from "@/types/habit";
 
 // Helper to get category color based on the application's category system
 const getHabitCategoryColor = (category: string): string => {
   switch (category.toLowerCase()) {
-    case 'fitness':
+    case 'physical':
       return 'text-red-500';
-    case 'health':
     case 'nutrition':
       return 'text-orange-500';
-    case 'mind':
     case 'mental':
       return 'text-yellow-500';
     case 'sleep':
       return 'text-indigo-500';
-    case 'social':
+    case 'relationships':
       return 'text-blue-500';
     case 'financial':
       return 'text-green-500';
