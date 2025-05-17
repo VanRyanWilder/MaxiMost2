@@ -15,32 +15,18 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CheckCircle2, Circle, AlertCircle } from "lucide-react";
 
-// Define the types needed for the component
-interface Habit {
-  id: string;
-  title: string;
-  description?: string;
-  category: string;
-  icon?: string;
-  isAbsolute?: boolean;
-  frequency?: string;
-  streak?: number;
-}
+// Import the actual types from the application to ensure compatibility
+import { Habit, HabitCompletion, HabitCategory } from "@/types/habit";
 
-interface HabitCompletion {
-  id?: number;
-  habitId: string;
-  date: string;
-  completed: boolean;
-}
-
-// Helper to get category color
+// Helper to get category color based on the application's category system
 const getHabitCategoryColor = (category: string): string => {
   switch (category.toLowerCase()) {
-    case 'physical':
+    case 'fitness':
       return 'text-red-500';
+    case 'health':
     case 'nutrition':
       return 'text-orange-500';
+    case 'mind':
     case 'mental':
       return 'text-yellow-500';
     case 'sleep':
@@ -85,20 +71,39 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
     return completions.some(
       (completion) => 
         completion.habitId === habitId && 
-        isSameDay(new Date(completion.date), date)
+        isSameDay(new Date(completion.date), date) &&
+        completion.completed
     );
   };
   
   // Calculate completion rate for each habit in the current month
   const getMonthlyCompletionRate = (habitId: string): { completed: number, total: number } => {
     const daysInMonth = monthDays.length;
+    
+    // For frequency-based habits, we should calculate based on expected frequency
+    const habit = habits.find(h => h.id === habitId);
+    let expectedCompletions = daysInMonth; // Default for 'daily'
+    
+    if (habit && !habit.isAbsolute) {
+      // Handle different frequency types
+      switch(habit.frequency) {
+        case '2x-week': expectedCompletions = Math.ceil(daysInMonth / 7) * 2; break;
+        case '3x-week': expectedCompletions = Math.ceil(daysInMonth / 7) * 3; break;
+        case '4x-week': expectedCompletions = Math.ceil(daysInMonth / 7) * 4; break;
+        case '5x-week': expectedCompletions = Math.ceil(daysInMonth / 7) * 5; break;
+        case '6x-week': expectedCompletions = Math.ceil(daysInMonth / 7) * 6; break;
+        case 'weekly': expectedCompletions = Math.ceil(daysInMonth / 7); break;
+        default: expectedCompletions = daysInMonth; // Default to daily
+      }
+    }
+    
     const completedDays = monthDays.filter(date => 
       isHabitCompletedOnDate(habitId, date)
     ).length;
     
     return {
       completed: completedDays,
-      total: daysInMonth
+      total: habit?.isAbsolute ? daysInMonth : expectedCompletions
     };
   };
   
@@ -110,7 +115,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
     if (!isSameMonth(date, currentMonth)) return null;
     
     // Check if habit is completed on this date
-    const isCompleted = isHabitCompletedOnDate(habit.id.toString(), date);
+    const isCompleted = isHabitCompletedOnDate(habit.id, date);
     
     // Get category color
     const categoryColor = getHabitCategoryColor(habit.category);
@@ -193,7 +198,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
                         <TooltipContent side="top">
                           <p className="font-medium">{habit.title}</p>
                           <p className="text-xs text-gray-500">
-                            {isHabitCompletedOnDate(habit.id.toString(), day) ? "Completed" : "Not completed"}
+                            {isHabitCompletedOnDate(habit.id, day) ? "Completed" : "Not completed"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
