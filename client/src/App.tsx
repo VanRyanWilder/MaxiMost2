@@ -18,6 +18,7 @@ import HabitTracker from "@/pages/habit-tracker"; // New weekly calendar habit t
 import HabitStacks from "@/pages/habit-stacks";
 // Individual pages for performance cornerstones (previously four pillars)
 import Supplements from "@/pages/supplements-unified";
+import FitnessTrackerConnect from "@/pages/fitness-tracker-connect";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
 import Principles from "@/pages/principles";
