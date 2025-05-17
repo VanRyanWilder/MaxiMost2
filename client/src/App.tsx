@@ -39,6 +39,7 @@ import Contact from "@/pages/contact";
 import HabitViewTest from "@/pages/habit-view-test";
 import SortableViewTest from "@/pages/sortable-view-test";
 import AIFeatures from "@/pages/ai-features";
+import FirebaseConfig from "@/pages/firebase-config";
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
@@ -177,6 +178,10 @@ function App() {
       
       <Route path="/pricing">
         <Route component={Pricing} />
+      </Route>
+
+      <Route path="/firebase-config">
+        <Route component={FirebaseConfig} />
       </Route>
       
       {/* 404 Not Found route */}
