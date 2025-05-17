@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -16,6 +16,13 @@ import {
   insertBodyStatSchema,
   insertBloodworkSchema
 } from "@shared/schema";
+import fetch from "node-fetch";
+import { URLSearchParams } from "url";
+
+// Helper function to encode credentials for Basic Auth
+const encodeCredentials = (clientId: string, clientSecret: string): string => {
+  return Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+};
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Users routes
