@@ -27,7 +27,7 @@ export default function FirebaseConfig() {
         return;
       }
       
-      // Try to initialize Firebase with new config
+      // Build the Firebase config
       const firebaseConfig = {
         apiKey,
         authDomain: `${projectId}.firebaseapp.com`,
@@ -37,14 +37,25 @@ export default function FirebaseConfig() {
         appId
       };
       
-      // Initialize Firebase with the new config
-      initializeApp(firebaseConfig);
+      // Instead of initializing Firebase, just validate the config format
+      if (!apiKey.startsWith("AIza")) {
+        setStatus("error");
+        setErrorMessage("API Key format is invalid. It should start with 'AIza'");
+        return;
+      }
+
+      if (!appId.includes(":")) {
+        setStatus("error");
+        setErrorMessage("App ID format is invalid. It should include colons (e.g., 1:123456789:web:abcdef)");
+        return;
+      }
       
-      // If we got here, it worked
+      // Configuration looks valid
       setStatus("success");
+      console.log("Valid Firebase configuration:", firebaseConfig);
     } catch (error: any) {
       setStatus("error");
-      setErrorMessage(error?.message || "Failed to initialize Firebase with provided configuration");
+      setErrorMessage(error?.message || "Failed to validate Firebase configuration");
     }
   };
 
