@@ -437,7 +437,9 @@ export function WeeklyTableViewFixedUpdated({
                             return (
                               <div 
                                 key={`${habit.id}-day-${i}`} 
-                                className={`text-center h-full flex items-center justify-center min-w-[40px] py-1.5 ${completed ? "bg-green-50 dark:bg-green-900/10" : ""} ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                                className={`text-center h-full flex items-center justify-center min-w-[40px] py-1.5 ${
+                                  completed ? habit.iconColor ? `bg-${habit.iconColor}-50 dark:bg-${habit.iconColor}-900/10` : "bg-green-50 dark:bg-green-900/10" : ""
+                                } ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
                                   isCompleted={completed}
