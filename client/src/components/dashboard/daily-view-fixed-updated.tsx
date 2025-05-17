@@ -127,6 +127,16 @@ export function DailyViewFixedUpdated({
   const completedDaysInCurrentWeek = (habitId: string): number => {
     return countCompletedDaysInWeek(habitId);
   };
+  
+  // Check if a habit has met its weekly frequency target
+  const hasMetWeeklyFrequency = (habit: Habit): boolean => {
+    if (!habit.frequency || habit.frequency === 'daily') return false;
+    
+    const targetDays = getTargetDays(habit);
+    const completedDays = countCompletedDaysInWeek(habit.id);
+    
+    return completedDays >= targetDays;
+  };
 
   // Get appropriate frequency text
   const getFrequencyText = (frequency: string) => {
@@ -314,7 +324,7 @@ export function DailyViewFixedUpdated({
                             'text-blue-600 dark:text-blue-400'
                           }`}>
                             {habit.title}
-                            {habit.streak && habit.streak > 0 && (
+                            {typeof habit.streak === "number" habit.streak && habit.streak > 0habit.streak && habit.streak > 0 habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                               </Badge>
@@ -394,7 +404,7 @@ export function DailyViewFixedUpdated({
                             {(() => {
                               const hasMetFrequency = habit.frequency && habit.frequency !== 'daily' && hasMetWeeklyFrequency(habit);
                               const targetDays = getTargetDays(habit);
-                              const completedDays = completedDaysInCurrentWeek(habit.id);
+                              const completedDays = countCompletedDaysInWeek(habit.id);
                               const isExceeding = completedDays > targetDays;
                               
                               return hasMetFrequency && (
@@ -420,7 +430,7 @@ export function DailyViewFixedUpdated({
                                 </Badge>
                               );
                             })()}
-                            {habit.streak > 0 && (
+                            {habit.streak && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
                               </Badge>
