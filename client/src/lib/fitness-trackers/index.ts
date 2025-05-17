@@ -8,6 +8,9 @@
 import { FitbitService } from './fitbit';
 import { SamsungHealthService } from './samsung-health';
 import { MyFitnessPalService } from './myfitnesspal';
+import { GoogleFitService } from './google-fit';
+import { AppleHealthService } from './apple-health';
+import { GarminService } from './garmin';
 
 // Unified types that combine data from different trackers
 export interface UnifiedActivityData {
@@ -16,7 +19,7 @@ export interface UnifiedActivityData {
   distance: number; // in meters
   activeMinutes: number;
   calories: number;
-  source: 'fitbit' | 'samsung_health' | 'manual';
+  source: 'fitbit' | 'samsung_health' | 'google_fit' | 'apple_health' | 'garmin' | 'manual';
 }
 
 export interface UnifiedSleepData {
@@ -31,7 +34,7 @@ export interface UnifiedSleepData {
     rem: number; // in minutes
     awake: number; // in minutes
   };
-  source: 'fitbit' | 'samsung_health' | 'manual';
+  source: 'fitbit' | 'samsung_health' | 'google_fit' | 'apple_health' | 'garmin' | 'manual';
 }
 
 export interface UnifiedHeartRateData {
@@ -39,7 +42,7 @@ export interface UnifiedHeartRateData {
   time?: string;
   heartRate: number; // beats per minute
   restingHeartRate?: number;
-  source: 'fitbit' | 'samsung_health' | 'manual';
+  source: 'fitbit' | 'samsung_health' | 'google_fit' | 'apple_health' | 'garmin' | 'manual';
 }
 
 export interface UnifiedNutritionData {
@@ -68,7 +71,7 @@ export interface UnifiedWaterData {
 export interface UnifiedWeightData {
   date: string;
   weight: number; // in kilograms
-  source: 'fitbit' | 'myfitnesspal' | 'samsung_health' | 'manual';
+  source: 'fitbit' | 'myfitnesspal' | 'samsung_health' | 'google_fit' | 'apple_health' | 'garmin' | 'manual';
 }
 
 export interface TrackerStatus {
@@ -84,23 +87,43 @@ export interface TrackerStatus {
     configured: boolean;
     authenticated: boolean;
   };
+  googleFit: {
+    configured: boolean;
+    authenticated: boolean;
+  };
+  appleHealth: {
+    supported: boolean;
+    lastSynced: Date | null;
+  };
+  garmin: {
+    configured: boolean;
+    authenticated: boolean;
+  };
 }
 
 class FitnessTrackerService {
   private fitbitService: FitbitService;
   private samsungHealthService: SamsungHealthService;
   private myFitnessPalService: MyFitnessPalService;
+  private googleFitService: GoogleFitService;
+  private appleHealthService: AppleHealthService;
+  private garminService: GarminService;
   
   constructor() {
     this.fitbitService = new FitbitService();
     this.samsungHealthService = new SamsungHealthService();
     this.myFitnessPalService = new MyFitnessPalService();
+    this.googleFitService = new GoogleFitService();
+    this.appleHealthService = new AppleHealthService();
+    this.garminService = new GarminService();
   }
   
   /**
    * Get the status of all fitness tracker integrations
    */
   public getStatus(): TrackerStatus {
+    const appleHealthStatus = this.appleHealthService.getSyncStatus();
+    
     return {
       fitbit: {
         configured: this.fitbitService.isConfigured(),
@@ -113,6 +136,18 @@ class FitnessTrackerService {
       myFitnessPal: {
         configured: this.myFitnessPalService.isConfigured(),
         authenticated: this.myFitnessPalService.isAuthenticated()
+      },
+      googleFit: {
+        configured: this.googleFitService.isConfigured(),
+        authenticated: this.googleFitService.isAuthenticated()
+      },
+      appleHealth: {
+        supported: this.appleHealthService.isSupported(),
+        lastSynced: appleHealthStatus.lastSynced
+      },
+      garmin: {
+        configured: this.garminService.isConfigured(),
+        authenticated: this.garminService.isAuthenticated()
       }
     };
   }
@@ -121,10 +156,25 @@ class FitnessTrackerService {
    * Get OAuth authorization URLs for each service
    */
   public getAuthUrls() {
+    // Garmin needs a different approach since it uses a 2-step process
+    let garminUrl = null;
+    if (this.garminService.isConfigured()) {
+      try {
+        // Start the Garmin auth flow (this is async but we'll return a promise)
+        garminUrl = this.garminService.startAuthFlow();
+      } catch (error) {
+        console.error('Failed to start Garmin auth flow:', error);
+      }
+    }
+    
     return {
       fitbit: this.fitbitService.isConfigured() ? this.fitbitService.getAuthUrl() : null,
       samsungHealth: this.samsungHealthService.isConfigured() ? this.samsungHealthService.getAuthUrl() : null,
-      myFitnessPal: this.myFitnessPalService.isConfigured() ? this.myFitnessPalService.getAuthUrl() : null
+      myFitnessPal: this.myFitnessPalService.isConfigured() ? this.myFitnessPalService.getAuthUrl() : null,
+      googleFit: this.googleFitService.isConfigured() ? this.googleFitService.getAuthUrl() : null,
+      garmin: garminUrl,
+      // Apple Health doesn't have an auth URL since it's accessed through the native iOS app
+      appleHealth: null
     };
   }
   
@@ -445,6 +495,27 @@ class FitnessTrackerService {
    */
   public async handleMyFitnessPalCallback(code: string, state: string): Promise<boolean> {
     return await this.myFitnessPalService.handleAuthCallback(code, state);
+  }
+  
+  /**
+   * Handle callback from Google Fit OAuth flow
+   */
+  public async handleGoogleFitCallback(code: string, state: string): Promise<boolean> {
+    return await this.googleFitService.handleAuthCallback(code, state);
+  }
+  
+  /**
+   * Handle callback from Garmin OAuth flow
+   */
+  public async handleGarminCallback(oauthToken: string, oauthVerifier: string, state: string): Promise<boolean> {
+    return await this.garminService.handleAuthCallback(oauthToken, oauthVerifier, state);
+  }
+  
+  /**
+   * Sync data from Apple Health (this doesn't use typical OAuth flow)
+   */
+  public async syncAppleHealthData(startDate: string, endDate: string): Promise<boolean> {
+    return await this.appleHealthService.syncHealthData(startDate, endDate);
   }
   
   /**
