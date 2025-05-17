@@ -308,18 +308,7 @@ export function DailyViewFixedUpdated({
                             habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
                             'text-blue-600 dark:text-blue-400'
                           }`}>
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
+                            {habit.title}
                             {habit.streak && habit.streak > 0 && (
                               <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
                                 <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
@@ -407,18 +396,7 @@ export function DailyViewFixedUpdated({
 {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
 {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
 {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-{habit.title ? habit.title.replace(/\u004F$/, "") : ""}
-                            <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
-                              {getFrequencyText(habit.frequency)}
-                            </Badge>
-                            
-                            {/* Bullseye indicator for frequency habits */}
-                            {(() => {
-                              const targetDays = getTargetDays(habit);
-                              const completedDays = countCompletedDaysInWeek(habit.id);
-                              const hasMetFrequency = completedDays >= targetDays;
-                              const isExceeding = completedDays > targetDays;
-                              
+                            {habit.title}
                               return hasMetFrequency && (
                                 <Badge className="bg-white px-1.5 py-0.5 h-5 border-2 border-red-600 ml-1">
                                   {isExceeding ? (
