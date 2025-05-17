@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Habit } from "@/types/habit";
 import { getHabitIcon } from "@/components/ui/icons";
+import { cleanHabitTitle } from "@/utils/clean-habit-title";
 import {
   DndContext,
   closestCenter,
