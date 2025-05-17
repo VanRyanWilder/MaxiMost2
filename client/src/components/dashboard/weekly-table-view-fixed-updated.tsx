@@ -341,7 +341,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[1.2fr,80px,80px,80px,80px,80px,80px,80px] items-center">
+                        <div className="border-t py-2 grid grid-cols-[2fr,65px,65px,65px,65px,65px,65px,65px] items-center">
                           <div className={`flex items-center gap-2 px-3 py-2 rounded-md shadow-sm mx-1 min-h-[80px] border ${
                             habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
                             habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
@@ -476,7 +476,7 @@ export function WeeklyTableViewFixedUpdated({
                     
                     return (
                       <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                        <div className="border-t py-2 grid grid-cols-[1.2fr,80px,80px,80px,80px,80px,80px,80px] items-center">
+                        <div className="border-t py-2 grid grid-cols-[2fr,65px,65px,65px,65px,65px,65px,65px] items-center">
                           <div className={`flex items-center gap-2 px-3 py-2 rounded-md shadow-sm mx-1 min-h-[80px] border ${
                             habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
                             habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
@@ -552,24 +552,21 @@ export function WeeklyTableViewFixedUpdated({
                                   </div>
                                   
                                   {hasMetFrequency && (
-                                    <Badge className="bg-white px-1.5 py-0.5 h-5 border-2 border-red-600">
+                                    <Badge className={`px-1.5 py-0.5 h-5 ${isExceeding ? 'bg-green-100 text-green-700 border-green-300' : 'bg-white border-2 border-green-600'}`}>
                                       {isExceeding ? (
                                         <>
-                                          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
-                                            <circle cx="12" cy="12" r="10"></circle>
-                                            <circle cx="12" cy="12" r="6"></circle>
-                                            <circle cx="12" cy="12" r="2"></circle>
-                                          </svg>
-                                          {completedDays > targetDays && (
-                                            <span className="text-xs text-red-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
-                                          )}
+                                          <div className="flex items-center">
+                                            <Check className="h-3.5 w-3.5 text-green-600" />
+                                            {completedDays > targetDays && (
+                                              <span className="text-xs text-green-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
+                                            )}
+                                          </div>
                                         </>
                                       ) : (
-                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" className="text-red-600">
-                                          <circle cx="12" cy="12" r="10"></circle>
-                                          <circle cx="12" cy="12" r="6"></circle>
-                                          <circle cx="12" cy="12" r="2"></circle>
-                                        </svg>
+                                        <div className="flex items-center">
+                                          <Check className="h-3.5 w-3.5 text-green-600" />
+                                          <span className="text-xs text-green-600 font-semibold ml-0.5">Done</span>
+                                        </div>
                                       )}
                                     </Badge>
                                   )}
