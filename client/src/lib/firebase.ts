@@ -15,11 +15,12 @@ import {
 
 // Firebase configuration 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCh7wIPAQrncK-kbierYcUjfRFW2A09MOc",
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6"}.firebaseapp.com`,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6",
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6"}.appspot.com`,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:413156369520:web:2120fdcdb298257bf380b5",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
+  messagingSenderId: "161512806223",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
