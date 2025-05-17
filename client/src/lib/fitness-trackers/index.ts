@@ -525,12 +525,15 @@ class FitnessTrackerService {
     this.fitbitService.logout();
     this.samsungHealthService.logout();
     this.myFitnessPalService.logout();
+    this.googleFitService.logout();
+    this.garminService.logout();
+    this.appleHealthService.clearData();
   }
   
   /**
    * Log out from a specific fitness tracker
    */
-  public logout(tracker: 'fitbit' | 'samsung_health' | 'myfitnesspal'): void {
+  public logout(tracker: 'fitbit' | 'samsung_health' | 'myfitnesspal' | 'google_fit' | 'garmin' | 'apple_health'): void {
     switch (tracker) {
       case 'fitbit':
         this.fitbitService.logout();
@@ -540,6 +543,15 @@ class FitnessTrackerService {
         break;
       case 'myfitnesspal':
         this.myFitnessPalService.logout();
+        break;
+      case 'google_fit':
+        this.googleFitService.logout();
+        break;
+      case 'garmin':
+        this.garminService.logout();
+        break;
+      case 'apple_health':
+        this.appleHealthService.clearData();
         break;
     }
   }
