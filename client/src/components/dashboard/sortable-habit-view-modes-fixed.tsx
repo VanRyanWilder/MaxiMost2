@@ -408,7 +408,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <MonthlyHabitView
+              <MonthlyCalendarView
                 habits={filteredHabits}
                 completions={completions}
                 currentMonth={currentMonth}
