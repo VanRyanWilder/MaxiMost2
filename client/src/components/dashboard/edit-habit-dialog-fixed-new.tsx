@@ -79,55 +79,51 @@ interface IconMapItem {
 
 // Map of icon keys to their components and metadata
 export const iconMap: Record<string, IconMapItem> = {
-  // Health
-  "heart": { component: Heart, label: "Heart", category: "health" },
-  "heartPulse": { component: HeartPulse, label: "Heart Rate", category: "health" },
-  "droplets": { component: DropletIcon, label: "Droplets", category: "health" },
-  "pill": { component: Pill, label: "Medication", category: "health" },
-  "weight": { component: Weight, label: "Weight", category: "health" },
-  "leaf": { component: Leaf, label: "Nature", category: "health" },
-  "apple": { component: Apple, label: "Apple", category: "health" },
+  // Physical Training (Red)
+  "dumbbell": { component: Dumbbell, label: "Weights", category: "physical" },
+  "footprints": { component: Footprints, label: "Walking", category: "physical" },
+  "weight": { component: Weight, label: "Weight", category: "physical" },
+  "barChart": { component: BarChart, label: "Progress", category: "physical" },
+  "heartPulse": { component: HeartPulse, label: "Heart Rate", category: "physical" },
   
-  // Fitness
-  "dumbbell": { component: Dumbbell, label: "Weights", category: "fitness" },
-  "footprints": { component: Footprints, label: "Steps", category: "fitness" },
-  "barChart": { component: BarChart, label: "Progress", category: "fitness" },
+  // Nutrition & Fueling (Orange)
+  "utensils": { component: Utensils, label: "Eat", category: "nutrition" },
+  "coffee": { component: Coffee, label: "Drink", category: "nutrition" },
+  "apple": { component: Apple, label: "Fruit", category: "nutrition" },
+  "leaf": { component: Leaf, label: "Veggies", category: "nutrition" },
+  "pill": { component: Pill, label: "Supplements", category: "nutrition" },
   
-  // Mind
-  "brain": { component: Brain, label: "Mind", category: "mind" },
-  "book": { component: BookText, label: "Reading", category: "mind" },
-  "penTool": { component: PenTool, label: "Writing", category: "mind" },
-  "pencil": { component: Pencil, label: "Notes", category: "mind" },
-  "mic": { component: Mic, label: "Speaking", category: "mind" },
-  "music": { component: Music, label: "Music", category: "mind" },
-  
-  // Sleep
+  // Sleep & Hygiene (Indigo)
   "moon": { component: Moon, label: "Sleep", category: "sleep" },
   "bed": { component: Bed, label: "Bed", category: "sleep" },
   "alarm": { component: AlarmClock, label: "Alarm", category: "sleep" },
+  "sun": { component: Sun, label: "Sunlight", category: "sleep" },
+  "droplets": { component: DropletIcon, label: "Hydration", category: "sleep" },
   
-  // Food
-  "utensils": { component: Utensils, label: "Eat", category: "food" },
-  "coffee": { component: Coffee, label: "Drink", category: "food" },
+  // Mental Acuity & Growth (Yellow)
+  "brain": { component: Brain, label: "Mind", category: "mental" },
+  "book": { component: BookText, label: "Reading", category: "mental" },
+  "penTool": { component: PenTool, label: "Writing", category: "mental" },
+  "pencil": { component: Pencil, label: "Journaling", category: "mental" },
+  "zap": { component: Zap, label: "Focus", category: "mental" },
+  "mic": { component: Mic, label: "Speaking", category: "mental" },
+  "music": { component: Music, label: "Music", category: "mental" },
   
-  // Social
-  "users": { component: Users, label: "Social", category: "social" },
-  "messageCircle": { component: MessageCircle, label: "Communication", category: "social" },
+  // Relationships & Community (Blue)
+  "users": { component: Users, label: "Social", category: "relationships" },
+  "messageCircle": { component: MessageCircle, label: "Communication", category: "relationships" },
+  "heart": { component: Heart, label: "Heart", category: "relationships" },
+  "smilePlus": { component: SmilePlus, label: "Positivity", category: "relationships" },
   
-  // Productivity
-  "check": { component: Check, label: "Complete", category: "productivity" },
-  "timer": { component: Timer, label: "Timer", category: "productivity" },
-  "zap": { component: Zap, label: "Energy", category: "productivity" },
-  "sun": { component: Sun, label: "Day", category: "productivity" },
+  // Financial Habits (Green)
+  "circleDollarSign": { component: CircleDollarSign, label: "Money", category: "financial" },
+  "check": { component: Check, label: "Budgeting", category: "financial" },
+  "timer": { component: Timer, label: "Time Value", category: "financial" },
   
-  // Achievements
+  // Achievement (General)
   "award": { component: Award, label: "Award", category: "achievements" },
-  "badgeCheck": { component: BadgeCheck, label: "Badge", category: "achievements" },
-  "thumbsUp": { component: ThumbsUp, label: "Like", category: "achievements" },
-  "smilePlus": { component: SmilePlus, label: "Positive", category: "achievements" },
-  
-  // Financial
-  "circleDollarSign": { component: CircleDollarSign, label: "Money", category: "finance" }
+  "badgeCheck": { component: BadgeCheck, label: "Completed", category: "achievements" },
+  "thumbsUp": { component: ThumbsUp, label: "Good Habit", category: "achievements" }
 };
 
 // Predefined color schemes for habits
@@ -150,15 +146,16 @@ const DEFAULT_NEW_HABIT: Habit = {
   title: "",
   description: "",
   icon: "zap",
-  iconColor: "blue", // Default color scheme
+  iconColor: "yellow", // Default color scheme matching mental category
   impact: 8,
   effort: 4,
   timeCommitment: "10 min",
   frequency: "daily", // Default frequency
   isAbsolute: true,
-  category: "health",
+  category: "mental", // Default to Mental Acuity & Growth category
   streak: 0,
-  createdAt: new Date().toISOString()
+  createdAt: new Date().toISOString(),
+  userChangedColor: false
 };
 
 // Helper function to render an icon from our icon map
@@ -188,7 +185,7 @@ export function EditHabitDialog({
   onDelete
 }: EditHabitDialogProps) {
   const [editedHabit, setEditedHabit] = useState<Habit | null>(null);
-  const [iconPickerTab, setIconPickerTab] = useState("health");
+  const [iconPickerTab, setIconPickerTab] = useState("physical");
   
   // Ref to track if we're creating a new habit or editing an existing one
   const isCreatingNewHabit = useRef(false);
