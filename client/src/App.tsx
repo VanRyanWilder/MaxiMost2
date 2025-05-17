@@ -183,6 +183,10 @@ function App() {
       <Route path="/firebase-config">
         <Route component={FirebaseConfig} />
       </Route>
+
+      <Route path="/fitness-tracker-connect">
+        <PrivateRoute component={FitnessTrackerConnect} />
+      </Route>
       
       {/* 404 Not Found route */}
       <Route component={NotFound} />
