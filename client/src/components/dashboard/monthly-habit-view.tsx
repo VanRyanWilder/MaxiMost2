@@ -216,7 +216,7 @@ export const MonthlyHabitView: React.FC<MonthlyHabitViewProps> = ({
         <h3 className="text-sm font-medium mb-3">Monthly Summary</h3>
         <div className="grid gap-2">
           {habits.map(habit => {
-            const stats = getMonthlyCompletionRate(habit.id);
+            const stats = getMonthlyCompletionRate(habit.id.toString());
             const completionRate = stats.total > 0 ? (stats.completed / stats.total) * 100 : 0;
             const categoryColor = getHabitCategoryColor(habit.category);
             
