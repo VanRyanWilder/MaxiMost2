@@ -1,6 +1,8 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import type { User } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
+import { onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase";
+import { User as FirebaseUser } from "firebase/auth";
 
 // Create a static mock user for development
 const mockUser: User = {
@@ -44,6 +46,7 @@ const guestUser: User = {
 
 interface UserContextType {
   user: User | null;
+  firebaseUser: FirebaseUser | null;
   userLoading: boolean;
   userError: Error | null;
   login: (username: string, password: string) => Promise<void>;

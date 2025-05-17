@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLocation } from "wouter";
 import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
-import { signInWithGoogle, signInWithFacebook, signInWithApple } from "@/lib/firebase";
+import { signInWithGoogle, signInWithFacebook, signInWithApple, signUpWithEmail } from "@/lib/firebase";
 
 export default function Signup() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -15,6 +15,45 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+
+  const handleEmailSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!name || !email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const user = await signUpWithEmail(email, password, name);
+      if (user) {
+        // Successfully registered, redirect to dashboard
+        setLocation("/dashboard");
+      }
+    } catch (error: any) {
+      console.error("Email signup error:", error);
+      // Provide a more specific error message based on Firebase error codes
+      if (error.code === 'auth/email-already-in-use') {
+        setError("This email is already in use. Try logging in instead.");
+      } else if (error.code === 'auth/invalid-email') {
+        setError("Invalid email address. Please check and try again.");
+      } else if (error.code === 'auth/weak-password') {
+        setError("Password is too weak. Please use a stronger password.");
+      } else {
+        setError("Failed to create account. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSocialSignup = async (provider: 'google' | 'facebook' | 'apple') => {
     setIsLoading(true);
@@ -36,8 +75,7 @@ export default function Signup() {
       }
       
       if (user) {
-        // In a real application, you would register the user in your backend
-        // For now, just navigate to onboarding
+        // Successfully authenticated with social provider, redirect to dashboard
         setLocation("/dashboard");
       }
     } catch (error) {
@@ -90,7 +128,7 @@ export default function Signup() {
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleEmailSignup} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input 
