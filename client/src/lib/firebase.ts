@@ -5,6 +5,9 @@ import {
   FacebookAuthProvider, 
   OAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User
@@ -59,6 +62,33 @@ export const signInWithApple = async () => {
   }
 };
 
+export const signInWithEmail = async (email: string, password: string) => {
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (error) {
+    console.error("Error signing in with email:", error);
+    throw error;
+  }
+};
+
+export const signUpWithEmail = async (email: string, password: string, displayName: string) => {
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // Update the user profile with the display name
+    if (result.user) {
+      await updateProfile(result.user, {
+        displayName: displayName
+      });
+    }
+    
+    return result.user;
+  } catch (error) {
+    console.error("Error signing up with email:", error);
+    throw error;
+  }
+};
 
 
 export const signOut = async () => {

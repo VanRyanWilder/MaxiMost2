@@ -2,16 +2,53 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
-import { signInWithGoogle, signInWithFacebook, signInWithApple } from "@/lib/firebase";
+import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithEmail } from "@/lib/firebase";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const { login } = useUser();
   const [, setLocation] = useLocation();
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const user = await signInWithEmail(email, password);
+      if (user) {
+        // Use the existing login function from context to handle auth state
+        await login(user.email || "user@example.com", "firebase-auth");
+        setLocation("/dashboard");
+      }
+    } catch (error: any) {
+      console.error("Email login error:", error);
+      // Provide a more specific error message based on Firebase error codes
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        setError("Invalid email or password. Please try again.");
+      } else if (error.code === 'auth/too-many-requests') {
+        setError("Too many failed login attempts. Please try again later.");
+      } else {
+        setError("Failed to login. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
     setIsLoading(true);
@@ -38,7 +75,7 @@ export default function Login() {
         setLocation("/dashboard");
       }
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Social login error:", error);
       setError("Failed to login. Please try again.");
     } finally {
       setIsLoading(false);
@@ -66,13 +103,58 @@ export default function Login() {
             </div>
           )}
           
-          {/* Featured option for guest login at top for easier access */}
+          {/* Email/Password Login Form */}
+          <form onSubmit={handleEmailLogin} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Button type="button" variant="link" size="sm" className="px-0 h-auto">
+                  Forgot password?
+                </Button>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
+            <Button 
+              type="submit" 
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-700"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  <span>Signing in...</span>
+                </div>
+              ) : (
+                <span>Sign in with Email</span>
+              )}
+            </Button>
+          </form>
+          
+          {/* Guest Login */}
           <Button 
-            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 py-6"
+            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
             onClick={async () => {
               try {
                 setIsLoading(true);
-                // Use the mock user login, avoiding Firebase
                 await login("guest@example.com", "guest-password");
                 setLocation("/dashboard");
               } catch (error) {
@@ -84,7 +166,7 @@ export default function Login() {
             }}
             disabled={isLoading}
           >
-            <span className="text-base">Continue as Guest</span>
+            <span>Continue as Guest</span>
           </Button>
           
           <div className="relative my-4">
