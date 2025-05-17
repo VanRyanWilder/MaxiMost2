@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Samsung Health Integration - MaxiMost</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+        }
+        h2 {
+            color: #1a73e8;
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #34a853;
+            margin-top: 25px;
+        }
+        .architecture {
+            font-family: monospace;
+            white-space: pre;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .info-box {
+            background-color: #e8f4fd;
+            border-left: 4px solid #1a73e8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .step {
+            margin-bottom: 15px;
+        }
+        .step-number {
+            font-weight: bold;
+            color: #1a73e8;
+        }
+    </style>
+</head>
+<body>
+    <h1>Samsung Health Integration - Detailed Data Flow</h1>
+
+    <div class="info-box">
+        <h3>Application Information</h3>
+        <p><strong>App Name</strong>: MaxiMost</p>
+        <p><strong>Package Name</strong>: com.maximost.app</p>
+        <p><strong>App Signature (SHA-256)</strong>: 62:7d:e9:2b:76:98:70:2e:a5:4e:78:db:25:c3:90:44:5b:b5:b2:09:24:5d:ee:2e:15:b4:d6:6e:eb:3d:cd:62</p>
+    </div>
+
+    <h2>System Architecture Overview</h2>
+
+    <div class="architecture">
++-------------------+     +-----------------+     +------------------------+
+|                   |     |                 |     |                        |
+|  Samsung Device   |     |  MaxiMost App   |     |  MaxiMost Backend     |
+|  with Health App  |     |  (Client)       |     |  (Server)             |
+|                   |     |                 |     |                        |
++--------+----------+     +--------+--------+     +-----------+-----------+
+         |                         |                          |
+         |                         |                          |
+         |   1. User authorizes    |                          |
+         +------------------------>|                          |
+         |   MaxiMost access       |                          |
+         |                         |                          |
+         |                         | 2. OAuth Authorization   |
+         |                         | Request                  |
+         |                         +------------------------->|
+         |                         |                          |
+         |                         |                          |
+         | 3. Samsung Health SDK   |                          |
+         |    Authorization Screen |                          |
+         |<----------------------------------------+          |
+         |                         |                          |
+         | 4. User grants access   |                          |
+         +------------------------>|                          |
+         |                         |                          |
+         |                         | 5. Auth code             |
+         |                         +------------------------->|
+         |                         |                          |
+         |                         | 6. Exchange for          |
+         |                         |    access token          |
+         |                         |<-------------------------+
+         |                         |                          |
+         | 7. Access health data   |                          |
+         |<------------------------+                          |
+         |                         |                          |
+         | 8. Return health data   |                          |
+         +------------------------>|                          |
+         |                         |                          |
+         |                         | 9. Process & store data  |
+         |                         +------------------------->|
+         |                         |                          |
+         |                         | 10. Return processed     |
+         |                         |     health insights      |
+         |                         |<-------------------------+
+         |                         |                          |
+         |                         |                          |
+         |                         |                          |
++--------+----------+     +--------+--------+     +-----------+-----------+
+|                   |     |                 |     |                        |
+|  Samsung Health   |     |  MaxiMost UI    |     |  MaxiMost Database    |
+|  Data             |     |  Dashboard      |     |  & Analytics          |
+|                   |     |                 |     |                        |
++-------------------+     +-----------------+     +------------------------+
+    </div>
+
+    <h2>Detailed Data Flow Process</h2>
+
+    <h3>1. Authentication Flow</h3>
+
+    <div class="step">
+        <p class="step-number">1. User Initiates Connection</p>
+        <ul>
+            <li>User navigates to "Connected Services" in MaxiMost app</li>
+            <li>User selects "Connect Samsung Health"</li>
+            <li>MaxiMost app generates a state parameter to prevent CSRF attacks</li>
+            <li>MaxiMost stores this state in secure storage</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">2. Authorization Request</p>
+        <ul>
+            <li>MaxiMost app sends OAuth request to MaxiMost server</li>
+            <li>Server prepares authentication URL with the following parameters:
+                <ul>
+                    <li><code>client_id</code>: MaxiMost's registered Samsung Health client ID</li>
+                    <li><code>redirect_uri</code>: https://api.maximost.com/auth/samsung-health/callback</li>
+                    <li><code>response_type</code>: code</li>
+                    <li><code>scope</code>: Requested data permissions (activity, sleep, heart_rate, etc.)</li>
+                    <li><code>state</code>: The generated state parameter</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">3. Samsung Health Authorization</p>
+        <ul>
+            <li>Samsung Health displays permission screen to user</li>
+            <li>Shows requested data types and access level</li>
+            <li>User reviews and approves or denies access</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">4. Authorization Grant</p>
+        <ul>
+            <li>Upon user approval, Samsung Health redirects to MaxiMost callback URL</li>
+            <li>Request includes <code>code</code> and <code>state</code> parameters</li>
+            <li>MaxiMost validates the state parameter matches the one stored</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">5. Token Exchange</p>
+        <ul>
+            <li>MaxiMost server exchanges authorization code for access token</li>
+            <li>Server sends request to Samsung Health token endpoint with:
+                <ul>
+                    <li><code>grant_type</code>: authorization_code</li>
+                    <li><code>code</code>: The authorization code</li>
+                    <li><code>client_id</code>: MaxiMost's client ID</li>
+                    <li><code>client_secret</code>: MaxiMost's client secret</li>
+                    <li><code>redirect_uri</code>: The same redirect URI used in step 2</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">6. Token Storage</p>
+        <ul>
+            <li>MaxiMost server receives access and refresh tokens</li>
+            <li>Tokens are encrypted and stored in secure database</li>
+            <li>Associated with user's account ID</li>
+            <li>Refresh token is used to maintain access without re-authentication</li>
+        </ul>
+    </div>
+
+    <h3>2. Data Retrieval Flow</h3>
+
+    <div class="step">
+        <p class="step-number">1. Scheduled Data Sync</p>
+        <ul>
+            <li>MaxiMost server runs scheduled sync jobs (every 4 hours)</li>
+            <li>For each connected user account, retrieves stored access token</li>
+            <li>Validates token expiration and refreshes if necessary</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">2. Data Requests</p>
+        <ul>
+            <li>Server makes authenticated requests to Samsung Health API endpoints</li>
+            <li>Uses access token in Authorization header</li>
+            <li>Requests specific data types with appropriate parameters:
+                <ul>
+                    <li>Time range (e.g., since last sync)</li>
+                    <li>Data granularity (daily summaries or detailed time series)</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">3. Data Types Requested</p>
+        <ul>
+            <li>Steps count: Daily totals and hourly breakdowns</li>
+            <li>Sleep data: Duration, efficiency, stages (deep, light, REM)</li>
+            <li>Heart rate: Resting rate, workout rates, continuous measurement</li>
+            <li>Exercise sessions: Type, duration, intensity, calories</li>
+            <li>Weight measurements: When recorded by user</li>
+            <li>Nutrition data: If available and permitted by user</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">4. Data Processing</p>
+        <ul>
+            <li>Server receives data in Samsung Health format</li>
+            <li>Transforms data into MaxiMost's unified health data model</li>
+            <li>Performs validation and sanitization</li>
+            <li>Calculates derived metrics:
+                <ul>
+                    <li>Activity streak calculations</li>
+                    <li>Sleep quality scores</li>
+                    <li>Activity intensity minutes</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">5. Data Storage</p>
+        <ul>
+            <li>Processed data stored in MaxiMost's database</li>
+            <li>Associated with user's account</li>
+            <li>Historical trends maintained</li>
+            <li>Original source (Samsung Health) tagged with data</li>
+        </ul>
+    </div>
+
+    <h3>3. Data Utilization Flow</h3>
+
+    <div class="step">
+        <p class="step-number">1. Habit Tracking Integration</p>
+        <ul>
+            <li>System checks user's active habits against Samsung Health data</li>
+            <li>Automatically marks relevant habits as complete based on data</li>
+            <li>Examples:
+                <ul>
+                    <li>"10,000 steps" habit marked complete when step count reaches threshold</li>
+                    <li>"8 hours sleep" habit marked when sleep data indicates sufficient duration</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">2. User Dashboard Updates</p>
+        <ul>
+            <li>Health data visualized in MaxiMost dashboard</li>
+            <li>Progress toward habit goals shown</li>
+            <li>Historical trends displayed</li>
+            <li>Correlations between habits and health metrics highlighted</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">3. Personalized Insights</p>
+        <ul>
+            <li>AI analysis of pattern between habits and health metrics</li>
+            <li>Generation of personalized recommendations</li>
+            <li>Adaptive goal setting based on historical performance</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">4. Privacy Protection</p>
+        <ul>
+            <li>Data access limited to user's own account</li>
+            <li>Data transmitted using TLS encryption</li>
+            <li>Sensitive health data stored with additional encryption</li>
+            <li>User can revoke access at any time</li>
+        </ul>
+    </div>
+
+    <h2>Security and Privacy Measures</h2>
+
+    <h3>Data Protection</h3>
+
+    <div class="step">
+        <p class="step-number">1. Transmission Security</p>
+        <ul>
+            <li>All API requests use HTTPS/TLS 1.2+</li>
+            <li>Data in transit is encrypted</li>
+            <li>API requests use token authentication</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">2. Storage Security</p>
+        <ul>
+            <li>Tokens stored using industry-standard encryption</li>
+            <li>Health data encrypted at rest</li>
+            <li>Database access restricted and monitored</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">3. Access Control</p>
+        <ul>
+            <li>Least privilege principle applied to all systems</li>
+            <li>Access to user health data restricted to user's own account</li>
+            <li>Admin access to health data prohibited by design</li>
+        </ul>
+    </div>
+
+    <h3>User Privacy Controls</h3>
+
+    <div class="step">
+        <p class="step-number">1. Consent Management</p>
+        <ul>
+            <li>Clear explanation of data usage before connection</li>
+            <li>Granular permissions for specific data types</li>
+            <li>User can disconnect at any time</li>
+            <li>Option to delete previously synced data</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <p class="step-number">2. Transparency Features</p>
+        <ul>
+            <li>Data source clearly labeled in UI</li>
+            <li>Last sync time displayed</li>
+            <li>Data usage explained in privacy policy</li>
+            <li>Data retention periods clearly communicated</li>
+        </ul>
+    </div>
+
+    <h2>Technical Requirements</h2>
+
+    <div class="info-box">
+        <ol>
+            <li><strong>Samsung Health SDK Version</strong>: Latest stable version</li>
+            <li><strong>API Protocol</strong>: REST over HTTPS</li>
+            <li><strong>Authentication</strong>: OAuth 2.0</li>
+            <li><strong>Data Format</strong>: JSON</li>
+            <li><strong>Request Frequency</strong>: Maximum 4 times per day per user</li>
+            <li><strong>Maximum Users</strong>: Scaling to 100,000 users</li>
+        </ol>
+    </div>
+
+    <h2>Compliance</h2>
+
+    <div class="info-box">
+        <ol>
+            <li><strong>Samsung Developer Policies</strong>: Full compliance with Samsung Health API terms</li>
+            <li><strong>Data Protection</strong>: Compliance with GDPR, CCPA, and other applicable regulations</li>
+            <li><strong>Medical Data Handling</strong>: Not using data for medical diagnosis or treatment</li>
+            <li><strong>User Consent</strong>: Explicit consent obtained before data access</li>
+        </ol>
+    </div>
+</body>
+</html>
