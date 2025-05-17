@@ -376,7 +376,7 @@ export function WeeklyTableViewFixedUpdated({
                                 habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
                                 'text-blue-600 dark:text-blue-400'
                               }`}>
-                                {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
+                                {habit.title}
                                 <div className="ml-2 flex items-center">
                                   {habit.streak && habit.streak > 0 && (
                                     <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
@@ -511,7 +511,7 @@ export function WeeklyTableViewFixedUpdated({
                                 habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
                                 'text-blue-600 dark:text-blue-400'
                               }`}>
-                                {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
+                                {habit.title}
                                 <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
                                   {getFrequencyText(habit.frequency)}
                                 </Badge>
