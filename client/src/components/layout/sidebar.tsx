@@ -39,6 +39,7 @@ import { SettingsPanel } from "@/components/settings/settings-panel";
 import { useState, useEffect } from "react";
 import { onAuthStateChange } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
+import { StreakDisplay } from "@/components/streak/streak-display";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -201,6 +202,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
+              {/* Temporarily use static streak indicator while we fix the dynamic one */}
               <div className="rounded-md bg-blue-50 dark:bg-blue-900/20 p-2.5">
                 <div className="flex justify-between mb-1.5">
                   <span className="text-xs font-medium flex items-center gap-1.5">
