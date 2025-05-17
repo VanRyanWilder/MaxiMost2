@@ -11,34 +11,11 @@ import {
 } from 'date-fns';
 import { Card } from '@/components/ui/card';
 import { CheckCircle2, Circle } from 'lucide-react';
-
-// Define the same type structure that we're currently using
-interface Habit {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  iconColor: string;
-  impact: number;
-  effort: number;
-  timeCommitment: string;
-  frequency: string;
-  isAbsolute: boolean;
-  category: string;
-  streak: number;
-  createdAt: Date;
-}
-
-interface HabitCompletion {
-  id: string;
-  habitId: string;
-  date: string | Date;
-  completed: boolean;
-}
+import { Habit } from '@/types/habit';
 
 interface MonthCalendarViewProps {
   habits: Habit[];
-  completions: HabitCompletion[];
+  completions: any[]; // Replace with proper type when available
   currentMonth: Date;
   onToggleHabit: (habitId: string, date: Date) => void;
 }
