@@ -13,7 +13,7 @@ import {
 import { ModernSidebar } from "./modern-sidebar";
 import { Link } from "wouter";
 import { Bell, LogOut, Settings, User } from "lucide-react";
-import { FirebaseUser } from "@/components/auth/firebase-user";
+import { FirebaseUserComponent } from "@/components/auth/firebase-user";
 
 interface ModernLayoutProps {
   children: ReactNode;
@@ -23,6 +23,8 @@ interface ModernLayoutProps {
 export function ModernLayout({ children, pageTitle = "Dashboard" }: ModernLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user, logout } = useUser();
+  
+  // Add FirebaseUser component to header
   
   return (
     <div className="flex min-h-screen">
@@ -43,6 +45,9 @@ export function ModernLayout({ children, pageTitle = "Dashboard" }: ModernLayout
                   3
                 </span>
               </Button>
+              
+              {/* Firebase Authentication */}
+              <FirebaseUserComponent />
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

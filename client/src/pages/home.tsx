@@ -16,7 +16,7 @@ import {
   Zap,
   LogIn
 } from "lucide-react";
-import { FirebaseUser } from "@/components/auth/firebase-user";
+import { FirebaseUserComponent } from "@/components/auth/firebase-user";
 import { useState, useEffect } from "react";
 import { onAuthStateChange } from "@/lib/firebase";
 
@@ -48,7 +48,7 @@ export default function Home() {
             {loading ? (
               <div className="h-10 w-20 animate-pulse bg-gray-800/70 rounded-md"></div>
             ) : user ? (
-              <FirebaseUser />
+              <FirebaseUserComponent />
             ) : (
               <>
                 <Button 
