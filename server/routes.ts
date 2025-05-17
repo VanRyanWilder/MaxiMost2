@@ -685,6 +685,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Habit completion data for streak calculation
+  app.get("/api/user/habit-completions", async (req, res) => {
+    try {
+      const { userId, days } = req.query;
+      const userIdParsed = parseInt(userId as string);
+      
+      if (isNaN(userIdParsed)) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      // Default to 90 days of history
+      const daysToFetch = parseInt(days as string) || 90;
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - daysToFetch);
+      
+      // Get all user tasks in the date range
+      const completions = [];
+      let currentDate = new Date(startDate);
+      
+      while (currentDate <= endDate) {
+        const userTasks = await storage.getUserTasks(userIdParsed, new Date(currentDate));
+        
+        // Format completion data for streak calculation
+        completions.push({
+          date: currentDate.toISOString(),
+          // Consider the day completed if any task was completed
+          completed: userTasks.some(userTask => userTask.completed)
+        });
+        
+        // Move to next day
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      
+      res.json(completions);
+    } catch (error) {
+      console.error("Error fetching habit completion data:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+  
   const httpServer = createServer(app);
   return httpServer;
 }
