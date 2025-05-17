@@ -40,7 +40,7 @@ export function useStreak({ userId }: UseStreakOptions = {}): StreakData {
 
   // Calculate streak when completion data changes
   useEffect(() => {
-    if (completionData && completionData.length > 0) {
+    if (completionData && Array.isArray(completionData) && completionData.length > 0) {
       const currentStreak = calculateCurrentStreak(completionData);
       const longestStreak = calculateLongestStreak(completionData);
       const { nextMilestone, progress } = calculateStreakProgress(currentStreak);
