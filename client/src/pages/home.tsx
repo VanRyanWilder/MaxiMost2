@@ -22,7 +22,7 @@ import { onAuthStateChange } from "@/lib/firebase";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   
   // Listen for Firebase auth state changes

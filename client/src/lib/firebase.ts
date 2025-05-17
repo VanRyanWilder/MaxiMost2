@@ -13,13 +13,13 @@ import {
   User
 } from "firebase/auth";
 
-// Firebase configuration with actual values
+// Firebase configuration 
 const firebaseConfig = {
-  apiKey: "AIzaSyCh7wIPAQrncK-kbierYcUjfRFW2A09MOc",
-  authDomain: "maximost-cf6e6.firebaseapp.com",
-  projectId: "maximost-cf6e6",
-  storageBucket: "maximost-cf6e6.appspot.com",
-  appId: "1:413156369520:web:2120fdcdb298257bf380b5",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCh7wIPAQrncK-kbierYcUjfRFW2A09MOc",
+  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6"}.firebaseapp.com`,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6",
+  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID || "maximost-cf6e6"}.appspot.com`,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:413156369520:web:2120fdcdb298257bf380b5",
 };
 
 // Initialize Firebase
@@ -89,7 +89,6 @@ export const signUpWithEmail = async (email: string, password: string, displayNa
     throw error;
   }
 };
-
 
 export const signOut = async () => {
   try {
