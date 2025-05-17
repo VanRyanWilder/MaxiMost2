@@ -480,21 +480,17 @@ export function EditHabitDialog({
               </div>
               
               <Tabs value={iconPickerTab} onValueChange={setIconPickerTab} className="w-full">
-                <TabsList className="grid grid-cols-4 mb-2">
-                  <TabsTrigger value="health">Health</TabsTrigger>
-                  <TabsTrigger value="fitness">Fitness</TabsTrigger>
-                  <TabsTrigger value="mind">Mind</TabsTrigger>
-                  <TabsTrigger value="more">More</TabsTrigger>
+                <TabsList className="grid grid-cols-6 mb-2">
+                  <TabsTrigger value="physical" className="text-xs text-red-500">Physical</TabsTrigger>
+                  <TabsTrigger value="nutrition" className="text-xs text-orange-500">Nutrition</TabsTrigger>
+                  <TabsTrigger value="sleep" className="text-xs text-indigo-500">Sleep</TabsTrigger>
+                  <TabsTrigger value="mental" className="text-xs text-yellow-500">Mental</TabsTrigger>
+                  <TabsTrigger value="relationships" className="text-xs text-blue-500">Social</TabsTrigger>
+                  <TabsTrigger value="financial" className="text-xs text-green-500">Financial</TabsTrigger>
                 </TabsList>
                 
                 {Object.keys(iconCategories).map(category => (
-                  <TabsContent key={category} value={
-                    category === "social" || category === "food" || 
-                    category === "sleep" || category === "productivity" || 
-                    category === "achievements" || category === "finance" 
-                      ? "more" 
-                      : category
-                  }>
+                  <TabsContent key={category} value={category}>
                     <div className="grid grid-cols-6 gap-2">
                       {iconCategories[category].map(iconKey => (
                         <Button
