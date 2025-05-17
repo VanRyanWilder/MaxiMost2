@@ -28,7 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { MonthlyHabitView } from './monthly-habit-view';
+import { MonthlyCalendarView } from './monthly-calendar-view';
 import { WeeklyTableViewColor } from './weekly-table-view-color';
 import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
@@ -375,7 +375,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
         {viewMode === "monthly" && (
           <div className="bg-white rounded-lg border p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Monthly View</h3>
+              <h3 className="text-lg font-medium">Monthly View - {format(currentMonth, 'MMMM yyyy')}</h3>
               <div className="flex items-center space-x-2">
                 <Button 
                   variant="outline" 
