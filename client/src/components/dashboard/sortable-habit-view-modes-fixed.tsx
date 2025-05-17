@@ -28,7 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
-import { MonthlyCalendarView } from './monthly-calendar-view';
+import { SimpleMonthView } from './simple-month-view';
 import { WeeklyTableViewColor } from './weekly-table-view-color';
 import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
@@ -406,162 +406,12 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <div className="calendar-layout">
-                {/* Calendar grid */}
-                <div className="rounded-lg border overflow-hidden">
-                  {/* Weekday headers */}
-                  <div className="grid grid-cols-7 bg-gray-50 border-b">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-                      <div 
-                        key={index}
-                        className="py-2 text-center text-sm font-medium text-gray-500"
-                      >
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Calendar days */}
-                  {Array.from({ length: 6 }).map((_, weekIndex) => {
-                    const firstDayOfMonth = startOfMonth(currentMonth);
-                    const firstDayOfWeek = addDays(firstDayOfMonth, weekIndex * 7 - getDay(firstDayOfMonth));
-                    
-                    const days = Array.from({ length: 7 }).map((_, dayIndex) => 
-                      addDays(firstDayOfWeek, dayIndex)
-                    );
-                    
-                    return (
-                      <div key={weekIndex} className="grid grid-cols-7 border-b last:border-b-0">
-                        {days.map((day, dayIndex) => {
-                          const isCurrentMonth = isSameMonth(day, currentMonth);
-                          const isCurrentDay = isToday(day);
-                          
-                          return (
-                            <div 
-                              key={dayIndex}
-                              className={`
-                                relative min-h-[80px] p-1 border-r last:border-r-0
-                                ${!isCurrentMonth ? 'bg-gray-50' : ''}
-                                ${isCurrentDay ? 'bg-blue-50' : ''}
-                              `}
-                            >
-                              {/* Day number */}
-                              <div className={`
-                                text-right text-sm font-medium p-1
-                                ${!isCurrentMonth ? 'text-gray-400' : 'text-gray-700'}
-                                ${isCurrentDay ? 'text-blue-600' : ''}
-                              `}>
-                                {format(day, 'd')}
-                              </div>
-                              
-                              {/* Habits for this day */}
-                              {isCurrentMonth && (
-                                <div className="flex flex-col gap-1">
-                                  {filteredHabits.slice(0, 4).map(habit => (
-                                    <div key={habit.id} onClick={() => onToggleHabit(habit.id, day)} className="cursor-pointer">
-                                      <div className="flex items-center">
-                                        {completions.some(c => 
-                                          c.habitId === habit.id && 
-                                          isSameDay(new Date(c.date), day) &&
-                                          c.completed
-                                        ) 
-                                          ? <CheckCircle2 className={`h-4 w-4 text-${habit.category.toLowerCase() === 'physical' 
-                                                                  ? 'red' 
-                                                                  : habit.category.toLowerCase() === 'nutrition'
-                                                                  ? 'orange'
-                                                                  : habit.category.toLowerCase() === 'sleep'
-                                                                  ? 'indigo'
-                                                                  : habit.category.toLowerCase() === 'mental'
-                                                                  ? 'yellow'
-                                                                  : habit.category.toLowerCase() === 'relationships'
-                                                                  ? 'blue'
-                                                                  : habit.category.toLowerCase() === 'financial'
-                                                                  ? 'green'
-                                                                  : 'gray'}-500`} />
-                                          : <Circle className="h-4 w-4 text-gray-300" />
-                                        }
-                                      </div>
-                                    </div>
-                                  ))}
-                                  
-                                  {filteredHabits.length > 4 && (
-                                    <div className="text-xs text-gray-500">
-                                      +{filteredHabits.length - 4} more
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                {/* Monthly Progress Summary */}
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium mb-2">Monthly Progress</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {filteredHabits.map(habit => {
-                      // Calculate completion rate
-                      const daysInMonth = getDaysInMonth(currentMonth);
-                      const completedDays = completions.filter(
-                        completion => completion.habitId === habit.id && 
-                                    isSameMonth(new Date(completion.date), currentMonth) &&
-                                    completion.completed
-                      ).length;
-                      
-                      let expectedCompletions = daysInMonth;
-                      if (!habit.isAbsolute) {
-                        // Handle frequency
-                        const frequencyMap = {
-                          '2x-week': 2 * Math.ceil(daysInMonth / 7),
-                          '3x-week': 3 * Math.ceil(daysInMonth / 7),
-                          '4x-week': 4 * Math.ceil(daysInMonth / 7),
-                          '5x-week': 5 * Math.ceil(daysInMonth / 7),
-                          '6x-week': 6 * Math.ceil(daysInMonth / 7),
-                          'weekly': Math.ceil(daysInMonth / 7),
-                          'monthly': 1
-                        };
-                        
-                        expectedCompletions = habit.frequency in frequencyMap 
-                          ? frequencyMap[habit.frequency] 
-                          : daysInMonth;
-                      }
-                      
-                      const completionRate = Math.min(100, (completedDays / expectedCompletions) * 100);
-                      
-                      return (
-                        <div key={habit.id} className="p-3 border rounded flex flex-col">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-sm font-medium">{habit.title}</span>
-                            <span className="text-xs">{Math.round(completionRate)}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                            <div 
-                              className={`bg-${habit.category.toLowerCase() === 'physical' 
-                                              ? 'red' 
-                                              : habit.category.toLowerCase() === 'nutrition'
-                                              ? 'orange'
-                                              : habit.category.toLowerCase() === 'sleep'
-                                              ? 'indigo'
-                                              : habit.category.toLowerCase() === 'mental'
-                                              ? 'yellow'
-                                              : habit.category.toLowerCase() === 'relationships'
-                                              ? 'blue'
-                                              : habit.category.toLowerCase() === 'financial'
-                                              ? 'green'
-                                              : 'gray'}-500 h-full rounded-full`}
-                              style={{ width: `${completionRate}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
+              <SimpleMonthView 
+                habits={filteredHabits}
+                completions={completions}
+                currentMonth={currentMonth}
+                onToggleHabit={onToggleHabit}
+              />
             )}
           </div>
         )}
