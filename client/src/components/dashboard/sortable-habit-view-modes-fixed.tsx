@@ -28,6 +28,7 @@ import {
 import { WeeklyTableViewFixedUpdated } from './weekly-table-view-fixed-updated';
 import { WeeklyTableViewFixedColor } from './weekly-table-view-fixed-color';
 import { WeeklyTableViewImproved } from './weekly-table-view-improved';
+import { MonthlyHabitView } from './monthly-habit-view';
 import { WeeklyTableViewColor } from './weekly-table-view-color';
 import { DailyViewFixedUpdated } from './daily-view-fixed-updated';
 import {
@@ -409,9 +410,12 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
             ) : (
-              <div className="p-6 text-center">
-                <p className="text-muted-foreground">Monthly view coming soon...</p>
-              </div>
+              <MonthlyHabitView
+                habits={filteredHabits}
+                completions={completions}
+                currentMonth={currentMonth}
+                onToggleHabit={onToggleHabit}
+              />
             )}
           </div>
         )}

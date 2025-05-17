@@ -13,9 +13,46 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Habit, HabitCompletion } from "@/types";
-import { getHabitCategoryColor } from "@/lib/habits";
 import { CheckCircle2, Circle, AlertCircle } from "lucide-react";
+
+// Define the types needed for the component
+interface Habit {
+  id: number;
+  title: string;
+  description?: string;
+  category: string;
+  icon?: string;
+  isAbsolute?: boolean;
+  frequency?: number;
+  streak?: number;
+}
+
+interface HabitCompletion {
+  id?: number;
+  habitId: number;
+  date: string;
+  completed: boolean;
+}
+
+// Helper to get category color
+const getHabitCategoryColor = (category: string): string => {
+  switch (category.toLowerCase()) {
+    case 'physical':
+      return 'text-red-500';
+    case 'nutrition':
+      return 'text-orange-500';
+    case 'mental':
+      return 'text-yellow-500';
+    case 'sleep':
+      return 'text-indigo-500';
+    case 'social':
+      return 'text-blue-500';
+    case 'financial':
+      return 'text-green-500';
+    default:
+      return 'text-gray-500';
+  }
+};
 
 interface MonthlyHabitViewProps {
   habits: Habit[];
