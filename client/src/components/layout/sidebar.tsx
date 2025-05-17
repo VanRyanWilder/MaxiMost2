@@ -202,24 +202,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   <p className="text-xs text-muted-foreground">High-ROI Achiever</p>
                 </div>
               </div>
-              {/* Temporarily use static streak indicator while we fix the dynamic one */}
-              <div className="rounded-md bg-blue-50 dark:bg-blue-900/20 p-2.5">
-                <div className="flex justify-between mb-1.5">
-                  <span className="text-xs font-medium flex items-center gap-1.5">
-                    <Zap className="h-3.5 w-3.5 text-amber-500" />
-                    Current Streak
-                  </span>
-                  <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
-                    7 days
-                  </span>
-                </div>
-                <div className="w-full bg-blue-100 dark:bg-blue-900/40 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full" 
-                    style={{ width: '70%' }}
-                  ></div>
-                </div>
-              </div>
+              {/* Dynamic streak display based on user's habit completion */}
+              {firebaseUser ? (
+                <StreakDisplay userId={firebaseUser.uid} />
+              ) : (
+                <StreakDisplay userId={user?.id} />
+              )}
             </div>
           )}
         </div>
