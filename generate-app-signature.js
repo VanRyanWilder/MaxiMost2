@@ -1,5 +1,5 @@
 // Generate a sample app signature for Samsung Health integration
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 // Create a function to generate a signature based on the package name
 function generateAppSignature(packageName) {
