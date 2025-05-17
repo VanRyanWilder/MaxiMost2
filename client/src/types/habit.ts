@@ -4,10 +4,7 @@ export type HabitCategory =
   | 'sleep' 
   | 'mental' 
   | 'relationships' 
-  | 'financial' 
-  | 'health' 
-  | 'social' 
-  | 'general';
+  | 'financial';
 
 export type HabitFrequency = 
   | 'daily' 

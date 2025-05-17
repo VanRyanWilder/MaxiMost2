@@ -38,6 +38,8 @@ import {
   Pill,
   BarChart,
   Leaf,
+  Lightbulb,
+  CircleDollarSign,
   PenTool,
   Mic,
   Bed,
@@ -398,12 +400,42 @@ export function EditHabitDialog({
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="health">Health</SelectItem>
-                <SelectItem value="fitness">Fitness</SelectItem>
-                <SelectItem value="mind">Mind</SelectItem>
-                <SelectItem value="social">Social</SelectItem>
-                <SelectItem value="productivity">Productivity</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
+                <SelectItem value="physical">
+                  <div className="flex items-center gap-2">
+                    <Dumbbell className="h-4 w-4 text-red-500" />
+                    <span>Physical Training</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="nutrition">
+                  <div className="flex items-center gap-2">
+                    <Utensils className="h-4 w-4 text-orange-500" />
+                    <span>Nutrition & Fueling</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="sleep">
+                  <div className="flex items-center gap-2">
+                    <Moon className="h-4 w-4 text-indigo-500" />
+                    <span>Sleep & Hygiene</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="mental">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    <span>Mental Acuity & Growth</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="relationships">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-blue-500" />
+                    <span>Relationships & Community</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="financial">
+                  <div className="flex items-center gap-2">
+                    <CircleDollarSign className="h-4 w-4 text-green-500" />
+                    <span>Financial Habits</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
