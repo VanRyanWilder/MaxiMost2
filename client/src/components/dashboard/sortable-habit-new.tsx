@@ -133,21 +133,7 @@ export function SortableHabit({
           
           <div className="min-w-0 flex flex-col">
             <span className={`font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block ${colorScheme?.primary || ""}`}>
-              {/* Add visible debugging */}
-              {habit.title ? 
-                habit.title.split('').map((char, i) => (
-                  <span key={i} className="inline-block" title={`Char code: ${char.charCodeAt(0)}`}>
-                    {char}
-                  </span>
-                ))
-                : habit.title
-              }
-              <span className="block text-xs text-red-600 font-normal">
-                Length: {habit.title ? habit.title.length : 0} |
-                Last char: {habit.title && habit.title.length > 0 ? 
-                  `"${habit.title[habit.title.length-1]}" (${habit.title.charCodeAt(habit.title.length-1)})` 
-                  : 'none'}
-              </span>
+              {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
             </span>
             <div className="flex items-center justify-between gap-1 mt-0.5">
               <Badge 
