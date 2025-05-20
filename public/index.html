@@ -972,12 +972,14 @@
             <div class="mid-signup">
                 <h2>Be The First To Try Maximost</h2>
                 <p>Join our exclusive early access list and get notified when we launch. Gain an edge in your personal growth journey.</p>
-                <form class="email-form">
-                    <input type="email" class="email-input" placeholder="Enter your email" required>
-                    <button type="submit" class="submit-btn">Join Waitlist</button>
+                <form class="email-form" action="https://formspree.io/f/maximost@gmail.com" method="POST">
+                    <div class="form-row">
+                        <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+                        <button type="submit" class="submit-btn">Join Waitlist</button>
+                    </div>
                     <div class="referral-option">
                         <div class="referral-checkbox-area">
-                            <input type="checkbox" id="referral-checkbox">
+                            <input type="checkbox" id="referral-checkbox" name="join_rewards">
                             <label for="referral-checkbox">Join our rewards program</label>
                         </div>
                         <div class="referral-description">
