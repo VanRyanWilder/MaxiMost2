@@ -79,6 +79,20 @@
             padding: 60px 0;
             text-align: center;
             background: linear-gradient(135deg, var(--dark-color) 0%, var(--darker-color) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.2;
+            z-index: 0;
         }
         
         .hero h1 {
@@ -106,6 +120,8 @@
             line-height: 1.6;
             color: var(--text-color);
             font-style: italic;
+            position: relative;
+            z-index: 1;
         }
         
         /* Dashboard Showcase */
@@ -114,6 +130,8 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
         }
         
         .dashboard-image {
@@ -124,46 +142,107 @@
             height: 250px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .dashboard-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 40%);
+            pointer-events: none;
         }
         
         .dashboard-image:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
             border-color: var(--primary-color);
+        }
+        
+        .dashboard-image:hover::after {
+            background: linear-gradient(to top, rgba(var(--primary-color), 0.2) 0%, rgba(0,0,0,0) 40%);
         }
         
         .dashboard-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: contrast(1.1) brightness(1.05);
+            transition: var(--transition);
+        }
+        
+        .dashboard-image:hover img {
+            transform: scale(1.05);
         }
         
         /* Mid-page signup */
         .mid-signup {
             margin: 20px 0 60px;
-            padding: 30px;
+            padding: 40px;
             border-radius: var(--border-radius);
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             text-align: center;
             color: white;
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mid-signup::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.03) 10px,
+                rgba(255, 255, 255, 0.03) 20px
+            );
+            animation: pattern-shift 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes pattern-shift {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
         
         .mid-signup h2 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .mid-signup p {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .mid-signup .email-form {
             max-width: 500px;
             margin: 0 auto;
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         /* Features Section */
@@ -425,8 +504,8 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="maximost-logo-1.png" alt="Maximost Logo">
-                    <div class="logo-text">Maximost</div>
+                    <img src="maximost-logo-1.png" alt="Maximost Logo" style="height: 40px; width: auto;">
+                    <div class="logo-text">MaxiMost</div>
                 </div>
             </div>
         </div>
@@ -437,7 +516,7 @@
         <div class="container">
             <h1>Unlock Your Maximum Hidden Potential</h1>
             <div class="uvp-banner">
-                <h2>"Maximost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience."</h2>
+                <h2>"MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience with the power of 1% daily improvement."</h2>
             </div>
             <div class="dashboard-showcase">
                 <div class="dashboard-image">
@@ -473,18 +552,23 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🔄</div>
-                    <h3>Streak Calculation</h3>
-                    <p>Track consecutive days of habit completion with milestone visualization to keep you motivated.</p>
+                    <h3>Smart Streak Calculation</h3>
+                    <p>Track consecutive days of habit completion with milestone visualizations at 3, 7, 14, 30, 60, 90, 180, and 365 days to keep you motivated and build lasting habits.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📊</div>
-                    <h3>Comprehensive Tracking</h3>
-                    <p>Daily, weekly, and monthly views with visual progress indicators for absolute and frequency-based habits.</p>
+                    <h3>Multi-view Tracking</h3>
+                    <p>Daily, weekly, and monthly views with beautiful visual progress indicators for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⬆️</div>
+                    <h3>1% Better Every Day</h3>
+                    <p>Make small, consistent improvements following the "compound effect" principle. Just 1% better each day results in 37x improvement over a year.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🧠</div>
                     <h3>Six Key Performance Areas</h3>
-                    <p>Physical Training, Nutrition & Fueling, Sleep & Hygiene, Mental Acuity & Growth, Relationships & Community, and Financial Habits.</p>
+                    <p>Physical Training 🔴, Nutrition 🟠, Sleep & Hygiene 🟣, Mental Acuity 🟡, Relationships 🔵, and Financial Habits 🟢 - all color-coded for easy recognition.</p>
                 </div>
             </div>
         </div>
@@ -496,9 +580,22 @@
             <h2>Fitness Tracker Integration</h2>
             <div class="integration-content">
                 <div class="integration-text">
-                    <h3>Automatic Habit Completion</h3>
-                    <p>Connect your favorite fitness trackers like Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin to automatically complete habits based on your activity data.</p>
-                    <p>No more manual tracking - your steps, workouts, sleep data, and more will automatically mark relevant habits as complete!</p>
+                    <h3>Connect All Your Health Data</h3>
+                    <p>Integration with <span class="highlight">Fitbit</span>, <span class="highlight">Samsung Health</span>, <span class="highlight">Apple Health</span>, <span class="highlight">Google Fit</span>, and <span class="highlight">Garmin</span> automatically completes your habits based on your activity.</p>
+                    <div class="integration-benefits">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">🏃‍♂️</div>
+                            <p>Auto-complete workout habits when your fitness tracker records activity</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">😴</div>
+                            <p>Sleep habits marked complete when your tracker records sufficient sleep</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">❤️</div>
+                            <p>Heart rate and recovery metrics for holistic health tracking</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="integration-device">
                     <div class="mobile-mockup">
@@ -508,6 +605,34 @@
                     </div>
                 </div>
             </div>
+            
+            <style>
+                .highlight {
+                    color: var(--accent-color);
+                    font-weight: bold;
+                }
+                
+                .integration-benefits {
+                    margin-top: 30px;
+                }
+                
+                .benefit-item {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    padding: 15px;
+                    border-radius: var(--border-radius);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .benefit-icon {
+                    font-size: 1.8rem;
+                    margin-right: 15px;
+                    min-width: 40px;
+                    text-align: center;
+                }
+            </style>
         </div>
     </section>
     
