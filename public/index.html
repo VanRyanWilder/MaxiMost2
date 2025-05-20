@@ -397,8 +397,14 @@
             max-width: 500px;
             margin: 0 auto;
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-row {
+            display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
         
         .email-input {
@@ -410,6 +416,7 @@
             font-size: 1rem;
             background-color: rgba(255, 255, 255, 0.9);
             min-width: 200px;
+            outline: none;
         }
         
         .submit-btn {
@@ -419,15 +426,66 @@
             color: white;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
             transition: var(--transition);
         }
         
         .submit-btn:hover {
             background-color: #0b7d47;
             transform: translateY(-2px);
+        }
+        
+        /* Referral Option Styling */
+        .referral-option {
+            margin-top: 10px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .referral-checkbox-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .referral-checkbox-area label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .referral-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 20px;
+        }
+        
+        .referral-description p {
+            margin-bottom: 8px;
+        }
+        
+        .points-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .points-icon {
+            font-size: 1.1rem;
+            color: #FFD700;
+        }
+        
+        .points-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         /* FAQ Section */
@@ -801,13 +859,20 @@
             </style>
             
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Find quote elements if they exist on the current page
+                // Move quote rotation logic to window load to ensure all elements are fully loaded
+                window.addEventListener('load', function() {
+                    // Skip this if we're not on the main page with quotes
+                    if (document.querySelector('.hero-quotes') === null) {
+                        return;
+                    }
+                    
                     const heroQuoteSlides = document.querySelectorAll('.hero-quotes .quote-slide');
                     const heroIndicators = document.querySelectorAll('.hero-quotes .quote-indicator');
                     
-                    // Only set up quote rotation if elements exist
-                    if (heroQuoteSlides.length > 0 && heroIndicators.length > 0) {
+                    // Only set up quote rotation if elements exist and match in count
+                    if (heroQuoteSlides.length > 0 && heroIndicators.length > 0 && 
+                        heroQuoteSlides.length === heroIndicators.length) {
+                        
                         let heroCurrentQuote = 0;
                         
                         function showHeroQuote(index) {
@@ -817,8 +882,12 @@
                             }
                             
                             // Remove active class from all slides and indicators
-                            heroQuoteSlides.forEach(slide => slide.classList.remove('active'));
-                            heroIndicators.forEach(dot => dot.classList.remove('active'));
+                            for (let i = 0; i < heroQuoteSlides.length; i++) {
+                                heroQuoteSlides[i].classList.remove('active');
+                                if (i < heroIndicators.length) {
+                                    heroIndicators[i].classList.remove('active');
+                                }
+                            }
                             
                             // Add active class to current slide and indicator
                             heroQuoteSlides[index].classList.add('active');
@@ -827,14 +896,14 @@
                         }
                         
                         // Add click event to indicators
-                        heroIndicators.forEach((indicator, index) => {
-                            indicator.addEventListener('click', () => {
-                                showHeroQuote(index);
+                        for (let i = 0; i < heroIndicators.length; i++) {
+                            heroIndicators[i].addEventListener('click', function() {
+                                showHeroQuote(i);
                             });
-                        });
+                        }
                         
                         // Auto-rotate quotes
-                        setInterval(() => {
+                        setInterval(function() {
                             let nextQuote = (heroCurrentQuote + 1) % heroQuoteSlides.length;
                             showHeroQuote(nextQuote);
                         }, 8000);
@@ -1939,12 +2008,14 @@
             <div class="cta-panel">
                 <h2>Join the MaxiMost Community</h2>
                 <p>Be the first to access our AI-powered habit tracking system and start your journey to maximum potential.</p>
-                <form class="email-form dark">
-                    <input type="email" class="email-input" placeholder="Enter your email" required>
-                    <button type="submit" class="submit-btn">Get Early Access</button>
+                <form class="email-form dark" action="https://formspree.io/f/maximost@gmail.com" method="POST">
+                    <div class="form-row">
+                        <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+                        <button type="submit" class="submit-btn">Get Early Access</button>
+                    </div>
                     <div class="referral-option">
                         <div class="referral-checkbox-area">
-                            <input type="checkbox" id="referral-checkbox-footer">
+                            <input type="checkbox" id="referral-checkbox-footer" name="join_rewards">
                             <label for="referral-checkbox-footer">Join our rewards program</label>
                         </div>
                         <div class="referral-description">
