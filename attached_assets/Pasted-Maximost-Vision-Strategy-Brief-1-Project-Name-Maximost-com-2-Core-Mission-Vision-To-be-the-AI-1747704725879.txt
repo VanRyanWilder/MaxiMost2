@@ -1,0 +1,88 @@
+Maximost Vision & Strategy Brief
+1. Project Name: Maximost.com
+
+2. Core Mission/Vision:
+To be the AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help users forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience.
+
+3. Target Audience(s):
+
+Performance Optimizers: Individuals focused on peak physical and mental performance, influenced by figures like Peter Attia and David Goggins, interested in data and advanced strategies.
+
+Stoic Practitioners/Seekers: Those actively studying or trying to implement Stoic philosophy for resilience and better living.
+
+Habit Builders (Atomic Habits followers): Individuals looking for effective tools to build good habits and break bad ones based on proven principles.
+
+Individuals in Recovery/Seeking to Break Bad Habits: Users needing structured support, accountability, and positive replacement strategies for specific issues like alcohol, porn, or gambling.
+
+Holistic Self-Improvers: People looking for an integrated approach to wellness that combines physical, mental, and philosophical elements.
+
+4. Unique Selling Proposition (UVP):
+Maximost offers a synergistic integration of:
+
+Actionable habit formation based on scientific principles.
+
+Deeply embedded Stoic philosophy and performance science (Attia, Goggins) for mindset and resilience.
+
+Personalized AI coaching for guidance, feedback, and adaptation.
+
+Comprehensive habit management: building positive habits AND robust support for breaking detrimental habits/addictions.
+
+Practical application of wisdom from influential books ("Atomic Habits," "Discipline Equals Freedom," "Eat That Frog," etc.).
+It aims to be a unified platform, reducing the need for multiple disparate self-improvement apps.
+
+5. Core Philosophies & Influences:
+
+Stoicism (Marcus Aurelius, Seneca, Epictetus)
+
+"Atomic Habits" by James Clear
+
+Mindset of David Goggins (mental toughness, resilience)
+
+Performance optimization principles of Peter Attia (healthspan, data-driven health)
+
+"Discipline Equals Freedom" by Jocko Willink
+
+"Eat That Frog" by Brian Tracy
+
+6. Key App Pillars/Modules (High-Level):
+
+Intelligent Habit Tracking (for building positive habits)
+
+Dedicated Module for Breaking Bad Habits & Addiction Recovery Support (AI-assisted)
+
+AI Stoic Coach & Performance Insights
+
+Integrated Journaling with Themed Prompts
+
+Resource Library (summaries, actionable guides related to core philosophies/books)
+
+(Future) Community & Accountability Features
+
+7. Overall Tone & Feel of the Brand/App:
+Sophisticated, strong, inspiring, trustworthy, disciplined, resilient, empowering, action-oriented, empathetic (especially for habit breaking).
+
+8. Technology Stack (Primary):
+
+App: React Native (for iOS and Android)
+
+Website: Initial landing page/MVP on Replit (HTML/CSS/JS), potentially expanding later.
+
+Backend/AI: Google Cloud Platform
+
+9. Monetization Model:
+
+App: Freemium (core features free, premium subscription for advanced AI, deeper content, more customization).
+
+Website: Affiliate marketing (e.g., supplements via Amazon Associates, relevant books, courses).
+
+10. Current Project Stage (as of May 2025):
+
+App: Core functionality developed, currently in testing.
+
+Website: maximost.com domain secured, basic Replit HTML page for initial presence/testing.
+
+Google Workspace & Google Cloud: Set up.
+
+Amazon Associates: Account active for supplement links.
+
+AI Validation Framework: Steps 1-3 (Problem, Market, Competitor) show positive signals. Steps 4 (Zero-Cost MVP) & 5 (Early Adopter Interviews) are the immediate next actions for real-world validation.
