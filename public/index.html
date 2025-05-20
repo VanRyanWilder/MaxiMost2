@@ -798,31 +798,43 @@
             
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
+                    // Find quote elements if they exist on the current page
                     const heroQuoteSlides = document.querySelectorAll('.hero-quotes .quote-slide');
                     const heroIndicators = document.querySelectorAll('.hero-quotes .quote-indicator');
-                    let heroCurrentQuote = 0;
                     
-                    function showHeroQuote(index) {
-                        heroQuoteSlides.forEach(slide => slide.classList.remove('active'));
-                        heroIndicators.forEach(dot => dot.classList.remove('active'));
+                    // Only set up quote rotation if elements exist
+                    if (heroQuoteSlides.length > 0 && heroIndicators.length > 0) {
+                        let heroCurrentQuote = 0;
                         
-                        heroQuoteSlides[index].classList.add('active');
-                        heroIndicators[index].classList.add('active');
-                        heroCurrentQuote = index;
-                    }
-                    
-                    // Add click event to indicators
-                    heroIndicators.forEach((indicator, index) => {
-                        indicator.addEventListener('click', () => {
-                            showHeroQuote(index);
+                        function showHeroQuote(index) {
+                            // Safety check for valid index
+                            if (index >= heroQuoteSlides.length) {
+                                index = 0;
+                            }
+                            
+                            // Remove active class from all slides and indicators
+                            heroQuoteSlides.forEach(slide => slide.classList.remove('active'));
+                            heroIndicators.forEach(dot => dot.classList.remove('active'));
+                            
+                            // Add active class to current slide and indicator
+                            heroQuoteSlides[index].classList.add('active');
+                            heroIndicators[index].classList.add('active');
+                            heroCurrentQuote = index;
+                        }
+                        
+                        // Add click event to indicators
+                        heroIndicators.forEach((indicator, index) => {
+                            indicator.addEventListener('click', () => {
+                                showHeroQuote(index);
+                            });
                         });
-                    });
-                    
-                    // Auto-rotate quotes
-                    setInterval(() => {
-                        let nextQuote = (heroCurrentQuote + 1) % heroQuoteSlides.length;
-                        showHeroQuote(nextQuote);
-                    }, 8000);
+                        
+                        // Auto-rotate quotes
+                        setInterval(() => {
+                            let nextQuote = (heroCurrentQuote + 1) % heroQuoteSlides.length;
+                            showHeroQuote(nextQuote);
+                        }, 8000);
+                    }
                 });
             </script>
             
