@@ -27,8 +27,7 @@ const encodeCredentials = (clientId: string, clientSecret: string): string => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve static files from the public directory
-  app.use('/', express.static('public'));
+  // Remove this line as we're handling static files in index.ts
   
   // Landing page route for the "Fake Door" test
   app.get("/landing", (req, res) => {
