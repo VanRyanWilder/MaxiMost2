@@ -17,7 +17,8 @@ import {
   insertBloodworkSchema
 } from "@shared/schema";
 import fetch from "node-fetch";
-import { URLSearchParams } from "url";
+// Using native URLSearchParams for fetch requests
+import { URLSearchParams as NodeURLSearchParams } from "url";
 import path from "path";
 import fs from "fs";
 
