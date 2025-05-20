@@ -642,7 +642,7 @@
             <p>Join our exclusive waitlist today and get early access to the app that's revolutionizing personal growth.</p>
             
             <div class="form-container">
-                <form id="waitlist-form" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+                <form id="waitlist-form" action="https://formspree.io/f/xeqgdvja" method="POST">
                     <input type="email" name="email" placeholder="Your email address" required>
                     <button type="submit">Join the Waitlist for Early Access</button>
                 </form>
@@ -665,8 +665,14 @@
         </div>
     </footer>
 
-    <!-- Tracking Scripts -->
+    <!-- Google Analytics Tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-MEASUREMENT_ID');
+        
         // Track page views
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Page view recorded');
@@ -674,16 +680,20 @@
         
         // Track email signups
         document.getElementById('waitlist-form').addEventListener('submit', function(e) {
-            // Prevent the default form submission for the demo
-            e.preventDefault();
+            // Don't prevent the default form submission - let Formspree handle it
             const email = this.querySelector('input[type="email"]').value;
             console.log('Signup recorded:', email);
             
-            // Show success message
-            alert('Thank you for joining our waitlist! We\'ll notify you when early access is available.');
+            // The form will be submitted to Formspree and redirected
+            // We track this event but don't need to show an alert as Formspree handles confirmation
             
-            // In a real implementation, you would submit to Formspree
-            // this.submit();
+            // Add tracking for analytics if needed
+            if (window.gtag) {
+                gtag('event', 'signup', {
+                    'event_category': 'engagement',
+                    'event_label': 'waitlist'
+                });
+            }
         });
         
         // Track time on page
