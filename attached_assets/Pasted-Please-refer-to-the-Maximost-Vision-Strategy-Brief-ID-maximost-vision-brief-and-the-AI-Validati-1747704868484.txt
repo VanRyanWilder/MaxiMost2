@@ -1,0 +1,28 @@
+Please refer to the Maximost Vision & Strategy Brief (ID: maximost_vision_brief) and the AI Validation Framework Summary & Next Steps (ID: maximost_validation_summary_next_steps).
+
+We are now ready to execute Step 4: Zero-Cost MVP Design (Fake Door Test). I need your help to create the assets for a simple HTML landing page that I will build on Replit.
+
+Specifically, please provide:
+
+Detailed Landing Page Content:
+
+Based on the UVP and target audiences in the maximost_vision_brief, and the "Landing Page Copy Generation" examples in Step 4 of the maximost_ai_validation_apply document (which is now summarized in maximost_validation_summary_next_steps), please generate the full text content for the landing page. This should include:
+A compelling main headline.
+An engaging sub-headline.
+3-4 key problem/solution bullet points highlighting how Maximost addresses user pains.
+A section briefly listing 3-5 core feature highlights (e.g., "AI Stoic Coach," "Atomic Habit Integration," "Addiction Recovery Module").
+A clear Call to Action (CTA) text (e.g., for an email signup button).
+The tone should be inspiring, trustworthy, and clearly communicate the unique blend of Stoicism, AI, and performance.
+Guidance for Visuals on the Landing Page:
+
+While I'll be coding in HTML on Replit, describe what kind of simple visuals or image placeholders I should use to represent the app mockups mentioned in Step 4 of the validation framework. For example, should I use placeholder boxes with text descriptions, or can you suggest simple icons or abstract imagery that conveys the concepts (AI, Stoicism, habits, performance)?
+Email Collection Setup Advice for Replit:
+
+What's the simplest way to collect email addresses from an HTML page hosted on Replit for this "Fake Door" test? (e.g., link to a Google Form, suggest a simple email mailto: link, or a basic third-party form embed if feasible on Replit).
+Ad Copy for Driving Traffic:
+
+Please provide 2-3 short ad copy examples (for platforms like Facebook/Instagram or Google Ads) designed to drive traffic to this Replit landing page, targeting the demographics identified in Step 2 of the validation.
+Key Metrics to Track for this Test:
+
+Reiterate the specific metrics I need to track from the ad campaigns and the landing page to evaluate the success of this "Fake Door" test (as outlined in Step 4 of the validation summary).
+My goal is to quickly set up this test on Replit to gauge initial user interest based on the Maximost promise. Thank you!"
