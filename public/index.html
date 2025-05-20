@@ -543,7 +543,7 @@
             </div>
             
             <div class="performance-areas">
-                <h3 class="section-subtitle">Six Key Performance Areas</h3>
+                <h3 class="section-subtitle">AI-Driven Habit Tracking System</h3>
                 <div class="performance-grid">
                     <div class="performance-area">
                         <div class="area-color-indicator" style="background-color: #ff3b30;"></div>
@@ -740,6 +740,7 @@
                     </div>
                     <h3>Multi-view Tracking</h3>
                     <p>Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits.</p>
+                    <div class="card-hover-effect"></div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -751,6 +752,7 @@
                     </div>
                     <h3>Smart Streak Calculation</h3>
                     <p>Track consecutive days with milestone visualizations at 3, 7, 14, 30, 60, 90, 180, and 365 days.</p>
+                    <div class="card-hover-effect"></div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -763,6 +765,7 @@
                     </div>
                     <h3>Fitness Tracker Integration</h3>
                     <p>Connect with Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin for automatic habit completion.</p>
+                    <div class="card-hover-effect"></div>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -774,8 +777,80 @@
                     </div>
                     <h3>1% Better Every Day</h3>
                     <p>Make consistent improvements following the "compound effect" principle. 1% better each day leads to 37x improvement in a year.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Scientific Approach</h3>
+                    <p>Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Dr. Mike Brecka for optimal health outcomes.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 14.9999C19 16.0608 18.5259 17.0782 17.682 17.8283C16.8381 18.5784 15.6935 18.9999 14.5 18.9999H6.5C5.30653 18.9999 4.16193 18.5784 3.31802 17.8283C2.47411 17.0782 2 16.0608 2 14.9999C2 13.4382 2.655 12.0392 3.69 11.1499C3.24 10.2899 3 9.32993 3 8.32993C3 7.26906 3.47411 6.25169 4.31802 5.50155C5.16193 4.75142 6.30653 4.32993 7.5 4.32993C8.92 4.32993 10.2 4.92993 11.09 5.89993C11.5 5.75993 11.95 5.67993 12.41 5.67993C13.8217 5.67993 15.1752 6.2427 16.1754 7.24287C17.1755 8.24303 17.74 9.59658 17.74 10.9999C17.74 11.2399 17.72 11.4799 17.68 11.7099C18.52 12.5999 19 13.7499 19 14.9999Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7.5 9.83002V13.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12.5 10.83V14.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Mental Resilience</h3>
+                    <p>Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges.</p>
+                    <div class="card-hover-effect"></div>
                 </div>
             </div>
+            
+            <style>
+                .feature-card {
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                
+                .feature-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+                    z-index: 2;
+                }
+                
+                .feature-card:hover .feature-icon {
+                    transform: scale(1.15);
+                    color: var(--accent-color);
+                }
+                
+                .feature-icon {
+                    transition: all 0.3s ease;
+                }
+                
+                .card-hover-effect {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: linear-gradient(90deg, var(--accent-color), #ff3131, #ff914d, #ffbd59, #6259ff);
+                    background-size: 400% 400%;
+                    transform: scaleX(0);
+                    transform-origin: left;
+                    transition: transform 0.3s ease-out;
+                }
+                
+                .feature-card:hover .card-hover-effect {
+                    transform: scaleX(1);
+                    animation: gradientMove 3s ease infinite;
+                }
+                
+                @keyframes gradientMove {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+            </style>
             
             <style>
                 .features-grid {
@@ -1035,6 +1110,14 @@
         </div>
     </section>
     
+    <!-- Logo Footer -->
+    <section class="logo-footer">
+        <div class="logo-container">
+            <img src="maximost-logo-0.png" alt="MaxiMost Logo" class="footer-logo">
+            <div class="logo-glow"></div>
+        </div>
+    </section>
+    
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1048,5 +1131,61 @@
             </div>
         </div>
     </footer>
+    
+    <style>
+        .logo-footer {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 25, 1) 70%);
+        }
+        
+        .logo-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            width: 400px;
+            height: 400px;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+            animation: pulse 3s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.5));
+        }
+        
+        .logo-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.3) 0%, rgba(var(--primary-color-rgb), 0.1) 40%, rgba(var(--primary-color-rgb), 0) 70%);
+            border-radius: 50%;
+            animation: glow 4s infinite alternate ease-in-out;
+            z-index: 1;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { 
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            100% { 
+                opacity: 0.8;
+                transform: scale(1.2);
+            }
+        }
+    </style>
 </body>
 </html>
