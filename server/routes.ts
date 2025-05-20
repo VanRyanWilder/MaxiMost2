@@ -1,4 +1,4 @@
-import type { Express, Request, Response } from "express";
+import express, { type Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -27,6 +27,9 @@ const encodeCredentials = (clientId: string, clientSecret: string): string => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from the public directory
+  app.use('/', express.static('public'));
+  
   // Landing page route for the "Fake Door" test
   app.get("/landing", (req, res) => {
     const landingPath = path.join(process.cwd(), 'public', 'landing.html');
