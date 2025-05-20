@@ -527,7 +527,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="maximost-logo-0.png" alt="MaxiMost Logo" style="height: 60px; width: 60px; object-fit: contain;">
+                    <img src="maximost-logo-0.png" alt="MaxiMost Logo" style="height: 100px; width: 100px; object-fit: contain;">
                     <div class="logo-text">MaxiMost</div>
                 </div>
             </div>
@@ -542,32 +542,112 @@
                 <h2>"MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience with the power of 1% daily improvement."</h2>
             </div>
             
-            <div class="performance-indicators">
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(255, 59, 48, 0.2); color: #ff3b30;">💪</div>
-                    <span>Physical Training</span>
-                </div>
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(255, 149, 0, 0.2); color: #ff9500;">🍽️</div>
-                    <span>Nutrition & Fueling</span>
-                </div>
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(88, 86, 214, 0.2); color: #5856d6;">😴</div>
-                    <span>Sleep & Hygiene</span>
-                </div>
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(255, 204, 0, 0.2); color: #ffcc00;">💡</div>
-                    <span>Mental Acuity</span>
-                </div>
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(0, 122, 255, 0.2); color: #007aff;">👥</div>
-                    <span>Relationships</span>
-                </div>
-                <div class="indicator">
-                    <div class="indicator-icon" style="background-color: rgba(52, 199, 89, 0.2); color: #34c759;">💰</div>
-                    <span>Financial Habits</span>
+            <div class="performance-areas">
+                <h3 class="section-subtitle">Six Key Performance Areas</h3>
+                <div class="performance-grid">
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ff3b30;"></div>
+                        <span class="area-name">Physical Training</span>
+                        <span class="area-desc">Strength, cardio, mobility, and recovery</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ff9500;"></div>
+                        <span class="area-name">Nutrition & Fueling</span>
+                        <span class="area-desc">Diet, hydration, and supplements</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #5856d6;"></div>
+                        <span class="area-name">Sleep & Hygiene</span>
+                        <span class="area-desc">Quality rest and recovery cycles</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ffcc00;"></div>
+                        <span class="area-name">Mental Acuity</span>
+                        <span class="area-desc">Focus, learning, and mindfulness</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #007aff;"></div>
+                        <span class="area-name">Relationships</span>
+                        <span class="area-desc">Social connections and communication</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #34c759;"></div>
+                        <span class="area-name">Financial Habits</span>
+                        <span class="area-desc">Saving, investing, and wealth building</span>
+                    </div>
                 </div>
             </div>
+            
+            <style>
+                .section-subtitle {
+                    text-align: center;
+                    margin-bottom: 25px;
+                    font-size: 1.5rem;
+                    font-weight: 500;
+                }
+                
+                .performance-areas {
+                    margin: 40px 0;
+                }
+                
+                .performance-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 20px;
+                }
+                
+                .performance-area {
+                    background: rgba(255, 255, 255, 0.03);
+                    padding: 20px;
+                    border-radius: var(--border-radius);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    display: flex;
+                    flex-direction: column;
+                    transition: var(--transition);
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .performance-area:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                    background: rgba(255, 255, 255, 0.05);
+                }
+                
+                .area-color-indicator {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 6px;
+                    height: 100%;
+                    opacity: 0.9;
+                }
+                
+                .area-name {
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    margin: 0 0 10px 0;
+                    padding-left: 15px;
+                }
+                
+                .area-desc {
+                    font-size: 0.9rem;
+                    opacity: 0.8;
+                    padding-left: 15px;
+                }
+                
+                @media (max-width: 991px) {
+                    .performance-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+                
+                @media (max-width: 576px) {
+                    .performance-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+            </style>
             
             <div class="hero-graphic">
                 <div class="dashboard-image featured-image">
@@ -649,26 +729,74 @@
             <h2>Key Features</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Smart Streak Calculation</h3>
-                    <p>Track consecutive days of habit completion with milestone visualizations at 3, 7, 14, 30, 60, 90, 180, and 365 days to keep you motivated and build lasting habits.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 3V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 3V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 9H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 15H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <h3>Multi-view Tracking</h3>
-                    <p>Daily, weekly, and monthly views with beautiful visual progress indicators for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits.</p>
+                    <p>Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">⬆️</div>
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Smart Streak Calculation</h3>
+                    <p>Track consecutive days with milestone visualizations at 3, 7, 14, 30, 60, 90, 180, and 365 days.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 16V8C21 7.46957 20.7893 6.96086 20.4142 6.58579C20.0391 6.21071 19.5304 6 19 6H5C4.46957 6 3.96086 6.21071 3.58579 6.58579C3.21071 6.96086 3 7.46957 3 8V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 10H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 14H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M11 14H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Fitness Tracker Integration</h3>
+                    <p>Connect with Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin for automatic habit completion.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
                     <h3>1% Better Every Day</h3>
-                    <p>Make small, consistent improvements following the "compound effect" principle. Just 1% better each day results in 37x improvement over a year.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🧠</div>
-                    <h3>Six Key Performance Areas</h3>
-                    <p>Physical Training 🔴, Nutrition 🟠, Sleep & Hygiene 🟣, Mental Acuity 🟡, Relationships 🔵, and Financial Habits 🟢 - all color-coded for easy recognition.</p>
+                    <p>Make consistent improvements following the "compound effect" principle. 1% better each day leads to 37x improvement in a year.</p>
                 </div>
             </div>
+            
+            <style>
+                .features-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 30px;
+                    margin-bottom: 40px;
+                }
+                
+                @media (max-width: 768px) {
+                    .features-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+                
+                @media (max-width: 576px) {
+                    .features-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+            </style>
         </div>
     </section>
     
@@ -682,27 +810,163 @@
                     <p>Integration with <span class="highlight">Fitbit</span>, <span class="highlight">Samsung Health</span>, <span class="highlight">Apple Health</span>, <span class="highlight">Google Fit</span>, and <span class="highlight">Garmin</span> automatically completes your habits based on your activity.</p>
                     <div class="integration-benefits">
                         <div class="benefit-item">
-                            <div class="benefit-icon">🏃‍♂️</div>
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                </svg>
+                            </div>
                             <p>Auto-complete workout habits when your fitness tracker records activity</p>
                         </div>
                         <div class="benefit-item">
-                            <div class="benefit-icon">😴</div>
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20.94c1.5 0 2.75-1.25 2.75-2.75v-4l-1.5-1.5h-2.5L9.25 14.19v4c0 1.5 1.25 2.75 2.75 2.75z"></path>
+                                    <path d="M12 3.06c-1.5 0-2.75 1.25-2.75 2.75v4l1.5 1.5h2.5l1.5-1.5v-4c0-1.5-1.25-2.75-2.75-2.75z"></path>
+                                    <path d="M20.94 12c0-1.5-1.25-2.75-2.75-2.75h-4l-1.5 1.5v2.5l1.5 1.5h4c1.5 0 2.75-1.25 2.75-2.75z"></path>
+                                    <path d="M3.06 12c0 1.5 1.25 2.75 2.75 2.75h4l1.5-1.5v-2.5l-1.5-1.5h-4C4.31 9.25 3.06 10.5 3.06 12z"></path>
+                                </svg>
+                            </div>
                             <p>Sleep habits marked complete when your tracker records sufficient sleep</p>
                         </div>
                         <div class="benefit-item">
-                            <div class="benefit-icon">❤️</div>
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
+                                </svg>
+                            </div>
                             <p>Heart rate and recovery metrics for holistic health tracking</p>
                         </div>
                     </div>
                 </div>
                 <div class="integration-device">
-                    <div class="mobile-mockup">
-                        <div class="device-frame">
-                            <img src="dashboard1.png" alt="Fitness Integration" class="device-screen">
+                    <div class="tracker-stats">
+                        <div class="tracker-header">
+                            <div class="tracker-logo">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6.8 22L17.2 22C19.2 22 19.6 21.5 19.6 19.5L19.6 4.5C19.6 2.5 19.2 2 17.2 2L6.8 2C4.8 2 4.4 2.5 4.4 4.5L4.4 19.5C4.4 21.5 4.8 22 6.8 22Z" stroke-width="1.5" stroke-miterlimit="10"/>
+                                    <path d="M12 19C11.4477 19 11 18.5523 11 18C11 17.4477 11.4477 17 12 17C12.5523 17 13 17.4477 13 18C13 18.5523 12.5523 19 12 19Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="tracker-title">Fitness Activity</div>
+                            <div class="tracker-date">Today</div>
+                        </div>
+                        
+                        <div class="tracker-metrics">
+                            <div class="metric-item">
+                                <div class="metric-value">9,857</div>
+                                <div class="metric-label">Steps</div>
+                                <div class="metric-progress" style="width: 82%"></div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">4.3</div>
+                                <div class="metric-label">Miles</div>
+                                <div class="metric-progress" style="width: 72%"></div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">2,478</div>
+                                <div class="metric-label">Calories</div>
+                                <div class="metric-progress" style="width: 62%"></div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">45</div>
+                                <div class="metric-label">Active Min</div>
+                                <div class="metric-progress" style="width: 56%"></div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">7:15</div>
+                                <div class="metric-label">Sleep</div>
+                                <div class="metric-progress" style="width: 91%"></div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">68</div>
+                                <div class="metric-label">BPM</div>
+                                <div class="metric-progress" style="width: 68%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <style>
+                .tracker-stats {
+                    background: rgba(20, 20, 30, 0.9);
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    overflow: hidden;
+                    width: 100%;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                }
+                
+                .tracker-header {
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .tracker-logo {
+                    margin-right: 15px;
+                    color: var(--accent-color);
+                }
+                
+                .tracker-title {
+                    flex-grow: 1;
+                    font-weight: 600;
+                    font-size: 1.2rem;
+                }
+                
+                .tracker-date {
+                    font-size: 0.9rem;
+                    opacity: 0.7;
+                }
+                
+                .tracker-metrics {
+                    padding: 15px;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                }
+                
+                .metric-item {
+                    padding: 15px;
+                    position: relative;
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                    overflow: hidden;
+                }
+                
+                .metric-value {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .metric-label {
+                    font-size: 0.9rem;
+                    opacity: 0.7;
+                    margin-top: 5px;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .metric-progress {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    height: 3px;
+                    background: var(--accent-color);
+                    opacity: 0.7;
+                }
+                
+                @media (max-width: 768px) {
+                    .tracker-metrics {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+            </style>
             
             <style>
                 .highlight {
