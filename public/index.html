@@ -834,12 +834,9 @@
                     display: flex;
                     justify-content: center;
                     gap: 8px;
-                    margin-top: 10px;
-                    padding-top: 10px;
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
+                    margin: 20px auto 0;
+                    padding-top: 5px;
+                    position: relative;
                     z-index: 5;
                 }
                 
@@ -859,54 +856,18 @@
             </style>
             
             <script>
-                // Move quote rotation logic to window load to ensure all elements are fully loaded
-                window.addEventListener('load', function() {
-                    // Skip this if we're not on the main page with quotes
-                    if (document.querySelector('.hero-quotes') === null) {
-                        return;
+                // Fixed quote rotation script
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Set first quote to active by default (no rotation)
+                    const quotes = document.querySelectorAll('.quote-slide');
+                    const indicators = document.querySelectorAll('.quote-indicator');
+                    
+                    if (quotes.length > 0) {
+                        quotes[0].classList.add('active');
                     }
                     
-                    const heroQuoteSlides = document.querySelectorAll('.hero-quotes .quote-slide');
-                    const heroIndicators = document.querySelectorAll('.hero-quotes .quote-indicator');
-                    
-                    // Only set up quote rotation if elements exist and match in count
-                    if (heroQuoteSlides.length > 0 && heroIndicators.length > 0 && 
-                        heroQuoteSlides.length === heroIndicators.length) {
-                        
-                        let heroCurrentQuote = 0;
-                        
-                        function showHeroQuote(index) {
-                            // Safety check for valid index
-                            if (index >= heroQuoteSlides.length) {
-                                index = 0;
-                            }
-                            
-                            // Remove active class from all slides and indicators
-                            for (let i = 0; i < heroQuoteSlides.length; i++) {
-                                heroQuoteSlides[i].classList.remove('active');
-                                if (i < heroIndicators.length) {
-                                    heroIndicators[i].classList.remove('active');
-                                }
-                            }
-                            
-                            // Add active class to current slide and indicator
-                            heroQuoteSlides[index].classList.add('active');
-                            heroIndicators[index].classList.add('active');
-                            heroCurrentQuote = index;
-                        }
-                        
-                        // Add click event to indicators
-                        for (let i = 0; i < heroIndicators.length; i++) {
-                            heroIndicators[i].addEventListener('click', function() {
-                                showHeroQuote(i);
-                            });
-                        }
-                        
-                        // Auto-rotate quotes
-                        setInterval(function() {
-                            let nextQuote = (heroCurrentQuote + 1) % heroQuoteSlides.length;
-                            showHeroQuote(nextQuote);
-                        }, 8000);
+                    if (indicators.length > 0) {
+                        indicators[0].classList.add('active');
                     }
                 });
             </script>
