@@ -744,10 +744,10 @@
                     </div>
                 </div>
                 <div class="quote-indicators">
-                    <span class="quote-indicator active"></span>
-                    <span class="quote-indicator"></span>
-                    <span class="quote-indicator"></span>
-                    <span class="quote-indicator"></span>
+                    <button class="quote-indicator active" aria-label="Quote 1"></button>
+                    <button class="quote-indicator" aria-label="Quote 2"></button>
+                    <button class="quote-indicator" aria-label="Quote 3"></button>
+                    <button class="quote-indicator" aria-label="Quote 4"></button>
                 </div>
             </div>
             
@@ -2103,5 +2103,46 @@
             }
         }
     </style>
+    <script>
+        // Quote rotation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const quoteSlides = document.querySelectorAll('.quote-slide');
+            const quoteIndicators = document.querySelectorAll('.quote-indicator');
+            let currentQuoteIndex = 0;
+            
+            // Setup click handlers for indicators
+            quoteIndicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentQuoteIndex = index;
+                    updateQuotes();
+                });
+            });
+            
+            // Function to update active quote
+            function updateQuotes() {
+                quoteSlides.forEach((slide, index) => {
+                    if (index === currentQuoteIndex) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+                
+                quoteIndicators.forEach((indicator, index) => {
+                    if (index === currentQuoteIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Auto rotate quotes
+            setInterval(() => {
+                currentQuoteIndex = (currentQuoteIndex + 1) % quoteSlides.length;
+                updateQuotes();
+            }, 6000);
+        });
+    </script>
 </body>
 </html>
