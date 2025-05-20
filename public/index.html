@@ -527,7 +527,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="maximost-logo-0.png" alt="MaxiMost Logo" style="height: 40px; width: 40px; object-fit: contain;">
+                    <img src="maximost-logo-0.png" alt="MaxiMost Logo" style="height: 60px; width: 60px; object-fit: contain;">
                     <div class="logo-text">MaxiMost</div>
                 </div>
             </div>
@@ -541,12 +541,95 @@
             <div class="uvp-banner">
                 <h2>"MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience with the power of 1% daily improvement."</h2>
             </div>
+            
+            <div class="performance-indicators">
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(255, 59, 48, 0.2); color: #ff3b30;">💪</div>
+                    <span>Physical Training</span>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(255, 149, 0, 0.2); color: #ff9500;">🍽️</div>
+                    <span>Nutrition & Fueling</span>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(88, 86, 214, 0.2); color: #5856d6;">😴</div>
+                    <span>Sleep & Hygiene</span>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(255, 204, 0, 0.2); color: #ffcc00;">💡</div>
+                    <span>Mental Acuity</span>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(0, 122, 255, 0.2); color: #007aff;">👥</div>
+                    <span>Relationships</span>
+                </div>
+                <div class="indicator">
+                    <div class="indicator-icon" style="background-color: rgba(52, 199, 89, 0.2); color: #34c759;">💰</div>
+                    <span>Financial Habits</span>
+                </div>
+            </div>
+            
             <div class="hero-graphic">
                 <div class="dashboard-image featured-image">
                     <img src="dashboard4.png" alt="MaxiMost Dashboard">
                     <div class="image-caption">The MaxiMost Dashboard - Your Personal Growth Command Center</div>
                 </div>
             </div>
+            
+            <style>
+                .performance-indicators {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    margin: 30px 0;
+                    gap: 15px;
+                }
+                
+                .indicator {
+                    flex: 1;
+                    min-width: 150px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    padding: 15px;
+                    border-radius: var(--border-radius);
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    transition: var(--transition);
+                }
+                
+                .indicator:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                    border-color: rgba(255, 255, 255, 0.2);
+                }
+                
+                .indicator-icon {
+                    font-size: 2rem;
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    margin-bottom: 10px;
+                }
+                
+                .indicator span {
+                    font-weight: 500;
+                }
+                
+                @media (max-width: 768px) {
+                    .performance-indicators {
+                        justify-content: center;
+                    }
+                    
+                    .indicator {
+                        min-width: 120px;
+                    }
+                }
+            </style>
             
             <!-- Mid-page signup banner -->
             <div class="mid-signup">
