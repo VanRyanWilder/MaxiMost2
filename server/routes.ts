@@ -36,6 +36,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(404).send('Landing page not found');
     }
   });
+  
+  // Also serve the landing page at the root URL for maximum visibility
+  app.get("/", (req, res) => {
+    const landingPath = path.join(process.cwd(), 'public', 'landing.html');
+    if (fs.existsSync(landingPath)) {
+      res.sendFile(landingPath);
+    } else {
+      res.status(404).send('Landing page not found');
+    }
+  });
   // Users routes
   app.get("/api/users/:id", async (req, res) => {
     const id = parseInt(req.params.id);
