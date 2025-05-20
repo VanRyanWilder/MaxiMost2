@@ -18,6 +18,8 @@ import {
 } from "@shared/schema";
 import fetch from "node-fetch";
 import { URLSearchParams } from "url";
+import path from "path";
+import fs from "fs";
 
 // Helper function to encode credentials for Basic Auth
 const encodeCredentials = (clientId: string, clientSecret: string): string => {
@@ -25,6 +27,15 @@ const encodeCredentials = (clientId: string, clientSecret: string): string => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Landing page route for the "Fake Door" test
+  app.get("/landing", (req, res) => {
+    const landingPath = path.join(process.cwd(), 'public', 'landing.html');
+    if (fs.existsSync(landingPath)) {
+      res.sendFile(landingPath);
+    } else {
+      res.status(404).send('Landing page not found');
+    }
+  });
   // Users routes
   app.get("/api/users/:id", async (req, res) => {
     const id = parseInt(req.params.id);
