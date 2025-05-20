@@ -641,7 +641,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // In a real app, you would get userId from the session
       // For prototype purposes, we'll use a placeholder user ID
-      const userId = req.user?.id || 1;
+      const userId = (req as any).user?.id || 1;
       
       const validatedData = insertSupplementReviewSchema.parse({
         ...req.body,
@@ -658,8 +658,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const review = await storage.createSupplementReview(validatedData);
       
-      // Update supplement review statistics
-      await storage.updateSupplementReviewStatistics(validatedData.supplementId);
+      // Update supplement status with review counts
+      await storage.updateSupplementReviewStatus(
+        validatedData.supplementId,
+        existingReviews.length + 1,
+        (existingReviews.reduce((sum, r) => sum + r.rating, 0) + validatedData.rating) / (existingReviews.length + 1)
+      );
       
       res.status(201).json(review);
     } catch (error) {
@@ -680,7 +684,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // In a real app, you would get userId from the session
-      const userId = req.user?.id || 1;
+      const userId = (req as any).user?.id || 1;
       
       const { isHelpful } = req.body;
       if (typeof isHelpful !== 'boolean') {
