@@ -983,7 +983,7 @@
             <div class="mid-signup">
                 <h2>Join the Maximost Waitlist – Be the First to Transform Your Habits!</h2>
                 <p>Join our exclusive early access list and get notified when we launch.</p>
-                <form class="email-form" action="https://formspree.io/f/maximost@gmail.com" method="POST">
+                <form class="email-form" action="https://formspree.io/f/maximost.com@gmail.com" method="POST" id="mid-signup-form">
                     <div class="form-row">
                         <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
                         <button type="submit" class="submit-btn">Join Waitlist</button>
@@ -2016,7 +2016,7 @@
             <div class="cta-panel">
                 <h2>Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!</h2>
                 <p>Sign up for early access and unlock special benefits reserved for our first members.</p>
-                <form class="email-form dark" action="https://formspree.io/f/maximost@gmail.com" method="POST">
+                <form class="email-form dark" action="https://formspree.io/f/maximost.com@gmail.com" method="POST" id="bottom-signup-form">
                     <div class="form-row">
                         <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
                         <button type="submit" class="submit-btn">Get Early Access</button>
@@ -2116,7 +2116,14 @@
             }
         }
     </style>
+    <!-- Google Analytics tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEASUREMENT_ID"></script>
     <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-MEASUREMENT_ID'); // Replace G-MEASUREMENT_ID with your actual Google Analytics ID
+        
         // Quote rotation functionality
         document.addEventListener('DOMContentLoaded', function() {
             const quoteSlides = document.querySelectorAll('.quote-slide');
@@ -2155,6 +2162,30 @@
                 currentQuoteIndex = (currentQuoteIndex + 1) % quoteSlides.length;
                 updateQuotes();
             }, 6000);
+            
+            // Track form submissions with Google Analytics
+            const midSignupForm = document.getElementById('mid-signup-form');
+            const bottomSignupForm = document.getElementById('bottom-signup-form');
+            
+            // Track mid-page signup form
+            if (midSignupForm) {
+                midSignupForm.addEventListener('submit', function() {
+                    gtag('event', 'signup', {
+                        'event_category': 'conversion',
+                        'event_label': 'mid-page-signup'
+                    });
+                });
+            }
+            
+            // Track bottom signup form
+            if (bottomSignupForm) {
+                bottomSignupForm.addEventListener('submit', function() {
+                    gtag('event', 'signup', {
+                        'event_category': 'conversion',
+                        'event_label': 'bottom-signup'
+                    });
+                });
+            }
         });
     </script>
 </body>
