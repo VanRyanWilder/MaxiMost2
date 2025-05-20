@@ -397,20 +397,24 @@
             max-width: 500px;
             margin: 0 auto;
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
         }
         
         .email-input {
             flex: 1;
-            padding: 15px;
+            padding: 12px 15px;
+            height: 45px;
             border: none;
             border-radius: var(--border-radius);
             font-size: 1rem;
             background-color: rgba(255, 255, 255, 0.9);
+            min-width: 200px;
         }
         
         .submit-btn {
-            padding: 15px 30px;
+            padding: 12px 20px;
+            height: 45px;
             background-color: var(--accent-color);
             color: white;
             border: none;
@@ -1552,17 +1556,7 @@
         </div>
     </section>
     
-    <!-- Call-to-Action -->
-    <section class="cta">
-        <div class="container">
-            <h2>Want to Maximize Your Potential?</h2>
-            <p>Join our waitlist to be the first to know when we launch. Get exclusive early access and special offers!</p>
-            <form class="email-form">
-                <input type="email" class="email-input" placeholder="Enter your email" required>
-                <button type="submit" class="submit-btn">Join Waitlist</button>
-            </form>
-        </div>
-    </section>
+    <!-- Removed duplicate Call-to-Action section with email signup -->
     
     <!-- Performance Areas Section -->
     <section class="performance-areas-section">
