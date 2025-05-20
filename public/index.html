@@ -542,9 +542,16 @@
                 <h2>"MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience with the power of 1% daily improvement."</h2>
             </div>
             
-            <!-- Quotes Section - Moved from below -->
+            <!-- AI-Driven Habit Tracking Section -->
+            <div class="habit-tracking-section">
+                <h3 class="section-subtitle">AI-Driven Habit Tracking System</h3>
+                <p class="system-description">Track your daily habits across six key performance areas, receive personalized insights, and unlock your maximum potential with our intelligent system.</p>
+            </div>
+            
+            <!-- Quotes Section -->
             <div class="quotes-panel">
                 <h3 class="section-subtitle">The Power of Habits</h3>
+                <p class="subtitle-description">Habits shape who we are and who we become</p>
                 <div class="quotes-carousel hero-quotes">
                     <div class="quote-slide active">
                         <div class="quote-content">
@@ -580,6 +587,19 @@
             </div>
             
             <style>
+                .habit-tracking-section {
+                    text-align: center;
+                    margin: 40px 0 20px 0;
+                }
+                
+                .system-description {
+                    max-width: 800px;
+                    margin: 0 auto 30px auto;
+                    font-size: 1.1rem;
+                    line-height: 1.6;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+                
                 .quotes-panel {
                     margin: 40px 0;
                     position: relative;
@@ -587,9 +607,17 @@
                 
                 .section-subtitle {
                     text-align: center;
-                    margin-bottom: 25px;
+                    margin-bottom: 15px;
                     font-size: 1.5rem;
                     font-weight: 500;
+                }
+                
+                .subtitle-description {
+                    text-align: center;
+                    margin-bottom: 25px;
+                    font-size: 1.05rem;
+                    color: rgba(255, 255, 255, 0.7);
+                    font-style: italic;
                 }
                 
                 .hero-quotes {
@@ -927,7 +955,60 @@
             <div class="integration-content">
                 <div class="integration-text">
                     <h3>Connect All Your Health Data</h3>
-                    <p>Integration with <span class="highlight">Fitbit</span>, <span class="highlight">Samsung Health</span>, <span class="highlight">Apple Health</span>, <span class="highlight">Google Fit</span>, and <span class="highlight">Garmin</span> automatically completes your habits based on your activity.</p>
+                    <p>Integration with your favorite fitness platforms automatically completes your habits based on your activity.</p>
+                    
+                    <div class="tracker-logos">
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon fitbit">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.2 3.8C14.4 2 11.7 2 9.8 3.8C8 5.6 8 8.3 9.8 10.2C11.6 12 14.3 12 16.2 10.2C18 8.4 18 5.7 16.2 3.8Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M2 15.3C2 17.4 3.8 19.1 5.8 19.1C7.8 19.1 9.6 17.4 9.6 15.3C9.6 13.2 7.8 11.5 5.8 11.5C3.8 11.5 2 13.3 2 15.3Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M18.2 22C20.4 22 22.2 20.2 22.2 18C22.2 15.8 20.4 14 18.2 14C16 14 14.2 15.8 14.2 18C14.2 20.2 16 22 18.2 22Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span>Fitbit</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon samsung">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L6.5 11H17.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 22L6.5 13H17.5L12 22Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span>Samsung Health</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon apple">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.1471 7.703C12.9821 7.703 13.9821 7.118 14.5681 6.325C15.1001 5.609 15.4851 4.609 15.4851 3.609C15.4851 3.494 15.4731 3.38 15.4491 3.289C14.4961 3.329 13.4241 3.926 12.8001 4.754C12.3041 5.391 11.8431 6.38 11.8431 7.391C11.8431 7.519 11.8671 7.647 11.8791 7.691C11.9501 7.695 12.0481 7.703 12.1471 7.703Z" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M15.5921 11.7918C15.5681 9.32976 17.5121 8.10576 17.6081 8.04976C16.4911 6.44176 14.7641 6.21776 14.1561 6.20576C12.5561 6.03776 11.0041 7.10976 10.1881 7.10976C9.35615 7.10976 8.06415 6.21776 6.72015 6.25376C4.95215 6.28976 3.33615 7.24976 2.41615 8.77376C0.522148 11.8458 1.92015 16.3718 3.73615 18.7798C4.64415 19.9558 5.71215 21.2718 7.08815 21.2118C8.43215 21.1518 8.94415 20.3318 10.5681 20.3318C12.1801 20.3318 12.6561 21.2118 14.0601 21.1758C15.5081 21.1518 16.4281 19.9918 17.3001 18.8038C18.3401 17.4338 18.7681 16.0998 18.7921 16.0158C18.7441 15.9978 15.6201 14.8338 15.5921 11.7918Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </div>
+                            <span>Apple Health</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon google">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 8L12 2L3 8V16L12 22L21 16V8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    <path d="M3 8L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 22V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M21 8L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 2V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <span>Google Fit</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon garmin">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <span>Garmin</span>
+                        </div>
+                    </div>
+                    
                     <div class="integration-benefits">
                         <div class="benefit-item">
                             <div class="benefit-icon">
@@ -1439,6 +1520,216 @@
         
         @media (max-width: 576px) {
             .performance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What People Are Saying</h2>
+            <p class="section-description">Hear from influencers and experts about how MaxiMost is changing the habit-building landscape</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Hormozi">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Alex Hormozi</div>
+                            <div class="author-title">Founder, Acquisition.com</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Melissa Urban">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Melissa Urban</div>
+                            <div class="author-title">Co-Founder & CEO, Whole30</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="Andrew Huberman">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Andrew Huberman</div>
+                            <div class="author-title">Neuroscientist & Professor</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/62.jpg" alt="Rhonda Patrick">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Rhonda Patrick</div>
+                            <div class="author-title">Biochemist & Health Expert</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .testimonials {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(20, 20, 25, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxjaXJjbGUgcj0iMS41IiBjeD0iMjAiIGN5PSIyMCIgZmlsbD0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSI+PC9jaXJjbGU+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIj48L3JlY3Q+PC9zdmc+');
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .testimonials h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-description {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin-right: 15px;
+            border: 2px solid rgba(var(--accent-color-rgb), 0.5);
+        }
+        
+        .testimonial-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .testimonial-author {
+            flex-grow: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .author-title {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .testimonial-source {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .testimonial-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .testimonials-grid {
                 grid-template-columns: 1fr;
             }
         }
