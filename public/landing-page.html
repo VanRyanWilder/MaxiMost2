@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaxiMost Habit Tracker - Unlock Your Maximum Hidden Potential</title>
+    <style>
+        :root {
+            --primary-color: #2962ff;
+            --secondary-color: #db4437;
+            --accent-color: #0f9d58;
+            --light-color: #f8f9fa;
+            --dark-color: #212121;
+            --darker-color: #121212;
+            --text-color: #e0e0e0;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--dark-color);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--darker-color);
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 40px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--darker-color) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        
+        .uvp-banner {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            margin-bottom: 40px;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .uvp-banner h2 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--text-color);
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Hero Graphic */
+        .hero-graphic {
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .dashboard-image {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        
+        .featured-image {
+            width: 70%;
+            max-width: 900px;
+            height: 350px;
+            margin: 0 auto;
+        }
+        
+        .image-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0) 100%);
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .dashboard-image:hover .image-caption {
+            transform: translateY(0);
+        }
+        
+        .dashboard-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 40%);
+            pointer-events: none;
+        }
+        
+        .dashboard-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: var(--primary-color);
+        }
+        
+        .dashboard-image:hover::after {
+            background: linear-gradient(to top, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 40%);
+        }
+        
+        .dashboard-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) brightness(1.05);
+            transition: var(--transition);
+        }
+        
+        .dashboard-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Mid-page signup */
+        .mid-signup {
+            margin: 20px 0 60px;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            text-align: center;
+            color: white;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mid-signup::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.03) 10px,
+                rgba(255, 255, 255, 0.03) 20px
+            );
+            animation: pattern-shift 20s linear infinite;
+            z-index: 0;
+        }
+        
+        @keyframes pattern-shift {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .mid-signup h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .mid-signup p {
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .mid-signup .email-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            background-color: var(--darker-color);
+        }
+        
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        /* Integration Section */
+        .integration {
+            padding: 60px 0;
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--darker-color) 100%);
+        }
+        
+        .integration h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .integration-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .integration-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .integration-device {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+        }
+        
+        .mobile-mockup {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .device-frame {
+            width: 100%;
+            border-radius: 36px;
+            border: 10px solid #333;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .device-screen {
+            width: 100%;
+            display: block;
+        }
+        
+        /* Call-to-Action */
+        .cta {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .email-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .email-input {
+            flex: 1;
+            padding: 12px 15px;
+            height: 45px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            min-width: 200px;
+            outline: none;
+        }
+        
+        .submit-btn {
+            padding: 12px 20px;
+            height: 45px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        
+        .submit-btn:hover {
+            background-color: #0b7d47;
+            transform: translateY(-2px);
+        }
+        
+        /* Referral Option Styling */
+        .referral-option {
+            margin-top: 10px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .referral-checkbox-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .referral-checkbox-area label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .referral-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-left: 20px;
+        }
+        
+        .referral-description p {
+            margin-bottom: 8px;
+        }
+        
+        .points-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .points-icon {
+            font-size: 1.1rem;
+            color: #FFD700;
+        }
+        
+        .points-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* FAQ Section */
+        .faq {
+            padding: 60px 0;
+            background-color: var(--darker-color);
+        }
+        
+        .faq h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        
+        .faq-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .faq-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+        
+        .faq-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+        
+        .faq-item p {
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--darker-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .uvp-banner h2 {
+                font-size: 1rem;
+            }
+            
+            .email-form {
+                flex-direction: column;
+            }
+            
+            .integration-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="maximost-logo-0.png" alt="MaxiMost Logo" style="height: 80px; width: 80px; object-fit: contain;">
+                    <div class="logo-text">MaxiMost <span style="font-size: 1.2rem; font-weight: 500;">Habit Tracker</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Unlock Your Maximum Hidden Potential</h1>
+            <div class="uvp-banner">
+                <h2>"Maximost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience."</h2>
+            </div>
+            
+            <!-- Quotes Section -->
+            <!-- AI-Driven Feature Section -->
+            <div class="ai-section">
+                <h3 class="section-subtitle">AI-Driven <span style="color: #2962ff;">Habit Tracking</span> System</h3>
+                <p class="subtitle-description">Maximum results with personalized AI coaching tailored to your goals</p>
+                <div class="ai-features">
+                    <div class="ai-feature-item" style="border-left: 3px solid #2962ff;">
+                        <div class="ai-feature-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="ai-feature-text">
+                            <h4>Personalized Insights</h4>
+                            <p>AI analyzes your habits and provides targeted recommendations for improvement</p>
+                        </div>
+                    </div>
+                    <div class="ai-feature-item" style="border-left: 3px solid #2962ff;">
+                        <div class="ai-feature-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 3H3V10H10V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 3H14V10H21V3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 14H14V21H21V14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 14H3V21H10V14Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="ai-feature-text">
+                            <h4>Pattern Recognition</h4>
+                            <p>Identifies habit stacking opportunities and optimal timing for your routine</p>
+                        </div>
+                    </div>
+                    <div class="ai-feature-item" style="border-left: 3px solid #2962ff;">
+                        <div class="ai-feature-icon blue">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="ai-feature-text">
+                            <h4>Adaptive Guidance</h4>
+                            <p>Adjusts recommendations based on your progress and performance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .ai-section {
+                    margin: 50px auto;
+                    max-width: 1000px;
+                }
+                
+                .ai-features {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    margin-top: 30px;
+                }
+                
+                .ai-feature-item {
+                    display: flex;
+                    align-items: flex-start;
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: var(--border-radius);
+                    padding: 20px;
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    transition: all 0.3s ease;
+                }
+                
+                .ai-feature-item:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                    border-color: rgba(var(--accent-color-rgb), 0.4);
+                }
+                
+                .ai-feature-icon {
+                    color: var(--accent-color);
+                    margin-right: 20px;
+                    min-width: 40px;
+                }
+                
+                .ai-feature-icon svg {
+                    width: 32px;
+                    height: 32px;
+                }
+                
+                .ai-feature-text h4 {
+                    font-size: 1.2rem;
+                    margin-bottom: 8px;
+                    font-weight: 600;
+                }
+                
+                .ai-feature-text p {
+                    color: rgba(255, 255, 255, 0.8);
+                    line-height: 1.5;
+                }
+                
+                @media (min-width: 768px) {
+                    .ai-features {
+                        flex-direction: row;
+                    }
+                    
+                    .ai-feature-item {
+                        flex: 1;
+                    }
+                }
+            </style>
+            
+            <div class="quotes-panel">
+                <h3 class="section-subtitle accent-text">The Power of Habits</h3>
+                <div class="quotes-container">
+                    <div class="quotes-carousel hero-quotes">
+                        <div class="quote-slide active">
+                            <div class="quote-content">
+                                <blockquote>"We are what we repeatedly do. Excellence, then, is not an act, but a habit."</blockquote>
+                                <cite>— Aristotle</cite>
+                            </div>
+                        </div>
+                        <div class="quote-slide">
+                            <div class="quote-content">
+                                <blockquote>"Habits are the compound interest of self-improvement. The same way that money multiplies through compound interest, the effects of your habits multiply as you repeat them."</blockquote>
+                                <cite>— James Clear, Atomic Habits</cite>
+                            </div>
+                        </div>
+                        <div class="quote-slide">
+                            <div class="quote-content">
+                                <blockquote>"Your daily habits impact everything from your productivity to your happiness to your waistline. Build systems that make good habits inevitable."</blockquote>
+                                <cite>— Dr. Peter Attia</cite>
+                            </div>
+                        </div>
+                        <div class="quote-slide">
+                            <div class="quote-content">
+                                <blockquote>"If you believe you can change—if you make it a habit—the change becomes real. This is the real power of habit: the insight that your habits are what you choose them to be."</blockquote>
+                                <cite>— Charles Duhigg, The Power of Habit</cite>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="quote-indicators">
+                        <button class="quote-indicator active" aria-label="Quote 1"></button>
+                        <button class="quote-indicator" aria-label="Quote 2"></button>
+                        <button class="quote-indicator" aria-label="Quote 3"></button>
+                        <button class="quote-indicator" aria-label="Quote 4"></button>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                .accent-text {
+                    color: var(--accent-color);
+                    font-weight: 600;
+                    text-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.3);
+                    letter-spacing: 0.5px;
+                }
+                
+                .quotes-panel {
+                    margin: 30px 0;
+                    position: relative;
+                }
+                
+                .section-subtitle {
+                    text-align: center;
+                    margin-bottom: 15px;
+                    font-size: 1.5rem;
+                    font-weight: 500;
+                }
+                
+                .subtitle-description {
+                    text-align: center;
+                    margin-bottom: 25px;
+                    font-size: 1.05rem;
+                    color: rgba(255, 255, 255, 0.7);
+                    font-style: italic;
+                }
+                
+                .quotes-container {
+                    max-width: 900px;
+                    margin: 0 auto;
+                    position: relative;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    background: rgba(255, 255, 255, 0.02);
+                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                }
+                
+                .hero-quotes {
+                    height: 220px;
+                    max-width: 900px;
+                    margin: 0 auto;
+                    position: relative;
+                }
+                
+                .quote-slide {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    opacity: 0;
+                    transform: translateX(50px);
+                    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+                    padding: 0 20px;
+                    pointer-events: none;
+                }
+                
+                .quote-slide.active {
+                    opacity: 1;
+                    transform: translateX(0);
+                    pointer-events: all;
+                }
+                
+                .quote-content {
+                    background: rgba(255, 255, 255, 0.03);
+                    border-radius: 10px;
+                    padding: 30px;
+                    text-align: center;
+                    border-left: 4px solid var(--accent-color);
+                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+                }
+                
+                blockquote {
+                    font-size: 1.2rem;
+                    line-height: 1.6;
+                    font-weight: 300;
+                    margin: 0 0 20px 0;
+                    color: white;
+                    font-style: italic;
+                }
+                
+                cite {
+                    font-size: 1rem;
+                    color: rgba(255, 255, 255, 0.8);
+                    display: block;
+                    text-align: right;
+                    font-weight: 500;
+                }
+                
+                .quote-indicators {
+                    display: flex;
+                    justify-content: center;
+                    gap: 8px;
+                    margin: 15px auto 5px;
+                    position: relative;
+                    z-index: 5;
+                }
+                
+                .quote-indicator {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.2);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .quote-indicator.active {
+                    background: var(--accent-color);
+                    transform: scale(1.3);
+                }
+            </style>
+            
+            <script>
+                // Fixed quote rotation with proper animation
+                window.addEventListener('load', function() {
+                    const quotes = document.querySelectorAll('.hero-quotes .quote-slide');
+                    const indicators = document.querySelectorAll('.hero-quotes .quote-indicator');
+                    
+                    // Safety check - don't proceed if elements are missing
+                    if (!quotes.length || !indicators.length) return;
+                    
+                    // Make sure the first quote is active initially
+                    quotes[0].classList.add('active');
+                    indicators[0].classList.add('active');
+                    
+                    let currentQuote = 0;
+                    
+                    // Add click handlers to indicators
+                    for (let i = 0; i < indicators.length; i++) {
+                        indicators[i].addEventListener('click', function() {
+                            showQuote(i);
+                        });
+                    }
+                    
+                    // Function to show a specific quote
+                    function showQuote(index) {
+                        // Remove active class from all
+                        for (let i = 0; i < quotes.length; i++) {
+                            quotes[i].classList.remove('active');
+                        }
+                        
+                        for (let i = 0; i < indicators.length; i++) {
+                            indicators[i].classList.remove('active');
+                        }
+                        
+                        // Add active class to selected
+                        quotes[index].classList.add('active');
+                        indicators[index].classList.add('active');
+                        
+                        // Update current index
+                        currentQuote = index;
+                    }
+                    
+                    // Auto-rotate quotes
+                    if (quotes.length > 1) {
+                        setInterval(function() {
+                            currentQuote = (currentQuote + 1) % quotes.length;
+                            showQuote(currentQuote);
+                        }, 8000);
+                    }
+                });
+            </script>
+            
+            <div class="hero-graphic">
+                <div class="dashboard-image featured-image">
+                    <img src="dashboard4.png" alt="MaxiMost Dashboard">
+                    <div class="image-caption">The MaxiMost Dashboard - Your Personal Growth Command Center</div>
+                </div>
+            </div>
+            
+            <style>
+                .performance-indicators {
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    margin: 30px 0;
+                    gap: 15px;
+                }
+                
+                .indicator {
+                    flex: 1;
+                    min-width: 150px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    padding: 15px;
+                    border-radius: var(--border-radius);
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    transition: var(--transition);
+                }
+                
+                .indicator:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+                    border-color: rgba(255, 255, 255, 0.2);
+                }
+                
+                .indicator-icon {
+                    font-size: 2rem;
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                    margin-bottom: 10px;
+                }
+                
+                .indicator span {
+                    font-weight: 500;
+                }
+                
+                @media (max-width: 768px) {
+                    .performance-indicators {
+                        justify-content: center;
+                    }
+                    
+                    .indicator {
+                        min-width: 120px;
+                    }
+                }
+            </style>
+            
+            <!-- Mid-page signup banner -->
+            <div class="mid-signup">
+                <h2>Join the Maximost Waitlist – Be the First to Transform Your Habits!</h2>
+                <p>Join our exclusive early access list and get notified when we launch.</p>
+                <form class="email-form" action="https://formspree.io/f/maximost.com@gmail.com" method="POST" id="mid-signup-form">
+                    <div class="form-row">
+                        <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+                        <button type="submit" class="submit-btn">Join Waitlist</button>
+                    </div>
+                    <div class="referral-option">
+                        <div class="referral-checkbox-area">
+                            <input type="checkbox" id="referral-checkbox" name="join_rewards">
+                            <label for="referral-checkbox">Join our rewards program</label>
+                        </div>
+                        <div class="referral-description">
+                            <p>Refer friends and earn 50 points per signup for premium rewards & features</p>
+                            <div class="points-indicator">
+                                <div class="points-icon">⭐</div>
+                                <div class="points-text">Earn points towards premium features</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 5V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 3V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8 3V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 9H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 15H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Multi-view Tracking</h3>
+                    <p>Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 11C12.5523 11 13 10.5523 13 10C13 9.44772 12.5523 9 12 9C11.4477 9 11 9.44772 11 10C11 10.5523 11.4477 11 12 11Z" fill="currentColor"/>
+                            <path d="M12 16C15 16 16 14 16 12H8C8 14 9 16 12 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>AI Habit Coach</h3>
+                    <p>Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5V9.17071C11 9.17071 11 9.17071 11 9.17157C11 9.72386 11.4477 10.1716 12 10.1716C12.5523 10.1716 13 9.72386 13 9.17157V5Z" fill="currentColor"/>
+                            <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M14 12C14 11.4477 13.5523 11 13 11H10C9.44772 11 9 11.4477 9 12C9 12.5523 9.44772 13 10 13H13C13.5523 13 14 12.5523 14 12Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3>Break Bad Habits & Addictions</h3>
+                    <p>Specialized tools to identify, track, and overcome negative patterns, including addiction recovery support.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 20V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M18 20V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>1% Better Every Day</h3>
+                    <p>Make consistent improvements following the "compound effect" principle. 1% better each day leads to 37x improvement in a year.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 16H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Scientific Approach</h3>
+                    <p>Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Gary Brecka for optimal health outcomes.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19 14.9999C19 16.0608 18.5259 17.0782 17.682 17.8283C16.8381 18.5784 15.6935 18.9999 14.5 18.9999H6.5C5.30653 18.9999 4.16193 18.5784 3.31802 17.8283C2.47411 17.0782 2 16.0608 2 14.9999C2 13.4382 2.655 12.0392 3.69 11.1499C3.24 10.2899 3 9.32993 3 8.32993C3 7.26906 3.47411 6.25169 4.31802 5.50155C5.16193 4.75142 6.30653 4.32993 7.5 4.32993C8.92 4.32993 10.2 4.92993 11.09 5.89993C11.5 5.75993 11.95 5.67993 12.41 5.67993C13.8217 5.67993 15.1752 6.2427 16.1754 7.24287C17.1755 8.24303 17.74 9.59658 17.74 10.9999C17.74 11.2399 17.72 11.4799 17.68 11.7099C18.52 12.5999 19 13.7499 19 14.9999Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7.5 9.83002V13.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12.5 10.83V14.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Mental Resilience</h3>
+                    <p>Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges.</p>
+                    <div class="card-hover-effect"></div>
+                </div>
+            </div>
+            
+            <style>
+                .feature-card {
+                    position: relative;
+                    overflow: hidden;
+                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                
+                .feature-card:hover {
+                    transform: translateY(-8px) scale(1.02);
+                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+                    z-index: 2;
+                }
+                
+                .feature-card:hover .feature-icon {
+                    transform: scale(1.15);
+                    color: var(--accent-color);
+                }
+                
+                .feature-icon {
+                    transition: all 0.3s ease;
+                }
+                
+                .card-hover-effect {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background: linear-gradient(90deg, var(--accent-color), #ff3131, #ff914d, #ffbd59, #6259ff);
+                    background-size: 400% 400%;
+                    transform: scaleX(0);
+                    transform-origin: left;
+                    transition: transform 0.3s ease-out;
+                }
+                
+                .feature-card:hover .card-hover-effect {
+                    transform: scaleX(1);
+                    animation: gradientMove 3s ease infinite;
+                }
+                
+                @keyframes gradientMove {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+            </style>
+            
+            <style>
+                .features-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 30px;
+                    margin-bottom: 40px;
+                }
+                
+                @media (max-width: 768px) {
+                    .features-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+                
+                @media (max-width: 576px) {
+                    .features-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+            </style>
+        </div>
+    </section>
+    
+    <!-- Integration Section -->
+    <section class="integration">
+        <div class="container">
+            <h2>Fitness Tracker Integration</h2>
+            <div class="integration-content">
+                <div class="integration-text">
+                    <h3>Connect All Your Health Data</h3>
+                    <p>Integration with your favorite fitness platforms automatically completes your habits based on your activity.</p>
+                    
+                    <div class="tracker-logos">
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon fitbit">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.2 3.8C14.4 2 11.7 2 9.8 3.8C8 5.6 8 8.3 9.8 10.2C11.6 12 14.3 12 16.2 10.2C18 8.4 18 5.7 16.2 3.8Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M2 15.3C2 17.4 3.8 19.1 5.8 19.1C7.8 19.1 9.6 17.4 9.6 15.3C9.6 13.2 7.8 11.5 5.8 11.5C3.8 11.5 2 13.3 2 15.3Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M18.2 22C20.4 22 22.2 20.2 22.2 18C22.2 15.8 20.4 14 18.2 14C16 14 14.2 15.8 14.2 18C14.2 20.2 16 22 18.2 22Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span>Fitbit</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon samsung">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L6.5 11H17.5L12 2Z" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 22L6.5 13H17.5L12 22Z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <span>Samsung</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon apple">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12.1471 7.703C12.9821 7.703 13.9821 7.118 14.5681 6.325C15.1001 5.609 15.4851 4.609 15.4851 3.609C15.4851 3.494 15.4731 3.38 15.4491 3.289C14.4961 3.329 13.4241 3.926 12.8001 4.754C12.3041 5.391 11.8431 6.38 11.8431 7.391C11.8431 7.519 11.8671 7.647 11.8791 7.691C11.9501 7.695 12.0481 7.703 12.1471 7.703Z" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M15.5921 11.7918C15.5681 9.32976 17.5121 8.10576 17.6081 8.04976C16.4911 6.44176 14.7641 6.21776 14.1561 6.20576C12.5561 6.03776 11.0041 7.10976 10.1881 7.10976C9.35615 7.10976 8.06415 6.21776 6.72015 6.25376C4.95215 6.28976 3.33615 7.24976 2.41615 8.77376C0.522148 11.8458 1.92015 16.3718 3.73615 18.7798C4.64415 19.9558 5.71215 21.2718 7.08815 21.2118C8.43215 21.1518 8.94415 20.3318 10.5681 20.3318C12.1801 20.3318 12.6561 21.2118 14.0601 21.1758C15.5081 21.1518 16.4281 19.9918 17.3001 18.8038C18.3401 17.4338 18.7681 16.0998 18.7921 16.0158C18.7441 15.9978 15.6201 14.8338 15.5921 11.7918Z" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </div>
+                            <span>Apple</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon google">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 8L12 2L3 8V16L12 22L21 16V8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                    <path d="M3 8L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 22V14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M21 8L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 2V8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <span>Google Fit</span>
+                        </div>
+                        <div class="tracker-logo-item">
+                            <div class="logo-icon garmin">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <span>Garmin</span>
+                        </div>
+                    </div>
+                    
+                    <style>
+                        .tracker-logos {
+                            display: flex;
+                            justify-content: center;
+                            flex-wrap: wrap;
+                            gap: 20px;
+                            margin: 25px 0;
+                        }
+                        
+                        .tracker-logo-item {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            opacity: 0.8;
+                            transition: all 0.3s;
+                        }
+                        
+                        .tracker-logo-item:hover {
+                            opacity: 1;
+                            transform: translateY(-3px);
+                        }
+                        
+                        .logo-icon {
+                            width: 40px;
+                            height: 40px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: rgba(255, 255, 255, 0.05);
+                            border-radius: 50%;
+                            padding: 10px;
+                            margin-bottom: 8px;
+                        }
+                        
+                        .logo-icon svg {
+                            width: 100%;
+                            height: 100%;
+                        }
+                        
+                        .fitbit { color: #00B0B9; }
+                        .samsung { color: #1428A0; }
+                        .apple { color: #A2AAAD; }
+                        .google { color: #4285F4; }
+                        .garmin { color: #007CC3; }
+                        
+                        .tracker-logo-item span {
+                            font-size: 0.9rem;
+                            font-weight: 500;
+                        }
+                    </style>
+                    
+                    <div class="integration-benefits">
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 20V10"></path>
+                                    <path d="M12 20V4"></path>
+                                    <path d="M6 20v-6"></path>
+                                </svg>
+                            </div>
+                            <p>Auto-complete workout habits when your fitness tracker records activity</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20.94c1.5 0 2.75-1.25 2.75-2.75v-4l-1.5-1.5h-2.5L9.25 14.19v4c0 1.5 1.25 2.75 2.75 2.75z"></path>
+                                    <path d="M12 3.06c-1.5 0-2.75 1.25-2.75 2.75v4l1.5 1.5h2.5l1.5-1.5v-4c0-1.5-1.25-2.75-2.75-2.75z"></path>
+                                    <path d="M20.94 12c0-1.5-1.25-2.75-2.75-2.75h-4l-1.5 1.5v2.5l1.5 1.5h4c1.5 0 2.75-1.25 2.75-2.75z"></path>
+                                    <path d="M3.06 12c0 1.5 1.25 2.75 2.75 2.75h4l1.5-1.5v-2.5l-1.5-1.5h-4C4.31 9.25 3.06 10.5 3.06 12z"></path>
+                                </svg>
+                            </div>
+                            <p>Sleep habits marked complete when your tracker records sufficient sleep</p>
+                        </div>
+                        <div class="benefit-item">
+                            <div class="benefit-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
+                                </svg>
+                            </div>
+                            <p>Heart rate and recovery metrics for holistic health tracking</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="integration-device">
+                    <div class="tracker-carousel">
+                        <div class="tracker-item active">
+                            <div class="tracker-stats fitbit">
+                                <div class="tracker-header">
+                                    <div class="tracker-logo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16.2 3.8C14.4 2 11.7 2 9.8 3.8C8 5.6 8 8.3 9.8 10.2C11.6 12 14.3 12 16.2 10.2C18 8.4 18 5.7 16.2 3.8Z" stroke-width="1.5"/>
+                                            <path d="M2 15.3C2 17.4 3.8 19.1 5.8 19.1C7.8 19.1 9.6 17.4 9.6 15.3C9.6 13.2 7.8 11.5 5.8 11.5C3.8 11.5 2 13.3 2 15.3Z" stroke-width="1.5"/>
+                                            <path d="M18.2 22C20.4 22 22.2 20.2 22.2 18C22.2 15.8 20.4 14 18.2 14C16 14 14.2 15.8 14.2 18C14.2 20.2 16 22 18.2 22Z" stroke-width="1.5"/>
+                                        </svg>
+                                    </div>
+                                    <div class="tracker-title">Fitbit Activity</div>
+                                    <div class="tracker-date">Today</div>
+                                </div>
+                                
+                                <div class="tracker-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">9,857</div>
+                                        <div class="metric-label">Steps</div>
+                                        <div class="metric-progress" style="width: 82%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">4.3</div>
+                                        <div class="metric-label">Miles</div>
+                                        <div class="metric-progress" style="width: 72%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">2,478</div>
+                                        <div class="metric-label">Calories</div>
+                                        <div class="metric-progress" style="width: 62%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">45</div>
+                                        <div class="metric-label">Active Min</div>
+                                        <div class="metric-progress" style="width: 56%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">7:15</div>
+                                        <div class="metric-label">Sleep</div>
+                                        <div class="metric-progress" style="width: 91%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">68</div>
+                                        <div class="metric-label">BPM</div>
+                                        <div class="metric-progress" style="width: 68%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracker-item">
+                            <div class="tracker-stats samsung">
+                                <div class="tracker-header">
+                                    <div class="tracker-logo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2L6.5 11H17.5L12 2Z" stroke-width="1.5"/>
+                                            <path d="M12 22L6.5 13H17.5L12 22Z" stroke-width="1.5"/>
+                                        </svg>
+                                    </div>
+                                    <div class="tracker-title">Samsung Health</div>
+                                    <div class="tracker-date">Today</div>
+                                </div>
+                                
+                                <div class="tracker-metrics">
+                                    <div class="metric-item">
+                                        <div class="metric-value">11,235</div>
+                                        <div class="metric-label">Steps</div>
+                                        <div class="metric-progress" style="width: 92%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">5.2</div>
+                                        <div class="metric-label">Miles</div>
+                                        <div class="metric-progress" style="width: 87%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">2,912</div>
+                                        <div class="metric-label">Calories</div>
+                                        <div class="metric-progress" style="width: 73%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">65</div>
+                                        <div class="metric-label">Active Min</div>
+                                        <div class="metric-progress" style="width: 80%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">8:10</div>
+                                        <div class="metric-label">Sleep</div>
+                                        <div class="metric-progress" style="width: 95%"></div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value">71</div>
+                                        <div class="metric-label">BPM</div>
+                                        <div class="metric-progress" style="width: 71%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tracker-nav prev">◄</div>
+                        <div class="tracker-nav next">►</div>
+                        <div class="tracker-dots">
+                            <span class="dot active"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const items = document.querySelectorAll('.tracker-item');
+                            const prevBtn = document.querySelector('.tracker-nav.prev');
+                            const nextBtn = document.querySelector('.tracker-nav.next');
+                            const dots = document.querySelectorAll('.dot');
+                            let currentIndex = 0;
+                            
+                            function showItem(index) {
+                                items.forEach(item => item.classList.remove('active'));
+                                dots.forEach(dot => dot.classList.remove('active'));
+                                items[index].classList.add('active');
+                                dots[index].classList.add('active');
+                                currentIndex = index;
+                            }
+                            
+                            nextBtn.addEventListener('click', function() {
+                                let nextIndex = (currentIndex + 1) % items.length;
+                                showItem(nextIndex);
+                            });
+                            
+                            prevBtn.addEventListener('click', function() {
+                                let prevIndex = (currentIndex - 1 + items.length) % items.length;
+                                showItem(prevIndex);
+                            });
+                            
+                            dots.forEach((dot, index) => {
+                                dot.addEventListener('click', function() {
+                                    showItem(index);
+                                });
+                            });
+                            
+                            // Auto rotate every 5 seconds
+                            setInterval(() => {
+                                let nextIndex = (currentIndex + 1) % items.length;
+                                showItem(nextIndex);
+                            }, 5000);
+                        });
+                    </script>
+                </div>
+            </div>
+            
+            <style>
+                .tracker-carousel {
+                    position: relative;
+                    overflow: hidden;
+                    border-radius: 16px;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                }
+                
+                .tracker-item {
+                    display: none;
+                    opacity: 0;
+                    transform: translateX(20px);
+                    transition: all 0.5s ease;
+                }
+                
+                .tracker-item.active {
+                    display: block;
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                
+                .tracker-nav {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: rgba(0, 0, 0, 0.5);
+                    color: white;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    z-index: 10;
+                    transition: all 0.3s ease;
+                }
+                
+                .tracker-nav:hover {
+                    background: rgba(var(--primary-color-rgb), 0.8);
+                    transform: translateY(-50%) scale(1.2);
+                }
+                
+                .tracker-nav.prev {
+                    left: 10px;
+                }
+                
+                .tracker-nav.next {
+                    right: 10px;
+                }
+                
+                .tracker-dots {
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    display: flex;
+                    gap: 8px;
+                    z-index: 10;
+                }
+                
+                .dot {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.3);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .dot.active {
+                    background: white;
+                    transform: scale(1.2);
+                }
+                
+                .tracker-stats {
+                    background: rgba(20, 20, 30, 0.9);
+                    border-radius: 16px;
+                    border: 1px solid rgba(255, 255, 255, 0.15);
+                    overflow: hidden;
+                    width: 100%;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                }
+                
+                .tracker-header {
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .tracker-logo {
+                    margin-right: 15px;
+                    color: var(--accent-color);
+                }
+                
+                .tracker-title {
+                    flex-grow: 1;
+                    font-weight: 600;
+                    font-size: 1.2rem;
+                }
+                
+                .tracker-date {
+                    font-size: 0.9rem;
+                    opacity: 0.7;
+                }
+                
+                .tracker-metrics {
+                    padding: 15px;
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                }
+                
+                .metric-item {
+                    padding: 15px;
+                    position: relative;
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                    overflow: hidden;
+                }
+                
+                .metric-value {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .metric-label {
+                    font-size: 0.9rem;
+                    opacity: 0.7;
+                    margin-top: 5px;
+                    position: relative;
+                    z-index: 2;
+                }
+                
+                .metric-progress {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    height: 3px;
+                    background: var(--accent-color);
+                    opacity: 0.7;
+                }
+                
+                @media (max-width: 768px) {
+                    .tracker-metrics {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+            </style>
+            
+            <style>
+                .highlight {
+                    color: var(--accent-color);
+                    font-weight: bold;
+                }
+                
+                .integration-benefits {
+                    margin-top: 30px;
+                }
+                
+                .benefit-item {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    background-color: rgba(255, 255, 255, 0.05);
+                    padding: 15px;
+                    border-radius: var(--border-radius);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                
+                .benefit-icon {
+                    font-size: 1.8rem;
+                    margin-right: 15px;
+                    min-width: 40px;
+                    text-align: center;
+                }
+            </style>
+        </div>
+    </section>
+    
+    <!-- Removed duplicate Call-to-Action section with email signup -->
+    
+    <!-- Performance Areas Section -->
+    <section class="performance-areas-section">
+        <div class="container">
+            <h2>Six Key Performance Areas</h2>
+            <div class="performance-areas">
+                <div class="performance-grid">
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ff3b30;"></div>
+                        <span class="area-name">Physical Training</span>
+                        <span class="area-desc">Strength, cardio, mobility, and recovery</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ff9500;"></div>
+                        <span class="area-name">Nutrition & Fueling</span>
+                        <span class="area-desc">Diet, hydration, and supplements</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #5856d6;"></div>
+                        <span class="area-name">Sleep & Hygiene</span>
+                        <span class="area-desc">Quality rest and recovery cycles</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #ffcc00;"></div>
+                        <span class="area-name">Mental Acuity</span>
+                        <span class="area-desc">Focus, learning, and mindfulness</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #007aff;"></div>
+                        <span class="area-name">Relationships</span>
+                        <span class="area-desc">Social connections and communication</span>
+                    </div>
+                    <div class="performance-area">
+                        <div class="area-color-indicator" style="background-color: #34c759;"></div>
+                        <span class="area-name">Financial Habits</span>
+                        <span class="area-desc">Saving, investing, and wealth building</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .performance-areas-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(20, 20, 25, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .performance-areas-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxjaXJjbGUgcj0iMS41IiBjeD0iMjAiIGN5PSIyMCIgZmlsbD0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSI+PC9jaXJjbGU+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIj48L3JlY3Q+PC9zdmc+');
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .performance-areas-section h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .performance-areas {
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .performance-area {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .performance-area:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .area-color-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            opacity: 0.9;
+        }
+        
+        .area-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0 0 12px 0;
+            padding-left: 15px;
+            color: white;
+        }
+        
+        .area-desc {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            padding-left: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @media (max-width: 991px) {
+            .performance-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>What People Are Saying</h2>
+            <p class="section-description">Hear from influencers and experts about how MaxiMost is changing the habit-building landscape</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Hormozi">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Alex Hormozi</div>
+                            <div class="author-title">Founder, Acquisition.com</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Melissa Urban">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Melissa Urban</div>
+                            <div class="author-title">Co-Founder & CEO, Whole30</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/41.jpg" alt="Andrew Huberman">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Andrew Huberman</div>
+                            <div class="author-title">Neuroscientist & Professor</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed."</p>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/62.jpg" alt="Rhonda Patrick">
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-name">Rhonda Patrick</div>
+                            <div class="author-title">Biochemist & Health Expert</div>
+                        </div>
+                        <div class="testimonial-source">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="testimonial-content">
+                        <p>"The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <style>
+        .testimonials {
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(20, 20, 25, 0.95) 0%, rgba(30, 30, 40, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonials::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxjaXJjbGUgcj0iMS41IiBjeD0iMjAiIGN5PSIyMCIgZmlsbD0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAzKSI+PC9jaXJjbGU+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIj48L3JlY3Q+PC9zdmc+');
+            z-index: 0;
+            opacity: 0.5;
+        }
+        
+        .testimonials h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .section-description {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin-right: 15px;
+            border: 2px solid rgba(var(--accent-color-rgb), 0.5);
+        }
+        
+        .testimonial-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .testimonial-author {
+            flex-grow: 1;
+        }
+        
+        .author-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .author-title {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .testimonial-source {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .testimonial-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>What makes Maximost different from other habit trackers?</h3>
+                    <p>Maximost isn't just a habit tracker—it's an AI-powered life operating system that applies both ancient Stoic wisdom and modern performance science. We integrate with 5 fitness trackers, provide automatic habit completion, offer streak milestones, and focus on the "maximum bang for your buck" principle to truly transform your life one habit at a time.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How does the fitness tracker integration work?</h3>
+                    <p>Maximost connects seamlessly with Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin. Once connected, relevant activities like steps, workouts, sleep data, and more will automatically mark corresponding habits as complete without manual input, making consistent tracking effortless.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What are the six key performance areas?</h3>
+                    <p>Maximost tracks habits across six critical life domains: Physical Training (red), Nutrition & Fueling (orange), Sleep & Hygiene (indigo), Mental Acuity & Growth (yellow), Relationships & Community (blue), and Financial Habits (green). This holistic approach ensures you're developing in all areas that truly matter for a fulfilling life.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How does the streak system motivate long-term habit formation?</h3>
+                    <p>Our streak system counts consecutive days of habit completion while providing milestone celebrations (3, 7, 14, 30, 60, 90, 180, 365 days). The system is designed with flexibility—continuing if you complete habits today or yesterday—while also encouraging consistent daily action for maximum habit formation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Email Signup Section -->
+    <section class="final-cta">
+        <div class="container">
+            <div class="cta-panel">
+                <h2>Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!</h2>
+                <p>Sign up for early access and unlock special benefits reserved for our first members.</p>
+                <form class="email-form dark" action="https://formspree.io/f/maximost.com@gmail.com" method="POST" id="bottom-signup-form">
+                    <div class="form-row">
+                        <input type="email" name="email" class="email-input" placeholder="Enter your email" required>
+                        <button type="submit" class="submit-btn">Get Early Access</button>
+                    </div>
+                    <div class="referral-option">
+                        <div class="referral-checkbox-area">
+                            <input type="checkbox" id="referral-checkbox-footer" name="join_rewards">
+                            <label for="referral-checkbox-footer">Join our rewards program</label>
+                        </div>
+                        <div class="referral-description">
+                            <p>Refer friends and earn 50 points per signup for premium rewards & features</p>
+                            <div class="points-indicator">
+                                <div class="points-icon">⭐</div>
+                                <div class="points-text">Earn points towards premium features</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Logo Footer -->
+    <section class="logo-footer">
+        <div class="logo-container">
+            <img src="maximost-logo-0.png" alt="MaxiMost Logo" class="footer-logo">
+            <div class="logo-glow"></div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="copyright">
+                &copy; 2024 Maximost. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <style>
+        .logo-footer {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(30, 30, 35, 0.8) 0%, rgba(20, 20, 25, 1) 70%);
+        }
+        
+        .logo-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            width: 400px;
+            height: 400px;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+            animation: pulse 3s infinite ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(var(--primary-color-rgb), 0.5));
+        }
+        
+        .logo-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(var(--primary-color-rgb), 0.3) 0%, rgba(var(--primary-color-rgb), 0.1) 40%, rgba(var(--primary-color-rgb), 0) 70%);
+            border-radius: 50%;
+            animation: glow 4s infinite alternate ease-in-out;
+            z-index: 1;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { 
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            100% { 
+                opacity: 0.8;
+                transform: scale(1.2);
+            }
+        }
+    </style>
+    <!-- Google Analytics tag -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-54N7D4YYXT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-54N7D4YYXT');
+        
+        // Quote rotation functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const quoteSlides = document.querySelectorAll('.quote-slide');
+            const quoteIndicators = document.querySelectorAll('.quote-indicator');
+            let currentQuoteIndex = 0;
+            
+            // Setup click handlers for indicators
+            quoteIndicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    currentQuoteIndex = index;
+                    updateQuotes();
+                });
+            });
+            
+            // Function to update active quote
+            function updateQuotes() {
+                quoteSlides.forEach((slide, index) => {
+                    if (index === currentQuoteIndex) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+                
+                quoteIndicators.forEach((indicator, index) => {
+                    if (index === currentQuoteIndex) {
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Auto rotate quotes
+            setInterval(() => {
+                currentQuoteIndex = (currentQuoteIndex + 1) % quoteSlides.length;
+                updateQuotes();
+            }, 6000);
+            
+            // Track form submissions with Google Analytics
+            const midSignupForm = document.getElementById('mid-signup-form');
+            const bottomSignupForm = document.getElementById('bottom-signup-form');
+            
+            // Track mid-page signup form
+            if (midSignupForm) {
+                midSignupForm.addEventListener('submit', function() {
+                    gtag('event', 'signup', {
+                        'event_category': 'conversion',
+                        'event_label': 'mid-page-signup'
+                    });
+                });
+            }
+            
+            // Track bottom signup form
+            if (bottomSignupForm) {
+                bottomSignupForm.addEventListener('submit', function() {
+                    gtag('event', 'signup', {
+                        'event_category': 'conversion',
+                        'event_label': 'bottom-signup'
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
