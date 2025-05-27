@@ -37,8 +37,6 @@ import Experts from "@/pages/experts-unified";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
-import HabitViewTest from "@/pages/habit-view-test";
-import SortableViewTest from "@/pages/sortable-view-test";
 import AIFeatures from "@/pages/ai-features";
 import FirebaseConfig from "@/pages/firebase-config";
 
@@ -81,12 +79,6 @@ function App() {
       {/* Protected routes */}
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
-      </Route>
-      <Route path="/habit-view-test">
-        <PrivateRoute component={HabitViewTest} />
-      </Route>
-      <Route path="/sortable-view-test">
-        <PrivateRoute component={SortableViewTest} />
       </Route>
       {/* Integrated sortable dashboard into main dashboard */}
       <Route path="/profile">
