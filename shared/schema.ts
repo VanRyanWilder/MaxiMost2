@@ -61,19 +61,35 @@ export const insertProgramSchema = createInsertSchema(programs).pick({
 // Tasks model
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
   title: text("title").notNull(),
   description: text("description"),
   category: text("category").notNull(), // Mind, Body, Brain, Spirit, Health
   frequency: text("frequency").notNull(), // Must-Do, 3x Weekly, 5x Weekly, etc.
-  programId: integer("program_id"),
+  programId: integer("program_id"), // Optional: can belong to a program or be a standalone user task/habit
+  icon: text("icon"),
+  iconColor: text("icon_color"),
+  impact: integer("impact"),
+  effort: integer("effort"),
+  timeCommitment: text("time_commitment"),
+  isAbsolute: boolean("is_absolute").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const insertTaskSchema = createInsertSchema(tasks).pick({
+  userId: true,
   title: true,
   description: true,
   category: true,
   frequency: true,
   programId: true,
+  icon: true,
+  iconColor: true,
+  impact: true,
+  effort: true,
+  timeCommitment: true,
+  isAbsolute: true,
 });
 
 // User tasks for tracking completion

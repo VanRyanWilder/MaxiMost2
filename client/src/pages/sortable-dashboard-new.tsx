@@ -85,6 +85,7 @@ import {
 
 // Import shared types
 import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
+import { useUser } from "@/context/user-context";
 
 export default function SortableDashboard() {
   // Sidebar state
@@ -94,196 +95,9 @@ export default function SortableDashboard() {
   const [currentDate, setCurrentDate] = useState(new Date());
   
   // Habit and completion state
-  const [habits, setHabits] = useState<Habit[]>([
-    {
-      id: "h-morning-sunlight",
-      title: "Morning sunlight",
-      description: "Get direct sunlight within 30-60 min of waking",
-      icon: "sun",
-      iconColor: "orange",
-      impact: 9,
-      effort: 2,
-      timeCommitment: "5-10 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-strength-training",
-      title: "Strength training",
-      description: "Resistance training for muscle and bone health",
-      icon: "dumbbell",
-      iconColor: "red",
-      impact: 9,
-      effort: 7,
-      timeCommitment: "45-60 min",
-      frequency: "3x-week",
-      isAbsolute: false,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-walk",
-      title: "Daily walk",
-      description: "Low-intensity movement throughout the day",
-      icon: "footprints",
-      iconColor: "green",
-      impact: 8,
-      effort: 3,
-      timeCommitment: "20-30 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-reading",
-      title: "Read book",
-      description: "Read from a physical book before bed",
-      icon: "book-open",
-      iconColor: "amber",
-      impact: 7,
-      effort: 2,
-      timeCommitment: "15-20 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "mind",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-cold-exposure",
-      title: "Cold exposure",
-      description: "Cold shower or ice bath for recovery",
-      icon: "droplets",
-      iconColor: "blue",
-      impact: 8,
-      effort: 8,
-      timeCommitment: "2-5 min",
-      frequency: "3x-week",
-      isAbsolute: false,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-bed-before-midnight",
-      title: "Bed before midnight",
-      description: "In bed by 10-11pm for optimal sleep",
-      icon: "moon",
-      iconColor: "indigo",
-      impact: 9,
-      effort: 5,
-      timeCommitment: "N/A",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "sleep",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-protein-first",
-      title: "Protein-first meal",
-      description: "Start meals with protein source",
-      icon: "utensils",
-      iconColor: "orange",
-      impact: 8,
-      effort: 2,
-      timeCommitment: "5 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "nutrition",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-no-snacking",
-      title: "No snacking",
-      description: "Avoid between-meal snacks",
-      icon: "apple",
-      iconColor: "red",
-      impact: 8,
-      effort: 6,
-      timeCommitment: "All day",
-      frequency: "3x-week",
-      isAbsolute: false,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-6",
-      title: "Cold shower",
-      description: "End your shower with 30 seconds cold water",
-      icon: "droplets",
-      iconColor: "cyan",
-      impact: 8,
-      effort: 7,
-      timeCommitment: "1 min",
-      frequency: "4x-week",
-      isAbsolute: false,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-7",
-      title: "Track calories",
-      description: "Log all meals in a food tracking app",
-      icon: "utensils",
-      iconColor: "orange",
-      impact: 9,
-      effort: 5,
-      timeCommitment: "5 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "health",
-      streak: 0,
-      createdAt: new Date().toISOString()
-    },
-    {
-      id: "h-8",
-      title: "Exercise",
-      description: "30 minutes of moderate exercise",
-      icon: "dumbbell",
-      iconColor: "red",
-      impact: 10,
-      effort: 7,
-      timeCommitment: "30 min",
-      frequency: "3x-week",
-      isAbsolute: false,
-      category: "fitness",
-      streak: 2,
-      createdAt: new Date(2023, 0, 15).toISOString()
-    },
-    {
-      id: "h-stretch-routine",
-      title: "Stretch",
-      description: "Morning stretching routine",
-      icon: "activity",
-      iconColor: "orange",
-      impact: 7,
-      effort: 3,
-      timeCommitment: "5 min",
-      frequency: "daily",
-      isAbsolute: true,
-      category: "fitness",
-      streak: 0,
-      createdAt: new Date(2023, 0, 20).toISOString()
-    }
-  ]);
+  const [habits, setHabits] = useState<Habit[]>([]);
   
-  const [completions, setCompletions] = useState<HabitCompletion[]>([
-    { id: "c-1", habitId: "h-1", date: new Date().toISOString(), completed: true },
-    { id: "c-2", habitId: "h-2", date: new Date().toISOString(), completed: true },
-    { id: "c-3", habitId: "h-3", date: subDays(new Date(), 1).toISOString(), completed: true },
-    { id: "c-4", habitId: "h-1", date: subDays(new Date(), 1).toISOString(), completed: true },
-    { id: "c-5", habitId: "h-2", date: subDays(new Date(), 1).toISOString(), completed: true }
-  ]);
+  const [completions, setCompletions] = useState<HabitCompletion[]>([]);
   
   // Edit/Create habit dialog state
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
@@ -292,6 +106,9 @@ export default function SortableDashboard() {
   // Confetti celebration state
   const [showPerfectDayConfetti, setShowPerfectDayConfetti] = useState(false);
   const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
+
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Start true
+  const [error, setError] = useState<string | null>(null);
   
   // Setup drag and drop sensors
   const sensors = useSensors(
@@ -325,100 +142,108 @@ export default function SortableDashboard() {
   };
   
   // Toggle habit completion for a specific date
-  const toggleCompletion = (habitId: string, date: Date | string) => {
-    // Ensure date is a Date object
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    const existingCompletionIndex = completions.findIndex(
-      c => c.habitId === habitId && isSameDay(new Date(c.date), dateObj)
-    );
-    
-    let updatedCompletions = [...completions];
-    let isNowCompleted = false;
-    
-    if (existingCompletionIndex !== -1) {
-      // Toggle existing completion
-      isNowCompleted = !updatedCompletions[existingCompletionIndex].completed;
-      updatedCompletions[existingCompletionIndex] = {
-        ...updatedCompletions[existingCompletionIndex],
-        completed: isNowCompleted
-      };
-      setCompletions(updatedCompletions);
-    } else {
-      // Create a new completion
-      isNowCompleted = true;
-      const newCompletion: HabitCompletion = {
-        id: `c-${Date.now()}-${Math.floor(Math.random() * 1000000)}`,
-        habitId,
-        date: typeof dateObj === 'string' ? dateObj : dateObj.toISOString(),
-        completed: true
-      };
-      updatedCompletions = [...completions, newCompletion];
-      setCompletions(updatedCompletions);
+  const toggleCompletion = async (habitId: string, date: Date | string) => {
+    if (!user || !user.id) {
+      setError("User not available. Cannot toggle completion.");
+      console.error("User not available for toggling completion.");
+      return;
     }
-    
-    // Only check for celebrations if a habit was marked as completed
-    if (isNowCompleted) {
-      // Check for perfect day completion (all of today's habits completed)
-      if (isSameDay(dateObj, new Date())) {
-        // Get all habit IDs
-        const habitIds = habits.map(h => h.id);
-        
-        // Check if every habit has a completion for today
-        const allHabitsCompleted = habitIds.every(hId => {
-          return updatedCompletions.some(c => 
-            c.habitId === hId && 
-            c.completed && 
-            isSameDay(new Date(c.date), dateObj)
-          );
-        });
-        
-        if (allHabitsCompleted) {
-          // Trigger perfect day celebration
-          setShowPerfectDayConfetti(true);
-        }
+
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    setError(null);
+
+    try {
+      const payload = {
+        userId: user.id,
+        taskId: habitId, // Assuming habitId from client maps to taskId in backend
+        date: dateObj.toISOString(),
+      };
+
+      const response = await fetch('/api/user-tasks/toggle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({})); // Catch if response is not JSON
+        throw new Error(errorData.message || `Failed to toggle completion: ${response.statusText}`);
       }
+
+      const completionFromServer: HabitCompletion = await response.json();
       
-      // Check for perfect week completion
-      const currentWeekStart = startOfWeek(new Date());
-      const currentWeekEnd = endOfWeek(new Date());
-      
-      // Map to track completed days per habit per frequency
-      const habitCompletionMap = new Map();
-      
-      // Initialize tracking for each habit
-      habits.forEach(habit => {
-        habitCompletionMap.set(habit.id, {
-          completed: 0,
-          target: getTargetDaysFromFrequency(habit.frequency),
-          isAbsolute: habit.isAbsolute
-        });
+      // Update local completions state
+      let newCompletionsState: HabitCompletion[] = [];
+      setCompletions(prevCompletions => {
+        const existingIndex = prevCompletions.findIndex(c => c.id === completionFromServer.id);
+        if (existingIndex !== -1) {
+          newCompletionsState = prevCompletions.map(c => c.id === completionFromServer.id ? completionFromServer : c);
+        } else {
+          newCompletionsState = [...prevCompletions, completionFromServer];
+        }
+        return newCompletionsState;
       });
       
-      // Count completed days for each habit in the current week
-      updatedCompletions.forEach(completion => {
-        const completionDate = new Date(completion.date);
+      const isNowCompleted = completionFromServer.completed;
+
+      // Only check for celebrations if a habit was marked as completed
+      if (isNowCompleted) {
+        // Important: Use a callback with setCompletions to ensure confetti logic runs *after* state update
+        // However, since newCompletionsState is derived synchronously after the setCompletions call starts,
+        // we can use it here for the confetti logic directly. This relies on the fact that setCompletions
+        // will eventually update to this state. For more complex scenarios, a useEffect watching completions
+        // might be safer for triggering side effects like confetti.
         
-        // Only consider completions in the current week
-        if (completion.completed && 
-            completionDate >= currentWeekStart && 
-            completionDate <= currentWeekEnd) {
+        // Check for perfect day completion (all of today's habits completed)
+        if (isSameDay(dateObj, new Date())) {
+          const habitIds = habits.map(h => h.id);
+          const allHabitsCompletedToday = habitIds.every(hId => {
+            return newCompletionsState.some(c => 
+              c.habitId === hId && 
+              c.completed && 
+              isSameDay(new Date(c.date), dateObj)
+            );
+          });
           
-          const habitInfo = habitCompletionMap.get(completion.habitId);
-          if (habitInfo) {
-            habitInfo.completed += 1;
+          if (allHabitsCompletedToday) {
+            setShowPerfectDayConfetti(true);
           }
         }
-      });
-      
-      // Check if all habits have met their frequency requirements
-      const perfectWeek = Array.from(habitCompletionMap.values()).every(info => {
-        return info.completed >= info.target;
-      });
-      
-      if (perfectWeek) {
-        // Trigger perfect week celebration
-        setShowPerfectWeekConfetti(true);
+        
+        // Check for perfect week completion
+        const currentWeekStart = startOfWeek(new Date());
+        const currentWeekEnd = endOfWeek(new Date());
+        const habitCompletionMap = new Map();
+        
+        habits.forEach(habit => {
+          habitCompletionMap.set(habit.id, {
+            completedCount: 0,
+            target: getTargetDaysFromFrequency(habit.frequency),
+            isAbsolute: habit.isAbsolute
+          });
+        });
+        
+        newCompletionsState.forEach(completion => {
+          const completionDate = new Date(completion.date);
+          if (completion.completed && completionDate >= currentWeekStart && completionDate <= currentWeekEnd) {
+            const habitInfo = habitCompletionMap.get(completion.habitId);
+            if (habitInfo) {
+              habitInfo.completedCount += 1;
+            }
+          }
+        });
+        
+        const perfectWeek = Array.from(habitCompletionMap.values()).every(info => {
+          return info.completedCount >= info.target;
+        });
+        
+        if (perfectWeek) {
+          setShowPerfectWeekConfetti(true);
+        }
       }
+    } catch (err: any) {
+      setError(err.message || "An unknown error occurred while toggling completion.");
+      console.error("Toggle completion error:", err);
     }
   };
   
@@ -436,28 +261,70 @@ export default function SortableDashboard() {
   };
   
   // Add a new habit
-  const addHabit = (habit: Habit) => {
+  const addHabit = async (habitData: Omit<Habit, 'id' | 'createdAt' | 'streak' | 'userId'>) => {
+    if (!user || !user.id) {
+      setError("User not available. Cannot add habit.");
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+
     // Clean up any trailing O characters in title
-    let cleanedHabit = {...habit};
-    
-    if (cleanedHabit.title && cleanedHabit.title.endsWith("O")) {
-      cleanedHabit.title = cleanedHabit.title.replace(/O$/, "");
+    let title = habitData.title;
+    if (title && title.endsWith("O")) {
+      title = title.replace(/O$/, "");
       console.log("Removed trailing O character from new habit title");
     }
-    
-    setHabits([...habits, cleanedHabit]);
+
+    const newHabitPayload = {
+      ...habitData,
+      title, // Use cleaned title
+      userId: user.id,
+      // Server will set id, createdAt, updatedAt. Streak defaults to 0 on server or client.
+    };
+
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newHabitPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to add habit: ${response.statusText}`);
+      }
+      const habitFromServer: Habit = await response.json();
+      setHabits(prev => [...prev, habitFromServer]);
+      console.log("➕ Added new habit via API:", habitFromServer.title);
+    } catch (err: any) {
+      setError(err.message || "An unknown error occurred while adding habit.");
+      console.error("Add habit error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   // Improved habit editing function with better error handling and reliability
-  const editHabit = (updatedHabit: Habit) => {
-    console.log("⚡⚡ EDIT FUNCTION - START");
-    console.log("Updating habit:", updatedHabit.title);
-    
-    // Ensure we have all required fields
-    if (!updatedHabit.id || !updatedHabit.title) {
-      console.error("❌ Missing required fields in habit");
+  const editHabit = async (updatedHabit: Habit) => {
+    if (!user || !user.id) {
+      setError("User not available. Cannot edit habit.");
       return;
     }
+    if (!updatedHabit.id || typeof updatedHabit.id !== 'string' || updatedHabit.id.startsWith('h-')) {
+        // This check helps differentiate client-generated IDs if they follow a pattern like 'h-'
+        // Server-generated IDs are usually numbers or UUIDs without such a prefix.
+        // This might indicate an issue if we're trying to PATCH a habit that wasn't properly created on the server.
+        console.warn("Attempting to edit a habit with a client-side ID or invalid ID:", updatedHabit.id);
+        // Depending on UX, you might want to attempt to create it instead, or show an error.
+        // For now, we'll proceed, but this is a potential point of failure if the ID isn't a valid server ID.
+    }
+
+    console.log("⚡⚡ EDIT FUNCTION (API) - START");
+    console.log("Updating habit:", updatedHabit.title, "ID:", updatedHabit.id);
+    
+    setIsLoading(true);
+    setError(null);
     
     // Clean up title to remove any trailing "O" characters
     let cleanTitle = updatedHabit.title;
@@ -465,113 +332,89 @@ export default function SortableDashboard() {
       cleanTitle = cleanTitle.replace(/O$/, "");
       console.log("Removed trailing O character from habit title");
     }
-    
-    // Force daily habits to be absolute
-    const finalHabit = {
+
+    const habitToUpdate = {
       ...updatedHabit,
       title: cleanTitle,
       isAbsolute: updatedHabit.frequency === 'daily' ? true : updatedHabit.isAbsolute,
-      // Ensure these fields have valid values
       iconColor: updatedHabit.iconColor || 'blue',
-      icon: updatedHabit.icon || 'check-square'
-      // Don't add updatedAt field as it's not in our Habit type
+      icon: updatedHabit.icon || 'check-square',
     };
     
-    console.log("Saving with color:", finalHabit.iconColor);
-    console.log("Saving with icon:", finalHabit.icon);
-    
+    // Remove userId, id, createdAt, updatedAt from payload for PATCH as they are not typically updatable or are part of URL
+    const { id, userId, createdAt, updatedAt, streak, ...updatePayload } = habitToUpdate;
+
     try {
-      // Make a fresh copy of habits to avoid state mutation issues
-      const currentHabits = [...habits];
-      
-      // Check if habit exists
-      const existingIndex = currentHabits.findIndex(h => h.id === finalHabit.id);
-      
-      // Create new habits array with updated or added habit
-      let newHabitsArray: Habit[];
-      
-      if (existingIndex >= 0) {
-        // Update existing habit
-        newHabitsArray = [
-          ...currentHabits.slice(0, existingIndex),
-          finalHabit,
-          ...currentHabits.slice(existingIndex + 1)
-        ];
-        console.log("✏️ Updated existing habit:", finalHabit.title);
-      } else {
-        // Add as new habit
-        newHabitsArray = [...currentHabits, finalHabit];
-        console.log("➕ Adding as new habit:", finalHabit.title);
+      const response = await fetch(`/api/tasks/${habitToUpdate.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatePayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to update habit: ${response.statusText}`);
       }
+      const habitFromServer: Habit = await response.json();
+      setHabits(prev => prev.map(h => (h.id === habitFromServer.id ? habitFromServer : h)));
+      console.log("✏️ Updated existing habit via API:", habitFromServer.title);
       
-      console.log("📊 Total habits:", newHabitsArray.length);
-      
-      // Save to localStorage first for reliability
-      // Debug habit data to find the issue
-      console.log("🔍 First few habits to be saved:", 
-        newHabitsArray.slice(0, 3).map(h => ({
-          id: h.id,
-          title: h.title,
-          keys: Object.keys(h),
-          valuesForTitle: Object.entries(h)
-            .filter(([key]) => key.toLowerCase().includes('title'))
-            .map(([key, value]) => `${key}: ${value}`)
-        }))
-      );
-      
-      const saveData = JSON.stringify(newHabitsArray);
-      console.log("💾 Data length:", saveData.length);
-      try {
-        localStorage.setItem('maximost-habits', saveData);
-        console.log("💾 Successfully saved to localStorage");
-      } catch (storageError) {
-        console.error("❌ Error saving to localStorage:", storageError);
-      }
-      
-      // Update state with the new array
-      setHabits(newHabitsArray);
-      
-      console.log("⚡⚡ EDIT FUNCTION - COMPLETE");
-      
-    } catch (error) {
-      console.error("❌ Error updating habit:", error);
+    } catch (err: any) {
+      setError(err.message || "An unknown error occurred while updating habit.");
+      console.error("Update habit error:", err);
+    } finally {
+      setIsLoading(false);
+      console.log("⚡⚡ EDIT FUNCTION (API) - COMPLETE");
     }
   };
   
-  // Delete a habit - completely rewritten for reliability
-  const deleteHabit = (habitId: string) => {
-    console.log("⚡⚡ DIRECT DELETE FUNCTION - START");
-    console.log("Deleting habit with ID:", habitId);
-    
-    // Create a new array without the habit to delete
-    const newHabitsArray = habits.filter(h => h.id !== habitId);
-    
-    // Create a new array of completions without the deleted habit's completions
-    const newCompletions = completions.filter(c => c.habitId !== habitId);
-    
-    console.log(`Before delete: ${habits.length} habits, After delete: ${newHabitsArray.length} habits`);
-    
-    // First save to localStorage
-    try {
-      const saveData = JSON.stringify(newHabitsArray);
-      localStorage.setItem('maximost-habits', saveData);
-      console.log("✅ Successfully saved updated habits to localStorage after deletion");
-      
-      // Update habit state
-      setHabits(newHabitsArray);
-      
-      // Update completions state
-      setCompletions(newCompletions);
-      
-      // Save completions to localStorage too
-      localStorage.setItem('maximost-completions', JSON.stringify(newCompletions));
-      console.log("✅ Successfully saved updated completions to localStorage after deletion");
-      
-    } catch (error) {
-      console.error("❌ Error saving to localStorage after deletion:", error);
+  // Delete a habit
+  const deleteHabit = async (habitId: string) => {
+    if (!user || !user.id) {
+      setError("User not available. Cannot delete habit.");
+      return;
     }
-    
-    console.log("⚡⚡ DIRECT DELETE FUNCTION - COMPLETE");
+     if (!habitId || typeof habitId !== 'string' || habitId.startsWith('h-')) {
+        console.warn("Attempting to delete a habit with a client-side ID or invalid ID:", habitId);
+        // If it's a client-side only habit, just remove from state
+        setHabits(prev => prev.filter(h => h.id !== habitId));
+        setCompletions(prev => prev.filter(c => c.habitId !== habitId));
+        return;
+    }
+
+    console.log("⚡⚡ DELETE FUNCTION (API) - START");
+    console.log("Deleting habit with ID:", habitId);
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`/api/tasks/${habitId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        // If status is 404, it might mean it was already deleted or never existed on server
+        if (response.status === 404) {
+          console.warn(`Habit with ID ${habitId} not found on server. Removing from local state.`);
+        } else {
+          const errorData = await response.json().catch(() => ({})); // Catch if response is not JSON
+          throw new Error(errorData.message || `Failed to delete habit: ${response.statusText}`);
+        }
+      }
+      
+      // Remove from local state regardless of 404, as the goal is to remove it from UI
+      setHabits(prev => prev.filter(h => h.id !== habitId));
+      setCompletions(prev => prev.filter(c => c.habitId !== habitId));
+      console.log("🗑️ Deleted habit via API (or ensured removal from local state):", habitId);
+
+    } catch (err: any) {
+      setError(err.message || "An unknown error occurred while deleting habit.");
+      console.error("Delete habit error:", err);
+    } finally {
+      setIsLoading(false);
+      console.log("⚡⚡ DELETE FUNCTION (API) - COMPLETE");
+    }
   };
   
   // Shortcut to open edit dialog for a habit
@@ -634,6 +477,52 @@ export default function SortableDashboard() {
   // Get absolute (must-do) and additional habits
   const absoluteHabits = habits.filter(h => h.isAbsolute);
   const additionalHabits = habits.filter(h => !h.isAbsolute);
+
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user && user.id) {
+      const fetchData = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+          // Fetch Habits
+          const habitsResponse = await fetch(`/api/users/${user.id}/tasks`);
+          if (!habitsResponse.ok) {
+            throw new Error(`Failed to fetch habits: ${habitsResponse.statusText}`);
+          }
+          const fetchedHabits: Habit[] = await habitsResponse.json();
+          setHabits(fetchedHabits);
+
+          // Fetch Completions
+          // Using /api/user-tasks/:userId?days=90 as per instructions.
+          // This endpoint currently returns UserTask[] which is compatible with HabitCompletion[] if taskId maps to habitId.
+          // If the backend for /api/user-tasks/:userId currently expects a single date and not a range,
+          // this part might need adjustment later, or the backend endpoint might need to be updated
+          // to support fetching completions for a date range or all completions for a user.
+          // For now, proceeding with the assumption that it can return relevant completions for the dashboard.
+          const completionsResponse = await fetch(`/api/user-tasks/${user.id}?days=90`); 
+          if (!completionsResponse.ok) {
+            throw new Error(`Failed to fetch completions: ${completionsResponse.statusText}`);
+          }
+          const fetchedCompletions: HabitCompletion[] = await completionsResponse.json();
+          setCompletions(fetchedCompletions);
+
+        } catch (err: any) {
+          setError(err.message || "An unknown error occurred while fetching data.");
+          console.error("Fetch data error:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
+    } else {
+      // No user, so set habits and completions to empty and stop loading.
+      setHabits([]);
+      setCompletions([]);
+      setIsLoading(false);
+    }
+  }, [user]); // Dependency array includes user
 
   // Handle adding a habit from the library
   const handleAddFromLibrary = (habitTemplate: any) => {
@@ -872,15 +761,28 @@ export default function SortableDashboard() {
         open={editHabitDialogOpen}
         setOpen={setEditHabitDialogOpen}
         habit={selectedHabit}
-        onSave={(updatedHabit) => {
-          if (updatedHabit.id && !updatedHabit.id.includes("habit-")) {
-            // Edit existing habit
-            console.log("Editing existing habit:", updatedHabit.title);
-            editHabit(updatedHabit);
+        onSave={(dataFromDialog) => {
+          // The dataFromDialog contains all fields from the form.
+          // If dataFromDialog.id is a client-generated one (e.g., starts with 'h-') or is missing, it's a new habit.
+          // Otherwise, it's an existing habit.
+          
+          // Ensure `user` is available before proceeding
+          if (!user || !user.id) {
+            setError("User information is not available. Please log in.");
+            console.error("User not available for saving habit.");
+            return;
+          }
+
+          if (dataFromDialog.id && typeof dataFromDialog.id === 'string' && !dataFromDialog.id.startsWith('h-') && habits.some(h => h.id === dataFromDialog.id)) {
+            // Existing habit - ID is present, doesn't start with 'h-', and exists in current habits list
+            console.log("Calling editHabit for:", dataFromDialog.title);
+            editHabit(dataFromDialog as Habit); // Cast as Habit, assuming server ID is number/string
           } else {
-            // Add new habit
-            console.log("Adding new habit:", updatedHabit.title);
-            addHabit(updatedHabit);
+            // New habit
+            console.log("Calling addHabit for:", dataFromDialog.title);
+            // Destructure to omit client-generated 'id', 'createdAt', 'streak' for the addHabit payload
+            const { id, createdAt, streak, ...newHabitData } = dataFromDialog;
+            addHabit(newHabitData);
           }
         }}
         onDelete={deleteHabit}

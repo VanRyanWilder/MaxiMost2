@@ -136,6 +136,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Tasks routes
+  app.get("/api/users/:userId/tasks", async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    try {
+      // Assuming storage.getUser exists to check if user is valid (optional step)
+      // const user = await storage.getUser(userId);
+      // if (!user) {
+      //   return res.status(404).json({ message: "User not found" });
+      // }
+      const tasks = await storage.getTasksByUserId(userId);
+      // if (!tasks || tasks.length === 0) {
+      //   return res.status(404).json({ message: "No tasks found for this user" });
+      // }
+      res.json(tasks);
+    } catch (error) {
+      console.error(`Error fetching tasks for user ${userId}:`, error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.get("/api/tasks", async (req, res) => {
     const { programId, category } = req.query;
     
@@ -184,8 +207,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+
+  app.patch("/api/tasks/:id", async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    if (isNaN(taskId)) {
+      return res.status(400).json({ message: "Invalid task ID" });
+    }
+
+    try {
+      // Note: req.body is passed directly for partial updates.
+      // For stricter validation, a partial Zod schema could be used here:
+      // const partialTaskSchema = insertTaskSchema.partial().omit({ userId: true, createdAt: true, updatedAt: true });
+      // const taskData = partialTaskSchema.parse(req.body);
+      // const updatedTask = await storage.updateTask(taskId, taskData);
+      const updatedTask = await storage.updateTask(taskId, req.body);
+      if (!updatedTask) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json(updatedTask);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid task data", errors: error.errors });
+      }
+      console.error(`Error updating task ${taskId}:`, error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/tasks/:id", async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    if (isNaN(taskId)) {
+      return res.status(400).json({ message: "Invalid task ID" });
+    }
+
+    try {
+      const result = await storage.deleteTask(taskId);
+      if (!result) { // Assuming storage.deleteTask returns null or throws if not found/fails
+        return res.status(404).json({ message: "Task not found or could not be deleted" });
+      }
+      // Successfully deleted
+      res.status(204).send(); // Or res.status(200).json({ message: "Task deleted successfully" });
+    } catch (error) {
+      console.error(`Error deleting task ${taskId}:`, error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
   
   // User Tasks routes
+
+  // Schema for the toggle endpoint payload
+  const toggleUserTaskSchema = z.object({
+    userId: z.number(),
+    taskId: z.number(),
+    date: z.string().refine(val => !isNaN(Date.parse(val)), { message: "Invalid ISO date string" }),
+  });
+
+  app.post("/api/user-tasks/toggle", async (req, res) => {
+    try {
+      const validatedData = toggleUserTaskSchema.parse(req.body);
+      const { userId, taskId, date: dateString } = validatedData;
+      
+      // Convert date string to Date object for the storage layer
+      const date = new Date(dateString);
+
+      // Assuming storage.toggleUserTaskCompletion will handle the logic:
+      // 1. Find existing userTask for userId, taskId, date.
+      // 2. If exists, flip 'completed' status.
+      // 3. If not exists, create new userTask with 'completed: true'.
+      // 4. Return the created/updated userTask.
+      const userTask = await storage.toggleUserTaskCompletion(userId, taskId, date);
+      
+      // Respond with the created or updated userTask.
+      // Status could be 200 if updated, 201 if created, or consistently 200.
+      // For simplicity, using 200 for now.
+      res.status(200).json(userTask);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid request body", errors: error.errors });
+      }
+      console.error("Error toggling user task completion:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.get("/api/user-tasks/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     if (isNaN(userId)) {
