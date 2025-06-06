@@ -36,7 +36,7 @@ const ExpertsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [followedExperts, setFollowedExperts] = useState<number[]>([]); // Assuming expert ID is number based on old data
-  
+
   const getCategoryIconComponent = (categoryId: string): React.ReactNode => {
     switch (categoryId) {
       case 'Longevity': return <Calendar className="w-4 h-4" />;

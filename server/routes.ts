@@ -266,7 +266,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validatedData = toggleUserTaskSchema.parse(req.body);
       const { userId, taskId, date: dateString } = validatedData;
-      
+
       // Convert date string to Date object for the storage layer
       const date = new Date(dateString);
 
@@ -276,7 +276,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // 3. If not exists, create new userTask with 'completed: true'.
       // 4. Return the created/updated userTask.
       const userTask = await storage.toggleUserTaskCompletion(userId, taskId, date);
-      
+
       // Respond with the created or updated userTask.
       // Status could be 200 if updated, 201 if created, or consistently 200.
       // For simplicity, using 200 for now.

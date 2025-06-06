@@ -198,9 +198,9 @@ export default function SortableDashboard() {
         if (isSameDay(dateObj, new Date())) {
           const habitIds = habits.map(h => h.id);
           const allHabitsCompletedToday = habitIds.every(hId => {
-            return newCompletionsState.some(c => 
-              c.habitId === hId && 
-              c.completed && 
+            return newCompletionsState.some(c =>
+              c.habitId === hId &&
+              c.completed &&
               isSameDay(new Date(c.date), dateObj)
             );
           });
@@ -209,12 +209,12 @@ export default function SortableDashboard() {
             setShowPerfectDayConfetti(true);
           }
         }
-        
+
         // Check for perfect week completion
         const currentWeekStart = startOfWeek(new Date());
         const currentWeekEnd = endOfWeek(new Date());
         const habitCompletionMap = new Map();
-        
+
         habits.forEach(habit => {
           habitCompletionMap.set(habit.id, {
             completedCount: 0,
@@ -222,7 +222,7 @@ export default function SortableDashboard() {
             isAbsolute: habit.isAbsolute
           });
         });
-        
+
         newCompletionsState.forEach(completion => {
           const completionDate = new Date(completion.date);
           if (completion.completed && completionDate >= currentWeekStart && completionDate <= currentWeekEnd) {
@@ -232,11 +232,11 @@ export default function SortableDashboard() {
             }
           }
         });
-        
+
         const perfectWeek = Array.from(habitCompletionMap.values()).every(info => {
           return info.completedCount >= info.target;
         });
-        
+
         if (perfectWeek) {
           setShowPerfectWeekConfetti(true);
         }
@@ -322,7 +322,7 @@ export default function SortableDashboard() {
 
     console.log("⚡⚡ EDIT FUNCTION (API) - START");
     console.log("Updating habit:", updatedHabit.title, "ID:", updatedHabit.id);
-    
+
     setIsLoading(true);
     setError(null);
     
@@ -501,7 +501,7 @@ export default function SortableDashboard() {
           // this part might need adjustment later, or the backend endpoint might need to be updated
           // to support fetching completions for a date range or all completions for a user.
           // For now, proceeding with the assumption that it can return relevant completions for the dashboard.
-          const completionsResponse = await fetch(`/api/user-tasks/${user.id}?days=90`); 
+          const completionsResponse = await fetch(`/api/user-tasks/${user.id}?days=90`);
           if (!completionsResponse.ok) {
             throw new Error(`Failed to fetch completions: ${completionsResponse.statusText}`);
           }
@@ -765,7 +765,7 @@ export default function SortableDashboard() {
           // The dataFromDialog contains all fields from the form.
           // If dataFromDialog.id is a client-generated one (e.g., starts with 'h-') or is missing, it's a new habit.
           // Otherwise, it's an existing habit.
-          
+
           // Ensure `user` is available before proceeding
           if (!user || !user.id) {
             setError("User information is not available. Please log in.");
