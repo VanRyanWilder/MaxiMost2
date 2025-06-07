@@ -1,20 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+// This is the corrected configuration for Cloudflare Pages deployment.
+// All Replit-specific plugins have been removed to ensure compatibility.
+// The paths have been kept as defined in your original file.
 
 export default defineConfig({
   plugins: [
     react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
+    // The "@replit/vite-plugin-runtime-error-modal" has been removed.
+    // The "@replit/vite-plugin-cartographer" has been removed.
   ],
   resolve: {
     alias: {
@@ -23,7 +19,10 @@ export default defineConfig({
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },
+  // This tells Vite where your source files (like index.html) are.
   root: path.resolve(import.meta.dirname, "client"),
+  
+  // This tells Vite where to put the final, built website files.
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
