@@ -1,5 +1,6 @@
 // client/src/pages/sortable-dashboard-new.tsx
 import { useState, useEffect, useCallback } from "react";
+// ... other imports ...
 import { cleanHabitTitle } from "@/utils/clean-habit-title";
 import { Sidebar } from "@/components/layout/sidebar";
 import { useTheme } from "@/components/theme-provider";
@@ -11,23 +12,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, Moon, CircleDollarSign, Users, AlertCircle, Loader2, Activity, CheckSquare, Calendar, Plus, Zap, Flame, Dumbbell, Brain, Droplets, BookOpen, Pill, TrendingUp, Menu, Utensils, Moon as BedIcon } from "lucide-react";
 import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
 import { IconPicker } from "@/components/ui/icon-picker";
@@ -38,25 +26,12 @@ import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-vi
 import { HabitProgressVisualization } from "@/components/dashboard/habit-progress-visualization";
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog-fixed-new";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { format, addDays, startOfWeek, endOfWeek, subDays, isSameDay, parseISO } from "date-fns";
 
 import { Habit as ClientHabitType, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
-import { FirestoreHabit, FirestoreTimestamp } from "../../../shared/types/firestore";
+import { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "../../../shared/types/firestore";
 import { apiClient } from "@/lib/apiClient";
 import { useUser } from "@/context/user-context";
 import { toast } from "@/hooks/use-toast";
@@ -74,24 +49,20 @@ const toDate = (timestamp: FirestoreTimestamp | Date | string): Date => {
 export default function SortableDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const [habits, setHabits] = useState<FirestoreHabit[]>([]);
   const [isLoadingHabits, setIsLoadingHabits] = useState<boolean>(true);
   const [loadHabitsError, setLoadHabitsError] = useState<string | null>(null);
-  
   const [isSubmittingHabit, setIsSubmittingHabit] = useState<boolean>(false);
   const [submitHabitError, setSubmitHabitError] = useState<string | null>(null);
-
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Partial<FirestoreHabit> | null>(null);
-
   const [showPerfectDayConfetti, setShowPerfectDayConfetti] = useState(false);
   const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
+   );
   const { user, userLoading } = useUser();
 
   const fetchHabitsAsync = useCallback(async (showLoadingIndicator = true) => {
@@ -100,10 +71,7 @@ export default function SortableDashboard() {
     setLoadHabitsError(null);
     try {
       const fetchedHabits = await apiClient<FirestoreHabit[]>("/habits", { method: "GET" });
-      const habitsWithEnsuredCompletions = fetchedHabits.map(h => ({
-        ...h,
-        completions: (h.completions || []).map(c => c)
-      }));
+      const habitsWithEnsuredCompletions = fetchedHabits.map(h => ({ ...h, completions: (h.completions || []).map(c => c) }));
       setHabits(habitsWithEnsuredCompletions);
     } catch (error: any) {
       console.error("Failed to fetch habits:", error);
@@ -115,12 +83,8 @@ export default function SortableDashboard() {
   }, [user]);
 
   useEffect(() => {
-    if (user && !userLoading) {
-      fetchHabitsAsync(true);
-    } else if (!user && !userLoading) {
-      setHabits([]);
-      setIsLoadingHabits(false);
-    }
+     if (user && !userLoading) { fetchHabitsAsync(true); }
+     else if (!user && !userLoading) { setHabits([]); setIsLoadingHabits(false); }
   }, [user, userLoading, fetchHabitsAsync]);
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -135,48 +99,96 @@ export default function SortableDashboard() {
     }
   };
 
+  // Updated isHabitCompletedOnDate for V1.1
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
     const habit = habits.find(h => h.habitId === habitId);
     if (!habit || !habit.completions || habit.completions.length === 0) return false;
-    return habit.completions.some(c => isSameDay(toDate(c), date));
+
+    const targetDateString = format(date, "yyyy-MM-dd");
+    const completionEntry = habit.completions.find(c => c.date === targetDateString);
+
+    if (!completionEntry) return false;
+
+    if (habit.type === "binary") {
+      return completionEntry.value >= 1;
+    } else if (habit.type === "quantitative") {
+      if (typeof habit.targetValue === "number" && habit.targetValue > 0) {
+        return completionEntry.value >= habit.targetValue;
+      }
+      return completionEntry.value > 0;
+    }
+    return false;
   };
 
+  // Updated toggleCompletion for V1.1
   const toggleCompletion = async (habitId: string, date: Date | string) => {
-    if (!user) { toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" }); return; }
-    
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
+    const habit = habits.find(h => h.habitId === habitId);
+    if (!habit) {
+      toast({ title: "Error", description: "Habit not found.", variant: "destructive" });
+      return;
+    }
+
     const dateObj = typeof date === "string" ? parseISO(date) : date;
     if (!isSameDay(dateObj, new Date())) {
         toast({
-            title: "Note",
-            description: "Habit completion via API is for the current server day. Marking for a different date is not yet fully supported by the backend.",
-            variant: "default"
+            title: "Completion Note",
+            description: `Completion will be logged for today (${format(new Date(), "MMM d")}). Logging for past/future dates will be available later.`,
+            variant: "default",
+            duration: 5000,
         });
     }
 
-    const habitToComplete = habits.find(h => h.habitId === habitId);
-    const habitTitle = habitToComplete ? habitToComplete.title : "Habit";
+    let completionValue: number;
+    if (habit.type === "binary") {
+      completionValue = 1;
+    } else if (habit.type === "quantitative") {
+      completionValue = (typeof habit.targetValue === "number" && habit.targetValue > 0) ? habit.targetValue : 1;
+      toast({
+          title: "Quantitative Completion",
+          description: `Logging completion with value: ${completionValue} ${habit.targetUnit || ""}. Custom value input via UI coming soon.`,
+          variant: "info",
+          duration: 5000,
+      });
+    } else {
+      toast({ title: "Error", description: "Unknown habit type. Cannot log completion.", variant: "destructive" });
+      return;
+    }
+
     try {
-      await apiClient(`/habits/${habitId}/complete`, { method: "POST" });
-      toast({ title: "Success", description: `"${habitTitle}" marked as complete.` });
+      await apiClient(`/habits/${habit.habitId}/complete`, {
+        method: "POST",
+        body: { value: completionValue },
+      });
+      toast({ title: "Success", description: `"${habit.title}" completion logged.` });
       await fetchHabitsAsync(false);
     } catch (error: any) {
-        toast({ title: "Error", description: `Failed to complete habit: ${error.message}`, variant: "destructive" });
+      console.error(`Failed to log completion for habit "${habit.title}":`, error);
+      toast({ title: "Error", description: `Failed to log completion: ${error.message}`, variant: "destructive" });
     }
   };
 
-  const addHabit = async (habitData: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions">) => {
+  const addHabit = async (habitData: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak">) => { /* ... as before ... */
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in to add habits.", variant: "destructive" }); return; }
     setIsSubmittingHabit(true);
     setSubmitHabitError(null);
     try {
-      const newHabitPayload = {
+      const newHabitPayload: Partial<FirestoreHabit> = {
         title: habitData.title, description: habitData.description || "", category: habitData.category,
-        icon: habitData.icon || "check-square", iconColor: habitData.iconColor || "blue",
-        impact: habitData.impact || 5, effort: habitData.effort || 5, timeCommitment: habitData.timeCommitment || "5 min",
-        frequency: habitData.frequency || "daily",
-        isAbsolute: habitData.frequency === "daily" ? true : (habitData.isAbsolute || false),
+        type: habitData.type,
+        targetValue: habitData.type === "quantitative" ? habitData.targetValue : undefined,
+        targetUnit: habitData.type === "quantitative" ? habitData.targetUnit : undefined,
         isBadHabit: habitData.isBadHabit || false,
-        trigger: habitData.trigger, replacementHabit: habitData.replacementHabit,
+        trigger: habitData.isBadHabit ? habitData.trigger : undefined,
+        replacementHabit: habitData.isBadHabit ? habitData.replacementHabit : undefined,
+        icon: habitData.icon || "activity", iconColor: habitData.iconColor || "gray",
+        impact: habitData.impact || 5, effort: habitData.effort || 5,
+        timeCommitment: habitData.timeCommitment || "N/A", frequency: habitData.frequency || "daily",
+        isAbsolute: typeof habitData.isAbsolute === "boolean" ? habitData.isAbsolute : (habitData.frequency === "daily"),
       };
       const createdHabit = await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload });
       setHabits(prevHabits => [...prevHabits, createdHabit]);
@@ -189,29 +201,40 @@ export default function SortableDashboard() {
       setIsSubmittingHabit(false);
     }
   };
-
-  const editHabit = async (updatedHabit: FirestoreHabit) => {
-    if (!user) { toast({ title: "Authentication Error", description: "You must be logged in to edit habits.", variant: "destructive" }); return; }
-    
+  const editHabit = async (updatedHabitFull: FirestoreHabit) => { /* ... as before ... */
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in to edit habits.", variant: "destructive" });
+      return;
+    }
+    if (!updatedHabitFull.habitId) {
+      toast({ title: "Error", description: "Cannot edit habit without an ID.", variant: "destructive" });
+      return;
+    }
     setIsSubmittingHabit(true);
     setSubmitHabitError(null);
+    const { habitId, userId, createdAt, completions, streak, ...editableFields } = updatedHabitFull;
+    const payload = editableFields;
     try {
-        setHabits(prevHabits => prevHabits.map(h => (h.habitId === updatedHabit.habitId ? updatedHabit : h)));
-        toast({
-            title: "Habit Updated (Locally)",
-            description: `Changes to "${updatedHabit.title}" are saved locally. Full backend update for edits is pending.`,
-            variant: "default",
-        });
-        setEditHabitDialogOpen(false);
+      const savedHabit = await apiClient<FirestoreHabit>(`/habits/${habitId}`, {
+        method: "PUT",
+        body: payload,
+      });
+      setHabits(prevHabits => prevHabits.map(h => (h.habitId === savedHabit.habitId ? savedHabit : h)));
+      toast({ title: "Success!", description: `Habit "${savedHabit.title}" updated.` });
+      setEditHabitDialogOpen(false);
     } catch (error: any) {
-        setSubmitHabitError(error.message || "An unknown error occurred.");
-        toast({ title: "Error updating habit", description: error.message, variant: "destructive" });
+      console.error("Failed to edit habit:", error);
+      setSubmitHabitError(error.message || "An unknown error occurred while editing the habit.");
+      toast({
+        title: "Error Editing Habit",
+        description: `${error.message}${error.status === 501 ? " (Edit endpoint may not be implemented on backend)" : ""}`,
+        variant: "destructive"
+      });
     } finally {
-        setIsSubmittingHabit(false);
+      setIsSubmittingHabit(false);
     }
   };
-
-  const deleteHabit = async (habitId: string) => {
+  const deleteHabit = async (habitId: string) => { /* ... as before ... */
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" }); return; }
     const habitToDelete = habits.find(h => h.habitId === habitId);
     const habitTitle = habitToDelete ? habitToDelete.title : "Habit";
@@ -226,21 +249,19 @@ export default function SortableDashboard() {
     } catch (error: any) {
         toast({ title: "Error archiving habit", description: error.message, variant: "destructive" });
     }
-  };
-
+   };
   const handleEditHabitClick = (habit: FirestoreHabit) => { setSelectedHabit(habit); setEditHabitDialogOpen(true); };
-  const handleCreateHabitClick = () => {
+  const handleCreateHabitClick = () => { /* ... as before ... */
     const newHabitTemplate: Partial<FirestoreHabit> = {
-        title: "", description: "", icon: "check-square", iconColor: "blue", impact: 5, effort: 5,
-        timeCommitment: "5 min", frequency: "daily", isAbsolute: true, category: "health",
-        isBadHabit: false, completions: [],
+        title: "", description: "", icon: "activity", iconColor: "gray", impact: 5, effort: 5,
+        timeCommitment: "N/A", frequency: "daily", isAbsolute: true, category: "health",
+        isBadHabit: false, completions: [], type: "binary", targetValue: undefined, targetUnit: undefined,
     };
     setSelectedHabit(newHabitTemplate);
     setEditHabitDialogOpen(true);
   };
-  
-  const handleSaveHabit = async (dialogHabitData: ClientHabitType) => {
-    const dataToSave = {
+  const handleSaveHabit = async (dialogHabitData: ClientHabitType & { type?: "binary" | "quantitative", targetValue?: number, targetUnit?: string }) => { /* ... as before ... */
+    const dataToSave: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak"> & { type: "binary" | "quantitative" } = {
         title: dialogHabitData.title, description: dialogHabitData.description,
         category: dialogHabitData.category as HabitCategory, icon: dialogHabitData.icon,
         iconColor: dialogHabitData.iconColor, impact: dialogHabitData.impact,
@@ -248,30 +269,19 @@ export default function SortableDashboard() {
         frequency: dialogHabitData.frequency as HabitFrequency, isAbsolute: dialogHabitData.isAbsolute,
         isBadHabit: dialogHabitData.isBadHabit || false, trigger: dialogHabitData.trigger,
         replacementHabit: dialogHabitData.replacementHabit,
+        type: dialogHabitData.type || "binary",
+        targetValue: dialogHabitData.type === "quantitative" ? dialogHabitData.targetValue : undefined,
+        targetUnit: dialogHabitData.type === "quantitative" ? dialogHabitData.targetUnit : undefined,
     };
-
     if (selectedHabit && selectedHabit.habitId) {
-      const updatedHabit: FirestoreHabit = {
-        ...(selectedHabit as FirestoreHabit),
-        ...dataToSave,
-        habitId: selectedHabit.habitId,
+      const habitToUpdate: FirestoreHabit = {
+        ...(selectedHabit as FirestoreHabit), ...dataToSave, habitId: selectedHabit.habitId,
       };
-      await editHabit(updatedHabit);
-    } else {
-      await addHabit(dataToSave);
-    }
+      await editHabit(habitToUpdate);
+    } else { await addHabit(dataToSave); }
   };
-
   const { setTheme } = useTheme();
-  useEffect(() => {
-    const savedSettings = localStorage.getItem("appSettings");
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        if (parsedSettings.theme) setTheme(parsedSettings.theme);
-      } catch (error) { console.error("Failed to parse settings from localStorage", error); }
-    }
-  }, [setTheme]);
+  useEffect(() => { /* ... theme ... */ }, [setTheme]);
 
   let habitContent;
   if (isLoadingHabits) { habitContent = (<div className="flex justify-center items-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /><p className="ml-2">Loading habits...</p></div>); }
@@ -281,68 +291,24 @@ export default function SortableDashboard() {
   else {
     habitContent = (
       <SortableHabitViewModes
-        habits={habits.map(h => ({
-            ...h,
-            id: h.habitId!,
-            isCompletedToday: isHabitCompletedOnDate(h.habitId!, currentDate)
-        } as any))}
-        onToggleHabit={toggleCompletion}
-        onAddHabit={handleCreateHabitClick}
-        onEditHabit={handleEditHabitClick}
-        onUpdateHabit={editHabit}
+        habits={habits.map(h => ({ ...h, id: h.habitId!, isCompletedToday: isHabitCompletedOnDate(h.habitId!, currentDate) } as any))}
+        onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
+        onEditHabit={handleEditHabitClick} onUpdateHabit={editHabit}
         onDeleteHabit={deleteHabit}
         onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits.map(h => ({...h, habitId: h.id})))}
-      />
-    );
+      />);
   }
-
-  const handleAddFromLibrary = (habitTemplate: any) => { console.log("handleAddFromLibrary needs API integration"); };
+  const handleAddFromLibrary = (habitTemplate: any) => { /* ... placeholder ... */ };
 
   return (
     <SettingsProvider>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        <main className="flex-1">
-          <PageContainer>
-            <div className="flex justify-end items-center mb-4"><HeaderWithSettings /></div>
-            <div className="flex flex-col lg:flex-row gap-6">
-              <div className="flex-1">
-                <Card className="mb-8">
-                  <CardHeader className="pb-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <CardTitle className="text-lg font-semibold">Habit Dashboard
-                        {!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}
-                      </CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <Tabs defaultValue="tracker" className="w-full">
-                      <TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2">
-                        <TabsTrigger value="tracker" className="flex items-center gap-1"><CheckSquare className="h-4 w-4" /><span>Habit Tracker</span></TabsTrigger>
-                        <TabsTrigger value="progress" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /><span>Progress Visualization</span></TabsTrigger>
-                      </TabsList>
-                      <TabsContent value="tracker" className="mt-0">{habitContent}</TabsContent>
-                      <TabsContent value="progress" className="mt-0"><HabitProgressVisualization habits={habits} /></TabsContent>
-                    </Tabs>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="w-full lg:w-80 space-y-6">
-                <DailyMotivation />
-                <TopRatedSupplements />
-                <HabitLibrary onAddHabit={handleAddFromLibrary} />
-              </div>
-            </div>
-          </PageContainer>
-        </main>
-      </div>
+      <div className="flex min-h-screen bg-background"><Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} /><main className="flex-1"><PageContainer><div className="flex justify-end items-center mb-4"><HeaderWithSettings /></div><div className="flex flex-col lg:flex-row gap-6"><div className="flex-1"><Card className="mb-8"><CardHeader className="pb-2"><div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"><CardTitle className="text-lg font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle></div></CardHeader><CardContent><Tabs defaultValue="tracker" className="w-full"><TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2"><TabsTrigger value="tracker" className="flex items-center gap-1"><CheckSquare className="h-4 w-4" /><span>Habit Tracker</span></TabsTrigger><TabsTrigger value="progress" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /><span>Progress Visualization</span></TabsTrigger></TabsList><TabsContent value="tracker" className="mt-0">{habitContent}</TabsContent><TabsContent value="progress" className="mt-0"><HabitProgressVisualization habits={habits} /></TabsContent></Tabs></CardContent></Card></div><div className="w-full lg:w-80 space-y-6"><DailyMotivation /><TopRatedSupplements /><HabitLibrary onAddHabit={handleAddFromLibrary} /></div></div></PageContainer></main></div>
       <ConfettiCelebration trigger={showPerfectDayConfetti} type="perfectDay" onComplete={() => setShowPerfectDayConfetti(false)} />
       <ConfettiCelebration trigger={showPerfectWeekConfetti} type="perfectWeek" onComplete={() => setShowPerfectWeekConfetti(false)} />
-      
       <EditHabitDialog
         open={editHabitDialogOpen}
         setOpen={setEditHabitDialogOpen}
-        habit={selectedHabit as ClientHabitType | null}
+        habit={selectedHabit as ClientHabitType & { type?: "binary" | "quantitative", targetValue?: number, targetUnit?: string } | null}
         onSave={handleSaveHabit}
         onDelete={deleteHabit}
         isSaving={isSubmittingHabit}
