@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
+// bodyParser import removed, using express built-ins
 import habitRoutes from "./routes/habitRoutes"; // Import habit routes
 
 // Initialize Firebase Admin SDK - Ensure this is done before routes that need it.
@@ -12,8 +12,8 @@ const port = process.env.PORT || 8080;
 
 // Middleware
 app.use(cors()); // Enable CORS for all routes - Already added, ensuring it is here.
-app.use(bodyParser.json()); // Parse JSON bodies
-app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // Routes
 app.get("/", (req, res) => {
