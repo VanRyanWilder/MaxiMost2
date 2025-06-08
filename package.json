@@ -5,7 +5,7 @@
   "main": "server/index.ts",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "build": "npm run build --prefix client",
+    "build": "npx vite build",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,6 +34,7 @@
     "@types/node": "^20.14.11",
     "concurrently": "^8.2.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vite": "^5.3.5"
   }
 }
