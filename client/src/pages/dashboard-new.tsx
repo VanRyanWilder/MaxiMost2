@@ -84,12 +84,13 @@ import { Badge } from "@/components/ui/badge";
 import { EditHabitDialog } from '@/components/dashboard/edit-habit-dialog';
 
 // Import shared types
-import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
+import { Habit, HabitCompletion, HabitFrequency, HabitCategory, CompletionEntry } from "@/types/habit"; // Added CompletionEntry
 
-// Sample data
-const initialHabits: Habit[] = [
-  {
-    id: 'h1',
+// Sample data REMOVED - will be fetched from API
+// const initialHabits: Habit[] = [ ... ];
+// const initialCompletions: HabitCompletion[] = [ ... ];
+
+// Function to get icon component based on icon string
     title: 'Drink 64oz Water',
     description: 'Stay hydrated for optimal performance and health',
     icon: 'droplets',
@@ -203,13 +204,67 @@ function getIconComponent(iconName: string, iconColor?: string, className: strin
 export default function Dashboard() {
   const { user } = useUser();
   const { toast } = useToast();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [habits, setHabits] = useState<Habit[]>(initialHabits);
-  const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
+  const [habits, setHabits] = useState<Habit[]>([]); // Initialize with empty array
+  // const [completions, setCompletions] = useState<HabitCompletion[]>([]); // Removed, completions are part of habits
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [weekOffset, setWeekOffset] = useState(0);
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  // const [currentDate, setCurrentDate] = useState<Date>(new Date()); // Not actively used, can be removed if only for initialCompletions
+
+  useEffect(() => {
+    if (!user) {
+      setHabits([]);
+      // setCompletions([]); // Completions state removed
+      setIsLoading(false);
+      setError(null); // Clear error if user logs out
+      return;
+    }
+
+    const fetchHabits = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const token = await user.getIdToken();
+        const response = await fetch(`${apiBaseUrl}/api/habits`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text(); // Try to get more error info
+          console.error("Failed to fetch habits response:", errorData);
+          throw new Error(`Failed to fetch habits: ${response.status} ${response.statusText}`);
+        }
+
+        const fetchedHabits: any[] = await response.json(); // Initially parse as any to handle raw dates
+
+        // Transform data (e.g., convert Firestore Timestamps)
+        const transformedHabits: Habit[] = fetchedHabits.map(habit => ({
+          ...habit,
+          createdAt: habit.createdAt ? (typeof habit.createdAt === 'string' ? new Date(habit.createdAt) : new Date((habit.createdAt._seconds || habit.createdAt.seconds) * 1000)) : undefined,
+          completions: (habit.completions || []).map((comp: any) => ({
+            ...comp,
+            timestamp: comp.timestamp ? (typeof comp.timestamp === 'string' ? new Date(comp.timestamp) : new Date((comp.timestamp._seconds || comp.timestamp.seconds) * 1000)) : undefined,
+          })),
+        }));
+
+        setHabits(transformedHabits);
+      } catch (err: any) {
+        console.error("Error fetching habits:", err);
+        setError(err.message || "An unknown error occurred while fetching habits.");
+        setHabits([]); // Clear habits on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHabits();
+  }, [user, apiBaseUrl]); // apiBaseUrl added as dependency, though it shouldn't change often
 
   // Set up sensors for the drag and drop functionality
   const sensors = useSensors(
@@ -220,45 +275,153 @@ export default function Dashboard() {
   );
   
   // Generate dates for the week
-  const today = new Date();
+  const today = new Date(); // Keep for date calculations
   const startOfCurrentWeek = startOfWeek(today, { weekStartsOn: 1 }); // Monday as start of week
   
   const weekDates = Array.from({ length: 7 }).map((_, i) => {
     return addDays(startOfCurrentWeek, i + (weekOffset * 7));
   });
 
-  const toggleCompletion = (habitId: string, date: Date) => {
-    const isCompleted = completions.some(c => 
-      c.habitId === habitId && 
-      isSameDay(c.date, date) && 
-      c.completed
-    );
+  const toggleCompletion = async (habitId: string, dateToToggle: Date) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+    const token = await user.getIdToken();
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) {
+      toast({ title: "Error", description: "Habit not found.", variant: "destructive" });
+      return;
+    }
+
+    const dateString = format(dateToToggle, 'yyyy-MM-dd');
+    const existingCompletion = (habit.completions || []).find(c => c.date === dateString);
     
-    if (isCompleted) {
-      // Remove completion if it exists
-      setCompletions(completions.filter(c => 
-        !(c.habitId === habitId && isSameDay(c.date, date))
-      ));
-    } else {
-      // Add completion
-      const newCompletion: HabitCompletion = {
-        id: `c-${Date.now()}`,
-        habitId,
-        date,
-        completed: true
-      };
-      setCompletions([...completions, newCompletion]);
+    let newValue = 1; // Default to complete (value 1 for binary)
+    if (habit.type === 'quantitative') {
+      // For quantitative, default to targetValue if not completed, or 0 if "uncompleting"
+      // This part may need more sophisticated UI for quantitative value input later
+      newValue = existingCompletion && existingCompletion.value > 0 ? 0 : (habit.targetValue || 1);
+    } else { // Binary
+      newValue = existingCompletion && existingCompletion.value > 0 ? 0 : 1;
+    }
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/habits/${habitId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ value: newValue }),
+      });
+
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || `Failed to toggle completion: ${response.status}`);
+      }
+
+      const result = await response.json(); // Expects { habitId, message, completions }
+
+      // Optimistically update the habit in the local state with new completions from backend
+      setHabits(prevHabits =>
+        prevHabits.map(h => {
+          if (h.id === habitId) {
+            // Transform timestamps in the returned completions
+            const transformedCompletions = (result.completions || []).map((comp: any) => ({
+              ...comp,
+              timestamp: comp.timestamp ? (typeof comp.timestamp === 'string' ? new Date(comp.timestamp) : new Date((comp.timestamp._seconds || comp.timestamp.seconds) * 1000)) : undefined,
+            }));
+            return { ...h, completions: transformedCompletions };
+          }
+          return h;
+        })
+      );
+
+      toast({
+        title: "Habit Updated",
+        description: `Completion for "${habit.title}" on ${format(dateToToggle, 'MMM d')} ${newValue > 0 ? 'logged' : 'removed'}.`
+      });
+
+    } catch (err: any) {
+      console.error("Error toggling completion:", err);
+      toast({ title: "Error Toggling Completion", description: err.message || "An unknown error occurred.", variant: "destructive" });
+      // Optionally, re-fetch habits to ensure consistency if optimistic update fails badly
+      // fetchHabits();
     }
   };
 
-  // Function to add a new habit
-  const addHabit = (habit: Habit) => {
-    setHabits([...habits, habit]);
-  };
+  // Function to add or edit a habit via API
+  const handleSaveHabit = async (habitData: Habit) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+    const token = await user.getIdToken();
+    const isNewHabit = !habitData.id || habitData.id.startsWith('h-'); // Simple check for new habit
 
-  // Function to edit an existing habit
-  const editHabit = (updatedHabit: Habit) => {
-    setHabits(habits.map(h => h.id === updatedHabit.id ? updatedHabit : h));
+    const endpoint = isNewHabit ? `${apiBaseUrl}/api/habits` : `${apiBaseUrl}/api/habits/${habitData.id}`;
+    const method = isNewHabit ? 'POST' : 'PUT';
+
+    // Prepare payload, remove client-side only fields or transform if needed
+    const payload = { ...habitData };
+    if (isNewHabit) {
+      delete payload.id; // Backend will assign ID
+    }
+    // Ensure createdAt is not sent as Date object if backend expects string or server timestamp
+    // For add, backend sets createdAt. For edit, it's usually not updated or backend handles.
+    // Let's assume backend handles createdAt appropriately if it's part of payload.
+    // If `payload.createdAt` is a Date object, convert to ISO string or remove for add.
+    if (payload.createdAt && typeof payload.createdAt !== 'string') {
+        payload.createdAt = (payload.createdAt as Date).toISOString();
+    }
+    // Remove habit.completions from the main habit payload if they are handled by a separate endpoint
+    // or if the backend doesn't expect them on habit create/update directly.
+    // Based on current backend, completions are part of the habit document, but not directly updatable via POST/PUT habit.
+    // Let's assume for now that we don't send completions when creating/updating the main habit fields.
+    // If the backend DOES accept completions on PUT, this might need adjustment.
+    // delete payload.completions; // Assuming completions are managed via /complete endpoint primarily
+
+    try {
+      const response = await fetch(endpoint, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || `Failed to save habit: ${response.status}`);
+      }
+
+      const savedHabit = await response.json();
+
+      // Transform timestamps for frontend state
+      const transformedSavedHabit: Habit = {
+          ...savedHabit,
+          createdAt: savedHabit.createdAt ? (typeof savedHabit.createdAt === 'string' ? new Date(savedHabit.createdAt) : new Date((savedHabit.createdAt._seconds || savedHabit.createdAt.seconds) * 1000)) : undefined,
+          completions: (savedHabit.completions || []).map((comp: any) => ({
+            ...comp,
+            timestamp: comp.timestamp ? (typeof comp.timestamp === 'string' ? new Date(comp.timestamp) : new Date((comp.timestamp._seconds || comp.timestamp.seconds) * 1000)) : undefined,
+          })),
+        };
+
+
+      if (isNewHabit) {
+        setHabits(prevHabits => [...prevHabits, transformedSavedHabit]);
+        toast({ title: "Habit Added", description: `"${transformedSavedHabit.title}" was successfully added.` });
+      } else {
+        setHabits(prevHabits => prevHabits.map(h => (h.id === transformedSavedHabit.id ? transformedSavedHabit : h)));
+        toast({ title: "Habit Updated", description: `"${transformedSavedHabit.title}" was successfully updated.` });
+      }
+      setEditHabitDialogOpen(false); // Close dialog on success
+    } catch (err: any) {
+      console.error("Error saving habit:", err);
+      toast({ title: "Error Saving Habit", description: err.message || "An unknown error occurred.", variant: "destructive" });
+    }
   };
   
   // Handle drag end for sorting habits
@@ -289,9 +452,47 @@ export default function Dashboard() {
   };
 
   // Function to delete a habit
-  const deleteHabit = (habitId: string) => {
-    setHabits(habits.filter(h => h.id !== habitId));
-    setCompletions(completions.filter(c => c.habitId !== habitId));
+  const deleteHabit = async (habitId: string) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+    if (!habitId) {
+      toast({ title: "Error", description: "Habit ID is missing.", variant: "destructive" });
+      return;
+    }
+    const token = await user.getIdToken();
+
+    // Optimistic update (optional, for quicker UI response)
+    // const originalHabits = habits;
+    // setHabits(prevHabits => prevHabits.filter(h => h.id !== habitId));
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/api/habits/${habitId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        // If optimistic update was done, revert it
+        // setHabits(originalHabits);
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || `Failed to delete habit: ${response.status}`);
+      }
+
+      // If no optimistic update, update state after successful API call
+      setHabits(prevHabits => prevHabits.filter(h => h.id !== habitId));
+      toast({ title: "Habit Deleted", description: "The habit was successfully deleted." });
+    } catch (err: any) {
+      console.error("Error deleting habit:", err);
+      toast({ title: "Error Deleting Habit", description: err.message || "An unknown error occurred.", variant: "destructive" });
+      // If optimistic update was done and failed, ensure state is reverted
+      // This might require fetching habits again if not reverting, or more complex state management.
+      // For simplicity, if optimistic update is used, the revert is important.
+      // Without optimistic: fetchHabits(); // Or rely on user to see change on next full fetch.
+    }
   };
   
   // Handle habit editing
@@ -301,7 +502,7 @@ export default function Dashboard() {
   };
   
   // Function to add a quick habit from the library
-  const addQuickHabit = (
+  const addQuickHabit = async (
     title: string, 
     icon: string, 
     category: string, 
@@ -313,68 +514,52 @@ export default function Dashboard() {
     isAbsolute?: boolean,
     iconColor?: string
   ) => {
-    // Determine a suitable default color if none provided
     let defaultColor = iconColor;
     if (!defaultColor) {
-      // Choose color based on category
       switch (category) {
-        case 'health': defaultColor = 'green'; break;
-        case 'fitness': defaultColor = 'red'; break;
-        case 'mind': defaultColor = 'purple'; break;
-        case 'social': defaultColor = 'blue'; break;
-        default: defaultColor = 'blue';
+        case 'physical': defaultColor = 'blue'; break; // Example color mapping
+        case 'nutrition': defaultColor = 'green'; break;
+        case 'sleep': defaultColor = 'indigo'; break;
+        case 'mental': defaultColor = 'purple'; break;
+        case 'relationships': defaultColor = 'pink'; break;
+        case 'financial': defaultColor = 'teal'; break;
+        default: defaultColor = 'slate';
       }
     }
     
-    // Determine if this is an "absolute" (daily must-do) habit based on frequency
-    // if isAbsolute is explicitly provided, use that value, otherwise infer from frequency
-    const shouldBeAbsolute = isAbsolute !== undefined 
-      ? isAbsolute 
-      : frequency === 'daily';
+    const shouldBeAbsolute = isAbsolute !== undefined ? isAbsolute : frequency === 'daily';
     
-    const newHabit: Habit = {
-      id: `h-${Date.now()}`,
-      title,
-      description,
-      icon,
-      iconColor: defaultColor,
-      impact,
-      effort,
-      timeCommitment,
-      frequency,
-      isAbsolute: shouldBeAbsolute,
-      category: category as HabitCategory,
+    // Prepare a partial Habit object for saving. ID will be set by backend.
+    const newHabitData: Partial<Habit> = {
+      title, description, icon, iconColor: defaultColor, category, frequency, impact, effort, timeCommitment, isAbsolute,
+      // Default other fields that backend expects but are not part of quick add params
+      type: 'binary', // Assuming quick adds are binary by default
       streak: 0,
-      createdAt: new Date()
+      // createdAt will be set by backend
     };
     
-    addHabit(newHabit);
-    
-    // Show a confirmation toast instead of an alert
-    toast({
-      title: "Habit Added",
-      description: `"${title}" was added to your habits!`,
-      variant: "default",
-    });
+    // Call handleSaveHabit which now handles API call
+    await handleSaveHabit(newHabitData as Habit); // Cast as Habit, ID is optional on create
   };
 
   // Function to check if a habit is completed on a specific date
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(c => 
-      c.habitId === habitId && 
+  // This will need to use the nested `completions` in the `Habit` object (Ticket #17)
+  const isHabitCompletedOnDate = (habit: Habit, date: Date): boolean => {
+    return (habit.completions || []).some(c =>
       isSameDay(new Date(c.date), date) && 
-      c.completed
+      c.value > 0 // Assuming value > 0 means completed for binary/quantitative
     );
   };
 
   // Function to count completed days in the current week for a habit
-  const countCompletedDaysInWeek = (habitId: string): number => {
-    return weekDates.filter(date => isHabitCompletedOnDate(habitId, date)).length;
+  // This will also use nested completions
+  const countCompletedDaysInWeek = (habit: Habit): number => {
+    return weekDates.filter(date => isHabitCompletedOnDate(habit, date)).length;
   };
 
   // Check if the habit has met its weekly frequency requirement
   const hasMetWeeklyFrequency = (habit: Habit): boolean => {
-    const completedDays = countCompletedDaysInWeek(habit.id);
+    const completedDays = countCompletedDaysInWeek(habit); // Pass the whole habit
     const targetDays = habit.frequency === 'daily' ? 7 : 
                      habit.frequency === '2x-week' ? 2 :
                      habit.frequency === '3x-week' ? 3 :
@@ -518,140 +703,74 @@ export default function Dashboard() {
                     {/* Must-do habits section */}
                     <div className="mb-6">
                       <h3 className="text-sm font-medium text-muted-foreground mb-2 px-3">Must-Do Habits</h3>
-                      
-                      {absoluteHabits.length === 0 ? (
+                      {/* Loading and Error UI */}
+                      {isLoading && <p className="px-3 py-4 text-center text-muted-foreground">Loading habits...</p>}
+                      {error && <p className="px-3 py-4 text-center text-red-600">Error loading habits: {error}. Please try again later.</p>}
+                      {!isLoading && !error && absoluteHabits.length === 0 && (
                         <div className="text-sm text-center py-4 text-muted-foreground italic">
                           No must-do habits added yet. Click "Add New Habit" to create one.
                         </div>
-                      ) : (
+                      )}
+                      {!isLoading && !error && absoluteHabits.length > 0 && (
                         <DndContext 
                           sensors={sensors}
                           collisionDetection={closestCenter}
                           onDragEnd={handleDragEnd}
                         >
                           <SortableContext 
-                            items={absoluteHabits.map(habit => habit.id)}
+                            items={absoluteHabits.map(habit => habit.id)} // Ensure habit.id is not undefined
                             strategy={verticalListSortingStrategy}
                           >
                             {absoluteHabits.map((habit) => (
                               <SortableHabit
                                 key={habit.id}
                                 habit={habit}
-                                completions={completions}
+                                // Pass habit's own completions, or empty array if none
+                                completions={habit.completions || []}
                                 onToggleCompletion={toggleCompletion}
                                 onEdit={handleEditHabit}
-                                currentDate={weekDates[0]}
+                                // currentDate seems unused in SortableHabit based on previous context,
+                                // but if needed, pass weekDates[0] or relevant date
+                                // For now, assuming isHabitCompletedOnDate in SortableHabit will use habit.completions
+                                // and the date from weekDates mapping within SortableHabit itself.
+                                // The isHabitCompletedOnDate prop for SortableHabit might need to be removed
+                                // if the component is to use its own internal logic with nested completions.
+                                // Or, pass the main isHabitCompletedOnDate function.
+                                isHabitCompletedOnDate={(date: Date) => isHabitCompletedOnDate(habit, date)}
+                                weekDates={weekDates} // Pass weekDates for rendering checkmarks
                               />
                             ))}
                           </SortableContext>
                         </DndContext>
-                                    </div>
-                                    <div className="min-w-0 flex flex-col">
-                                      <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
-                                        {habit.title}
-                                      </span>
-                                      <div className="flex items-center justify-between gap-1 mt-0.5">
-                                        <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
-                                          {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
-                                        </Badge>
-                                        <div className="flex items-center space-x-1">
-                                          <span className={`text-[10px] ${weeklyGoalMet ? 'text-green-600 font-medium' : 'text-muted-foreground'}`}>
-                                            {completedDays}/{targetDays} {habit.frequency} 
-                                            {weeklyGoalMet && " ✓"}
-                                          </span>
-                                          {habit.streak > 0 && (
-                                            <span className="inline-flex items-center text-[10px] text-amber-500">
-                                              <Star className="h-2.5 w-2.5 text-amber-500 mr-0.5" /> 
-                                              {habit.streak}
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Move the edit buttons to appear only on hover */}
-                                  <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                                          <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                          <Pencil className="h-4 w-4 mr-2" />
-                                          Edit Habit
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem 
-                                          onClick={() => deleteHabit(habit.id)}
-                                          className="text-red-600"
-                                        >
-                                          <Trash className="h-4 w-4 mr-2" />
-                                          Delete Habit
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
-                                  </div>
-                                </div>
-                                
-                                {/* Render the weekday checkboxes */}
-                                {weekDates.map((date, i) => {
-                                  const completed = isHabitCompletedOnDate(habit.id, date);
-                                  const isPast = isBefore(date, today) && !isSameDay(date, today);
-                                  const isFuture = isAfter(date, today) && !isSameDay(date, today);
-                                  
-                                  return (
-                                    <div key={i} className="flex justify-center">
-                                      <button 
-                                        onClick={() => toggleCompletion(habit.id, date)}
-                                        disabled={isFuture}
-                                        className={`flex items-center justify-center transition-all duration-200 ease-in-out
-                                          ${completed 
-                                            ? 'bg-green-100 text-green-600 hover:bg-green-200 rounded-md' 
-                                            : isPast 
-                                              ? 'text-muted-foreground hover:bg-red-50 hover:text-red-500' 
-                                              : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
-                                          } w-full h-10`}
-                                      >
-                                        {completed ? (
-                                          <Check className="h-5 w-5" />
-                                        ) : (
-                                          <div className="h-5 w-5 rounded-full border-2 border-current"></div>
-                                        )}
-                                      </button>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            );
-                          })}
-                        </div>
                       )}
                     </div>
                     
                     {/* Additional habits section */}
-                    {additionalHabits.length > 0 && (
+                    {!isLoading && !error && additionalHabits.length > 0 && (
                       <div>
                         <h3 className="text-sm font-medium text-muted-foreground mb-2 px-3">Additional Habits</h3>
-                        
+                        {/* No DND for additional habits in this example, but could be added */}
                         {additionalHabits.map((habit) => {
-                          // Calculate completion count for this habit
-                          const completedDays = countCompletedDaysInWeek(habit.id);
+                          const weeklyGoalMet = hasMetWeeklyFrequency(habit);
+                          const completedDays = countCompletedDaysInWeek(habit);
                           const targetDays = habit.frequency === 'daily' ? 7 : 
                                           habit.frequency === '2x-week' ? 2 :
                                           habit.frequency === '3x-week' ? 3 :
                                           habit.frequency === '4x-week' ? 4 : 1;
-                          const weeklyGoalMet = hasMetWeeklyFrequency(habit);
-                          
+
+                          // This is a simplified rendering part, assuming SortableHabit is not used here
+                          // or would need similar prop adjustments.
+                          // For now, replicating some of the SortableHabit display logic directly for simplicity
+                          // to show how nested completions would be used.
                           return (
                             <div 
                               key={habit.id} 
                               className={`grid grid-cols-[2fr_repeat(7,1fr)] gap-1 mb-2 ${weeklyGoalMet ? 'bg-gradient-to-r from-green-50 to-transparent rounded-lg shadow-sm border border-green-100' : ''}`}
                             >
                               <div className="flex items-center p-1.5 relative group">
+                                {/* ... (icon and title rendering as before) ... */}
                                 <div className="flex items-center gap-2 min-w-0">
-                                  <div className={`p-1.5 rounded-md ${
+                                   <div className={`p-1.5 rounded-md ${
                                       weeklyGoalMet 
                                         ? 'bg-green-100 text-green-600' 
                                         : habit.iconColor 
@@ -659,7 +778,7 @@ export default function Dashboard() {
                                           : 'bg-slate-100'
                                     }`}>
                                     {getIconComponent(
-                                      habit.icon, 
+                                      habit.icon || 'activity', // Fallback icon
                                       weeklyGoalMet ? undefined : habit.iconColor
                                     )}
                                   </div>
@@ -667,9 +786,9 @@ export default function Dashboard() {
                                     <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block">
                                       {habit.title}
                                     </span>
-                                    <div className="flex items-center justify-between gap-1 mt-0.5">
+                                     <div className="flex items-center justify-between gap-1 mt-0.5">
                                       <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-4 bg-blue-50 border-blue-200">
-                                        {habit.category.charAt(0).toUpperCase() + habit.category.slice(1)}
+                                        {habit.category?.charAt(0).toUpperCase() + habit.category?.slice(1)}
                                       </Badge>
                                       <span className={`text-[10px] ${weeklyGoalMet ? 'text-green-600 font-medium' : 'text-muted-foreground'}`}>
                                         {completedDays}/{targetDays} {habit.frequency} 
@@ -678,8 +797,6 @@ export default function Dashboard() {
                                     </div>
                                   </div>
                                 </div>
-                                
-                                {/* Edit buttons appear only on hover */}
                                 <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -689,24 +806,19 @@ export default function Dashboard() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                       <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
-                                        <Pencil className="h-4 w-4 mr-2" />
-                                        Edit Habit
+                                        <Pencil className="h-4 w-4 mr-2" /> Edit Habit
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem 
-                                        onClick={() => deleteHabit(habit.id)}
-                                        className="text-red-600"
-                                      >
-                                        <Trash className="h-4 w-4 mr-2" />
-                                        Delete Habit
+                                      <DropdownMenuItem onClick={() => deleteHabit(habit.id)} className="text-red-600">
+                                        <Trash className="h-4 w-4 mr-2" /> Delete Habit
                                       </DropdownMenuItem>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </div>
                               </div>
                               
-                              {/* Render weekday checkboxes */}
                               {weekDates.map((date, i) => {
-                                const completed = isHabitCompletedOnDate(habit.id, date);
+                                const completedInfo = (habit.completions || []).find(c => isSameDay(new Date(c.date), date));
+                                const completed = !!(completedInfo && completedInfo.value > 0);
                                 const isPast = isBefore(date, today) && !isSameDay(date, today);
                                 const isFuture = isAfter(date, today) && !isSameDay(date, today);
                                 
@@ -723,11 +835,7 @@ export default function Dashboard() {
                                             : 'text-muted-foreground/50 hover:text-blue-500 hover:bg-blue-50'
                                         } w-full h-10`}
                                     >
-                                      {completed ? (
-                                        <Check className="h-5 w-5" />
-                                      ) : (
-                                        <div className="h-5 w-5 rounded-full border-2 border-current"></div>
-                                      )}
+                                      {completed ? <Check className="h-5 w-5" /> : <div className="h-5 w-5 rounded-full border-2 border-current"></div>}
                                     </button>
                                   </div>
                                 );
@@ -737,6 +845,11 @@ export default function Dashboard() {
                         })}
                       </div>
                     )}
+                     {!isLoading && !error && habits.length > 0 && absoluteHabits.length === 0 && additionalHabits.length === 0 && (
+                        <div className="text-sm text-center py-4 text-muted-foreground italic">
+                          No habits matching current filters. Try adjusting or adding new habits.
+                        </div>
+                      )}
                   </CardContent>
                 </Card>
               </div>
@@ -1364,14 +1477,7 @@ export default function Dashboard() {
         open={editHabitDialogOpen}
         onOpenChange={setEditHabitDialogOpen}
         habit={selectedHabit}
-        onSave={(habit) => {
-          if (habits.some(h => h.id === habit.id)) {
-            editHabit(habit);
-          } else {
-            addHabit(habit);
-          }
-          setEditHabitDialogOpen(false);
-        }}
+        onSave={handleSaveHabit} // Use the new handleSaveHabit
       />
     </>
   );

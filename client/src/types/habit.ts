@@ -29,15 +29,39 @@ export interface Habit {
   timeCommitment: string;
   isAbsolute?: boolean;
   streak?: number;
-  createdAt?: string;
+  createdAt?: string | Date; // Can be string from API, converted to Date
   userChangedColor?: boolean;
+
+  // Fields from backend (FirestoreHabit)
+  userId?: string; // Provided by backend
+  isActive?: boolean; // Provided by backend
+
+  type?: "binary" | "quantitative";
+  targetValue?: number;
+  targetUnit?: string;
+
+  completions?: CompletionEntry[]; // Nested completions
+
+  isBadHabit?: boolean;
+  trigger?: string;
+  replacementHabit?: string;
 }
 
+// For nested completions within a Habit object
+export interface CompletionEntry {
+  date: string; // YYYY-MM-DD
+  value: number;
+  timestamp?: string | Date | { _seconds: number, _nanoseconds: number }; // Raw from Firestore or processed
+}
+
+// HabitCompletion might still be used for local state/optimistic updates,
+// but fetched data will have completions nested.
 export interface HabitCompletion {
-  id: string;
+  id: string; // This might be composite (habitId + date) or specific to UI interaction
   habitId: string;
-  date: string;
-  completed: boolean;
+  date: string; // YYYY-MM-DD
+  completed: boolean; // For binary habits primarily, or derived for quantitative
+  value?: number; // For quantitative habits
 }
 
 export interface JournalEntry {
