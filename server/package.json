@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/worker.ts",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "wrangler dev src/worker.ts",
+    "dev": "wrangler dev src/index.ts",
     "deploy": "wrangler deploy",
-    "build": "tsc --project tsconfig.json"
+    "build": "tsc"
   },
   "dependencies": {
     "hono": "^4.4.13",
