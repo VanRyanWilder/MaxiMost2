@@ -1,5 +1,5 @@
 name = "maximost-backend"
-main = "dist/worker.js"
+main = "dist/src/worker.js" # Adjusted path based on tsc output
 compatibility_date = "2024-03-15" # Using a recent example date
 
 [build]

@@ -5,7 +5,10 @@
   "main": "server/index.ts",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "build": "npx vite build",
+    "build:client": "vite build",
+    "build:shared": "tsc --build shared",
+    "build:server": "tsc --build shared && tsc --build server",
+    "build": "npm run build:client && npm run build:server",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
