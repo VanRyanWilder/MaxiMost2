@@ -1,57 +1,83 @@
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
-// bodyParser import removed, using express built-ins
-import habitRoutes from "./routes/habitRoutes"; // Import habit routes
-import userRoutes from "./routes/userRoutes"; // Import user routes
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { secureHeaders } from 'hono/secure-headers';
 
-// Initialize Firebase Admin SDK - Ensure this is done before routes that need it.
-// This import will execute the firebaseAdmin.ts file.
-import "./config/firebaseAdmin";
+// Assuming you have these route files created in the /routes directory
+// These will also need to be adapted to use Hono's routing context instead of Express's req/res.
+// import authRoutes from './routes/authRoutes';
+// import habitRoutes from './routes/habitRoutes';
+// import userRoutes from './routes/userRoutes';
 
-const app = express();
-const port = process.env.PORT || 8080;
+// Define the environment bindings for Hono, if you're using secrets/bindings in Cloudflare
+type Bindings = {
+    // e.g., DB: D1Database
+}
 
-// Middleware
-app.use(cors()); // Enable CORS for all routes - Already added, ensuring it is here.
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+// Initialize the Hono app. Hono is a lightweight framework designed for edge environments like Cloudflare Workers.
+const app = new Hono<{ Bindings: Bindings }>();
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Maximost Backend Server is running!");
+// --- Middleware Registration ---
+// Middleware is applied to requests before they reach the route handlers.
+// We use app.use() for middleware.
+
+// 1. Logger: Logs all incoming requests to the console for debugging.
+app.use('*', logger());
+
+// 2. Secure Headers: Adds security-related headers to responses automatically.
+app.use('*', secureHeaders());
+
+// 3. CORS (Cross-Origin Resource Sharing): Allows your frontend (www.maximost.com) to make requests to your API (api.maximost.com).
+app.use('*', cors({
+  origin: [
+    'https://www.maximost.com', // Your production frontend
+    'http://localhost:5173', // Your local development frontend (adjust port if needed)
+    // Add any Cloudflare Pages preview URLs if necessary for testing
+  ],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
+// --- Route Registration ---
+// We use app.route() to mount a collection of routes from another file under a specific path prefix.
+// This keeps the main index file clean and organized.
+
+// Example of how you would mount your route handlers.
+// Jules will need to ensure the files in './routes/*' are also using Hono syntax.
+// app.route('/api/auth', authRoutes);
+// app.route('/api/habits', habitRoutes);
+// app.route('/api/users', userRoutes);
+
+
+// --- Basic & Health Check Routes ---
+
+// A simple root route to confirm the API is live.
+app.get('/', (c) => {
+  return c.json({
+    message: 'Maximost API is operational.',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Mount the habit routes
-app.use("/api/habits", habitRoutes);
-
-// Mount the user routes
-app.use("/api/users", userRoutes);
-
-// Basic 404 handler for routes not found
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.status(404).json({ message: "Not Found - The requested resource could not be found on this server." });
+// A specific health check endpoint for monitoring services.
+app.get('/health', (c) => {
+    return c.text('OK');
 });
 
-// Basic Error Handling Middleware (should be last middleware)
-// This will catch errors passed by next(error) or unhandled synchronous errors in route handlers
-// (though async errors need to be caught and passed to next() explicitly in older Express versions without Express 5 auto async error handling)
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error("Unhandled error:", err.stack || err); // Log the error stack for debugging
 
-  // Avoid sending stack trace to client in production for security
-  const errorResponse = {
-    message: err.message || "An unexpected error occurred.",
-    // ...(process.env.NODE_ENV === "development" && { stack: err.stack }) // Optionally include stack in dev
-  };
-
-  // If headers have already been sent, delegate to the default Express error handler.
-  if (res.headersSent) {
-    return next(err);
-  }
-
-  res.status(500).json(errorResponse);
+// --- Error Handling ---
+// Hono has a built-in error handler. This is a simple custom override to ensure
+// error responses are consistently formatted in JSON.
+app.onError((err, c) => {
+  console.error(`${err}`);
+  return c.json({
+    success: false,
+    message: 'An internal server error occurred.',
+    error: err.message
+  }, 500);
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+
+// This is the default export that Cloudflare Workers expects.
+export default app;
