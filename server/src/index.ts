@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 // bodyParser import removed, using express built-ins
 import habitRoutes from "./routes/habitRoutes"; // Import habit routes
+import userRoutes from "./routes/userRoutes"; // Import user routes
 
 // Initialize Firebase Admin SDK - Ensure this is done before routes that need it.
 // This import will execute the firebaseAdmin.ts file.
@@ -22,6 +23,9 @@ app.get("/", (req, res) => {
 
 // Mount the habit routes
 app.use("/api/habits", habitRoutes);
+
+// Mount the user routes
+app.use("/api/users", userRoutes);
 
 // Basic 404 handler for routes not found
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -1,10 +1,10 @@
-import { Router } from "express";
-import { db } from "../config/firebaseAdmin";
-import { protectWithFirebase, AuthenticatedRequest } from "../middleware/authMiddleware";
-import { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "../../../shared/types/firestore";
-import * as admin from "firebase-admin";
+import { Hono, Context as HonoCtx } from 'hono';
+import { db, admin } from "../config/firebaseAdmin"; // admin for FieldValue, Timestamp
+import { honoProtectWithFirebase, AuthEnv } from "../middleware/authMiddleware"; // Import AuthEnv
+import type { DecodedIdToken } from 'firebase-admin/auth';
+import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "../../../shared/types/firestore";
 
-const router = Router();
+const app = new Hono<AuthEnv>(); // Use AuthEnv for typed context
 
 const getCurrentDateString = (): string => {
   const now = new Date();
@@ -14,48 +14,60 @@ const getCurrentDateString = (): string => {
   return `${year}-${month}-${day}`;
 };
 
-// GET /api/habits - Fetch all active habits for the authenticated user (V1.1)
-router.get("/", protectWithFirebase, async (req: AuthenticatedRequest, res) => {
+// GET / - Fetch all active habits for the authenticated user
+app.get("/", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
   try {
-    const userId = req.user?.uid;
-    if (!userId) return res.status(400).json({ message: "User ID not found in token." });
-    const habitsSnapshot = await db.collection("habits").where("userId", "==", userId).where("isActive", "==", true).get();
-    if (habitsSnapshot.empty) return res.status(200).json([]);
+    const firebaseUser = c.get('user'); // Correctly typed due to Hono<AuthEnv>
+    if (!firebaseUser?.uid) return c.json({ message: "User ID not found in token." }, 400);
+
+    const habitsSnapshot = await db.collection("habits").where("userId", "==", firebaseUser.uid).where("isActive", "==", true).get();
+    if (habitsSnapshot.empty) return c.json([], 200);
+
     const habits: FirestoreHabit[] = habitsSnapshot.docs.map(doc => {
       const data = doc.data();
       return {
         habitId: doc.id, userId: data.userId, title: data.title, description: data.description,
-        category: data.category, createdAt: data.createdAt, isActive: data.isActive,
-        type: data.type, targetValue: data.targetValue, targetUnit: data.targetUnit,
-        completions: (data.completions || []).map((comp: any) => ({ date: comp.date, value: comp.value, timestamp: comp.timestamp })),
+        category: data.category, createdAt: data.createdAt as FirestoreTimestamp, // Cast if necessary
+        isActive: data.isActive, type: data.type,
+        targetValue: data.targetValue, targetUnit: data.targetUnit,
+        completions: (data.completions || []).map((comp: any) => ({
+            date: comp.date, value: comp.value, timestamp: comp.timestamp as FirestoreTimestamp // Cast if necessary
+        })),
         isBadHabit: data.isBadHabit, trigger: data.trigger, replacementHabit: data.replacementHabit,
         icon: data.icon, iconColor: data.iconColor, impact: data.impact, effort: data.effort,
-        timeCommitment: data.timeCommitment, frequency: data.frequency, isAbsolute: data.isAbsolute, streak: data.streak
+        timeCommitment: data.timeCommitment, frequency: data.frequency,
+        isAbsolute: data.isAbsolute, streak: data.streak,
       } as FirestoreHabit;
     });
-    res.status(200).json(habits);
+    return c.json(habits, 200);
   } catch (error) {
     console.error("Error fetching habits:", error);
-    if (error instanceof Error) res.status(500).json({ message: "Error fetching habits.", error: error.message });
-    else res.status(500).json({ message: "Error fetching habits.", error: "An unknown error occurred." });
+    const err = error as Error;
+    return c.json({ message: "Error fetching habits.", errorName: err.name, errorDetail: err.message }, 500);
   }
 });
 
-// POST /api/habits - Create a new habit (V1.1)
-router.post("/", protectWithFirebase, async (req: AuthenticatedRequest, res) => {
+// POST / - Create a new habit
+app.post("/", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
   try {
-    const userId = req.user?.uid;
-    if (!userId) return res.status(400).json({ message: "User ID not found in token." });
+    const firebaseUser = c.get('user');
+    if (!firebaseUser?.uid) return c.json({ message: "User ID not found in token." }, 400);
+
+    const body = await c.req.json();
     const {
       title, category, type, description, targetValue, targetUnit, isBadHabit, trigger, replacementHabit,
       icon, iconColor, impact, effort, timeCommitment, frequency, isAbsolute
-    } = req.body;
-    if (!title || !category || !type) return res.status(400).json({ message: "Missing required fields." });
-    if (type !== "binary" && type !== "quantitative") return res.status(400).json({ message: "Invalid type." });
-    if (type === "quantitative" && (typeof targetValue !== "number" || !targetUnit)) return res.status(400).json({ message: "Quantitative habits require targetValue and targetUnit." });
-    const newHabitData: Omit<FirestoreHabit, "habitId"> = {
-      userId, title, description: description || "", category,
-      createdAt: admin.firestore.FieldValue.serverTimestamp() as FirestoreTimestamp,
+    } = body;
+
+    if (!title || !category || !type) return c.json({ message: "Missing required fields: title, category, and type." }, 400);
+    if (type !== "binary" && type !== "quantitative") return c.json({ message: "Invalid habit type. Must be 'binary' or 'quantitative'." }, 400);
+    if (type === "quantitative" && (typeof targetValue !== "number" || typeof targetUnit !== "string" || targetUnit.trim() === "")) {
+      return c.json({ message: "Quantitative habits require a numeric targetValue and a non-empty string targetUnit." }, 400);
+    }
+
+    const newHabitData = { // Explicitly type or ensure all fields match FirestoreHabit
+      userId: firebaseUser.uid, title, description: description || "", category,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(), // This is FieldValue, not FirestoreTimestamp
       isActive: true, type, completions: [], isBadHabit: isBadHabit || false,
       ...(type === "quantitative" && { targetValue, targetUnit }),
       ...(isBadHabit && { trigger, replacementHabit }),
@@ -64,49 +76,47 @@ router.post("/", protectWithFirebase, async (req: AuthenticatedRequest, res) => 
       frequency: frequency || "daily", isAbsolute: typeof isAbsolute === "boolean" ? isAbsolute : false,
       streak: 0
     };
-    const habitRef = await db.collection("habits").add(newHabitData);
+    // Cast to any for Firestore add, or use a more specific type for data being added
+    const habitRef = await db.collection("habits").add(newHabitData as any);
     const newHabitDoc = await habitRef.get();
     const newHabit = { habitId: newHabitDoc.id, ...newHabitDoc.data() } as FirestoreHabit;
-    res.status(201).json(newHabit);
+    // Ensure createdAt is transformed if needed before sending to client, or client handles FieldValue-like objects.
+    // For now, assume client can handle the structure or it gets serialized appropriately.
+    return c.json(newHabit, 201);
   } catch (error) {
     console.error("Error creating habit:", error);
-    if (error instanceof Error) res.status(500).json({ message: "Error creating habit.", error: error.message });
-    else res.status(500).json({ message: "Error creating habit.", error: "An unknown error occurred." });
+    const err = error as Error;
+    return c.json({ message: "Error creating habit.", errorName: err.name, errorDetail: err.message }, 500);
   }
 });
 
-// PUT /api/habits/:habitId - Update an existing habit (V1.1)
-router.put("/:habitId", protectWithFirebase, async (req: AuthenticatedRequest, res) => {
+// PUT /:habitId - Update an existing habit
+app.put("/:habitId", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
   try {
-    const userId = req.user?.uid;
-    const { habitId } = req.params;
+    const firebaseUser = c.get('user');
+    const habitId = c.req.param('habitId');
 
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized: User ID not found in token." });
-    }
-    if (!habitId) {
-      return res.status(400).json({ message: "Habit ID not provided in path." });
-    }
+    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized: User ID not found in token." }, 401);
+    if (!habitId) return c.json({ message: "Habit ID not provided in path." }, 400);
 
     const habitRef = db.collection("habits").doc(habitId);
     const habitDoc = await habitRef.get();
 
-    if (!habitDoc.exists) {
-      return res.status(404).json({ message: "Habit not found." });
-    }
+    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
 
     const existingHabitData = habitDoc.data() as FirestoreHabit;
-    if (existingHabitData.userId !== userId) {
-      return res.status(403).json({ message: "Forbidden: User does not own this habit." });
+    if (existingHabitData.userId !== firebaseUser.uid) {
+      return c.json({ message: "Forbidden: User does not own this habit." }, 403);
     }
 
+    const body = await c.req.json();
     const {
       title, description, category, type, targetValue, targetUnit,
       isBadHabit, trigger, replacementHabit,
       icon, iconColor, impact, effort, timeCommitment, frequency, isAbsolute
-    } = req.body;
+    } = body;
 
-    const updatePayload: {[key: string]: any} = {}; // Use any for FieldValue.delete()
+    const updatePayload: {[key: string]: any} = {};
 
     if (title !== undefined) updatePayload.title = title;
     if (description !== undefined) updatePayload.description = description;
@@ -115,18 +125,18 @@ router.put("/:habitId", protectWithFirebase, async (req: AuthenticatedRequest, r
     const effectiveType = type || existingHabitData.type;
     if (type !== undefined) {
       if (type !== "binary" && type !== "quantitative") {
-        return res.status(400).json({ message: "Invalid habit type. Must be \"binary\" or \"quantitative\"." });
+        return c.json({ message: "Invalid habit type. Must be \"binary\" or \"quantitative\"." }, 400);
       }
       updatePayload.type = type;
     }
 
     if (effectiveType === "quantitative") {
       if (targetValue !== undefined) {
-        if (typeof targetValue !== "number") return res.status(400).json({ message: "targetValue must be a number for quantitative habits."});
+        if (typeof targetValue !== "number") return c.json({ message: "targetValue must be a number for quantitative habits." }, 400);
         updatePayload.targetValue = targetValue;
       }
       if (targetUnit !== undefined) {
-         if (typeof targetUnit !== "string") return res.status(400).json({ message: "targetUnit must be a string for quantitative habits."});
+         if (typeof targetUnit !== "string" || targetUnit.trim() === "") return c.json({ message: "targetUnit must be a non-empty string for quantitative habits." }, 400);
         updatePayload.targetUnit = targetUnit;
       }
     } else if (effectiveType === "binary") {
@@ -154,47 +164,97 @@ router.put("/:habitId", protectWithFirebase, async (req: AuthenticatedRequest, r
     if (isAbsolute !== undefined) updatePayload.isAbsolute = isAbsolute;
 
     if (Object.keys(updatePayload).length === 0) {
-      return res.status(400).json({ message: "No valid fields provided for update." });
+      return c.json({ message: "No valid fields provided for update." }, 400);
     }
 
     await habitRef.update(updatePayload);
     const updatedHabitDoc = await habitRef.get();
     const updatedHabit = { habitId: updatedHabitDoc.id, ...updatedHabitDoc.data() } as FirestoreHabit;
 
-    res.status(200).json(updatedHabit);
-
+    return c.json(updatedHabit, 200);
   } catch (error) {
-    console.error(`Error updating habit ${req.params.habitId}:`, error);
-    if (error instanceof Error) {
-        res.status(500).json({ message: "Error updating habit.", error: error.message });
-    } else {
-        res.status(500).json({ message: "Error updating habit.", error: "An unknown error occurred." });
-    }
+    console.error(`Error updating habit ${c.req.param('habitId')}:`, error);
+    const err = error as Error;
+    return c.json({ message: "Error updating habit.", errorName: err.name, errorDetail: err.message }, 500);
   }
 });
 
-// POST /api/habits/:habitId/complete - Mark a habit as complete for the current day (V1.1)
-router.post("/:habitId/complete", protectWithFirebase, async (req: AuthenticatedRequest, res) => {
+// POST /:habitId/complete - Mark a habit as complete for the current day
+app.post("/:habitId/complete", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
   try {
-    const userId = req.user?.uid; const { habitId } = req.params; const { value } = req.body;
-    if (!userId) return res.status(401).json({ message: "Unauthorized." }); if (!habitId) return res.status(400).json({ message: "Habit ID not provided." }); if (typeof value !== "number") return res.status(400).json({ message: "Invalid value." });
-    const habitRef = db.collection("habits").doc(habitId); const habitDoc = await habitRef.get();
-    if (!habitDoc.exists) return res.status(404).json({ message: "Habit not found." }); const habitData = habitDoc.data() as FirestoreHabit; if (habitData.userId !== userId) return res.status(403).json({ message: "Forbidden." });
-    const currentDateStr = getCurrentDateString(); const serverTimestamp = admin.firestore.FieldValue.serverTimestamp() as FirestoreTimestamp; let completions: HabitCompletionEntry[] = habitData.completions || []; const existingCompletionIndex = completions.findIndex(c => c.date === currentDateStr);
-    if (existingCompletionIndex !== -1) { completions[existingCompletionIndex].value = value; completions[existingCompletionIndex].timestamp = serverTimestamp; } else { completions.push({ date: currentDateStr, value: value, timestamp: serverTimestamp }); }
-    await habitRef.update({ completions }); res.status(200).json({ habitId: habitId, message: "Habit completion logged successfully." });
-  } catch (error) { console.error(`Error completing habit ${req.params.habitId}:`, error); if (error instanceof Error) res.status(500).json({ message: "Error completing habit.", error: error.message }); else res.status(500).json({ message: "Error completing habit.", error: "An unknown error occurred." }); }
+    const firebaseUser = c.get('user');
+    const habitId = c.req.param('habitId');
+    const body = await c.req.json();
+    const { value } = body;
+
+    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized." }, 401);
+    if (!habitId) return c.json({ message: "Habit ID not provided." }, 400);
+    if (typeof value !== "number") return c.json({ message: "Invalid value. Must be a number." }, 400);
+
+    const habitRef = db.collection("habits").doc(habitId);
+    const habitDoc = await habitRef.get();
+
+    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
+
+    const habitData = habitDoc.data() as FirestoreHabit;
+    if (habitData.userId !== firebaseUser.uid) return c.json({ message: "Forbidden. User does not own this habit." }, 403);
+
+    const currentDateStr = getCurrentDateString();
+    const serverTimestamp = admin.firestore.FieldValue.serverTimestamp(); // FieldValue
+
+    let completions: HabitCompletionEntry[] = habitData.completions || [];
+    const existingCompletionIndex = completions.findIndex(c => c.date === currentDateStr);
+
+    if (existingCompletionIndex !== -1) {
+      completions[existingCompletionIndex].value = value;
+      completions[existingCompletionIndex].timestamp = serverTimestamp as any; // Cast to any for assignment to FirestoreTimestamp typed field
+    } else {
+      completions.push({ date: currentDateStr, value: value, timestamp: serverTimestamp as any }); // Cast to any
+    }
+
+    await habitRef.update({ completions });
+    // Fetch the updated document to return the new completions array with resolved timestamps
+    const updatedDoc = await habitRef.get();
+    const updatedHabit = updatedDoc.data();
+
+    return c.json({
+        habitId: habitId,
+        message: "Habit completion logged successfully.",
+        completions: updatedHabit?.completions || [] // Send back resolved completions
+    }, 200);
+  } catch (error) {
+    console.error(`Error completing habit ${c.req.param('habitId')}:`, error);
+    const err = error as Error;
+    return c.json({ message: "Error completing habit.", errorName: err.name, errorDetail: err.message }, 500);
+  }
 });
 
-// DELETE /api/habits/:habitId - Archive a habit (set isActive to false) (V1.1 - Unchanged logic)
-router.delete("/:habitId", protectWithFirebase, async (req: AuthenticatedRequest, res) => {
+// DELETE /:habitId - Archive a habit (set isActive to false)
+app.delete("/:habitId", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
   try {
-    const userId = req.user?.uid; const { habitId } = req.params;
-    if (!userId) return res.status(401).json({ message: "Unauthorized: User ID not found in token." }); if (!habitId) return res.status(400).json({ message: "Habit ID not provided in path." });
-    const habitRef = db.collection("habits").doc(habitId); const habitDoc = await habitRef.get();
-    if (!habitDoc.exists) return res.status(404).json({ message: "Habit not found." }); const habitData = habitDoc.data() as FirestoreHabit; if (habitData.userId !== userId) return res.status(403).json({ message: "Forbidden: User does not own this habit." });
-    await habitRef.update({ isActive: false }); res.status(200).json({ habitId: habitId, message: "Habit archived successfully." });
-  } catch (error) { console.error(`Error archiving habit ${req.params.habitId}:`, error); if (error instanceof Error) res.status(500).json({ message: "Error archiving habit.", error: error.message }); else res.status(500).json({ message: "Error archiving habit.", error: "An unknown error occurred." }); }
+    const firebaseUser = c.get('user');
+    const habitId = c.req.param('habitId');
+
+    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized: User ID not found in token." }, 401);
+    if (!habitId) return c.json({ message: "Habit ID not provided in path." }, 400);
+
+    const habitRef = db.collection("habits").doc(habitId);
+    const habitDoc = await habitRef.get();
+
+    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
+
+    const habitData = habitDoc.data() as FirestoreHabit;
+    if (habitData.userId !== firebaseUser.uid) {
+      return c.json({ message: "Forbidden: User does not own this habit." }, 403);
+    }
+
+    await habitRef.update({ isActive: false });
+    return c.json({ habitId: habitId, message: "Habit archived successfully." }, 200);
+  } catch (error) {
+    console.error(`Error archiving habit ${c.req.param('habitId')}:`, error);
+    const err = error as Error;
+    return c.json({ message: "Error archiving habit.", errorName: err.name, errorDetail: err.message }, 500);
+  }
 });
 
-export default router;
+export default app;
