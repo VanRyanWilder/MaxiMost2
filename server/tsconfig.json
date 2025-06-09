@@ -17,6 +17,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["server/src/**/*", "shared/types/**/*"],
   "exclude": ["node_modules"]
 }
