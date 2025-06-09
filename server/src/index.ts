@@ -22,10 +22,12 @@ app.get("/", (req, res) => {
 });
 
 // Mount the habit routes
-app.use("/api/habits", habitRoutes);
+// app.use("/api/habits", habitRoutes); // Commented out as habitRoutes is now a Hono app
+console.log("Note: Express habit routes are commented out in src/index.ts as they are now Hono routes.");
 
 // Mount the user routes
-app.use("/api/users", userRoutes);
+// app.use("/api/users", userRoutes); // Commented out as userRoutes is now a Hono app
+console.log("Note: Express user routes are commented out in src/index.ts as they are now Hono routes.");
 
 // Basic 404 handler for routes not found
 app.use((req: Request, res: Response, next: NextFunction) => {
