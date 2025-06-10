@@ -1,6 +1,6 @@
 import { Hono, Context as HonoCtx } from 'hono';
-import { db, admin } from "../config/firebaseAdmin"; // admin for FieldValue, Timestamp
-import { honoProtectWithFirebase, AuthEnv } from "../middleware/authMiddleware"; // Import AuthEnv
+import { db, admin } from "@/config/firebaseAdmin"; // admin for FieldValue, Timestamp
+import { honoProtectWithFirebase, AuthEnv } from "@/middleware/authMiddleware"; // Import AuthEnv
 import type { DecodedIdToken } from 'firebase-admin/auth';
 import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore";
 

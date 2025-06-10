@@ -1,6 +1,6 @@
 import { Hono, Context as HonoCtx } from 'hono'; // Import Context for typing
-import { honoProtectWithFirebase } from '../middleware/authMiddleware';
-import { db, admin } from '../config/firebaseAdmin'; // admin is used for firestore.FieldValue and DecodedIdToken type
+import { honoProtectWithFirebase } from '@/middleware/authMiddleware';
+import { db, admin } from '@/config/firebaseAdmin'; // admin is used for firestore.FieldValue and DecodedIdToken type
 import type { DecodedIdToken } from 'firebase-admin/auth'; // Correct type
 
 // Define a type for Hono context variables for this route module

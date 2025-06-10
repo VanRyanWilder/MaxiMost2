@@ -891,7 +891,7 @@ export default function IntegratedDashboard() {
                           {[
                             { title: "Make Bed", icon: <CheckSquare className="h-4 w-4 text-blue-500" />, description: "Start the day right", category: "mind" },
                             { title: "Lift Weights", icon: <Dumbbell className="h-4 w-4 text-blue-500" />, description: "Strength training", category: "fitness" },
-                            { title: "Drink Water", icon: <DropletIcon className="h-4 w-4 text-blue-500" />, description: "Stay hydrated", category: "health" },
+                            { title: "Drink Water", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Stay hydrated", category: "health" },
                             { title: "Read 10 pages", icon: <BookOpen className="h-4 w-4 text-blue-500" />, description: "Daily reading", category: "mind" },
                             { title: "Meditate", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Calm the mind", category: "mind" },
                             { title: "Take Vitamins", icon: <Pill className="h-4 w-4 text-blue-500" />, description: "Daily supplements", category: "health" },
