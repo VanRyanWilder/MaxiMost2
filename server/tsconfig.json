@@ -13,12 +13,16 @@
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true,
+    "noImplicitAny": true, // Ensured present
 
-    /* Bundler & Module Resolution */
+    /* Module System - The Core Fix */
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
-    "noEmit": true,
+    // "noEmit" is omitted, so it defaults to false, meaning tsc WILL emit JS files.
+
+    /* Output */
+    "outDir": "dist",
+    "rootDir": "src", // Added by Gem in Turn 149
 
     /* Path Aliases */
     "baseUrl": ".",
@@ -28,5 +32,5 @@
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "**/*.test.ts"] // Added test file exclusion
+  "exclude": ["node_modules", "dist", "**/*.test.ts"] // Added test file exclusion and kept "dist"
 }
