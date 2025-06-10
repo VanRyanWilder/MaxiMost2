@@ -1,7 +1,7 @@
 import app from './habitRoutes'; // Hono app from habitRoutes.ts
 import { admin } from '../config/firebaseAdmin'; // This will be the mocked version due to jest.setup.ts
 import type { DecodedIdToken } from 'firebase-admin/auth';
-import type { FirestoreHabit } from "../../../@shared/types/firestore"; // Import FirestoreHabit
+import type { FirestoreHabit } from "../../../shared/types/firestore"; // Import FirestoreHabit
 
 // MockAdmin type and mockedAdmin variable are no longer needed
 

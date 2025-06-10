@@ -1,23 +1,32 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["esnext"],
-    "jsx": "react-jsx",
-    "outDir": "dist",
-    "strict": true,
-    "skipLibCheck": true,
+    /* Base Options */
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    
-    // --- Monorepo Configuration ---
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+
+    /* Bundler & Module Resolution */
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "noEmit": true,
+
+    /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@shared/*": ["../shared/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/*"] // Added for shared types
     }
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.test.ts"] // Added test file exclusion
 }

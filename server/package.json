@@ -1,11 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "src/worker.ts",
   "scripts": {
-    "build": "tsc",
+    "dev": "wrangler dev src/worker.ts",
     "deploy": "wrangler deploy",
-    "dev": "wrangler dev src/index.ts"
+    "build": "tsc --project tsconfig.json"
   },
   "dependencies": {
     "hono": "^4.4.13",
@@ -18,7 +18,11 @@
     "@cloudflare/workers-types": "^4.20240712.0",
     "wrangler": "^3.67.0",
     "typescript": "^5.5.3",
+    "@types/node": "^20.14.11",
     "@types/bcrypt": "^5.0.2",
-    "@types/jsonwebtoken": "^9.0.6"
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.3"
   }
 }
