@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["server/src/*"],
+      "@shared/*": ["shared/*"]
+    },
+    "outDir": "server/dist"
+  },
+  "include": ["server/src", "shared"],
+  "exclude": ["node_modules", "client", "**/*.test.ts"]
+}

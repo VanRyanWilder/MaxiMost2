@@ -5,16 +5,16 @@ import { logger } from 'hono/logger'; // Optional: for logging requests
 // import { bodyParse } from 'hono/body-parse'; // Hono v4 often doesn't need explicit body parsing for JSON
 
 // Initialize Firebase Admin SDK - This needs to run to configure Firebase
-import './config/firebaseAdmin';
-// import { admin } from './config/firebaseAdmin'; // admin import for token verification is now in authMiddleware
+import '@/config/firebaseAdmin';
+// import { admin } from '@/config/firebaseAdmin'; // admin import for token verification is now in authMiddleware
 
 // Import Hono-compatible auth middleware
-// import { honoProtectWithFirebase } from './middleware/authMiddleware'; // No longer needed globally, applied in routes
+// import { honoProtectWithFirebase } from '@/middleware/authMiddleware'; // No longer needed globally, applied in routes
 // Routes will import and apply their own middleware as needed.
 
 // Import Hono route modules
-import userRoutes from './routes/userRoutes';
-import habitRoutes from './routes/habitRoutes'; // Import refactored Hono habit routes
+import userRoutes from '@/routes/userRoutes';
+import habitRoutes from '@/routes/habitRoutes'; // Import refactored Hono habit routes
 
 const app = new Hono();
 

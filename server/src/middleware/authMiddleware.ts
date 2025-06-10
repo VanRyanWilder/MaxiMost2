@@ -1,7 +1,7 @@
 // This file now only contains Hono-specific middleware.
 // Express-specific parts have been removed as 'express' is no longer a dependency.
 
-import { auth } from "../config/firebaseAdmin";
+import { auth } from "@/config/firebaseAdmin"; // Updated path alias
 import type { DecodedIdToken } from "firebase-admin/auth";
 import { Context as HonoCtx } from 'hono';
 
