@@ -9,7 +9,7 @@
     "dev:server": "wrangler dev server/src/worker.ts",
     "build:client": "vite build",
     "build:server": "tsc --project tsconfig.server.json",
-    "build": "npm run build:client && npm run build:server",
+    "build": "tsc --build --verbose && npx vite build",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
     "test": "jest"
   },

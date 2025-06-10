@@ -1,14 +1,22 @@
 {
-  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": ["esnext"],
+    "outDir": "dist",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
       "@shared/*": ["../shared/*"]
-    }
+    },
+    "composite": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts"],
-  "references": [{ "path": "../shared" }]
+  "references": [{ "path": "../shared" }],
+  "exclude": ["node_modules", "**/*.test.ts"]
 }
