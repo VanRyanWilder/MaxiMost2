@@ -5,9 +5,9 @@ import { secureHeaders } from 'hono/secure-headers';
 
 // Import the route handlers.
 // Jules will need to ensure these route files are also updated to use Hono's context (c) instead of Express's (req, res).
-import authRoutes from './routes/authRoutes';
-import habitRoutes from './routes/habitRoutes';
-import userRoutes from './routes/userRoutes';
+import authRoutes from './routes/authRoutes.js';
+import habitRoutes from './routes/habitRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Define the environment bindings for Hono, which will be used for secrets in Cloudflare.
 type Bindings = {
