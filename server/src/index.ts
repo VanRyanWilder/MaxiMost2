@@ -3,10 +3,10 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
 
-// CORRECTED: Using the '@/' alias to point to 'server/src/'
-import authRoutes from '@/routes/authRoutes';
-import habitRoutes from '@/routes/habitRoutes';
-import userRoutes from '@/routes/userRoutes';
+// Using relative paths with .js extension for compiled output
+import authRoutes from './routes/authRoutes.js';
+import habitRoutes from './routes/habitRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Define the environment bindings for Hono.
 type Bindings = {
