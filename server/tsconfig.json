@@ -1,16 +1,29 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "esModuleInterop": true,
     "target": "es6",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "outDir": "dist",             // -> /app/server/dist/
+    "rootDir": "../",             // -> /app/
+    "baseUrl": "../",             // -> /app/ (paths are relative to this)
+    "paths": {
+      "@shared/*": ["shared/*"]    // -> /app/shared/*
+    },
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "include": [ // These paths are relative to the tsconfig.json file's directory (/app/server/)
+    "src/**/*.ts",                // -> /app/server/src/*
+    "../shared/**/*.ts"           // -> /app/shared/*
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/index.ts"
+  ]
 }
