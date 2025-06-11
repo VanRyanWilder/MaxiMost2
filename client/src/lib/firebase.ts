@@ -13,13 +13,13 @@ import {
   User
 } from "firebase/auth";
 
-// Firebase configuration 
+/// Firebase configuration 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, // CORRECTED
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: `${import.meta.env.VITE_FIREBASE_PROJECT_ID}.appspot.com`,
-  messagingSenderId: "161512806223",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET, // CORRECTED
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID, // CORRECTED
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
