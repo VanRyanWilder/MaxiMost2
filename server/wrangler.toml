@@ -1,10 +1,10 @@
 name = "maximost-backend"
-main = "dist/server/src/worker.js" # Corrected path for rootDir = ../
+main = "dist/server/src/worker.js" # Adjusted for rootDir: ".."
 compatibility_date = "2024-03-15"
 
 [build]
 command = "npm run build"
-watch_dir = "src" # This is still server/src
+watch_dir = "src" # This refers to server/src
 
 # Environment variables & Secrets reminder (no changes here)
 # ... (rest of the file unchanged)
