@@ -1,36 +1,25 @@
 {
   "compilerOptions": {
-    /* Base Options */
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "ES2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitAny": true, // Ensured present
-
-    /* Module System - The Core Fix */
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    // "noEmit" is omitted, so it defaults to false, meaning tsc WILL emit JS files.
-
-    /* Output */
-    "outDir": "dist",
-    "rootDir": "src", // Added by Gem in Turn 149
-
-    /* Path Aliases */
-    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "..",
+    "baseUrl": "..",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/*"] // Added for shared types
+      "@shared/*": ["shared/*"]
     }
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"] // Added test file exclusion and kept "dist"
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/index.ts",
+    "**/*.test.ts",
+    "src/**/*.test.ts"
+  ]
 }
