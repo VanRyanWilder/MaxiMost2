@@ -6,5 +6,5 @@ compatibility_date = "2024-06-11"
 [build]
 command = "npm run build"
 
-# This line enables Node.js compatibility, which is essential
+# This line is now at the correct top-level and enables Node.js compatibility
 compatibility_flags = [ "nodejs_compat" ]
