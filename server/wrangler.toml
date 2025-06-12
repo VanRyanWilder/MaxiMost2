@@ -1,7 +1,1 @@
-name = "maximost-backend"
-main = "src/worker.ts"
-compatibility_date = "2024-06-12"
-compatibility_flags = [ "nodejs_compat" ]
-
-[build]
-command = "npm run build"
+name = "maximost-backend"\nmain = "src/worker.ts"\ncompatibility_date = "2024-06-12"\ncompatibility_flags = [ "nodejs_compat" ]\n\n[build]\ncommand = "npm run build"
