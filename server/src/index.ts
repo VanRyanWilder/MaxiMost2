@@ -21,6 +21,7 @@ app.use('*', secureHeaders());
 app.use('*', cors({
   origin: [
     'https://www.maximost.com',
+    'https://*.maximost-frontend.pages.dev',
     'http://localhost:5173'
   ],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
