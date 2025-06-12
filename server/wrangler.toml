@@ -1,10 +1,27 @@
 name = "maximost-backend"
-main = "dist/server/src/worker.js" # Adjusted for rootDir: ".."
-compatibility_date = "2024-03-15"
+main = "src/worker.ts"
+compatibility_date = "2024-06-11"
 
+# This is the critical fix
 [build]
 command = "npm run build"
-watch_dir = "src" # This refers to server/src
 
-# Environment variables & Secrets reminder (no changes here)
-# ... (rest of the file unchanged)
+[durable_objects]
+bindings = []
+
+[migrations]
+tag = "v1"
+new_classes = []
+
+[[r2_buckets]]
+binding = ""
+bucket_name = ""
+preview_bucket_name = ""
+
+[[services]]
+binding = ""
+service = ""
+environment = ""
+
+# This line enables Node.js compatibility
+compatibility_flags = [ "nodejs_compat" ]
