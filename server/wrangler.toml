@@ -2,26 +2,9 @@ name = "maximost-backend"
 main = "src/worker.ts"
 compatibility_date = "2024-06-11"
 
-# This is the critical fix
+# This section tells wrangler how to build the project
 [build]
 command = "npm run build"
 
-[durable_objects]
-bindings = []
-
-[migrations]
-tag = "v1"
-new_classes = []
-
-[[r2_buckets]]
-binding = ""
-bucket_name = ""
-preview_bucket_name = ""
-
-[[services]]
-binding = ""
-service = ""
-environment = ""
-
-# This line enables Node.js compatibility
+# This line enables Node.js compatibility, which is essential
 compatibility_flags = [ "nodejs_compat" ]
