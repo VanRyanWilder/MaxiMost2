@@ -1,260 +1,250 @@
-import { Hono, Context as HonoCtx } from 'hono';
-import { db, admin } from "@/config/firebaseAdmin"; // admin for FieldValue, Timestamp
-import { honoProtectWithFirebase, AuthEnv } from "@/middleware/authMiddleware"; // Import AuthEnv
-import type { DecodedIdToken } from 'firebase-admin/auth';
-import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore";
+import { useState, useEffect } from "react";
+import { PageContainer } from "../components/layout/page-container";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Check, Plus, Calendar, Trophy, Settings, Bell, Eye, Paintbrush, Loader2 } from "lucide-react";
+import { Badge } from "../components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
+import { Habit } from "../types/habit";
+import { HabitCompletion } from "../types/habit-completion";
+import { formatDate } from "../lib/utils";
+import { Switch } from "../components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import { Slider } from "../components/ui/slider";
+import { Label } from "../components/ui/label";
+import { Logo } from "../components/ui/logo";
+import { auth, onAuthStateChange } from "../lib/firebase";
+import type { User } from "firebase/auth";
 
-const app = new Hono<AuthEnv>(); // Use AuthEnv for typed context
+// Helper functions
+function getDayName(date: Date): string {
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+}
 
-const getCurrentDateString = (): string => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, "0");
-  const day = now.getDate().toString().padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+function getViewDates(daysBack: number = 3, daysForward: number = 4): Date[] {
+    const dates: Date[] = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-// GET / - Fetch all active habits for the authenticated user
-app.get("/", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
-  try {
-    const firebaseUser = c.get('user'); // Correctly typed due to Hono<AuthEnv>
-    if (!firebaseUser?.uid) return c.json({ message: "User ID not found in token." }, 400);
+    for (let i = daysBack; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        dates.push(date);
+    }
 
-    const habitsSnapshot = await db.collection("habits").where("userId", "==", firebaseUser.uid).where("isActive", "==", true).get();
-    if (habitsSnapshot.empty) return c.json([], 200);
+    for (let i = 1; i <= daysForward - 1; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() + i);
+        dates.push(date);
+    }
+    return dates;
+}
 
-    const habits: FirestoreHabit[] = habitsSnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        habitId: doc.id, userId: data.userId, title: data.title, description: data.description,
-        category: data.category, createdAt: data.createdAt as FirestoreTimestamp, // Cast if necessary
-        isActive: data.isActive, type: data.type,
-        targetValue: data.targetValue, targetUnit: data.targetUnit,
-        completions: (data.completions || []).map((comp: any) => ({
-            date: comp.date, value: comp.value, timestamp: comp.timestamp as FirestoreTimestamp // Cast if necessary
-        })),
-        isBadHabit: data.isBadHabit, trigger: data.trigger, replacementHabit: data.replacementHabit,
-        icon: data.icon, iconColor: data.iconColor, impact: data.impact, effort: data.effort,
-        timeCommitment: data.timeCommitment, frequency: data.frequency,
-        isAbsolute: data.isAbsolute, streak: data.streak,
-      } as FirestoreHabit;
+// --- Main Component ---
+export default function HabitTrackerPage() {
+  // State for real data
+  const [user, setUser] = useState<User | null>(null);
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [completions, setCompletions] = useState<HabitCompletion[]>([]);
+  
+  // State for UI management
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Settings states
+  const [activeTab, setActiveTab] = useState<string>("tracker");
+  const [daysVisible, setDaysVisible] = useState<number>(7);
+  const [showAbsoluteHabits, setShowAbsoluteHabits] = useState<boolean>(true);
+  const [showAdditionalHabits, setShowAdditionalHabits] = useState<boolean>(true);
+  const [compactView, setCompactView] = useState<boolean>(false);
+  
+  const [viewDates, setViewDates] = useState<Date[]>(() => getViewDates(3, 4));
+
+  useEffect(() => {
+    const pastDays = Math.floor(daysVisible / 2);
+    const futureDays = daysVisible - pastDays;
+    setViewDates(getViewDates(pastDays, futureDays));
+  }, [daysVisible]);
+
+  // Fetch real data from the backend
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        setLoading(true);
+        setError(null);
+        try {
+          const token = await currentUser.getIdToken();
+          const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/habits`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`Network response was not ok. Status: ${response.status}`);
+          }
+
+          const fetchedHabits = await response.json();
+          
+          if (Array.isArray(fetchedHabits)) {
+            setHabits(fetchedHabits);
+          } else {
+            setHabits([]);
+            console.error("API response for habits is not an array:", fetchedHabits);
+            throw new Error("Invalid data format received from server.");
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "An unknown error occurred.");
+          setHabits([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        // User is signed out
+        setUser(null);
+        setHabits([]);
+        setCompletions([]);
+        setLoading(false);
+      }
     });
-    return c.json(habits, 200);
-  } catch (error) {
-    console.error("Error fetching habits:", error);
-    const err = error as Error;
-    return c.json({ message: "Error fetching habits.", errorName: err.name, errorDetail: err.message }, 500);
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleToggleCompletion = (habitId: string, date: Date) => {
+      console.log("Toggling completion for", habitId, "on", date);
+      // Placeholder for backend update
+  };
+  
+  const isHabitCompleted = (habitId: string, date: Date) => {
+    return completions.some(
+      (c) => c.habitId === habitId && formatDate(new Date(c.date)) === formatDate(date) && c.completed
+    );
+  };
+
+  const absoluteHabits = habits.filter(h => h.isAbsolute);
+  const additionalHabits = habits.filter(h => !h.isAbsolute);
+
+  if (loading) {
+    return (
+        <PageContainer>
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+                <p className="ml-4 text-lg">Loading your habits...</p>
+            </div>
+        </PageContainer>
+    );
   }
-});
 
-// POST / - Create a new habit
-app.post("/", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
-  try {
-    const firebaseUser = c.get('user');
-    if (!firebaseUser?.uid) return c.json({ message: "User ID not found in token." }, 400);
+  return (
+    <PageContainer>
+        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+            <header className="flex items-center justify-between mb-6">
+                <Logo size="medium" />
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="h-4 w-4 mr-1" /> Add Habit
+                </Button>
+            </header>
 
-    const body = await c.req.json();
-    const {
-      title, category, type, description, targetValue, targetUnit, isBadHabit, trigger, replacementHabit,
-      icon, iconColor, impact, effort, timeCommitment, frequency, isAbsolute
-    } = body;
+            <Tabs defaultValue="tracker" value={activeTab} onValueChange={setActiveTab} className="mb-8">
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                    <TabsTrigger value="tracker">Habit Tracker</TabsTrigger>
+                    <TabsTrigger value="settings">Settings</TabsTrigger>
+                </TabsList>
 
-    if (!title || !category || !type) return c.json({ message: "Missing required fields: title, category, and type." }, 400);
-    if (type !== "binary" && type !== "quantitative") return c.json({ message: "Invalid habit type. Must be 'binary' or 'quantitative'." }, 400);
-    if (type === "quantitative" && (typeof targetValue !== "number" || typeof targetUnit !== "string" || targetUnit.trim() === "")) {
-      return c.json({ message: "Quantitative habits require a numeric targetValue and a non-empty string targetUnit." }, 400);
-    }
+                <TabsContent value="tracker" className="mt-0">
+                    {error && (
+                        <Card className="bg-red-50 border-red-200 text-red-800 p-4 mb-4">
+                           <CardTitle>Error Loading Habits</CardTitle>
+                           <CardContent className="pt-2">
+                             <p>{error}</p>
+                             <p className="text-xs mt-2">Please try refreshing the page. If the problem persists, contact support.</p>
+                           </CardContent>
+                        </Card>
+                    )}
 
-    const newHabitData = { // Explicitly type or ensure all fields match FirestoreHabit
-      userId: firebaseUser.uid, title, description: description || "", category,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(), // This is FieldValue, not FirestoreTimestamp
-      isActive: true, type, completions: [], isBadHabit: isBadHabit || false,
-      ...(type === "quantitative" && { targetValue, targetUnit }),
-      ...(isBadHabit && { trigger, replacementHabit }),
-      icon: icon || "default-icon", iconColor: iconColor || "default-color",
-      impact: impact || 0, effort: effort || 0, timeCommitment: timeCommitment || "N/A",
-      frequency: frequency || "daily", isAbsolute: typeof isAbsolute === "boolean" ? isAbsolute : false,
-      streak: 0
-    };
-    // Cast to any for Firestore add, or use a more specific type for data being added
-    const habitRef = await db.collection("habits").add(newHabitData as any);
-    const newHabitDoc = await habitRef.get();
-    const newHabit = { habitId: newHabitDoc.id, ...newHabitDoc.data() } as FirestoreHabit;
-    // Ensure createdAt is transformed if needed before sending to client, or client handles FieldValue-like objects.
-    // For now, assume client can handle the structure or it gets serialized appropriately.
-    return c.json(newHabit, 201);
-  } catch (error) {
-    console.error("Error creating habit:", error);
-    const err = error as Error;
-    return c.json({ message: "Error creating habit.", errorName: err.name, errorDetail: err.message }, 500);
-  }
-});
+                    {!error && habits.length === 0 ? (
+                        <Card className="text-center p-8">
+                            <CardTitle>Welcome to MaxiMost!</CardTitle>
+                            <CardContent className="mt-4">
+                                <p>You haven't added any habits yet. Let's add one!</p>
+                                <Button className="mt-4 bg-blue-600 hover:bg-blue-700">
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Add Your First Habit
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <>
+                            {showAbsoluteHabits && absoluteHabits.length > 0 && (
+                              <Card className="mb-6">
+                                <CardHeader className="py-4 px-6 border-b">
+                                  <CardTitle className="text-lg font-semibold">Daily Absolute Habits</CardTitle>
+                                </CardHeader>
+                                <CardContent className="p-0">
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                      <thead>
+                                        <tr className="text-left text-xs text-gray-500 bg-gray-50">
+                                          <th className="py-3 px-6 font-medium w-[200px]">Habit</th>
+                                          {viewDates.map((date, i) => (
+                                            <th key={i} className={`py-3 px-2 text-center font-medium ${formatDate(date) === formatDate(today) ? 'bg-blue-50' : ''}`}>
+                                              <div className="flex flex-col items-center">
+                                                <span>{getDayName(date)}</span>
+                                                <span>{date.getDate()}</span>
+                                              </div>
+                                            </th>
+                                          ))}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {absoluteHabits.map((habit) => (
+                                          <tr key={habit.id} className={`${compactView ? 'h-10' : ''} border-b border-gray-100`}>
+                                            <td className={`${compactView ? 'py-1' : 'py-3'} px-6`}>
+                                               <div className="font-medium">{habit.title}</div>
+                                            </td>
+                                            {viewDates.map((date, i) => {
+                                              const isPast = date <= today;
+                                              const isCompleted = isHabitCompleted(habit.id, date);
+                                              return (
+                                                <td key={i} className={`${compactView ? 'py-1' : 'py-3'} px-2 text-center`}>
+                                                  <button
+                                                    onClick={() => isPast && handleToggleCompletion(habit.id, date)}
+                                                    className={`w-6 h-6 rounded-md flex items-center justify-center mx-auto transition-colors ${ isCompleted ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400' } ${!isPast ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-200'}`}
+                                                    disabled={!isPast}
+                                                  >
+                                                    {isCompleted && <Check className="h-4 w-4" />}
+                                                  </button>
+                                                </td>
+                                              );
+                                            })}
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            )}
+                            {showAdditionalHabits && additionalHabits.length > 0 && ( <Card> {/* Table for additional habits */} </Card> )}
+                        </>
+                    )}
+                </TabsContent>
 
-// PUT /:habitId - Update an existing habit
-app.put("/:habitId", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
-  try {
-    const firebaseUser = c.get('user');
-    const habitId = c.req.param('habitId');
-
-    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized: User ID not found in token." }, 401);
-    if (!habitId) return c.json({ message: "Habit ID not provided in path." }, 400);
-
-    const habitRef = db.collection("habits").doc(habitId);
-    const habitDoc = await habitRef.get();
-
-    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
-
-    const existingHabitData = habitDoc.data() as FirestoreHabit;
-    if (existingHabitData.userId !== firebaseUser.uid) {
-      return c.json({ message: "Forbidden: User does not own this habit." }, 403);
-    }
-
-    const body = await c.req.json();
-    const {
-      title, description, category, type, targetValue, targetUnit,
-      isBadHabit, trigger, replacementHabit,
-      icon, iconColor, impact, effort, timeCommitment, frequency, isAbsolute
-    } = body;
-
-    const updatePayload: {[key: string]: any} = {};
-
-    if (title !== undefined) updatePayload.title = title;
-    if (description !== undefined) updatePayload.description = description;
-    if (category !== undefined) updatePayload.category = category;
-
-    const effectiveType = type || existingHabitData.type;
-    if (type !== undefined) {
-      if (type !== "binary" && type !== "quantitative") {
-        return c.json({ message: "Invalid habit type. Must be \"binary\" or \"quantitative\"." }, 400);
-      }
-      updatePayload.type = type;
-    }
-
-    if (effectiveType === "quantitative") {
-      if (targetValue !== undefined) {
-        if (typeof targetValue !== "number") return c.json({ message: "targetValue must be a number for quantitative habits." }, 400);
-        updatePayload.targetValue = targetValue;
-      }
-      if (targetUnit !== undefined) {
-         if (typeof targetUnit !== "string" || targetUnit.trim() === "") return c.json({ message: "targetUnit must be a non-empty string for quantitative habits." }, 400);
-        updatePayload.targetUnit = targetUnit;
-      }
-    } else if (effectiveType === "binary") {
-        updatePayload.targetValue = admin.firestore.FieldValue.delete();
-        updatePayload.targetUnit = admin.firestore.FieldValue.delete();
-    }
-
-    if (isBadHabit !== undefined) updatePayload.isBadHabit = isBadHabit;
-    const effectiveIsBadHabit = typeof isBadHabit === 'boolean' ? isBadHabit : existingHabitData.isBadHabit;
-
-    if (effectiveIsBadHabit) {
-        if (trigger !== undefined) updatePayload.trigger = trigger;
-        if (replacementHabit !== undefined) updatePayload.replacementHabit = replacementHabit;
-    } else {
-        updatePayload.trigger = admin.firestore.FieldValue.delete();
-        updatePayload.replacementHabit = admin.firestore.FieldValue.delete();
-    }
-
-    if (icon !== undefined) updatePayload.icon = icon;
-    if (iconColor !== undefined) updatePayload.iconColor = iconColor;
-    if (impact !== undefined) updatePayload.impact = impact;
-    if (effort !== undefined) updatePayload.effort = effort;
-    if (timeCommitment !== undefined) updatePayload.timeCommitment = timeCommitment;
-    if (frequency !== undefined) updatePayload.frequency = frequency;
-    if (isAbsolute !== undefined) updatePayload.isAbsolute = isAbsolute;
-
-    if (Object.keys(updatePayload).length === 0) {
-      return c.json({ message: "No valid fields provided for update." }, 400);
-    }
-
-    await habitRef.update(updatePayload);
-    const updatedHabitDoc = await habitRef.get();
-    const updatedHabit = { habitId: updatedHabitDoc.id, ...updatedHabitDoc.data() } as FirestoreHabit;
-
-    return c.json(updatedHabit, 200);
-  } catch (error) {
-    console.error(`Error updating habit ${c.req.param('habitId')}:`, error);
-    const err = error as Error;
-    return c.json({ message: "Error updating habit.", errorName: err.name, errorDetail: err.message }, 500);
-  }
-});
-
-// POST /:habitId/complete - Mark a habit as complete for the current day
-app.post("/:habitId/complete", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
-  try {
-    const firebaseUser = c.get('user');
-    const habitId = c.req.param('habitId');
-    const body = await c.req.json();
-    const { value } = body;
-
-    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized." }, 401);
-    if (!habitId) return c.json({ message: "Habit ID not provided." }, 400);
-    if (typeof value !== "number") return c.json({ message: "Invalid value. Must be a number." }, 400);
-
-    const habitRef = db.collection("habits").doc(habitId);
-    const habitDoc = await habitRef.get();
-
-    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
-
-    const habitData = habitDoc.data() as FirestoreHabit;
-    if (habitData.userId !== firebaseUser.uid) return c.json({ message: "Forbidden. User does not own this habit." }, 403);
-
-    const currentDateStr = getCurrentDateString();
-    const serverTimestamp = admin.firestore.FieldValue.serverTimestamp(); // FieldValue
-
-    let completions: HabitCompletionEntry[] = habitData.completions || [];
-    const existingCompletionIndex = completions.findIndex(c => c.date === currentDateStr);
-
-    if (existingCompletionIndex !== -1) {
-      completions[existingCompletionIndex].value = value;
-      completions[existingCompletionIndex].timestamp = serverTimestamp as any; // Cast to any for assignment to FirestoreTimestamp typed field
-    } else {
-      completions.push({ date: currentDateStr, value: value, timestamp: serverTimestamp as any }); // Cast to any
-    }
-
-    await habitRef.update({ completions });
-    // Fetch the updated document to return the new completions array with resolved timestamps
-    const updatedDoc = await habitRef.get();
-    const updatedHabit = updatedDoc.data();
-
-    return c.json({
-        habitId: habitId,
-        message: "Habit completion logged successfully.",
-        completions: updatedHabit?.completions || [] // Send back resolved completions
-    }, 200);
-  } catch (error) {
-    console.error(`Error completing habit ${c.req.param('habitId')}:`, error);
-    const err = error as Error;
-    return c.json({ message: "Error completing habit.", errorName: err.name, errorDetail: err.message }, 500);
-  }
-});
-
-// DELETE /:habitId - Archive a habit (set isActive to false)
-app.delete("/:habitId", honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
-  try {
-    const firebaseUser = c.get('user');
-    const habitId = c.req.param('habitId');
-
-    if (!firebaseUser?.uid) return c.json({ message: "Unauthorized: User ID not found in token." }, 401);
-    if (!habitId) return c.json({ message: "Habit ID not provided in path." }, 400);
-
-    const habitRef = db.collection("habits").doc(habitId);
-    const habitDoc = await habitRef.get();
-
-    if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
-
-    const habitData = habitDoc.data() as FirestoreHabit;
-    if (habitData.userId !== firebaseUser.uid) {
-      return c.json({ message: "Forbidden: User does not own this habit." }, 403);
-    }
-
-    await habitRef.update({ isActive: false });
-    return c.json({ habitId: habitId, message: "Habit archived successfully." }, 200);
-  } catch (error) {
-    console.error(`Error archiving habit ${c.req.param('habitId')}:`, error);
-    const err = error as Error;
-    return c.json({ message: "Error archiving habit.", errorName: err.name, errorDetail: err.message }, 500);
-  }
-});
-
-export default app;
+                <TabsContent value="settings" className="mt-0">
+                  {/* Settings UI */}
+                </TabsContent>
+            </Tabs>
+        </div>
+    </PageContainer>
+  );
+}
