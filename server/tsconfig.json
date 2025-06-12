@@ -7,10 +7,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    
-    // --- Monorepo Configuration ---
-    "rootDir": "src",
+    "outDir": "dist",
+
+    // --- This is the definitive fix for a monorepo structure ---
+    "rootDirs": [
+      "src",
+      "../shared"
+    ],
     "baseUrl": "..",
     "paths": {
       "@/*": ["server/src/*"],
@@ -18,7 +21,5 @@
     }
   },
   "include": ["src/**/*.ts"],
-  
-  // --- This is the critical fix to ignore test files ---
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
