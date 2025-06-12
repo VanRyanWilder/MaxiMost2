@@ -2,6 +2,10 @@ import React from "react";
 // import { PageContainer } from "@/components/layout/page-container";
 
 // Import reusable components
+import { useEffect, useRef } from "react"; // Added useEffect, useRef
+// import { PageContainer } from "@/components/layout/page-container";
+
+// Import reusable components
 import { CTASection } from "@/components/landing/CTASection";
 import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
 import { FeatureCard } from "@/components/landing/FeatureCard";
@@ -9,11 +13,12 @@ import { TestimonialCard } from "@/components/landing/TestimonialCard";
 import { FAQItem } from "@/components/landing/FAQItem";
 import { Accordion } from "@/components/ui/accordion";
 
+import { useState } from "react"; // Added useState
 // Import Lucide icons (already defined in previous step)
 import {
   Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
   Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Users2, Landmark,
-  Smartphone,
+  Smartphone, Scale, Heart, Shield as LucideShield // Added Scale, Heart, Shield
 } from "lucide-react";
 
 // Data structures (full data from previous steps should be here)
@@ -48,6 +53,47 @@ const faqData = [
 
 
 const NewHomePage: React.FC = () => {
+  const [activePersona, setActivePersona] = useState<string | null>(null); // Added state for active persona
+
+  // Refs for scroll animation
+  const sectionsToAnimate = [
+    useRef<HTMLDivElement>(null), // For MeetTheCoachesSection wrapper
+    useRef<HTMLElement>(null),    // For key-features
+    useRef<HTMLElement>(null),    // For performance-areas
+    useRef<HTMLElement>(null),    // For fitness-trackers
+    useRef<HTMLElement>(null),    // For testimonials
+    useRef<HTMLElement>(null),    // For faq
+    useRef<HTMLElement>(null)     // For final-cta
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target); // Optional: stop observing once visible
+          }
+        });
+      },
+      { threshold: 0.1 } // Trigger when 10% of the element is visible
+    );
+
+    sectionsToAnimate.forEach((sectionRef) => {
+      if (sectionRef.current) {
+        observer.observe(sectionRef.current);
+      }
+    });
+
+    return () => {
+      sectionsToAnimate.forEach((sectionRef) => {
+        if (sectionRef.current) {
+          observer.unobserve(sectionRef.current);
+        }
+      });
+    };
+  }, []); // Empty dependency array ensures this runs once on mount
+
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
     console.log("Waitlist form submitted:", formData);
     alert(`Thank you, ${formData.email}! You\'ve been added to the waitlist.`);
@@ -64,19 +110,79 @@ const NewHomePage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
-        {/* Section 1: UVP / Hero Section */}
-        <section id="uvp" className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
-          <CTASection headline="Unlock Your Maximum Hidden Potential" description="MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience." buttonText="Join Waitlist" emailPlaceholder="Enter your email address" rewardsText="Join our rewards program & refer friends for premium rewards & features" showRewardsOptIn={true} onSubmit={handleWaitlistSubmit} className="container mx-auto max-w-3xl" />
+        {/* Section 1: UVP / Hero Section - Not animated by scroll by default, but contains animated persona cards */}
+        <section
+          id="uvp"
+          className={`py-16 md:py-24 transition-all duration-500 ease-in-out bg-gradient-to-b from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 ${
+            activePersona === 'stoic' ? 'hero-glow-stoic' :
+            activePersona === 'operator' ? 'hero-glow-operator' :
+            activePersona === 'nurturer' ? 'hero-glow-nurturer' : ''
+          }`}
+        >
+          <CTASection
+            headline="Forge Your Elite Habits. Master Your Mind."
+            description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive.”
+            buttonText="Get Started Free"
+            emailPlaceholder="Enter your email address"
+            rewardsText="Join our rewards program & refer friends for premium rewards & features"
+            showRewardsOptIn={true} // Assuming this is still desired or will be adjusted later
+            onSubmit={handleWaitlistSubmit}
+            className="container mx-auto max-w-3xl"
+          />
+          {/* AI Coach Personas Section */}
+          <div className="container mx-auto px-4 mt-16 md:mt-20"> {/* Added container for personas */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              {/* The Stoic Persona Card */}
+              <div
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-stoic-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-stoic-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('stoic')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <Scale className="h-10 w-10 text-[hsl(var(--persona-stoic-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Stoic</h3>
+                <p className="text-sm text-muted-foreground">Calm, reflective, logical. Focuses on virtue.</p>
+              </div>
+              {/* The Operator Persona Card */}
+              <div
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-operator-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-operator-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('operator')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <LucideShield className="h-10 w-10 text-[hsl(var(--persona-operator-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Operator</h3>
+                <p className="text-sm text-muted-foreground">Direct, intense, disciplined. Focuses on execution.</p>
+              </div>
+              {/* The Nurturer Persona Card */}
+              <div
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-nurturer-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-nurturer-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('nurturer')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <Heart className="h-10 w-10 text-[hsl(var(--persona-nurturer-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Nurturer</h3>
+                <p className="text-sm text-muted-foreground">Empathetic, supportive, encouraging. Focuses on self-compassion.</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Section 2: Meet The Coaches */}
-        <MeetTheCoachesSection
-          title="Find the Coach That Drives You"
-          className="py-16 md:py-20 bg-background dark:bg-neutral-900"
-        />
+        {/* Wrapped MeetTheCoachesSection for animation */}
+        <div ref={sectionsToAnimate[0]} className="scroll-animate">
+          <MeetTheCoachesSection
+            title="Find the Coach That Drives You"
+            className="py-16 md:py-20 bg-background dark:bg-neutral-900"
+          />
+        </div>
 
         {/* Section 3: Key Features */}
-        <section id="key-features" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="key-features" ref={sectionsToAnimate[1]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             {keyFeaturesData.length > 0 ? (
@@ -88,7 +194,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 4: Six Key Performance Areas */}
-        <section id="performance-areas" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="performance-areas" ref={sectionsToAnimate[2]} className="scroll-animate py-16 md:py-20 bg-background dark:bg-neutral-900">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             {performanceAreasData.length > 0 ? (
@@ -100,7 +206,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 5: Fitness Tracker Integration */}
-        <section id="fitness-trackers" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="fitness-trackers" ref={sectionsToAnimate[3]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Fitness Tracker Integration
@@ -153,7 +259,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section id="testimonials" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="testimonials" ref={sectionsToAnimate[4]} className="scroll-animate py-16 md:py-20 bg-background dark:bg-neutral-900">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -178,7 +284,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 7: FAQ */}
-        <section id="faq" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="faq" ref={sectionsToAnimate[5]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -201,7 +307,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 8: Final CTA Section */}
-        <section id="final-cta" className="py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
+        <section id="final-cta" ref={sectionsToAnimate[6]} className="scroll-animate py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
           <CTASection
             headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
             description="Sign up for early access and unlock special benefits reserved for our first members."

@@ -27,7 +27,7 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
     .toUpperCase();
 
   return (
-    <Card className={`flex flex-col items-center text-center p-6 shadow-lg rounded-lg ${className}`}>
+    <Card className={`flex flex-col items-center text-center p-6 shadow-lg rounded-lg transition-all duration-300 ease-in-out hover:shadow-xl ${className}`}>
       <Avatar className="w-20 h-20 mb-4">
         <AvatarImage src={imageSrc} alt={altText} />
         <AvatarFallback>{initials}</AvatarFallback>
