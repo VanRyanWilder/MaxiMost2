@@ -1,10 +1,7 @@
 name = "maximost-backend"
 main = "src/worker.ts"
 compatibility_date = "2024-06-12"
-
-# This flag enables Node.js modules like 'crypto' and 'stream'
 compatibility_flags = [ "nodejs_compat" ]
 
-# This section tells wrangler how to build the project
 [build]
 command = "npm run build"
