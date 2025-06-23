@@ -1,10 +1,14 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from 'tailwindcss/defaultTheme'; // Ensure this import is present
 
 export default {
   darkMode: ["class"],
   content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: { // Added
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -78,6 +82,10 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Added persona color class names
+        'persona-stoic': 'hsl(var(--persona-stoic-glow))',
+        'persona-operator': 'hsl(var(--persona-operator-glow))',
+        'persona-nurturer': 'hsl(var(--persona-nurturer-glow))',
       },
       keyframes: {
         "accordion-down": {

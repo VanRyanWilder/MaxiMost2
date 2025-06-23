@@ -1,25 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
     "outDir": "dist",
-
-    // --- This is the definitive fix for a monorepo structure ---
-    "rootDirs": [
-      "src",
-      "../shared"
-    ],
-    "baseUrl": "..",
-    "paths": {
-      "@/*": ["server/src/*"],
-      "@shared/*": ["shared/*"]
-    }
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

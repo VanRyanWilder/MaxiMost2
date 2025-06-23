@@ -62,7 +62,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
           <Button
             type="submit"
             size="lg" // Made button larger
-            className="text-lg"
+            className="text-lg transition-colors duration-300 ease-in-out" // Added transition
             disabled={isLoading}
           >
             {isLoading ? "Submitting..." : buttonText}

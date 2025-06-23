@@ -1,47 +1,57 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { secureHeaders } from 'hono/secure-headers';
+import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
+// bodyParser import removed, using express built-ins
+import habitRoutes from "./routes/habitRoutes"; // Import habit routes
+import userRoutes from "./routes/userRoutes"; // Import user routes
 
-// Using relative paths with .js extension for compiled output
-import authRoutes from './routes/authRoutes.js';
-import habitRoutes from './routes/habitRoutes.js';
-import userRoutes from './routes/userRoutes.js';
+// Initialize Firebase Admin SDK - Ensure this is done before routes that need it.
+// This import will execute the firebaseAdmin.ts file.
+import "./config/firebaseAdmin";
 
-// Define the environment bindings for Hono.
-type Bindings = {
-  // e.g., DB: D1Database
-}
+const app = express();
+const port = process.env.PORT || 8080;
 
-const app = new Hono<{ Bindings: Bindings }>();
+// Middleware
+app.use(cors()); // Enable CORS for all routes - Already added, ensuring it is here.
+app.use(express.json()); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
-// --- Middleware ---
-app.use('*', logger());
-app.use('*', secureHeaders());
-app.use('*', cors({
-  origin: [
-    'https://www.maximost.com',
-    'https://*.maximost-frontend.pages.dev',
-    'http://localhost:5173'
-  ],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-}));
-
-// --- Route Registration ---
-app.route('/api/auth', authRoutes);
-app.route('/api/habits', habitRoutes);
-app.route('/api/users', userRoutes);
-
-// --- Basic & Health Check Routes ---
-app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
-app.get('/health', (c) => c.text('OK'));
-
-// --- Error & Not Found Handlers ---
-app.onError((err, c) => {
-  console.error(`Error: ${err.message}`);
-  return c.json({ success: false, message: 'Internal Server Error' }, 500);
+// Routes
+app.get("/", (req, res) => {
+  res.send("Maximost Backend Server is running!");
 });
-app.notFound((c) => c.json({ success: false, message: 'Endpoint Not Found' }, 404));
 
-export default app;
+// Mount the habit routes
+app.use("/api/habits", habitRoutes);
+
+// Mount the user routes
+app.use("/api/users", userRoutes);
+
+// Basic 404 handler for routes not found
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(404).json({ message: "Not Found - The requested resource could not be found on this server." });
+});
+
+// Basic Error Handling Middleware (should be last middleware)
+// This will catch errors passed by next(error) or unhandled synchronous errors in route handlers
+// (though async errors need to be caught and passed to next() explicitly in older Express versions without Express 5 auto async error handling)
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error("Unhandled error:", err.stack || err); // Log the error stack for debugging
+
+  // Avoid sending stack trace to client in production for security
+  const errorResponse = {
+    message: err.message || "An unexpected error occurred.",
+    // ...(process.env.NODE_ENV === "development" && { stack: err.stack }) // Optionally include stack in dev
+  };
+
+  // If headers have already been sent, delegate to the default Express error handler.
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  res.status(500).json(errorResponse);
+});
+
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});

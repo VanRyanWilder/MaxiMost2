@@ -1,10 +1,32 @@
 name = "maximost-backend"
-main = "src/worker.ts"
-
-# This is the key change, as suggested by the error log.
-compatibility_date = "2024-09-23"
-
-compatibility_flags = [ "nodejs_compat" ]
+main = "dist/worker.js"
+compatibility_date = "2024-03-15" # Using a recent example date
 
 [build]
-command = "npm run build"
+command = "npm run build" # This command uses tsc as per package.json
+watch_dir = "src"         # Optional: Tells wrangler to watch the src directory for changes during `wrangler dev`
+
+# Environment variables for the worker.
+# Secrets should be set using `wrangler secret put VAR_NAME` and not committed here.
+# This [vars] section is for non-secret environment variables.
+# For FIREBASE_SERVICE_ACCOUNT_KEY_JSON, it's critical to set it as a secret.
+# The line below is a placeholder comment to remind that this variable is needed.
+# vars = { FIREBASE_SERVICE_ACCOUNT_KEY_JSON = "NEEDS_TO_BE_SET_AS_SECRET" }
+#
+# Better practice: Define non-secret vars if any, and handle secrets via dashboard/CLI.
+# For this exercise, we are just noting the requirement for FIREBASE_SERVICE_ACCOUNT_KEY_JSON.
+# No actual [vars] entry will be made for it to avoid confusion with how secrets are handled.
+
+# If you had other, non-secret environment variables, you might define them here:
+# [vars]
+# MY_NON_SECRET_VAR = "some_value"
+
+# Placeholder for potential future needs like KV namespaces, D1 databases, etc.
+# [[kv_namespaces]]
+# binding = "MY_KV_NAMESPACE"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"

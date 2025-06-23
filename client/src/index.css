@@ -46,26 +46,32 @@ html {
 }
 
 .dark {
-  --background: 222 47% 11%;
-  --foreground: 210 40% 98%;
+  --background: 210 68% 11%; /* dark navy */
+  --foreground: 210 40% 98%; /* good contrast with dark navy */
+  --primary: 211 100% 50%; /* electric blue */
+  --primary-foreground: 210 40% 98%; /* Ensure this has good contrast with electric blue if used as button text */
+
   --muted: 223 47% 16%;
   --muted-foreground: 215 20% 75%;
-  --popover: 222 47% 11%;
+  --popover: 222 47% 11%; /* Consider adjusting if background changes significantly */
   --popover-foreground: 210 40% 98%;
-  --card: 222 47% 11%;
+  --card: 222 47% 11%; /* Consider adjusting if background changes significantly */
   --card-foreground: 210 40% 98%;
   --border: 216 34% 17%;
   --input: 216 34% 17%;
-  --primary: 210 100% 65%;
-  --primary-foreground: 210 40% 98%;
   --secondary: 217 33% 20%;
   --secondary-foreground: 210 40% 98%;
-  --accent: 217 33% 20%;
+  --accent: 217 33% 20%; /* Consider if this needs to change with new primary */
   --accent-foreground: 210 40% 98%;
   --destructive: 0 63% 50%;
   --destructive-foreground: 210 40% 98%;
-  --ring: 216 34% 30%;
+  --ring: 211 100% 50%; /* Changed to new primary for focus rings */
   --radius: 0.5rem;
+
+  /* Persona Accent Colors (Glows) */
+  --persona-stoic-glow: 211 100% 50%;    /* electric blue */
+  --persona-operator-glow: 151 100% 33%; /* emerald green */
+  --persona-nurturer-glow: 45 100% 50%;   /* amber yellow */
   
   /* BeastMode Custom Colors */
   --progress: 142, 71%, 45%;
@@ -77,6 +83,54 @@ html {
   --info: 207, 90%, 54%;
   --info-foreground: 0 0% 100%;
 }
+
+/* Hero Glow Effects */
+.hero-glow-stoic, .hero-glow-operator, .hero-glow-nurturer {
+  position: relative; /* Needed for pseudo-element positioning */
+  /* Ensure other styles like overflow don't clip the glow if it's very large */
+}
+
+.hero-glow-stoic::before,
+.hero-glow-operator::before,
+.hero-glow-nurturer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: inherit; /* If section has rounded corners */
+  z-index: -1; /* Place behind content */
+  opacity: 0;
+  animation: fadeInGlow 0.5s forwards;
+  pointer-events: none; /* Ensure pseudo-element doesn't intercept mouse events */
+}
+
+.hero-glow-stoic::before {
+  box-shadow: 0 0 150px 50px hsla(var(--persona-stoic-glow), 0.3); /* Adjusted spread and alpha */
+}
+
+.hero-glow-operator::before {
+  box-shadow: 0 0 150px 50px hsla(var(--persona-operator-glow), 0.3);
+}
+
+.hero-glow-nurturer::before {
+  box-shadow: 0 0 150px 50px hsla(var(--persona-nurturer-glow), 0.3);
+}
+
+@keyframes fadeInGlow {
+  to { opacity: 1; }
+}
+/* End Hero Glow Effects */
+
+/* For IntersectionObserver scroll animations */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.scroll-animate.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* End IntersectionObserver scroll animations */
 
 @layer base {
   * {
