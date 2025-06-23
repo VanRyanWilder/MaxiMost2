@@ -1,5 +1,4 @@
-import React from "react";
-// import { PageContainer } from "@/components/layout/page-container";
+import React, { useState, useEffect, useRef } from "react";
 
 // Import reusable components
 import { CTASection } from "@/components/landing/CTASection";
@@ -9,16 +8,16 @@ import { TestimonialCard } from "@/components/landing/TestimonialCard";
 import { FAQItem } from "@/components/landing/FAQItem";
 import { Accordion } from "@/components/ui/accordion";
 
-// Import Lucide icons (already defined in previous step)
+// Import Lucide icons
 import {
   Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
   Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Users2, Landmark,
-  Smartphone,
+  Smartphone, Scale, Heart, Shield as LucideShield
 } from "lucide-react";
 
-// Data structures (full data from previous steps should be here)
+// Data structures
 const keyFeaturesData = [
-  { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn\'t do) and frequency-based (2x, 3x per week) habits." },
+  { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
   { id: "feat-ai-coach", icon: <Brain size={32} />, title: "AI Habit Coach", description: "Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency." },
   { id: "feat-break-bad", icon: <Zap size={32} />, title: "Break Bad Habits & Addictions", description: "Specialized tools to identify, track, and overcome negative patterns, including addiction recovery support." },
   { id: "feat-one-percent", icon: <TrendingUp size={32} />, title: "1% Better Every Day", description: "Make consistent improvements following the \"compound effect\" principle. 1% better each day leads to 37x improvement in a year." },
@@ -34,23 +33,62 @@ const performanceAreasData = [
   { id: "area-financial", icon: <Landmark size={32} />, title: "Financial Habits", description: "Saving, investing, and wealth building" },
 ];
 const testimonialsData = [
-  { id: "t-hormozi", imageSrc: "/placeholder-avatar.png", altText: "Alex Hormozi", name: "Alex Hormozi", title: "Founder, Acquisition.com", quote: "MaxiMost perfectly embodies the \'small hinges swing big doors\' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers." },
-  { id: "t-urban", imageSrc: "/placeholder-avatar.png", altText: "Melissa Urban", name: "Melissa Urban", title: "Co-Founder & CEO, Whole30", quote: "I\'ve tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier." },
-  { id: "t-huberman", imageSrc: "/placeholder-avatar.png", altText: "Andrew Huberman", name: "Andrew Huberman", title: "Neuroscientist & Professor", quote: "The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they\'ve created a system that works with our brain\'s neuroplasticity rather than against it. This is how lasting habits are formed." },
+  { id: "t-hormozi", imageSrc: "/placeholder-avatar.png", altText: "Alex Hormozi", name: "Alex Hormozi", title: "Founder, Acquisition.com", quote: "MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers." },
+  { id: "t-urban", imageSrc: "/placeholder-avatar.png", altText: "Melissa Urban", name: "Melissa Urban", title: "Co-Founder & CEO, Whole30", quote: "I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier." },
+  { id: "t-huberman", imageSrc: "/placeholder-avatar.png", altText: "Andrew Huberman", name: "Andrew Huberman", title: "Neuroscientist & Professor", quote: "The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed." },
   { id: "t-patrick", imageSrc: "/placeholder-avatar.png", altText: "Rhonda Patrick", name: "Rhonda Patrick", title: "Biochemist & Health Expert", quote: "The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!" },
 ];
 const faqData = [
-  { id: "faq-1", question: "What makes Maximost different from other habit trackers?", answer: "Maximost isn\'t just a habit tracker—it\'s an AI-powered life operating system that applies both ancient Stoic wisdom and modern performance science. We integrate with 5 fitness trackers, provide automatic habit completion, offer streak milestones, and focus on the \"maximum bang for your buck\" principle to truly transform your life one habit at a time." },
+  { id: "faq-1", question: "What makes Maximost different from other habit trackers?", answer: "Maximost isn't just a habit tracker—it's an AI-powered life operating system that applies both ancient Stoic wisdom and modern performance science. We integrate with 5 fitness trackers, provide automatic habit completion, offer streak milestones, and focus on the \"maximum bang for your buck\" principle to truly transform your life one habit at a time." },
   { id: "faq-2", question: "How does the fitness tracker integration work?", answer: "Maximost connects seamlessly with Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin. Once connected, relevant activities like steps, workouts, sleep data, and more will automatically mark corresponding habits as complete without manual input, making consistent tracking effortless." },
-  { id: "faq-3", question: "What are the six key performance areas?", answer: "Maximost tracks habits across six critical life domains: Physical Training (red), Nutrition & Fueling (orange), Sleep & Hygiene (indigo), Mental Acuity & Growth (yellow), Relationships & Community (blue), and Financial Habits (green). This holistic approach ensures you\'re developing in all areas that truly matter for a fulfilling life." },
+  { id: "faq-3", question: "What are the six key performance areas?", answer: "Maximost tracks habits across six critical life domains: Physical Training (red), Nutrition & Fueling (orange), Sleep & Hygiene (indigo), Mental Acuity & Growth (yellow), Relationships & Community (blue), and Financial Habits (green). This holistic approach ensures you're developing in all areas that truly matter for a fulfilling life." },
   { id: "faq-4", question: "How does the streak system motivate long-term habit formation?", answer: "Our streak system counts consecutive days of habit completion while providing milestone celebrations (3, 7, 14, 30, 60, 90, 180, 365 days). The system is designed with flexibility—continuing if you complete habits today or yesterday—while also encouraging consistent daily action for maximum habit formation." },
 ];
 
-
 const NewHomePage: React.FC = () => {
+  const [activePersona, setActivePersona] = useState<string | null>(null);
+
+  const sectionsToAnimate = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLElement>(null),
+    useRef<HTMLElement>(null),
+    useRef<HTMLElement>(null),
+    useRef<HTMLElement>(null),
+    useRef<HTMLElement>(null),
+    useRef<HTMLElement>(null)
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    sectionsToAnimate.forEach((sectionRef) => {
+      if (sectionRef.current) {
+        observer.observe(sectionRef.current);
+      }
+    });
+
+    return () => {
+      sectionsToAnimate.forEach((sectionRef) => {
+        if (sectionRef.current) {
+          observer.unobserve(sectionRef.current);
+        }
+      });
+    };
+  }, []);
+
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
     console.log("Waitlist form submitted:", formData);
-    alert(`Thank you, ${formData.email}! You\'ve been added to the waitlist.`);
+    alert(`Thank you, ${formData.email}! You've been added to the waitlist.`);
   };
 
   const fitnessTrackers = [
@@ -64,19 +102,71 @@ const NewHomePage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
-        {/* Section 1: UVP / Hero Section */}
-        <section id="uvp" className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
-          <CTASection headline="Unlock Your Maximum Hidden Potential" description="MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience." buttonText="Join Waitlist" emailPlaceholder="Enter your email address" rewardsText="Join our rewards program & refer friends for premium rewards & features" showRewardsOptIn={true} onSubmit={handleWaitlistSubmit} className="container mx-auto max-w-3xl" />
+        <section 
+          id="uvp" 
+          className={`py-16 md:py-24 transition-all duration-500 ease-in-out bg-gradient-to-b from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 ${
+            activePersona === 'stoic' ? 'hero-glow-stoic' :
+            activePersona === 'operator' ? 'hero-glow-operator' :
+            activePersona === 'nurturer' ? 'hero-glow-nurturer' : ''
+          }`}
+        >
+          <CTASection 
+            headline="Forge Your Elite Habits. Master Your Mind." 
+            description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
+            buttonText="Get Started Free" 
+            emailPlaceholder="Enter your email address" 
+            rewardsText="Join our rewards program & refer friends for premium rewards & features" 
+            showRewardsOptIn={true} 
+            onSubmit={handleWaitlistSubmit} 
+            className="container mx-auto max-w-3xl" 
+          />
+          <div className="container mx-auto px-4 mt-16 md:mt-20">
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div 
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-stoic-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-stoic-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('stoic')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <Scale className="h-10 w-10 text-[hsl(var(--persona-stoic-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Stoic</h3>
+                <p className="text-sm text-muted-foreground">Calm, reflective, logical. Focuses on virtue.</p>
+              </div>
+              <div 
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-operator-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-operator-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('operator')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <LucideShield className="h-10 w-10 text-[hsl(var(--persona-operator-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Operator</h3>
+                <p className="text-sm text-muted-foreground">Direct, intense, disciplined. Focuses on execution.</p>
+              </div>
+              <div 
+                className="bg-card dark:bg-neutral-800 border border-[hsl(var(--persona-nurturer-glow))] rounded-lg p-6 shadow-lg hover:transform hover:-translate-y-1 hover:shadow-[0_0_30px_-5px_hsl(var(--persona-nurturer-glow),0.5)] transition-all duration-300 cursor-pointer"
+                onMouseEnter={() => setActivePersona('nurturer')}
+                onMouseLeave={() => setActivePersona(null)}
+              >
+                <div className="mx-auto mb-4 h-16 w-16 flex items-center justify-center">
+                  <Heart className="h-10 w-10 text-[hsl(var(--persona-nurturer-glow))]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">The Nurturer</h3>
+                <p className="text-sm text-muted-foreground">Empathetic, supportive, encouraging. Focuses on self-compassion.</p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Section 2: Meet The Coaches */}
-        <MeetTheCoachesSection
-          title="Find the Coach That Drives You"
-          className="py-16 md:py-20 bg-background dark:bg-neutral-900"
-        />
+        <div ref={sectionsToAnimate[0]} className="scroll-animate">
+          <MeetTheCoachesSection
+            title="Find the Coach That Drives You"
+            className="py-16 md:py-20 bg-background dark:bg-neutral-900"
+          />
+        </div>
 
-        {/* Section 3: Key Features */}
-        <section id="key-features" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="key-features" ref={sectionsToAnimate[1]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             {keyFeaturesData.length > 0 ? (
@@ -87,8 +177,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 4: Six Key Performance Areas */}
-        <section id="performance-areas" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="performance-areas" ref={sectionsToAnimate[2]} className="scroll-animate py-16 md:py-20 bg-background dark:bg-neutral-900">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             {performanceAreasData.length > 0 ? (
@@ -99,8 +188,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 5: Fitness Tracker Integration */}
-        <section id="fitness-trackers" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="fitness-trackers" ref={sectionsToAnimate[3]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Fitness Tracker Integration
@@ -152,8 +240,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 6: Social Proof (Testimonials) */}
-        <section id="testimonials" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="testimonials" ref={sectionsToAnimate[4]} className="scroll-animate py-16 md:py-20 bg-background dark:bg-neutral-900">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -177,8 +264,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 7: FAQ */}
-        <section id="faq" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="faq" ref={sectionsToAnimate[5]} className="scroll-animate py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -200,8 +286,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 8: Final CTA Section */}
-        <section id="final-cta" className="py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
+        <section id="final-cta" ref={sectionsToAnimate[6]} className="scroll-animate py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
           <CTASection
             headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
             description="Sign up for early access and unlock special benefits reserved for our first members."
@@ -214,7 +299,6 @@ const NewHomePage: React.FC = () => {
           />
         </section>
 
-        {/* Simple Footer */}
         <footer className="py-8 border-t border-border">
             <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
                 <p className="mb-2">MaxiMost Logo (Placeholder)</p>
