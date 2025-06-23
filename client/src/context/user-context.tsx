@@ -4,26 +4,6 @@ import { queryClient } from "@/lib/queryClient";
 import { onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
 
-// Create a static mock user for development until the user API is ready
-const mockUser: User = {
-  id: 1,
-  username: "maximost_user",
-  password: "password123", // This should not be stored in a real app
-  name: "MaxiMost User",
-  email: "user@maximost.com",
-  currentProgramId: 3,
-  programStartDate: new Date("2023-04-15"),
-  programProgress: 32,
-  firebaseUid: 'mock-firebase-uid',
-  subscriptionTier: "premium",
-  subscriptionStatus: "active",
-  subscriptionStartDate: new Date("2023-03-15"),
-  subscriptionEndDate: new Date("2024-03-15"),
-  trialEndsAt: null,
-  stripeCustomerId: "cus_123456",
-  stripeSubscriptionId: "sub_123456"
-};
-
 interface UserContextType {
   user: User | null;
   firebaseUser: FirebaseUser | null;
@@ -31,11 +11,11 @@ interface UserContextType {
   logout: () => void;
 }
 
-// Create context with a proper default (null user)
+// Create context with a proper default (null user, loading)
 const UserContext = createContext<UserContextType>({
   user: null,
   firebaseUser: null,
-  userLoading: true, // Start in a loading state
+  userLoading: true,
   logout: () => {},
 });
 
@@ -46,23 +26,42 @@ interface UserProviderProps {
 export function UserProvider({ children }: UserProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
-  const [userLoading, setUserLoading] = useState(true); // Start as true
+  const [userLoading, setUserLoading] = useState(true); // Start in a loading state
 
   useEffect(() => {
-    // This is the core of real authentication.
-    // It listens to Firebase for login/logout events.
+    // This listener is the core of real authentication.
     const unsubscribe = onAuthStateChange((fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser) {
         // A user is logged in via Firebase.
-        // In a real app, you would now fetch your app-specific user profile from your backend.
-        // For now, we'll use the mockUser to represent the logged-in user's profile.
-        setUser({ ...mockUser, firebaseUid: fbUser.uid, email: fbUser.email || 'no-email@maximost.com' });
+        // We create a minimal User profile from the Firebase user data.
+        // In a real app, you would fetch the full profile from your backend here.
+        const appUser: User = {
+          id: 0, // Placeholder ID
+          firebaseUid: fbUser.uid,
+          name: fbUser.displayName || "MaxiMost User",
+          email: fbUser.email || "no-email@provided.com",
+          username: fbUser.displayName || "maximost_user",
+          // Set default/null values for other fields until they are fetched
+          password: "",
+          currentProgramId: null,
+          programStartDate: null,
+          programProgress: null,
+          subscriptionTier: 'free',
+          subscriptionStatus: 'active',
+          subscriptionStartDate: null,
+          subscriptionEndDate: null,
+          trialEndsAt: null,
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+        };
+        setUser(appUser);
       } else {
         // No user is logged in.
         setUser(null);
       }
-      setUserLoading(false); // Finished loading auth state
+      // Finished checking auth state, set loading to false.
+      setUserLoading(false);
     });
 
     // Cleanup the listener when the component unmounts
@@ -71,8 +70,7 @@ export function UserProvider({ children }: UserProviderProps) {
 
   const logout = async () => {
     await firebaseSignOut();
-    setUser(null);
-    setFirebaseUser(null);
+    // The onAuthStateChange listener above will handle setting user state to null.
     queryClient.clear();
   };
 
