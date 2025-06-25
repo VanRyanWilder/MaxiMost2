@@ -6,6 +6,8 @@ import { CoachPersona } from "@/data/coachPersonaData"; // Import the data struc
 interface CoachPersonaCardProps {
   coach: CoachPersona;
   className?: string;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
 }
 
 // Helper to get Lucide icon component by name string
@@ -20,21 +22,60 @@ const DynamicLucideIcon = ({ name, color, size = 48 }: { name: string; color?: s
   return <IconComponent color={color} size={size} />;
 };
 
+import { useState } from "react"; // Import useState for hover state
+
 export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
   coach,
   className,
+  onHoverStart,
+  onHoverEnd,
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (onHoverStart) {
+      onHoverStart();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (onHoverEnd) {
+      onHoverEnd();
+    }
+  };
+
+  const cardStyle: React.CSSProperties = {
+    transition: "all 0.3s ease-in-out",
+    boxShadow: isHovered ? `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}` : "var(--tw-shadow, 0 0 #0000)", // Use Tailwind shadow if not hovered
+    transform: isHovered ? "translateY(-5px)" : "translateY(0px)",
+  };
+
+  // Ensure Tailwind classes for border and bg are applied, but allow hover style to dominate
+  const combinedClassName = `flex flex-col h-full overflow-hidden rounded-lg
+    ${coach.borderColor || "border-border"}
+    ${coach.cardBgColor || "bg-card"}
+    ${className}`;
+
   return (
     <Card
-      className={`flex flex-col h-full overflow-hidden rounded-lg shadow-lg transition-all hover:shadow-xl ${coach.borderColor || "border-border"} ${coach.cardBgColor || "bg-card"} ${className}`}
+      className={combinedClassName}
+      style={cardStyle}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
+      {coach.imageUrl && (
+        <div className="w-full h-40 overflow-hidden">
+          <img
+            src={coach.imageUrl}
+            alt={coach.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       <CardHeader className="items-center text-center p-6">
         <div className={`mb-4 p-3 rounded-full inline-block ${coach.iconColor ? "" : "text-primary"}`}>
-          {/* The iconColor from data is a Tailwind class like "text-blue-600".
-              DynamicLucideIcon color prop expects a direct color string or uses currentColor.
-              If iconColor is a Tailwind class, we apply it to a parent or handle it differently.
-              For simplicity, let DynamicLucideIcon use its default/currentColor and style parent.
-          */}
           <div className={coach.iconColor || "text-primary"}>
             <DynamicLucideIcon name={coach.iconName} size={40} />
           </div>

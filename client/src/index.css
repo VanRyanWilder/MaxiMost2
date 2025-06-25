@@ -23,8 +23,8 @@ html {
   --card-foreground: 20 14.3% 4.1%;
   --border: 20 5.9% 90%;
   --input: 20 5.9% 90%;
-  --primary: 207 90% 54%;
-  --primary-foreground: 211 100% 99%;
+  --primary: 200 100% 50%; /* Vibrant Electric Blue */
+  --primary-foreground: 210 40% 98%; /* Ensuring contrast for dark text on light blue, or light text on dark blue */
   --secondary: 207 90% 95%;
   --secondary-foreground: 207 90% 30%;
   --accent: 207 90% 95%;
@@ -46,18 +46,18 @@ html {
 }
 
 .dark {
-  --background: 222 47% 11%;
+  --background: 210 68% 11%; /* #0A192F approximation */
   --foreground: 210 40% 98%;
-  --muted: 223 47% 16%;
+  --muted: 223 47% 16%; /* Muted can stay as is or be a variant of the new bg */
   --muted-foreground: 215 20% 75%;
-  --popover: 222 47% 11%;
+  --popover: 210 68% 11%; /* Match new background */
   --popover-foreground: 210 40% 98%;
-  --card: 222 47% 11%;
+  --card: 210 68% 11%; /* Match new background */
   --card-foreground: 210 40% 98%;
   --border: 216 34% 17%;
   --input: 216 34% 17%;
-  --primary: 210 100% 65%;
-  --primary-foreground: 210 40% 98%;
+  --primary: 200 100% 50%; /* Vibrant Electric Blue (same as light mode) */
+  --primary-foreground: 210 40% 98%; /* Light foreground for contrast with bright blue */
   --secondary: 217 33% 20%;
   --secondary-foreground: 210 40% 98%;
   --accent: 217 33% 20%;
@@ -86,4 +86,25 @@ html {
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+@keyframes heroGradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInSlideUp {
+  animation: fadeInSlideUp 0.5s ease-out forwards;
 }
