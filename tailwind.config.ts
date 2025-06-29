@@ -9,6 +9,9 @@ export default {
       fontFamily: { // Added
         sans: ['Inter', ...defaultTheme.fontFamily.sans],
       },
+      fontFamily: {
+        sans: ['Inter', 'Poppins', ...require('tailwindcss/defaultTheme').fontFamily.sans],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

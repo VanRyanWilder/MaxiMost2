@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+// import { PageContainer } from "@/components/layout/page-container";
+
+import React, { useState } from "react";
 
 // Import reusable components
 import { CTASection } from "@/components/landing/CTASection";
@@ -85,6 +88,12 @@ const NewHomePage: React.FC = () => {
       });
     };
   }, []);
+
+  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
+
+  const handlePersonaHover = (glowColor: string | undefined) => {
+    setActiveGlowColor(glowColor || null);
+  };
 
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
     console.log("Waitlist form submitted:", formData);
