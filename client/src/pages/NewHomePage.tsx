@@ -1,6 +1,9 @@
 import React from "react";
 // import { PageContainer } from "@/components/layout/page-container";
 
+import React, { useState } from "react";
+// import { PageContainer } from "@/components/layout/page-container";
+
 // Import reusable components
 import { CTASection } from "@/components/landing/CTASection";
 import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
@@ -48,6 +51,12 @@ const faqData = [
 
 
 const NewHomePage: React.FC = () => {
+  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
+
+  const handlePersonaHover = (glowColor: string | undefined) => {
+    setActiveGlowColor(glowColor || null);
+  };
+
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
     console.log("Waitlist form submitted:", formData);
     alert(`Thank you, ${formData.email}! You\'ve been added to the waitlist.`);
@@ -65,18 +74,48 @@ const NewHomePage: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
         {/* Section 1: UVP / Hero Section */}
-        <section id="uvp" className="py-16 md:py-24 bg-gradient-to-b from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
-          <CTASection headline="Unlock Your Maximum Hidden Potential" description="MaxiMost is your AI-powered operating system for life, integrating Stoic wisdom and peak performance science to help you forge unbreakable positive habits, conquer detrimental ones (including addictions), and build unwavering mental resilience." buttonText="Join Waitlist" emailPlaceholder="Enter your email address" rewardsText="Join our rewards program & refer friends for premium rewards & features" showRewardsOptIn={true} onSubmit={handleWaitlistSubmit} className="container mx-auto max-w-3xl" />
+        <section
+          id="uvp"
+          className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden" // text-white for contrast on animated bg
+        >
+          {/* Animated Background Placeholder - Simple Gradient Animation */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              animation: 'heroGradientAnimation 15s ease infinite alternate',
+              backgroundSize: '200% 200%',
+              backgroundImage: activeGlowColor
+                ? `linear-gradient(-45deg, #0A192F, ${activeGlowColor}, #0A192F)`
+                : 'linear-gradient(-45deg, #0A192F, #1E3A8A, #3B82F6, #0A192F)',
+              transition: 'background-image 0.5s ease-in-out', // Smooth transition for color change
+            }}
+          />
+          {/* TODO: Implement more sophisticated looping animated background (e.g., abstract digital neurons, shifting geometric blueprints) */}
+
+          <div className="relative z-10 container mx-auto max-w-4xl text-center"> {/* Increased max-w for new text */}
+            <CTASection
+              headline="Forge Your Elite Habits. Master Your Mind."
+              description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
+              buttonText="Get Started Free" // Updated CTA text as per Ticket #A
+              emailPlaceholder="Enter your email to begin" // Slightly updated placeholder
+              rewardsText="Join now for early access and exclusive benefits." // Simplified rewards text
+              showRewardsOptIn={false} // Simplified for initial hero focus, can be re-evaluated
+              onSubmit={handleWaitlistSubmit}
+              // Removed className specific to max-w-3xl to allow container to control width
+            />
+          </div>
         </section>
 
         {/* Section 2: Meet The Coaches */}
         <MeetTheCoachesSection
           title="Find the Coach That Drives You"
-          className="py-16 md:py-20 bg-background dark:bg-neutral-900"
+          className="py-16 md:py-20 bg-background dark:bg-neutral-900" // This section can also be animated if desired
+          onPersonaHover={handlePersonaHover}
+          onPersonaLeave={() => handlePersonaHover(undefined)}
         />
 
         {/* Section 3: Key Features */}
-        <section id="key-features" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="key-features" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.2s'}}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             {keyFeaturesData.length > 0 ? (
@@ -88,7 +127,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 4: Six Key Performance Areas */}
-        <section id="performance-areas" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="performance-areas" className="py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.4s'}}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             {performanceAreasData.length > 0 ? (
@@ -100,7 +139,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 5: Fitness Tracker Integration */}
-        <section id="fitness-trackers" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="fitness-trackers" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.6s'}}>
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Fitness Tracker Integration
@@ -153,7 +192,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section id="testimonials" className="py-16 md:py-20 bg-background dark:bg-neutral-900">
+        <section id="testimonials" className="py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.8s'}}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -178,7 +217,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 7: FAQ */}
-        <section id="faq" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30">
+        <section id="faq" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '1.0s'}}>
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -201,7 +240,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 8: Final CTA Section */}
-        <section id="final-cta" className="py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30">
+        <section id="final-cta" className="py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '1.2s'}}>
           <CTASection
             headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
             description="Sign up for early access and unlock special benefits reserved for our first members."
