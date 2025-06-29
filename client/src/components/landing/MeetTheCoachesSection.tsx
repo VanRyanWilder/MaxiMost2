@@ -5,7 +5,7 @@ import { CoachPersonaCard } from "./CoachPersonaCard"; // Import the card compon
 interface MeetTheCoachesSectionProps {
   title: string;
   className?: string;
-  onPersonaHover?: (glowColor: string | undefined) => void;
+  onPersonaHover?: (glowColorRgb: string | undefined) => void;
   onPersonaLeave?: () => void;
 }
 
@@ -27,7 +27,7 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
               <CoachPersonaCard
                 key={coach.id}
                 coach={coach}
-                onHoverStart={() => onPersonaHover && onPersonaHover(coach.glowColor)}
+                onHoverStart={() => onPersonaHover && onPersonaHover(coach.glowColorRgb)} // Pass glowColorRgb
                 onHoverEnd={() => onPersonaLeave && onPersonaLeave()}
               />
             ))}

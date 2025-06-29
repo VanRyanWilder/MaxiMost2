@@ -1,7 +1,8 @@
 import React from "react";
 // import { PageContainer } from "@/components/layout/page-container";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver"; // Import the hook
 // import { PageContainer } from "@/components/layout/page-container";
 
 // Import reusable components
@@ -51,10 +52,10 @@ const faqData = [
 
 
 const NewHomePage: React.FC = () => {
-  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
+  const [activeGlowColorRgb, setActiveGlowColorRgb] = useState<string | null>(null);
 
-  const handlePersonaHover = (glowColor: string | undefined) => {
-    setActiveGlowColor(glowColor || null);
+  const handlePersonaHover = (glowColorRgb: string | undefined) => {
+    setActiveGlowColorRgb(glowColorRgb || null);
   };
 
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
@@ -70,6 +71,23 @@ const NewHomePage: React.FC = () => {
     { name: "Garmin", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
   ];
 
+  // Refs for sections to be animated
+  const keyFeaturesRef = useRef<HTMLDivElement>(null);
+  const performanceAreasRef = useRef<HTMLDivElement>(null);
+  const fitnessTrackersRef = useRef<HTMLDivElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const faqRef = useRef<HTMLDivElement>(null);
+  const finalCtaRef = useRef<HTMLDivElement>(null);
+
+  // Intersection observer hooks
+  const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
+  const isPerformanceAreasVisible = useIntersectionObserver(performanceAreasRef, { threshold: 0.1, triggerOnce: true });
+  const isFitnessTrackersVisible = useIntersectionObserver(fitnessTrackersRef, { threshold: 0.1, triggerOnce: true });
+  const isTestimonialsVisible = useIntersectionObserver(testimonialsRef, { threshold: 0.1, triggerOnce: true });
+  const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
+  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
+
+
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
@@ -80,17 +98,15 @@ const NewHomePage: React.FC = () => {
         >
           {/* Animated Background Placeholder - Simple Gradient Animation */}
           <div
-            className="absolute inset-0 z-0"
+            className="absolute inset-0 z-0 hero-background-animation" // Added class for new animation
             style={{
-              animation: 'heroGradientAnimation 15s ease infinite alternate',
-              backgroundSize: '200% 200%',
-              backgroundImage: activeGlowColor
-                ? `linear-gradient(-45deg, #0A192F, ${activeGlowColor}, #0A192F)`
-                : 'linear-gradient(-45deg, #0A192F, #1E3A8A, #3B82F6, #0A192F)',
-              transition: 'background-image 0.5s ease-in-out', // Smooth transition for color change
-            }}
+              // Base background color, will be layered with animated elements via CSS
+              backgroundColor: '#0A192F',
+              // CSS variable for dynamic glow color from persona hover
+              '--hero-glow-color-rgb': activeGlowColorRgb || '0, 128, 255' // Default: some blue
+            } as React.CSSProperties}
           />
-          {/* TODO: Implement more sophisticated looping animated background (e.g., abstract digital neurons, shifting geometric blueprints) */}
+          {/* New animation will be handled by .hero-background-animation class */}
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center"> {/* Increased max-w for new text */}
             <CTASection
@@ -115,7 +131,11 @@ const NewHomePage: React.FC = () => {
         />
 
         {/* Section 3: Key Features */}
-        <section id="key-features" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.2s'}}>
+        <section
+          id="key-features"
+          ref={keyFeaturesRef}
+          className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-opacity duration-500 ${isKeyFeaturesVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             {keyFeaturesData.length > 0 ? (
@@ -127,7 +147,11 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 4: Six Key Performance Areas */}
-        <section id="performance-areas" className="py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.4s'}}>
+        <section
+          id="performance-areas"
+          ref={performanceAreasRef}
+          className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-opacity duration-500 ${isPerformanceAreasVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             {performanceAreasData.length > 0 ? (
@@ -139,7 +163,11 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 5: Fitness Tracker Integration */}
-        <section id="fitness-trackers" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.6s'}}>
+        <section
+          id="fitness-trackers"
+          ref={fitnessTrackersRef}
+          className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-opacity duration-500 ${isFitnessTrackersVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Fitness Tracker Integration
@@ -192,7 +220,11 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section id="testimonials" className="py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '0.8s'}}>
+        <section
+          id="testimonials"
+          ref={testimonialsRef}
+          className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-opacity duration-500 ${isTestimonialsVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -217,7 +249,11 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 7: FAQ */}
-        <section id="faq" className="py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '1.0s'}}>
+        <section
+          id="faq"
+          ref={faqRef}
+          className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-opacity duration-500 ${isFaqVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -240,7 +276,11 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 8: Final CTA Section */}
-        <section id="final-cta" className="py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 opacity-0 animate-fadeInSlideUp" style={{animationDelay: '1.2s'}}>
+        <section
+          id="final-cta"
+          ref={finalCtaRef}
+          className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-opacity duration-500 ${isFinalCtaVisible ? "animate-fadeInSlideUp" : "opacity-0"}`}
+        >
           <CTASection
             headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
             description="Sign up for early access and unlock special benefits reserved for our first members."

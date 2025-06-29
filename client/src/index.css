@@ -88,11 +88,58 @@ html {
   }
 }
 
-@keyframes heroGradientAnimation {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+.hero-background-animation {
+  position: absolute;
+  inset: 0;
+  overflow: hidden; /* To contain pseudo-elements if they go wild */
+  /* Base dark navy already set by inline style backgroundColor: '#0A192F' */
 }
+
+/* Static Grid */
+.hero-background-animation::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(var(--hero-glow-color-rgb, 0, 128, 255), 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(var(--hero-glow-color-rgb, 0, 128, 255), 0.07) 1px, transparent 1px);
+  background-size: 40px 40px; /* Grid size */
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Animated Elements Container - to allow separate animations */
+.hero-background-animation::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* This pseudo-element can host other layers of animation if needed, e.g., particles */
+  /* For simplicity, starting with animated lines directly on ::before or a new div */
+}
+
+/* Example: Moving subtle lines/beams - can be enhanced */
+@keyframes moveLines {
+  0% { background-position: 0 0, 0 0; } /* Initial position for two sets of lines */
+  100% { background-position: 200px 100px, -100px -200px; } /* End position */
+}
+
+.hero-background-animation { /* Additive style for moving lines */
+  background-image:
+    /* Faint diagonal lines */
+    repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.05) 35px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.05) 70px),
+    repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.03) 35px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.03) 70px);
+  animation: moveLines 30s linear infinite;
+  will-change: background-position; /* Performance hint */
+}
+
+
+/* TODO: Add more sophisticated particle effects or refine line animations */
+/* Example for particles (would need its own keyframes and more complex setup):
+.hero-particles { ... }
+@keyframes drift { ... }
+*/
+
 
 @keyframes fadeInSlideUp {
   from {

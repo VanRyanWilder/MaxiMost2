@@ -12,7 +12,8 @@ export interface CoachPersona {
   borderColor?: string; // Optional Tailwind CSS class for card border
   sampleQuote: string;
   imageUrl?: string; // Temporary placeholder for coach image
-  glowColor?: string; // For hero dynamic theming - e.g. electricBlue, emeraldGreen, amberYellow
+    glowColor?: string; // Hex for card boxShadow glow
+    glowColorRgb?: string; // RGB string for hero dynamic theming e.g., "0, 255, 255"
 }
 
 export const coachPersonaData: CoachPersona[] = [
@@ -27,7 +28,8 @@ export const coachPersonaData: CoachPersona[] = [
     borderColor: "border-blue-200 dark:border-blue-700",
     sampleQuote: "Focus on your actions, not the fruits of your actions. Therein lies tranquility.",
     imageUrl: "https://picsum.photos/seed/stoic/300/200", // Placeholder
-    glowColor: "#00FFFF", // Electric Blue (Cyan/Aqua as a vibrant blue)
+    glowColor: "#00FFFF", // Electric Blue (Cyan/Aqua as a vibrant blue) - for card glow
+    glowColorRgb: "0, 255, 255", // For hero background accents
   },
   {
     id: "operator",
@@ -40,7 +42,8 @@ export const coachPersonaData: CoachPersona[] = [
     borderColor: "border-green-200 dark:border-green-700",
     sampleQuote: "Discipline equals freedom. Execute the plan. No excuses.",
     imageUrl: "https://picsum.photos/seed/operator/300/200", // Placeholder
-    glowColor: "#39FF14", // Emerald Green (Neon Green as a vibrant emerald)
+    glowColor: "#39FF14", // Emerald Green (Neon Green as a vibrant emerald) - for card glow
+    glowColorRgb: "57, 255, 20", // For hero background accents
   },
   {
     id: "nurturer",
@@ -53,6 +56,7 @@ export const coachPersonaData: CoachPersona[] = [
     borderColor: "border-yellow-200 dark:border-yellow-600",
     sampleQuote: "Every small step is progress. Be kind to yourself on this journey.",
     imageUrl: "https://picsum.photos/seed/nurturer/300/200", // Placeholder
-    glowColor: "#FFD700", // Amber Yellow (Gold as a vibrant amber)
+    glowColor: "#FFD700", // Amber Yellow (Gold as a vibrant amber) - for card glow
+    glowColorRgb: "255, 215, 0", // For hero background accents
   },
 ];
