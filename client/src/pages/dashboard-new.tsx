@@ -22,19 +22,11 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-  useSortable // This was part of the @dnd-kit/core block, ensure it's correctly from @dnd-kit/sortable if used
-} from '@dnd-kit/core'; // This grouping might be incorrect based on previous diff.
-// Correcting dnd-kit imports based on typical usage:
-// useSortable should be from @dnd-kit/sortable
-// arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy are from @dnd-kit/sortable
-// I will assume the existing SortableContext and other sortable items are correctly imported from @dnd-kit/sortable as per the original file structure.
-// The diff tool might have just grouped them under @dnd-kit/core visually.
-// For this change, I only need to add Tabs imports.
-
+  useSortable
+} from '@dnd-kit/sortable';
 import { format, addDays, startOfWeek, subDays, isSameDay, isBefore, isAfter } from 'date-fns';
 import { iconMap as habitIconMap, colorSchemes } from "@/components/dashboard/edit-habit-dialog";
 import { SortableHabit } from "@/components/dashboard/sortable-habit";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Added Tabs imports
 import { 
   Activity, 
   AlertTriangle,
@@ -71,8 +63,7 @@ import {
   Trophy,
   Utensils,
   Wine,
-  Zap,
-  Settings // Added Settings import
+  Zap
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -226,9 +217,6 @@ export default function Dashboard() {
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   // const [currentDate, setCurrentDate] = useState<Date>(new Date()); // Not actively used, can be removed if only for initialCompletions
 
-  // Ref for AI Coach Corner scroll animation
-  const aiCoachCornerRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!user) {
       setHabits([]);
@@ -277,33 +265,6 @@ export default function Dashboard() {
 
     fetchHabits();
   }, [user, apiBaseUrl]); // apiBaseUrl added as dependency, though it shouldn't change often
-
-  // Scroll animation for AI Coach Corner
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (aiCoachCornerRef.current) {
-      observer.observe(aiCoachCornerRef.current);
-    }
-
-    // Cleanup
-    return () => {
-      if (aiCoachCornerRef.current) {
-        observer.unobserve(aiCoachCornerRef.current);
-      }
-    };
-  }, []);
-
 
   // Set up sensors for the drag and drop functionality
   const sensors = useSensors(
@@ -895,636 +856,613 @@ export default function Dashboard() {
               
               {/* Right column with habit library and other elements */}
               <div className="space-y-6">
-                {/* AI Coach Corner Card - Placed at the top of the right column */}
-                <Card ref={aiCoachCornerRef} className="scroll-animate">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-lg font-semibold">AI Coach</CardTitle>
-                    <Button variant="outline" size="sm" className="ml-auto">
-                      Change Coach <Settings className="ml-2 h-4 w-4" />
-                    </Button>
+                {/* Legend Card */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-500" /> Legend
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    {/* DailyMotivation component is now part of AI Coach Corner */}
-                    <DailyMotivation />
+                  <CardContent className="pt-0">
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Star className="h-4 w-4 text-amber-500" />
+                          <span className="font-medium">Impact Score</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Higher numbers (1-10) indicate habits with greater potential impact on wellness and progress.
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="h-4 w-4 text-purple-500" />
+                          <span className="font-medium">Effort Score</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Higher numbers (1-10) indicate habits requiring more effort or willpower to complete.
+                        </p>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-green-100 rounded">
+                            <Check className="h-3 w-3 text-green-600" />
+                          </div>
+                          <span className="font-medium">Weekly Goals</span>
+                        </div>
+                        <p className="text-muted-foreground text-xs">
+                          Green background shows when you've met your target frequency for the week.
+                        </p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
 
-                <Tabs defaultValue="library" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="library">Habit Library</TabsTrigger>
-                    <TabsTrigger value="legend">Legend</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="library">
-                    {/* Habit Library Card */}
+                {/* Habit Library Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-1.5">
+                      <BookOpen className="w-4 h-4 text-blue-500" /> Habit Library
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Quick Add Individual Habits Section */}
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-sm font-medium">Quick Add Individual Habits</h3>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="sm" className="h-8 px-2">
+                            More <ChevronDown className="ml-1 h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Mind</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience", 7, 6, "10 min", "daily", true, "blue")}>
+                              <Brain className="mr-2 h-4 w-4 text-blue-500" /> Cold Shower
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity", 6, 3, "15 min", "daily", true, "purple")}>
+                              <Pencil className="mr-2 h-4 w-4 text-purple-500" /> Journal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Reading", "book", "mind", "Read a book or article for growth", 7, 4, "30 min", "daily", true, "amber")}>
+                              <BookOpen className="mr-2 h-4 w-4 text-amber-500" /> Reading
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7, "60 min", "daily", true, "red")}>
+                              <Zap className="mr-2 h-4 w-4 text-red-500" /> Digital Detox
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily", true, "amber")}>
+                              <Star className="mr-2 h-4 w-4 text-amber-500" /> Pray
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Health</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition", 9, 5, "8 hours", "daily", true, "indigo")}>
+                              <Moon className="mr-2 h-4 w-4 text-indigo-500" /> Sleep 8 Hours
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "cookie", "health", "Avoid added sugar for better metabolic health", 8, 7, "All day", "daily", true, "red")}>
+                              <Cookie className="mr-2 h-4 w-4 text-red-500" /> No Sugar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "utensils", "health", "Nutrient-dense breakfast for health and energy", 7, 4, "10 min", "daily", true, "green")}>
+                              <Utensils className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "pill", "health", "Supplement with necessary micronutrients", 6, 2, "1 min", "daily", true, "purple")}>
+                              <Pill className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1, "2 min", "daily", true, "amber")}>
+                              <Sun className="mr-2 h-4 w-4 text-amber-500" /> Make Bed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day", true, "blue")}>
+                              <Zap className="mr-2 h-4 w-4 text-blue-500" /> Brush Teeth
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                          
+                          <DropdownMenuSeparator />
+                          
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Fitness</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "footprints", "fitness", "Improve daily movement and cardiovascular health", 8, 6, "60 min", "daily", true, "green")}>
+                              <Footprints className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "move", "fitness", "Improve flexibility and mobility", 7, 3, "15 min", "daily", true, "blue")}>
+                              <Move className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("Strength Training", "dumbbell", "fitness", "Build muscle and boost metabolism", 9, 7, "45 min", "3x-week", false, "red")}>
+                              <Dumbbell className="mr-2 h-4 w-4 text-red-500" /> Strength Training
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => addQuickHabit("HIIT Workout", "timer", "fitness", "High intensity interval training", 9, 8, "20 min", "3x-week", false, "amber")}>
+                              <Timer className="mr-2 h-4 w-4 text-amber-500" /> HIIT Workout
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 mt-2 mb-6">
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Stay hydrated for optimal body function", 9, 2)}
+                      >
+                        <Droplets className="h-4 w-4 text-blue-500" />
+                        Drink Water <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">1.2k</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Read", "book-open", "mind", "Daily reading for continuous growth", 8, 5)}
+                      >
+                        <BookOpen className="h-4 w-4 text-amber-500" />
+                        Read <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">856</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Meditate", "brain", "mind", "Mindfulness practice for clarity", 8, 4)}
+                      >
+                        <Brain className="h-4 w-4 text-violet-500" />
+                        Meditate <Badge className="ml-auto bg-violet-100 text-violet-700 hover:bg-violet-200">721</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Cardio", "activity", "fitness", "Heart-healthy aerobic activity", 10, 6)}
+                      >
+                        <Activity className="h-4 w-4 text-red-500" />
+                        Cardio <Badge className="ml-auto bg-red-100 text-red-700 hover:bg-red-200">695</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Gratitude", "pencil", "mind", "Write down three things you're grateful for", 7, 3)}
+                      >
+                        <Pencil className="h-4 w-4 text-green-500" />
+                        Gratitude <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">582</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("No Phone Hour", "zap", "mind", "Take a break from screens before bed", 7, 5)}
+                      >
+                        <Zap className="h-4 w-4 text-yellow-500" />
+                        No Phone <Badge className="ml-auto bg-yellow-100 text-yellow-700 hover:bg-yellow-200">447</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1)}
+                      >
+                        <Sun className="h-4 w-4 text-amber-500" />
+                        Make Bed <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">412</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day")}
+                      >
+                        <Zap className="h-4 w-4 text-blue-500" />
+                        Brush Teeth <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">405</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily")}
+                      >
+                        <Star className="h-4 w-4 text-amber-500" />
+                        Pray <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">399</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Track Calories", "activity", "health", "Monitor daily caloric intake", 8, 7)}
+                      >
+                        <Activity className="h-4 w-4 text-orange-500" />
+                        Track Calories <Badge className="ml-auto bg-orange-100 text-orange-700 hover:bg-orange-200">387</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Protein Intake", "dumbbell", "health", "Ensure adequate protein consumption", 8, 5, "10 min", "daily")}
+                      >
+                        <Dumbbell className="h-4 w-4 text-purple-500" />
+                        Protein Intake <Badge className="ml-auto bg-purple-100 text-purple-700 hover:bg-purple-200">398</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Supplements", "droplets", "health", "Take daily supplements", 6, 2, "2 min")}
+                      >
+                        <Droplets className="h-4 w-4 text-green-500" />
+                        Supplements <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">375</Badge>
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className="justify-start gap-2 text-sm"
+                        onClick={() => addQuickHabit("Intermittent Fast", "clock", "health", "Practice time-restricted eating", 8, 6, "60 min", "daily")}
+                      >
+                        <Clock className="h-4 w-4 text-blue-500" />
+                        Intermittent Fast <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">354</Badge>
+                      </Button>
+                    </div>
+
+                    <h3 className="text-sm font-medium mb-2">Expert Habit Stacks</h3>
+
+                    {/* Morning Routine Stack */}
                     <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg flex items-center gap-1.5">
-                          <BookOpen className="w-4 h-4 text-blue-500" /> Habit Library
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {/* Quick Add Individual Habits Section */}
+                      <CardHeader className="py-3 px-4">
                         <div className="flex justify-between items-center">
-                          <h3 className="text-sm font-medium">Quick Add Individual Habits</h3>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="outline" size="sm" className="h-8 px-2">
-                                More <ChevronDown className="ml-1 h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56">
-                              <DropdownMenuGroup>
-                                <DropdownMenuLabel>Mind</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Cold Shower", "brain", "mind", "Boost circulation and mental resilience", 7, 6, "10 min", "daily", true, "blue")}>
-                                  <Brain className="mr-2 h-4 w-4 text-blue-500" /> Cold Shower
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Journal", "pencil", "mind", "Write thoughts and reflections for mental clarity", 6, 3, "15 min", "daily", true, "purple")}>
-                                  <Pencil className="mr-2 h-4 w-4 text-purple-500" /> Journal
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Reading", "book", "mind", "Read a book or article for growth", 7, 4, "30 min", "daily", true, "amber")}>
-                                  <BookOpen className="mr-2 h-4 w-4 text-amber-500" /> Reading
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Digital Detox", "zap", "mind", "Take a break from all digital devices", 8, 7, "60 min", "daily", true, "red")}>
-                                  <Zap className="mr-2 h-4 w-4 text-red-500" /> Digital Detox
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily", true, "amber")}>
-                                  <Star className="mr-2 h-4 w-4 text-amber-500" /> Pray
-                                </DropdownMenuItem>
-                              </DropdownMenuGroup>
-
-                              <DropdownMenuSeparator />
-
-                              <DropdownMenuGroup>
-                                <DropdownMenuLabel>Health</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Sleep 8 Hours", "moon", "health", "Prioritize quality sleep for recovery and cognition", 9, 5, "8 hours", "daily", true, "indigo")}>
-                                  <Moon className="mr-2 h-4 w-4 text-indigo-500" /> Sleep 8 Hours
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("No Sugar", "cookie", "health", "Avoid added sugar for better metabolic health", 8, 7, "All day", "daily", true, "red")}>
-                                  <Cookie className="mr-2 h-4 w-4 text-red-500" /> No Sugar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Green Smoothie", "utensils", "health", "Nutrient-dense breakfast for health and energy", 7, 4, "10 min", "daily", true, "green")}>
-                                  <Utensils className="mr-2 h-4 w-4 text-green-500" /> Green Smoothie
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Take Vitamins", "pill", "health", "Supplement with necessary micronutrients", 6, 2, "1 min", "daily", true, "purple")}>
-                                  <Pill className="mr-2 h-4 w-4 text-purple-500" /> Take Vitamins
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1, "2 min", "daily", true, "amber")}>
-                                  <Sun className="mr-2 h-4 w-4 text-amber-500" /> Make Bed
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day", true, "blue")}>
-                                  <Zap className="mr-2 h-4 w-4 text-blue-500" /> Brush Teeth
-                                </DropdownMenuItem>
-                              </DropdownMenuGroup>
-
-                              <DropdownMenuSeparator />
-
-                              <DropdownMenuGroup>
-                                <DropdownMenuLabel>Fitness</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Walk 10K Steps", "footprints", "fitness", "Improve daily movement and cardiovascular health", 8, 6, "60 min", "daily", true, "green")}>
-                                  <Footprints className="mr-2 h-4 w-4 text-green-500" /> Walk 10K Steps
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Daily Stretching", "move", "fitness", "Improve flexibility and mobility", 7, 3, "15 min", "daily", true, "blue")}>
-                                  <Move className="mr-2 h-4 w-4 text-blue-500" /> Daily Stretching
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("Strength Training", "dumbbell", "fitness", "Build muscle and boost metabolism", 9, 7, "45 min", "3x-week", false, "red")}>
-                                  <Dumbbell className="mr-2 h-4 w-4 text-red-500" /> Strength Training
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => addQuickHabit("HIIT Workout", "timer", "fitness", "High intensity interval training", 9, 8, "20 min", "3x-week", false, "amber")}>
-                                  <Timer className="mr-2 h-4 w-4 text-amber-500" /> HIIT Workout
-                                </DropdownMenuItem>
-                              </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 mt-2 mb-6">
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Stay hydrated for optimal body function", 9, 2)}
-                          >
-                            <Droplets className="h-4 w-4 text-blue-500" />
-                            Drink Water <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">1.2k</Badge>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Read", "book-open", "mind", "Daily reading for continuous growth", 8, 5)}
-                          >
-                            <BookOpen className="h-4 w-4 text-amber-500" />
-                            Read <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">856</Badge>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Meditate", "brain", "mind", "Mindfulness practice for clarity", 8, 4)}
-                          >
-                            <Brain className="h-4 w-4 text-violet-500" />
-                            Meditate <Badge className="ml-auto bg-violet-100 text-violet-700 hover:bg-violet-200">721</Badge>
-                          </Button>
-                          
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Cardio", "activity", "fitness", "Heart-healthy aerobic activity", 10, 6)}
-                          >
-                            <Activity className="h-4 w-4 text-red-500" />
-                            Cardio <Badge className="ml-auto bg-red-100 text-red-700 hover:bg-red-200">695</Badge>
-                          </Button>
-                          
+                          <CardTitle className="text-base">Morning Routine</CardTitle>
                           <Button 
                             variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Gratitude", "pencil", "mind", "Write down three things you're grateful for", 7, 3)}
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1);
+                              addQuickHabit("Drink Water", "droplets", "health", "Hydrate first thing in the morning", 9, 1);
+                              addQuickHabit("Meditate", "brain", "mind", "5-minute mindfulness practice", 8, 3);
+                            }}
                           >
-                            <Pencil className="h-4 w-4 text-green-500" />
-                            Gratitude <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">582</Badge>
-                          </Button>
-
-                          <Button 
-                            variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("No Phone Hour", "zap", "mind", "Take a break from screens before bed", 7, 5)}
-                          >
-                            <Zap className="h-4 w-4 text-yellow-500" />
-                            No Phone <Badge className="ml-auto bg-yellow-100 text-yellow-700 hover:bg-yellow-200">447</Badge>
-                          </Button>
-
-                          <Button 
-                            variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1)}
-                          >
-                            <Sun className="h-4 w-4 text-amber-500" />
-                            Make Bed <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">412</Badge>
-                          </Button>
-
-                          <Button 
-                            variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Brush Teeth", "zap", "health", "Maintain oral hygiene and health", 7, 1, "3 min", "2x-day")}
-                          >
-                            <Zap className="h-4 w-4 text-blue-500" />
-                            Brush Teeth <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">405</Badge>
-                          </Button>
-
-                          <Button 
-                            variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Pray", "star", "mind", "Take time for spiritual reflection and gratitude", 9, 2, "5 min", "daily")}
-                          >
-                            <Star className="h-4 w-4 text-amber-500" />
-                            Pray <Badge className="ml-auto bg-amber-100 text-amber-700 hover:bg-amber-200">399</Badge>
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Track Calories", "activity", "health", "Monitor daily caloric intake", 8, 7)}
-                          >
-                            <Activity className="h-4 w-4 text-orange-500" />
-                            Track Calories <Badge className="ml-auto bg-orange-100 text-orange-700 hover:bg-orange-200">387</Badge>
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Protein Intake", "dumbbell", "health", "Ensure adequate protein consumption", 8, 5, "10 min", "daily")}
-                          >
-                            <Dumbbell className="h-4 w-4 text-purple-500" />
-                            Protein Intake <Badge className="ml-auto bg-purple-100 text-purple-700 hover:bg-purple-200">398</Badge>
-                          </Button>
-
-                          <Button
-                            variant="outline"
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Supplements", "droplets", "health", "Take daily supplements", 6, 2, "2 min")}
-                          >
-                            <Droplets className="h-4 w-4 text-green-500" />
-                            Supplements <Badge className="ml-auto bg-green-100 text-green-700 hover:bg-green-200">375</Badge>
-                          </Button>
-
-                          <Button 
-                            variant="outline" 
-                            className="justify-start gap-2 text-sm"
-                            onClick={() => addQuickHabit("Intermittent Fast", "clock", "health", "Practice time-restricted eating", 8, 6, "60 min", "daily")}
-                          >
-                            <Clock className="h-4 w-4 text-blue-500" />
-                            Intermittent Fast <Badge className="ml-auto bg-blue-100 text-blue-700 hover:bg-blue-200">354</Badge>
+                            Add All 3 Habits
                           </Button>
                         </div>
-
-                        <h3 className="text-sm font-medium mb-2">Expert Habit Stacks</h3>
-
-                        {/* Morning Routine Stack */}
-                        <Card>
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Morning Routine</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1);
-                                  addQuickHabit("Drink Water", "droplets", "health", "Hydrate first thing in the morning", 9, 1);
-                                  addQuickHabit("Meditate", "brain", "mind", "5-minute mindfulness practice", 8, 3);
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <Sun className="text-amber-500 h-4 w-4" />
-                                <span>Make your bed</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Droplets className="text-blue-500 h-4 w-4" />
-                                <span>Drink 16oz water</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Hydrate first thing in the morning", 9, 1)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Brain className="text-violet-500 h-4 w-4" />
-                                <span>5-min meditation</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Meditate", "brain", "mind", "5-minute mindfulness practice", 8, 3)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        {/* Evening Routine Stack */}
-                        <Card className="mt-4">
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Evening Routine</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("Reflection Journal", "penLine", "mind", "Write down 3 things that went well today", 8, 3);
-                                  addQuickHabit("No Screens Before Bed", "phoneOff", "health", "Avoid screens 30min before sleep", 9, 5);
-                                  addQuickHabit("Tomorrow's Plan", "listChecks", "mind", "Write down 3 priorities for tomorrow", 7, 2);
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <PenLine className="text-indigo-500 h-4 w-4" />
-                                <span>Evening reflection</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Reflection Journal", "penLine", "mind", "Write down 3 things that went well today", 8, 3)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <PhoneOff className="text-red-500 h-4 w-4" />
-                                <span>No screens 30min before bed</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("No Screens Before Bed", "phoneOff", "health", "Avoid screens 30min before sleep", 9, 5)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <ListChecks className="text-emerald-500 h-4 w-4" />
-                                <span>Plan tomorrow</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Tomorrow's Plan", "listChecks", "mind", "Write down 3 priorities for tomorrow", 7, 2)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        {/* Break Bad Habits Stack */}
-                        <Card className="mt-4">
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Break Bad Habits</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("No Alcohol", "wineOff", "health", "Skip alcoholic beverages", 10, 7);
-                                  addQuickHabit("No Social Media", "slash", "mind", "Avoid checking social media", 8, 6);
-                                  addQuickHabit("No Sugar", "candy", "health", "Avoid added sugar", 9, 8);
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <Wine className="text-red-500 h-4 w-4" />
-                                <span>No alcohol</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("No Alcohol", "wineOff", "health", "Skip alcoholic beverages", 10, 7)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Slash className="text-orange-500 h-4 w-4" />
-                                <span>No social media</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("No Social Media", "slash", "mind", "Avoid checking social media", 8, 6)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Candy className="text-pink-500 h-4 w-4" />
-                                <span>No sugar</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("No Sugar", "candy", "health", "Avoid added sugar", 9, 8)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        {/* Huberman Lab Stack */}
-                        <Card>
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Huberman Lab</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("Morning Sunlight", "sun", "health", "Get morning sun exposure for circadian rhythm", 10, 3);
-                                  addQuickHabit("Consistent Sleep Schedule", "clock", "health", "Go to bed and wake up at consistent times", 10, 6);
-                                  addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes", 9, 5);
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <Sun className="text-amber-500 h-4 w-4" />
-                                <span>Morning sunlight</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Morning Sunlight", "sun", "health", "Get sun exposure for circadian rhythm", 10, 3)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Clock className="text-blue-500 h-4 w-4" />
-                                <span>Consistent sleep</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Consistent Sleep", "clock", "health", "Go to bed and wake up at consistent times", 10, 6)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Dumbbell className="text-red-500 h-4 w-4" />
-                                <span>Zone 2 cardio</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes", 9, 5)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        {/* Stoic Philosophy Stack */}
-                        <Card>
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Stoic Philosophy</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2);
-                                  addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3);
-                                  addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4);
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <Sun className="text-amber-500 h-4 w-4" />
-                                <span>Morning reflection</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Pencil className="text-violet-500 h-4 w-4" />
-                                <span>Evening journal</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Brain className="text-blue-500 h-4 w-4" />
-                                <span>Negative visualization</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4)}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                        {/* Fitness Fundamentals Stack */}
-                        <Card>
-                          <CardHeader className="py-3 px-4">
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-base">Fitness Fundamentals</CardTitle>
-                              <Button
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => {
-                                  addQuickHabit("Protein with Every Meal", "apple", "health", "Ensure adequate protein intake for muscle support");
-                                  addQuickHabit("Progressive Overload", "dumbbell", "fitness", "Gradually increase workout intensity over time");
-                                  addQuickHabit("Mobility Work", "activity", "fitness", "Maintain joint health and prevent injuries");
-                                }}
-                              >
-                                Add All 3 Habits
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="py-2 px-4">
-                            <ul className="space-y-2">
-                              <li className="flex gap-2 items-center text-sm">
-                                <Apple className="text-green-500 h-4 w-4" />
-                                <span>Protein with every meal</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Protein with Every Meal", "apple", "health", "Ensure adequate protein intake for muscle support")}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Dumbbell className="text-red-500 h-4 w-4" />
-                                <span>Progressive overload</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Progressive Overload", "dumbbell", "fitness", "Gradually increase workout intensity over time")}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                              <li className="flex gap-2 items-center text-sm">
-                                <Activity className="text-blue-500 h-4 w-4" />
-                                <span>Mobility work</span>
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  className="ml-auto h-6 px-2 text-xs"
-                                  onClick={() => addQuickHabit("Mobility Work", "activity", "fitness", "Maintain joint health and prevent injuries")}
-                                >
-                                  Add
-                                </Button>
-                              </li>
-                            </ul>
-                          </CardContent>
-                        </Card>
-
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  <TabsContent value="legend">
-                    {/* Legend Card */}
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base flex items-center gap-1.5">
-                          <AlertTriangle className="w-4 h-4 text-amber-500" /> Legend
-                        </CardTitle>
                       </CardHeader>
-                      <CardContent className="pt-0">
-                        <div className="space-y-3 text-sm">
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <Star className="h-4 w-4 text-amber-500" />
-                              <span className="font-medium">Impact Score</span>
-                            </div>
-                            <p className="text-muted-foreground text-xs">
-                              Higher numbers (1-10) indicate habits with greater potential impact on wellness and progress.
-                            </p>
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <Zap className="h-4 w-4 text-purple-500" />
-                              <span className="font-medium">Effort Score</span>
-                            </div>
-                            <p className="text-muted-foreground text-xs">
-                              Higher numbers (1-10) indicate habits requiring more effort or willpower to complete.
-                            </p>
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <div className="p-1 bg-green-100 rounded">
-                                <Check className="h-3 w-3 text-green-600" />
-                              </div>
-                              <span className="font-medium">Weekly Goals</span>
-                            </div>
-                            <p className="text-muted-foreground text-xs">
-                              Green background shows when you've met your target frequency for the week.
-                            </p>
-                          </div>
-                        </div>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <Sun className="text-amber-500 h-4 w-4" />
+                            <span>Make your bed</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Make Bed", "sun", "health", "Start the day with a small accomplishment", 6, 1)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Droplets className="text-blue-500 h-4 w-4" />
+                            <span>Drink 16oz water</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Drink Water", "droplets", "health", "Hydrate first thing in the morning", 9, 1)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Brain className="text-violet-500 h-4 w-4" />
+                            <span>5-min meditation</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Meditate", "brain", "mind", "5-minute mindfulness practice", 8, 3)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
                       </CardContent>
                     </Card>
-                  </TabsContent>
-                </Tabs>
+
+                    {/* Evening Routine Stack */}
+                    <Card className="mt-4">
+                      <CardHeader className="py-3 px-4">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-base">Evening Routine</CardTitle>
+                          <Button 
+                            variant="outline" 
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("Reflection Journal", "penLine", "mind", "Write down 3 things that went well today", 8, 3);
+                              addQuickHabit("No Screens Before Bed", "phoneOff", "health", "Avoid screens 30min before sleep", 9, 5);
+                              addQuickHabit("Tomorrow's Plan", "listChecks", "mind", "Write down 3 priorities for tomorrow", 7, 2);
+                            }}
+                          >
+                            Add All 3 Habits
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <PenLine className="text-indigo-500 h-4 w-4" />
+                            <span>Evening reflection</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Reflection Journal", "penLine", "mind", "Write down 3 things that went well today", 8, 3)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <PhoneOff className="text-red-500 h-4 w-4" />
+                            <span>No screens 30min before bed</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("No Screens Before Bed", "phoneOff", "health", "Avoid screens 30min before sleep", 9, 5)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <ListChecks className="text-emerald-500 h-4 w-4" />
+                            <span>Plan tomorrow</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Tomorrow's Plan", "listChecks", "mind", "Write down 3 priorities for tomorrow", 7, 2)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    {/* Break Bad Habits Stack */}
+                    <Card className="mt-4">
+                      <CardHeader className="py-3 px-4">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-base">Break Bad Habits</CardTitle>
+                          <Button 
+                            variant="outline" 
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("No Alcohol", "wineOff", "health", "Skip alcoholic beverages", 10, 7);
+                              addQuickHabit("No Social Media", "slash", "mind", "Avoid checking social media", 8, 6);
+                              addQuickHabit("No Sugar", "candy", "health", "Avoid added sugar", 9, 8);
+                            }}
+                          >
+                            Add All 3 Habits
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <Wine className="text-red-500 h-4 w-4" />
+                            <span>No alcohol</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("No Alcohol", "wineOff", "health", "Skip alcoholic beverages", 10, 7)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Slash className="text-orange-500 h-4 w-4" />
+                            <span>No social media</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("No Social Media", "slash", "mind", "Avoid checking social media", 8, 6)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Candy className="text-pink-500 h-4 w-4" />
+                            <span>No sugar</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("No Sugar", "candy", "health", "Avoid added sugar", 9, 8)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    {/* Huberman Lab Stack */}
+                    <Card>
+                      <CardHeader className="py-3 px-4">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-base">Huberman Lab</CardTitle>
+                          <Button 
+                            variant="outline" 
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("Morning Sunlight", "sun", "health", "Get morning sun exposure for circadian rhythm", 10, 3);
+                              addQuickHabit("Consistent Sleep Schedule", "clock", "health", "Go to bed and wake up at consistent times", 10, 6);
+                              addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes", 9, 5);
+                            }}
+                          >
+                            Add All 3 Habits
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <Sun className="text-amber-500 h-4 w-4" />
+                            <span>Morning sunlight</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Morning Sunlight", "sun", "health", "Get sun exposure for circadian rhythm", 10, 3)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Clock className="text-blue-500 h-4 w-4" />
+                            <span>Consistent sleep</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Consistent Sleep", "clock", "health", "Go to bed and wake up at consistent times", 10, 6)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Dumbbell className="text-red-500 h-4 w-4" />
+                            <span>Zone 2 cardio</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Zone 2 Cardio", "activity", "fitness", "Moderate-intensity cardio for 30-45 minutes", 9, 5)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    {/* Stoic Philosophy Stack */}
+                    <Card>
+                      <CardHeader className="py-3 px-4">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-base">Stoic Philosophy</CardTitle>
+                          <Button 
+                            variant="outline" 
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2);
+                              addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3);
+                              addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4);
+                            }}
+                          >
+                            Add All 3 Habits
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <Sun className="text-amber-500 h-4 w-4" />
+                            <span>Morning reflection</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Morning Reflection", "sun", "mind", "Start the day with focused thought and intention", 8, 2)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Pencil className="text-violet-500 h-4 w-4" />
+                            <span>Evening journal</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Evening Journal", "pencil", "mind", "Reflect on the day's events and lessons", 7, 3)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Brain className="text-blue-500 h-4 w-4" />
+                            <span>Negative visualization</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4)}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    {/* Fitness Fundamentals Stack */}
+                    <Card>
+                      <CardHeader className="py-3 px-4">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-base">Fitness Fundamentals</CardTitle>
+                          <Button 
+                            variant="outline" 
+                            className="h-8 text-xs"
+                            onClick={() => {
+                              addQuickHabit("Protein with Every Meal", "apple", "health", "Ensure adequate protein intake for muscle support");
+                              addQuickHabit("Progressive Overload", "dumbbell", "fitness", "Gradually increase workout intensity over time");
+                              addQuickHabit("Mobility Work", "activity", "fitness", "Maintain joint health and prevent injuries");
+                            }}
+                          >
+                            Add All 3 Habits
+                          </Button>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="py-2 px-4">
+                        <ul className="space-y-2">
+                          <li className="flex gap-2 items-center text-sm">
+                            <Apple className="text-green-500 h-4 w-4" />
+                            <span>Protein with every meal</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Protein with Every Meal", "apple", "health", "Ensure adequate protein intake for muscle support")}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Dumbbell className="text-red-500 h-4 w-4" />
+                            <span>Progressive overload</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Progressive Overload", "dumbbell", "fitness", "Gradually increase workout intensity over time")}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                          <li className="flex gap-2 items-center text-sm">
+                            <Activity className="text-blue-500 h-4 w-4" />
+                            <span>Mobility work</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="ml-auto h-6 px-2 text-xs"
+                              onClick={() => addQuickHabit("Mobility Work", "activity", "fitness", "Maintain joint health and prevent injuries")}
+                            >
+                              Add
+                            </Button>
+                          </li>
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                  </CardContent>
+                </Card>
                 
                 {/* Motivation Card */}
                 <DailyMotivation />

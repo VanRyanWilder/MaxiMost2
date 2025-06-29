@@ -20,7 +20,7 @@ export const FAQItem: React.FC<FAQItemProps> = ({
 }) => {
   return (
     <AccordionItem value={value} className={className}>
-      <AccordionTrigger className="text-left hover:no-underline hover:text-primary transition-colors duration-200">
+      <AccordionTrigger className="text-left hover:no-underline">
         {question}
       </AccordionTrigger>
       <AccordionContent className="text-muted-foreground">

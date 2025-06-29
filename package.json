@@ -4,10 +4,14 @@
   "description": "",
   "main": "server/index.ts",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
-    "build": "npx vite build",
+    "dev": "concurrently \"npm:dev:*\"",
+    "dev:client": "vite",
+    "dev:server": "wrangler dev server/src/worker.ts --local",
+    "build:server": "tsc --build server",
+    "build:client": "vite build",
+    "build": "npm run build:server && npm run build:client",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -62,7 +66,10 @@
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.4.0",
     "wouter": "^3.3.1",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "hono": "^4.5.1",
+    "drizzle-orm": "^0.30.10",
+    "drizzle-zod": "^0.5.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
