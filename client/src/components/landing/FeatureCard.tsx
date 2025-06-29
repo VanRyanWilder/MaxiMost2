@@ -21,7 +21,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   className,
 }) => {
   return (
-    <Card className={`flex flex-col items-center text-center p-6 md:items-start md:text-left ${className}`}>
+    <Card className={`flex flex-col items-center text-center p-6 md:items-start md:text-left transition-all duration-300 ease-in-out hover:shadow-xl hover:transform hover:-translate-y-1 ${className}`}>
       {icon && (
         <div className="mb-4 text-primary"> {/* Default color, can be overridden by icon prop itself */}
           {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40 })}

@@ -358,9 +358,9 @@ export const WeeklyHabitView: React.FC<WeeklyHabitViewProps> = ({
                 })}
               </div>
             ))}
-          </div> {/* End of space-y-2 for absoluteHabits list */}
-        {/* Removed an extra </div> that was here, ensuring conditional block is correctly closed */}
-      )} {/* End of absoluteHabits.length > 0 check */}
+          </div>
+        </div>
+      )}
       
       {/* Continue the list with optional habits */}
         {optionalHabits.length > 0 && optionalHabits.map(habit => {

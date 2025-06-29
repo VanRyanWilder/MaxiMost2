@@ -1,2 +1,4 @@
+"use strict";
 // shared/types/firestore.ts
-export {};
+Object.defineProperty(exports, "__esModule", { value: true });
+//# sourceMappingURL=firestore.js.map
