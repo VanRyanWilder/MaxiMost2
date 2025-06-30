@@ -89,6 +89,8 @@ html {
 }
 
 /* New Hero Background Animation: Dark, Techy, Particles */
+/* (Ensuring no keyframes or animation classes from previous attempts interfere) */
+
 .hero-background-animation {
   position: absolute;
   inset: 0;
@@ -124,33 +126,20 @@ html {
 
 /* Small, dense particles - layer 1 */
 .hero-background-animation::before {
-  background-image: radial-gradient(1.5px 1.5px at 25px 25px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.7), transparent), /* Increased size & opacity */
-                    radial-gradient(1px 1px at 75px 75px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.5), transparent); /* Increased size & opacity */
-  background-size: 80px 80px; /* Increased density */
+  background-image: radial-gradient(2px 2px at 25px 25px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.8), transparent), /* Further Increased size & opacity */
+                    radial-gradient(1.5px 1.5px at 75px 75px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.6), transparent); /* Further Increased size & opacity */
+  background-size: 70px 70px; /* Further Increased density */
   animation: moveParticles 60s linear infinite;
 }
 
 /* Larger, sparser particles - layer 2 */
 .hero-background-animation::after {
-  background-image: radial-gradient(2px 2px at 50px 150px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.6), transparent), /* Increased size & opacity */
-                    radial-gradient(1.5px 1.5px at 150px 50px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.4), transparent); /* Increased size & opacity */
-  background-size: 160px 160px; /* Increased density */
+  background-image: radial-gradient(2.5px 2.5px at 50px 150px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.7), transparent), /* Further Increased size & opacity */
+                    radial-gradient(2px 2px at 150px 50px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.5), transparent); /* Further Increased size & opacity */
+  background-size: 140px 140px; /* Further Increased density */
   animation: moveParticles 90s linear infinite; /* Slower speed for parallax */
-  opacity: 0.8; /* Kept overall layer opacity for now, can be tweaked */
+  opacity: 0.9; /* Increased overall layer opacity */
 }
 
-
-@keyframes fadeInSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fadeInSlideUp {
-  animation: fadeInSlideUp 0.5s ease-out forwards;
-}
+/* Removed @keyframes fadeInSlideUp and .animate-fadeInSlideUp */
+/* New transition-based animation will be handled by Tailwind utility classes */
