@@ -135,8 +135,8 @@ const NewHomePage: React.FC = () => {
           id="key-features"
           ref={keyFeaturesRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
-            isKeyFeaturesVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30",
+            isKeyFeaturesVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -154,8 +154,8 @@ const NewHomePage: React.FC = () => {
           id="performance-areas"
           ref={performanceAreasRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0",
-            isPerformanceAreasVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900",
+            isPerformanceAreasVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -173,8 +173,8 @@ const NewHomePage: React.FC = () => {
           id="fitness-trackers"
           ref={fitnessTrackersRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
-            isFitnessTrackersVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30",
+            isFitnessTrackersVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4 text-center">
@@ -233,8 +233,8 @@ const NewHomePage: React.FC = () => {
           id="testimonials"
           ref={testimonialsRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0",
-            isTestimonialsVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900",
+            isTestimonialsVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -265,8 +265,8 @@ const NewHomePage: React.FC = () => {
           id="faq"
           ref={faqRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
-            isFaqVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30",
+            isFaqVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4 max-w-3xl">
@@ -295,8 +295,8 @@ const NewHomePage: React.FC = () => {
           id="final-cta"
           ref={finalCtaRef}
           className={cn(
-            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 opacity-0",
-            isFinalCtaVisible && "animate-fadeInSlideUp"
+            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30",
+            isFinalCtaVisible ? "animate-fadeInSlideUp" : "opacity-0"
           )}
         >
           <CTASection

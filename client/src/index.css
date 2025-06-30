@@ -124,19 +124,19 @@ html {
 
 /* Small, dense particles - layer 1 */
 .hero-background-animation::before {
-  background-image: radial-gradient(1px 1px at 25px 25px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.6), transparent),
-                    radial-gradient(0.5px 0.5px at 75px 75px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.4), transparent);
-  background-size: 100px 100px; /* Density of particles */
+  background-image: radial-gradient(1.5px 1.5px at 25px 25px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.7), transparent), /* Increased size & opacity */
+                    radial-gradient(1px 1px at 75px 75px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.5), transparent); /* Increased size & opacity */
+  background-size: 80px 80px; /* Increased density */
   animation: moveParticles 60s linear infinite;
 }
 
 /* Larger, sparser particles - layer 2 */
 .hero-background-animation::after {
-  background-image: radial-gradient(1.5px 1.5px at 50px 150px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.5), transparent),
-                    radial-gradient(1px 1px at 150px 50px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.3), transparent);
-  background-size: 200px 200px; /* Density of particles */
+  background-image: radial-gradient(2px 2px at 50px 150px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.6), transparent), /* Increased size & opacity */
+                    radial-gradient(1.5px 1.5px at 150px 50px, rgba(var(--hero-glow-color-rgb, 0,128,255), 0.4), transparent); /* Increased size & opacity */
+  background-size: 160px 160px; /* Increased density */
   animation: moveParticles 90s linear infinite; /* Slower speed for parallax */
-  opacity: 0.8;
+  opacity: 0.8; /* Kept overall layer opacity for now, can be tweaked */
 }
 
 
