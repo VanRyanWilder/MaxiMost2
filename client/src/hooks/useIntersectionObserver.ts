@@ -25,7 +25,6 @@ function useIntersectionObserver(
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Update state based on intersection
         if (entry.isIntersecting) {
           setIsIntersecting(true);
           if (triggerOnce) {
@@ -50,7 +49,7 @@ function useIntersectionObserver(
         observer.unobserve(element);
       }
     };
-  }, [elementRef, threshold, root, rootMargin, triggerOnce]); // Added triggerOnce back to deps
+  }, [elementRef, threshold, root, rootMargin, triggerOnce]); // Restored triggerOnce to deps
 
   return isIntersecting;
 }

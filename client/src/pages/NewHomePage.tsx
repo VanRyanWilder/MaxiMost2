@@ -84,22 +84,7 @@ const NewHomePage: React.FC = () => {
   const isFitnessTrackersVisible = useIntersectionObserver(fitnessTrackersRef, { threshold: 0.1, triggerOnce: true });
   const isTestimonialsVisible = useIntersectionObserver(testimonialsRef, { threshold: 0.1, triggerOnce: true });
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
-  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true }); // Will restore triggerOnce in useIntersectionObserver later
-
-  // useEffect(() => {
-  //   // console.log(`[HomePage] #key-features isKeyFeaturesVisible STATE changed to: ${isKeyFeaturesVisible}`);
-  // }, [isKeyFeaturesVisible]);
-
-  const keyFeaturesBaseClasses = "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30";
-
-  const keyFeaturesComputedClasses = cn(
-    keyFeaturesBaseClasses,
-    "opacity-0", // Ensure it starts hidden
-    isKeyFeaturesVisible && "animate-fadeInSlideUp" // Apply CSS keyframe animation
-  );
-  // if (typeof window !== 'undefined') {
-  //     // console.log(`[HomePage] KeyFeatures - isVisible: ${isKeyFeaturesVisible}, Applied Classes: ${keyFeaturesComputedClasses}`);
-  // }
+  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
@@ -143,11 +128,15 @@ const NewHomePage: React.FC = () => {
           onPersonaLeave={() => handlePersonaHover(undefined)}
         />
 
-        {/* Section 3: Key Features - Testing with CSS Keyframe Animation */}
+        {/* Section 3: Key Features */}
         <section
           id="key-features"
           ref={keyFeaturesRef}
-          className={keyFeaturesComputedClasses} // Reverted to class-based, using keyframe animation
+          className={cn(
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
+          )}
         >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
@@ -164,8 +153,9 @@ const NewHomePage: React.FC = () => {
           id="performance-areas"
           ref={performanceAreasRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isPerformanceAreasVisible && "opacity-100 translate-y-0"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
           )}
         >
           <div className="container mx-auto px-4">
@@ -183,8 +173,9 @@ const NewHomePage: React.FC = () => {
           id="fitness-trackers"
           ref={fitnessTrackersRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isFitnessTrackersVisible && "opacity-100 translate-y-0"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
           )}
         >
           <div className="container mx-auto px-4 text-center">
@@ -243,8 +234,9 @@ const NewHomePage: React.FC = () => {
           id="testimonials"
           ref={testimonialsRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isTestimonialsVisible && "opacity-100 translate-y-0"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
           )}
         >
           <div className="container mx-auto px-4">
@@ -275,8 +267,9 @@ const NewHomePage: React.FC = () => {
           id="faq"
           ref={faqRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isFaqVisible && "opacity-100 translate-y-0"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
           )}
         >
           <div className="container mx-auto px-4 max-w-3xl">
@@ -305,8 +298,9 @@ const NewHomePage: React.FC = () => {
           id="final-cta"
           ref={finalCtaRef}
           className={cn(
-            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isFinalCtaVisible && "opacity-100 translate-y-0"
+            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30", // Base layout/styling
+            "transition-all duration-500 ease-out", // Transition behavior
+            isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5' // State-dependent classes
           )}
         >
           <CTASection
