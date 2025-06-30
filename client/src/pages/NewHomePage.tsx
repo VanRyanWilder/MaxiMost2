@@ -86,7 +86,19 @@ const NewHomePage: React.FC = () => {
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
   const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
 
-  // Removed useEffect for console logging visibility states
+  // Log classes for Key Features section for debugging
+  const keyFeaturesDynamicClasses = isKeyFeaturesVisible && "opacity-100 translate-y-0";
+  const keyFeaturesComputedClasses = cn(
+    "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
+    keyFeaturesDynamicClasses
+  );
+  // Log only when isKeyFeaturesVisible changes to avoid excessive logging
+  useEffect(() => {
+    if(isKeyFeaturesVisible) {
+      console.log("KeyFeatures became visible. Classes:", keyFeaturesComputedClasses);
+    }
+  }, [isKeyFeaturesVisible, keyFeaturesComputedClasses]);
+
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">

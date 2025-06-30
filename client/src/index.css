@@ -141,5 +141,17 @@ html {
   opacity: 0.9; /* Increased overall layer opacity */
 }
 
-/* Removed @keyframes fadeInSlideUp and .animate-fadeInSlideUp */
-/* New transition-based animation will be handled by Tailwind utility classes */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInSlideUp {
+  animation: fadeInSlideUp 0.5s ease-out forwards;
+}

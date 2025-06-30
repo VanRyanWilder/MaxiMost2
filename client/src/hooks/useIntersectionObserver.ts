@@ -26,6 +26,7 @@ function useIntersectionObserver(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        console.log("[IO Hook] Entry for element:", entry.target.id || entry.target.className, "isIntersecting:", entry.isIntersecting);
         if (entry.isIntersecting) {
           setIsIntersecting(true);
           if (triggerOnce) {
