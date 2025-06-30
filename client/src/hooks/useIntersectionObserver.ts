@@ -26,10 +26,13 @@ function useIntersectionObserver(
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        console.log("[IO Hook] Entry for element:", entry.target.id || entry.target.className, "isIntersecting:", entry.isIntersecting);
+        const targetId = entry.target.id || entry.target.className.split(" ")[0] || "UnknownElement";
+        console.log(`[IO Hook] Intersection event for ${targetId}. Is Intersecting: ${entry.isIntersecting}. Entry:`, entry);
         if (entry.isIntersecting) {
+          console.log(`[IO Hook] ${targetId} IS intersecting. Setting state to true.`);
           setIsIntersecting(true);
           if (triggerOnce) {
+            console.log(`[IO Hook] ${targetId} triggerOnce is true. Unobserving.`);
             observer.unobserve(element);
           }
         } else {

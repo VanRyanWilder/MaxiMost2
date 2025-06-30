@@ -86,18 +86,20 @@ const NewHomePage: React.FC = () => {
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
   const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
 
-  // Log classes for Key Features section for debugging
-  const keyFeaturesDynamicClasses = isKeyFeaturesVisible && "opacity-100 translate-y-0";
-  const keyFeaturesComputedClasses = cn(
-    "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-    keyFeaturesDynamicClasses
-  );
-  // Log only when isKeyFeaturesVisible changes to avoid excessive logging
   useEffect(() => {
-    if(isKeyFeaturesVisible) {
-      console.log("KeyFeatures became visible. Classes:", keyFeaturesComputedClasses);
-    }
-  }, [isKeyFeaturesVisible, keyFeaturesComputedClasses]);
+    console.log(`[HomePage] isKeyFeaturesVisible state changed to: ${isKeyFeaturesVisible}`);
+  }, [isKeyFeaturesVisible]);
+
+  const keyFeaturesInitialClasses = "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30";
+  // For debugging, log the classes that WOULD be applied to key-features if using cn
+  const debugKeyFeaturesClassesWithCn = cn(
+    keyFeaturesInitialClasses,
+    "opacity-0 transform translate-y-5 transition-all duration-500 ease-out", // Base invisible state
+    isKeyFeaturesVisible && "opacity-100 translate-y-0" // Visible state
+  );
+  if (typeof window !== 'undefined') { // Ensure console.log only runs client-side
+      console.log(`[HomePage] KeyFeatures - isVisible: ${isKeyFeaturesVisible}, Computed classes if using cn: ${debugKeyFeaturesClassesWithCn}`);
+  }
 
 
   return (
@@ -142,14 +144,16 @@ const NewHomePage: React.FC = () => {
           onPersonaLeave={() => handlePersonaHover(undefined)}
         />
 
-        {/* Section 3: Key Features */}
+        {/* Section 3: Key Features - CRUCIAL TEST WITH INLINE STYLES */}
         <section
           id="key-features"
           ref={keyFeaturesRef}
-          className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0 transform translate-y-5 transition-all duration-500 ease-out",
-            isKeyFeaturesVisible && "opacity-100 translate-y-0"
-          )}
+          className={keyFeaturesInitialClasses} // Only base layout/bg classes
+          style={{
+            opacity: isKeyFeaturesVisible ? 1 : 0,
+            transform: isKeyFeaturesVisible ? 'translateY(0px)' : 'translateY(20px)',
+            transition: 'opacity 0.5s ease-out, transform 0.5s ease-out'
+          }}
         >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
