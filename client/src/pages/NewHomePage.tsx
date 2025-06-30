@@ -84,23 +84,22 @@ const NewHomePage: React.FC = () => {
   const isFitnessTrackersVisible = useIntersectionObserver(fitnessTrackersRef, { threshold: 0.1, triggerOnce: true });
   const isTestimonialsVisible = useIntersectionObserver(testimonialsRef, { threshold: 0.1, triggerOnce: true });
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
-  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
+  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true }); // Will restore triggerOnce in useIntersectionObserver later
 
-  useEffect(() => {
-    console.log(`[HomePage] isKeyFeaturesVisible state changed to: ${isKeyFeaturesVisible}`);
-  }, [isKeyFeaturesVisible]);
+  // useEffect(() => {
+  //   // console.log(`[HomePage] #key-features isKeyFeaturesVisible STATE changed to: ${isKeyFeaturesVisible}`);
+  // }, [isKeyFeaturesVisible]);
 
-  const keyFeaturesInitialClasses = "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30";
-  // For debugging, log the classes that WOULD be applied to key-features if using cn
-  const debugKeyFeaturesClassesWithCn = cn(
-    keyFeaturesInitialClasses,
-    "opacity-0 transform translate-y-5 transition-all duration-500 ease-out", // Base invisible state
-    isKeyFeaturesVisible && "opacity-100 translate-y-0" // Visible state
+  const keyFeaturesBaseClasses = "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30";
+
+  const keyFeaturesComputedClasses = cn(
+    keyFeaturesBaseClasses,
+    "opacity-0", // Ensure it starts hidden
+    isKeyFeaturesVisible && "animate-fadeInSlideUp" // Apply CSS keyframe animation
   );
-  if (typeof window !== 'undefined') { // Ensure console.log only runs client-side
-      console.log(`[HomePage] KeyFeatures - isVisible: ${isKeyFeaturesVisible}, Computed classes if using cn: ${debugKeyFeaturesClassesWithCn}`);
-  }
-
+  // if (typeof window !== 'undefined') {
+  //     // console.log(`[HomePage] KeyFeatures - isVisible: ${isKeyFeaturesVisible}, Applied Classes: ${keyFeaturesComputedClasses}`);
+  // }
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
@@ -144,16 +143,11 @@ const NewHomePage: React.FC = () => {
           onPersonaLeave={() => handlePersonaHover(undefined)}
         />
 
-        {/* Section 3: Key Features - CRUCIAL TEST WITH INLINE STYLES */}
+        {/* Section 3: Key Features - Testing with CSS Keyframe Animation */}
         <section
           id="key-features"
           ref={keyFeaturesRef}
-          className={keyFeaturesInitialClasses} // Only base layout/bg classes
-          style={{
-            opacity: isKeyFeaturesVisible ? 1 : 0,
-            transform: isKeyFeaturesVisible ? 'translateY(0px)' : 'translateY(20px)',
-            transition: 'opacity 0.5s ease-out, transform 0.5s ease-out'
-          }}
+          className={keyFeaturesComputedClasses} // Reverted to class-based, using keyframe animation
         >
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
