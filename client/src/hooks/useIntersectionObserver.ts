@@ -20,15 +20,19 @@ function useIntersectionObserver(
 
   useEffect(() => {
     const element = elementRef.current;
+    console.log('[IO] Hook useEffect run. Element:', element ? (element.id || element.tagName) : 'No element');
     if (!element) {
       return;
     }
 
+    console.log('[IO] Creating observer for:', element.id || element.tagName);
     const observer = new IntersectionObserver(
       ([entry]) => {
+        console.log('[IO] Intersection changed for:', element.id || element.tagName, 'isIntersecting:', entry.isIntersecting, entry);
         if (entry.isIntersecting) {
           setIsIntersecting(true);
           if (triggerOnce) {
+            console.log('[IO] TriggerOnce: Unobserving element:', element.id || element.tagName);
             observer.unobserve(element);
           }
         } else {
