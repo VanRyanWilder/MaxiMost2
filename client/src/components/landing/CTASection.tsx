@@ -46,7 +46,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
         <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-4">
           {headline}
         </h2>
-        <p className="mb-8 text-lg text-muted-foreground">
+        <p className="mb-8 text-lg text-slate-100"> {/* Changed from text-muted-foreground */}
           {description}
         </p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-start">

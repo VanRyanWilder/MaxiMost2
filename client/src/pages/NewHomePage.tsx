@@ -86,16 +86,7 @@ const NewHomePage: React.FC = () => {
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
   const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
 
-  useEffect(() => {
-    console.log('[HomePage] Visibility States:', {
-      isKeyFeaturesVisible,
-      isPerformanceAreasVisible,
-      isFitnessTrackersVisible,
-      isTestimonialsVisible,
-      isFaqVisible,
-      isFinalCtaVisible,
-    });
-  }, [isKeyFeaturesVisible, isPerformanceAreasVisible, isFitnessTrackersVisible, isTestimonialsVisible, isFaqVisible, isFinalCtaVisible]);
+  // Removed useEffect for console logging visibility states
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
@@ -144,8 +135,8 @@ const NewHomePage: React.FC = () => {
           id="key-features"
           ref={keyFeaturesRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Removed transition-opacity
-            isKeyFeaturesVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
+            isKeyFeaturesVisible && "animate-fadeInSlideUp"
           )}
         >
           <div className="container mx-auto px-4">
@@ -163,8 +154,8 @@ const NewHomePage: React.FC = () => {
           id="performance-areas"
           ref={performanceAreasRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900", // Removed transition-opacity
-            isPerformanceAreasVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0",
+            isPerformanceAreasVisible && "animate-fadeInSlideUp"
           )}
         >
           <div className="container mx-auto px-4">
@@ -182,8 +173,8 @@ const NewHomePage: React.FC = () => {
           id="fitness-trackers"
           ref={fitnessTrackersRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Removed transition-opacity
-            isFitnessTrackersVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
+            isFitnessTrackersVisible && "animate-fadeInSlideUp"
           )}
         >
           <div className="container mx-auto px-4 text-center">
@@ -242,8 +233,8 @@ const NewHomePage: React.FC = () => {
           id="testimonials"
           ref={testimonialsRef}
           className={cn(
-            "py-16 md:py-20 bg-background dark:bg-neutral-900", // Removed transition-opacity
-            isTestimonialsVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-20 bg-background dark:bg-neutral-900 opacity-0",
+            isTestimonialsVisible && "animate-fadeInSlideUp"
           )}
         >
           <div className="container mx-auto px-4">
@@ -274,8 +265,8 @@ const NewHomePage: React.FC = () => {
           id="faq"
           ref={faqRef}
           className={cn(
-            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30", // Removed transition-opacity
-            isFaqVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 opacity-0",
+            isFaqVisible && "animate-fadeInSlideUp"
           )}
         >
           <div className="container mx-auto px-4 max-w-3xl">
@@ -304,8 +295,8 @@ const NewHomePage: React.FC = () => {
           id="final-cta"
           ref={finalCtaRef}
           className={cn(
-            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30", // Removed transition-opacity
-            isFinalCtaVisible ? "animate-fadeInSlideUp" : "opacity-0"
+            "py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 opacity-0",
+            isFinalCtaVisible && "animate-fadeInSlideUp"
           )}
         >
           <CTASection
