@@ -1,124 +1,76 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { User } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
 import { onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
 
-// Create a static mock user for development
-const mockUser: User = {
-  id: 1,
-  username: "maximost_user",
-  password: "password123",
-  name: "MaxiMost User",
-  email: "user@maximost.com",
-  currentProgramId: 3,
-  programStartDate: new Date("2023-04-15"),
-  programProgress: 32,
-  firebaseUid: null,
-  subscriptionTier: "premium",
-  subscriptionStatus: "active",
-  subscriptionStartDate: new Date("2023-03-15"),
-  subscriptionEndDate: new Date("2024-03-15"),
-  trialEndsAt: null,
-  stripeCustomerId: "cus_123456",
-  stripeSubscriptionId: "sub_123456"
-};
-
-// Create a guest user
-const guestUser: User = {
-  id: 999,
-  username: "guest",
-  password: "",
-  name: "Guest User",
-  email: "guest@example.com",
-  currentProgramId: null,
-  programStartDate: null,
-  programProgress: null,
-  firebaseUid: null,
-  subscriptionTier: "free",
-  subscriptionStatus: "active",
-  subscriptionStartDate: null,
-  subscriptionEndDate: null,
-  trialEndsAt: null,
-  stripeCustomerId: null,
-  stripeSubscriptionId: null
-};
-
-interface UserContextType {
-  user: User | null;
-  firebaseUser: FirebaseUser | null;
-  userLoading: boolean;
-  userError: Error | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-  refetchUser: () => Promise<void>;
+// Define a minimal user type for our application context
+interface AppUser {
+  firebaseUid: string;
+  email: string | null;
+  name: string | null;
 }
 
-// Create context with a default value to avoid undefined checks
-const defaultUserContext: UserContextType = {
-  user: mockUser,
-  firebaseUser: null,
-  userLoading: false,
-  userError: null,
-  login: async () => {},
-  logout: () => {},
-  refetchUser: async () => {},
-};
+interface UserContextType {
+  user: AppUser | null;
+  firebaseUser: FirebaseUser | null;
+  userLoading: boolean;
+  logout: () => void;
+}
 
-const UserContext = createContext<UserContextType>(defaultUserContext);
+// Create context with a proper default state: no user, and loading is true.
+const UserContext = createContext<UserContextType>({
+  user: null,
+  firebaseUser: null,
+  userLoading: true,
+  logout: () => {},
+});
 
 interface UserProviderProps {
   children: ReactNode;
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [userLoading, setUserLoading] = useState(false);
-  const [userError, setUserError] = useState<Error | null>(null);
-  const [user, setUser] = useState<User | null>(mockUser);
+  const [user, setUser] = useState<AppUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [userLoading, setUserLoading] = useState(true); // Start in a loading state
 
-  const login = async (username: string, password: string) => {
-    try {
-      setUserLoading(true);
-
-      // Check if this is a guest login
-      if (username === "guest@example.com" && password === "guest-password") {
-        console.log("Logging in as guest");
-        setUser(guestUser);
-        localStorage.setItem('userType', 'guest');
+  useEffect(() => {
+    // This is the core of real authentication.
+    // It listens to Firebase for login/logout events.
+    const unsubscribe = onAuthStateChange((fbUser) => {
+      setFirebaseUser(fbUser);
+      if (fbUser) {
+        // A user is logged in via Firebase.
+        // We create our app-specific user profile from the Firebase user data.
+        // In a real app, you would fetch more details from your own backend here.
+        setUser({
+          firebaseUid: fbUser.uid,
+          email: fbUser.email,
+          name: fbUser.displayName,
+        });
       } else {
-        // For regular logins, use the mock user
-        console.log("Logging in as regular user");
-        setUser(mockUser);
-        localStorage.setItem('userType', 'regular');
+        // No user is logged in.
+        setUser(null);
       }
-
+      // We are no longer loading the initial auth state.
       setUserLoading(false);
-    } catch (error) {
-      console.error("Login error:", error);
-      setUserLoading(false);
-      setUserError(new Error("Login failed"));
-      throw new Error("Login failed");
-    }
-  };
+    });
 
-  const logout = () => {
-    // In a real app, we would call an API to logout
-    setUser(null);
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
+  }, []); // The empty dependency array ensures this runs only once on mount
+
+  const logout = async () => {
+    await firebaseSignOut();
+    // The onAuthStateChange listener will automatically set the user to null.
     queryClient.clear();
-  };
-
-  const refetchUser = async () => {
-    // In a real app, this would actually refetch the user
-    setUser(mockUser);
   };
 
   const value: UserContextType = {
     user,
+    firebaseUser,
     userLoading,
-    userError,
-    login,
     logout,
-    refetchUser,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
@@ -126,5 +78,8 @@ export function UserProvider({ children }: UserProviderProps) {
 
 export function useUser() {
   const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
   return context;
 }
