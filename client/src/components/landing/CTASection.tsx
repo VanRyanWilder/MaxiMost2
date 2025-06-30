@@ -55,7 +55,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
             placeholder={emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-grow text-lg p-3" // Made input larger
+            className="flex-grow text-lg p-3 bg-slate-700/50 text-slate-100 placeholder:text-slate-400 border-slate-600 focus:ring-primary focus:border-primary"
             required // HTML5 validation
             disabled={isLoading}
           />
