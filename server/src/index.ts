@@ -38,6 +38,13 @@ app.use('/api/*', cors({
   credentials: true, // If you need to handle cookies or authorization headers
 }));
 
+// Import and use Firebase Auth middleware for protected routes
+import { honoProtectWithFirebase, AuthEnv } from './middleware/authMiddleware.js';
+app.use('/api/habits/*', honoProtectWithFirebase); // Protect habit routes
+app.use('/api/users/*', honoProtectWithFirebase);   // Protect user routes (except if some are public)
+// Note: /api/auth routes are generally not protected by this middleware
+// as they are used for login/signup.
+
 // --- Route Registration ---
 app.route('/api/auth', authRoutes);
 app.route('/api/habits', habitRoutes);
