@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // Import reusable components
-import { CTASection } from "../components/landing/CTASection";
-import { MeetTheCoachesSection } from "../components/landing/MeetTheCoachesSection";
-import { FeatureCard } from "../components/landing/FeatureCard";
-import { TestimonialCard } from "../components/landing/TestimonialCard";
-import { FAQItem } from "../components/landing/FAQItem";
-import { Accordion } from "../components/ui/accordion";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+import { CTASection } from "@/components/landing/CTASection";
+import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
+import { FeatureCard } from "@/components/landing/FeatureCard";
+import { TestimonialCard } from "@/components/landing/TestimonialCard";
+import { FAQItem } from "@/components/landing/FAQItem";
+import { Accordion } from "@/components/ui/accordion";
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 
 // Import Lucide icons
 import {
@@ -266,4 +266,3 @@ const NewHomePage: React.FC = () => {
 };
 
 export default NewHomePage;
-
