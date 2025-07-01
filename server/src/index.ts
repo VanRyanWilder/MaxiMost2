@@ -15,6 +15,12 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>();
 
+// Add this logging middleware at the very top
+app.use('*', async (c, next) => {
+  console.log(`Request received for URL: ${c.req.url}`);
+  await next();
+});
+
 // --- Middleware ---
 app.use('*', logger());
 app.use('*', secureHeaders());
