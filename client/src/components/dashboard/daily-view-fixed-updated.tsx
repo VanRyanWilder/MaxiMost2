@@ -270,7 +270,7 @@ export function DailyViewFixedUpdated({
       )}
 
       {/* Daily Absolute Habits section */}
-      {displayedAbsoluteHabits.length > 0 && (
+      {displayedAbsoluteHabits && displayedAbsoluteHabits.length > 0 && (
         <>
           <div className="font-medium text-sm mb-2 px-4 py-2 bg-blue-50 rounded-md text-blue-700">
             Absolute Habits (Daily)
@@ -375,7 +375,7 @@ export function DailyViewFixedUpdated({
       )}
       
       {/* Frequency-based Habits section */}
-      {displayedFrequencyHabits.length > 0 && (
+      {displayedFrequencyHabits && displayedFrequencyHabits.length > 0 && (
         <>
           <div className="font-medium text-sm mb-2 px-4 py-2 bg-green-50 rounded-md text-green-700 mt-6">
             Frequency-based Habits (Weekly Target)

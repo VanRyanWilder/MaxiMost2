@@ -295,7 +295,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
             <div className="text-sm text-gray-500 mb-4">
               {format(currentDay, 'MMM d, yyyy')}
             </div>
-            {habits.length === 0 ? (
+            {(!habits || habits.length === 0) ? (
               <div className="p-6 text-center">
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
@@ -350,7 +350,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
               {format(weekDates[0], 'MMM d')} - {format(weekDates[6], 'MMM d, yyyy')}
             </div>
             
-            {habits.length === 0 ? (
+            {(!habits || habits.length === 0) ? (
               <div className="p-6 text-center">
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  
@@ -401,7 +401,7 @@ export const SortableHabitViewModesFixed: React.FC<SortableHabitViewProps> = ({
               </div>
             </div>
             
-            {habits.length === 0 ? (
+            {(!habits || habits.length === 0) ? (
               <div className="p-6 text-center">
                 <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
               </div>  

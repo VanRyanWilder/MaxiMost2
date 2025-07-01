@@ -42,9 +42,61 @@ import {
 
 // Import shared types
 import { Habit, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
+import { apiClient } from "@/lib/apiClient"; // Import apiClient
+import { HabitSkeleton } from "@/components/dashboard/habit-skeleton"; // Import Skeleton
 
 // Sample data (same as in dashboard-habits.tsx)
-const initialHabits: Habit[] = [
+// const initialHabits: Habit[] = [
+// Removed initialHabits to fetch from API
+// ];
+
+// Sample completions data
+// const initialCompletions: HabitCompletion[] = [
+// Removed initialCompletions
+// ];
+
+export default function Dashboard() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Initialize habits as null to represent loading state
+  const [habits, setHabits] = useState<Habit[] | null>(null);
+  const [completions, setCompletions] = useState<HabitCompletion[]>([]); // Initialize as empty
+  const [showCustomHabitDialog, setShowCustomHabitDialog] = useState(false);
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchHabitsAndCompletions = async () => {
+      if (user) {
+        setIsLoading(true);
+        setError(null);
+        try {
+          // Replace with your actual API endpoints
+          const fetchedHabits = await apiClient<Habit[]>('/habits');
+          const fetchedCompletions = await apiClient<HabitCompletion[]>('/completions');
+          setHabits(fetchedHabits);
+          setCompletions(fetchedCompletions);
+        } catch (err) {
+          console.error("Failed to fetch data:", err);
+          setError("Failed to load habits. Please try again.");
+          setHabits([]); // Set to empty array on error to avoid crash and show "no habits"
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // Handle case where user is not logged in, or set to sample data for demo
+        setHabits([]); // Or some placeholder/sample data if preferred for non-logged-in state
+        setCompletions([]);
+        setIsLoading(false);
+      }
+    };
+
+    fetchHabitsAndCompletions();
+  }, [user]);
+
+  // Get selected date range for Weekly View - starts on Monday of current week
+  const startOfCurrentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
   {
     id: 'h1',
     title: 'Drink 64oz Water',
@@ -253,29 +305,52 @@ export default function Dashboard() {
                     </div>
                   </CardHeader>
                   <CardContent className="pb-6">
-                    <div className="space-y-6">
-                      <SortableHabitViewModesFixed
-                        habits={habits}
-                        completions={completions}
-                        onToggleHabit={toggleCompletion}
-                        onOpenAddHabitDialog={() => setShowCustomHabitDialog(true)}
-                        onUpdateHabit={editHabit}
-                        onDeleteHabit={deleteHabit}
-                        onReorderHabits={(reorderedHabits) => setHabits(reorderedHabits)}
-                        onEditHabit={(habit) => setEditingHabit(habit)}
-                      />
-                      
-                      <div className="mt-8">
-                        <DashboardHabits 
-                          habits={habits}
-                          completions={completions.filter(c => isSameDay(c.date, new Date()))}
-                          onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
-                          onAddHabit={() => setShowCustomHabitDialog(true)}
-                          onEditHabit={setEditingHabit}
-                          onDeleteHabit={deleteHabit}
-                        />
+                    {isLoading ? (
+                      <HabitSkeleton />
+                    ) : error ? (
+                      <div className="text-red-500 text-center py-10">
+                        <AlertTriangle className="mx-auto h-12 w-12 text-red-400" />
+                        <p className="mt-4 text-lg">{error}</p>
+                        <Button onClick={() => window.location.reload()} className="mt-4">
+                          Try Again
+                        </Button>
                       </div>
-                    </div>
+                    ) : habits && habits.length > 0 ? (
+                      <div className="space-y-6">
+                        <SortableHabitViewModesFixed
+                          habits={habits}
+                          completions={completions}
+                          onToggleHabit={toggleCompletion}
+                          onOpenAddHabitDialog={() => setShowCustomHabitDialog(true)}
+                          onUpdateHabit={editHabit}
+                          onDeleteHabit={deleteHabit}
+                          onReorderHabits={(reorderedHabits) => setHabits(reorderedHabits)}
+                          onEditHabit={(habit) => setEditingHabit(habit)}
+                        />
+
+                        {/* DashboardHabits might be redundant if SortableHabitViewModesFixed covers all views */}
+                        {/* <div className="mt-8">
+                          <DashboardHabits
+                            habits={habits}
+                            completions={completions.filter(c => isSameDay(c.date, new Date()))}
+                            onToggleCompletion={(habitId) => toggleCompletion(habitId, new Date())}
+                            onAddHabit={() => setShowCustomHabitDialog(true)}
+                            onEditHabit={setEditingHabit}
+                            onDeleteHabit={deleteHabit}
+                          />
+                        </div> */}
+                      </div>
+                    ) : (
+                      <div className="text-center py-10">
+                        <Zap className="mx-auto h-12 w-12 text-gray-400" />
+                        <h3 className="mt-2 text-lg font-medium text-gray-900">No habits yet!</h3>
+                        <p className="mt-1 text-sm text-gray-500">Get started by adding a new habit.</p>
+                        <Button onClick={() => setShowCustomHabitDialog(true)} className="mt-6">
+                          <PlusCircle className="h-4 w-4 mr-2" />
+                          Add First Habit
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

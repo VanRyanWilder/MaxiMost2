@@ -109,7 +109,7 @@ export function HabitCalendarView({
           </div>
           
           <div className="space-y-1">
-            {habits.slice(0, 3).map(habit => (
+            {habits && habits.slice(0, 3).map(habit => (
               <div 
                 key={habit.id}
                 className="flex items-center text-xs cursor-pointer"
@@ -123,7 +123,7 @@ export function HabitCalendarView({
               </div>
             ))}
             
-            {habits.length > 3 && (
+            {habits && habits.length > 3 && (
               <div className="text-xs text-gray-500 italic">+{habits.length - 3} more</div>
             )}
           </div>
@@ -162,7 +162,7 @@ export function HabitCalendarView({
       <div className="monthly-progress">
         <h4 className="text-base font-medium mb-3">Monthly Progress</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {habits.map(habit => {
+          {habits && habits.map(habit => {
             const completionRate = getMonthlyCompletionRate(habit);
             const habitColor = getHabitColor(habit);
             
