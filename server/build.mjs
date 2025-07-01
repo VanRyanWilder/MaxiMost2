@@ -1,20 +1,25 @@
 import esbuild from 'esbuild';
 import { builtinModules } from 'module';
 
-// A more aggressive plugin to shim node built-ins
 const nodeShimPlugin = {
   name: 'node-shim',
   setup(build) {
-    // For each built-in module, resolve it to a virtual module named 'empty'
+    // Add a specific rule for node-fetch
+    build.onResolve({ filter: /^node-fetch$/ }, args => ({
+      path: args.path,
+      namespace: 'node-shim-empty',
+    }));
+
+    // For each built-in module, resolve it to a virtual module
     for (const mod of builtinModules) {
       if (mod === 'module') continue; // 'module' is special, don't shim it
       const filter = new RegExp(`^${mod}$`);
-      build.onResolve({ filter }, () => ({ path: mod, namespace: 'node-shim' }));
+      build.onResolve({ filter }, args => ({ path: args.path, namespace: 'node-shim-empty' }));
     }
 
     // The virtual 'empty' module exports nothing
-    build.onLoad({ filter: /.*/, namespace: 'node-shim' }, () => ({
-      contents: 'export default {}',
+    build.onLoad({ filter: /.*/, namespace: 'node-shim-empty' }, () => ({
+      contents: 'export default {}; module.exports = {};',
       loader: 'js',
     }));
   },
