@@ -4,13 +4,17 @@ import { builtinModules } from 'module';
 const nodeShimPlugin = {
   name: 'node-shim',
   setup(build) {
-    // Rule for bare module specifiers (e.g., 'fs')
-    build.onResolve({ filter: new RegExp(`^(${builtinModules.join('|')})$`) }, args => ({
+    // Combine built-in modules and node-fetch into one rule
+    const modulesToShim = [...builtinModules, 'node-fetch'];
+    const filter = new RegExp(`^(${modulesToShim.join('|')})$`);
+
+    // Rule for bare module specifiers (e.g., 'fs', 'node-fetch')
+    build.onResolve({ filter }, args => ({
       path: args.path,
       namespace: 'node-shim-empty',
     }));
 
-    // ADD THIS NEW RULE for "node:" prefixed specifiers
+    // Rule for "node:" prefixed specifiers
     build.onResolve({ filter: /^node:/ }, args => ({
       path: args.path,
       namespace: 'node-shim-empty',
