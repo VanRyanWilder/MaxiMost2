@@ -10,8 +10,8 @@ import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@
 // without firebase-admin. The new authMiddleware provides c.get('user') which is generic.
 
 import { app } from '../hono'; // Import our single, typed app instance
-import type { Context as HonoCtx } from 'hono';
-import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore"; // Keep if types are still relevant
+import type { Context as HonoContext } from 'hono'; // Renamed to avoid conflict if HonoCtx is defined elsewhere
+import type { FirestoreHabit as HabitDoc, HabitCompletionEntry as CompletionDoc, FirestoreTimestamp as TimestampDoc } from "@shared/types/firestore"; // Aliased to avoid global scope issues if these are too generic
 
 // No new Hono instance here. We extend the imported 'app'.
 // Types for context (c) will be inferred from the imported 'app'.
@@ -27,7 +27,7 @@ const getCurrentDateString = (): string => {
 // Placeholder for Firestore interaction logic.
 // This will need to be replaced with actual logic that uses a Firestore client
 // compatible with Cloudflare Workers (e.g., using Firestore REST API or a lightweight client).
-const getDbClient = (c: HonoCtx) => { // Context type will be inferred from app
+const getDbClient = (c: HonoContext) => { // Using aliased HonoContext
   // Example: return new FirestoreClient({ apiKey: c.env.FIREBASE_WEB_API_KEY, ... });
   // console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin.");
   // Returning a more compliant mock to avoid build errors for now.
@@ -215,13 +215,13 @@ app.post('/:habitId/complete', async (c) => {
 
         if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
 
-        const habitData = habitDoc.data() as FirestoreHabit;
+        const habitData = habitDoc.data() as HabitDoc; // Use aliased type
         if (habitData.userId !== authenticatedUser.localId) return c.json({ message: "Forbidden." }, 403);
 
         const currentDateStr = getCurrentDateString();
         const serverTimestamp = db.FieldValue.serverTimestamp();
 
-        const newCompletion: HabitCompletionEntry = {
+        const newCompletion: CompletionDoc = { // Use aliased type
             date: currentDateStr,
             value,
             timestamp: serverTimestamp as any

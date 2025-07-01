@@ -7,7 +7,7 @@
     "dev": "concurrently \"npm:dev:*\"",
     "dev:client": "vite",
     "dev:server": "wrangler dev server/src/worker.ts --local",
-    "build:server": "./node_modules/.bin/tsc --build server",
+    "build:server": "npm run build --prefix server",
     "build:client": "vite build",
     "build": "npm run build:server && npm run build:client",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",

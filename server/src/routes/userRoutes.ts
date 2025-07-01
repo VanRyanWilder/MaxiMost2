@@ -4,13 +4,13 @@ import { Hono, Context as HonoCtx } from 'hono';
 // REMOVED: import type { DecodedIdToken } from 'firebase-admin/auth'; // No longer using firebase-admin types
 
 import { app } from '../hono'; // Import our single, typed app instance
-import type { Context as HonoCtx } from 'hono';
+import type { Context as HonoContext } from 'hono'; // Renamed to avoid conflict
 
 // No new Hono instance here. We extend the imported 'app'.
 // Types for context (c) will be inferred from the imported 'app'.
 
 // Placeholder for Firestore interaction logic (similar to habitRoutes.ts)
-const getDbClient = (c: HonoCtx) => { // Context type will be inferred from app
+const getDbClient = (c: HonoContext) => { // Using aliased HonoContext
   // console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin (userRoutes).");
   return {
     collection: (name: string) => ({
@@ -49,11 +49,16 @@ app.post('/initialize', async (c) => { // No need for explicit HonoCtx<AppEnv>
         createdAt: new Date().toISOString(),
     };
     console.log(`User ${localId} initializing. DB logic pending.`);
-    // Simulate new user vs existing user for testing
-    if (localId === "new-user-test-id" || !doc.exists) { // Adjusted for mock
+
+    // Simulate new user vs existing user for testing - simplified mock
+    // The 'doc' variable was not defined in this branch of the mock logic previously.
+    // We'll just simulate a new user for now to pass the build.
+    // A more sophisticated mock would require fetching a mock 'doc'.
+    if (localId === "new-user-test-id") {
         return c.json(mockUser, 201);
     } else {
-        return c.json({ ...mockUser, existing: true, ...doc.data() }, 200); // Include mock doc.data()
+        // Simulate existing user by adding an 'existing' flag
+        return c.json({ ...mockUser, existing: true }, 200);
     }
 
     // Actual DB logic (commented out for now):
