@@ -36,9 +36,16 @@ export const authMiddleware = createMiddleware<{
       throw new Error(data.error?.message || 'Invalid token');
     }
 
-    c.set('user', data.users[0]);
+    // Assuming the first user in the array is the one we want
+    if (data.users && data.users.length > 0) {
+      c.set('user', data.users[0]);
+    } else {
+      // Handle case where no user data is returned, though successful lookup should return it
+      throw new Error('User data not found in token verification response.');
+    }
     await next();
   } catch (error: any) {
+    console.error('Error in authMiddleware:', error); // Log the actual error
     return c.json({ error: 'Unauthorized', message: error.message }, 401);
   }
 });

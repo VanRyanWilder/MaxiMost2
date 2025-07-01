@@ -1,10 +1,27 @@
 import { Hono } from 'hono';
 import type { Context as HonoCtx } from 'hono';
-import { db, admin } from '@/config/firebaseAdmin';
-import { honoProtectWithFirebase, AuthEnv } from '@/middleware/authMiddleware';
-import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore";
+// REMOVED: import { db, admin } from '@/config/firebaseAdmin'; // firebase-admin is uninstalled
+// REMOVED: import { honoProtectWithFirebase, AuthEnv } from '@/middleware/authMiddleware'; // Auth is global
+import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore"; // Keep if types are still relevant
 
-const app = new Hono<AuthEnv>();
+// Assuming db and admin (for serverTimestamp) will be handled differently or passed via context if still needed
+// For now, direct usage of db and admin from firebaseAdmin will cause errors.
+// This file will need significant rework if it's still meant to interact with Firestore
+// without firebase-admin. The new authMiddleware provides c.get('user') which is generic.
+
+// Define the expected environment for this router, including variables set by global middleware
+type HabitAppEnv = {
+  Variables: {
+    user: any; // From the global authMiddleware
+    // Potentially add DB client here if passed via context
+  };
+  Bindings: {
+    // Potentially add DB binding here
+    FIREBASE_WEB_API_KEY: string; // From global app env
+  };
+};
+
+const app = new Hono<HabitAppEnv>();
 
 const getCurrentDateString = (): string => {
   const now = new Date();
@@ -14,16 +31,42 @@ const getCurrentDateString = (): string => {
   return `${year}-${month}-${day}`;
 };
 
+// Placeholder for Firestore interaction logic.
+// This will need to be replaced with actual logic that uses a Firestore client
+// compatible with Cloudflare Workers (e.g., using Firestore REST API or a lightweight client).
+const getDbClient = (c: HonoCtx<HabitAppEnv>) => {
+  // Example: return new FirestoreClient({ apiKey: c.env.FIREBASE_WEB_API_KEY, ... });
+  console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin.");
+  return {
+    collection: (name: string) => ({
+      where: (...args: any[]) => ({ get: async () => ({ empty: true, docs: [] }) }),
+      add: async (data: any) => ({ get: async () => ({ id: 'mock-id', data: () => data }) }),
+      doc: (id: string) => ({
+        get: async () => ({ exists: false, data: () => null }),
+        update: async (data: any) => {},
+        set: async (data: any) => {},
+      }),
+    }),
+    FieldValue: { // Mock FieldValue
+        serverTimestamp: () => new Date().toISOString(), // Or appropriate mock
+        arrayUnion: (data: any) => data, // Simplified mock
+      },
+  };
+};
+
+
 // GET / - Fetch all active habits for the authenticated user
-app.get('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
+// REMOVED: honoProtectWithFirebase from individual route
+app.get('/', async (c: HonoCtx<HabitAppEnv>) => {
   try {
-    const firebaseUser = c.get('user');
-    if (!firebaseUser?.uid) {
+    const authenticatedUser = c.get('user'); // user is set by global authMiddleware
+    if (!authenticatedUser?.localId) { // localId is typical for Firebase REST API user object
       return c.json({ message: "User ID not found in token." }, 400);
     }
+    const db = getDbClient(c); // Get DB client instance
 
     const habitsSnapshot = await db.collection("habits")
-      .where("userId", "==", firebaseUser.uid)
+      .where("userId", "==", authenticatedUser.localId)
       .where("isActive", "==", true)
       .get();
 
@@ -31,7 +74,7 @@ app.get('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
       return c.json([], 200);
     }
 
-    const habits = habitsSnapshot.docs.map(doc => {
+    const habits = habitsSnapshot.docs.map((doc: any) => { // Type doc appropriately
       const data = doc.data();
       return {
         habitId: doc.id,
@@ -48,12 +91,14 @@ app.get('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
 });
 
 // POST / - Create a new habit
-app.post('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
+// REMOVED: honoProtectWithFirebase
+app.post('/', async (c: HonoCtx<HabitAppEnv>) => {
   try {
-    const firebaseUser = c.get('user');
-    if (!firebaseUser?.uid) {
+    const authenticatedUser = c.get('user');
+    if (!authenticatedUser?.localId) {
       return c.json({ message: "User ID not found in token." }, 400);
     }
+    const db = getDbClient(c);
 
     const body = await c.req.json();
     const { title, category, type } = body;
@@ -63,9 +108,9 @@ app.post('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
     }
 
     const newHabitData = {
-      userId: firebaseUser.uid,
+      userId: authenticatedUser.localId,
       ...body,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: db.FieldValue.serverTimestamp(), // Using mocked FieldValue
       isActive: true,
       completions: [],
       streak: 0
@@ -84,19 +129,24 @@ app.post('/', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
 });
 
 // PUT /:habitId - Update an existing habit
-app.put('/:habitId', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
+// REMOVED: honoProtectWithFirebase
+app.put('/:habitId', async (c: HonoCtx<HabitAppEnv>) => {
     try {
-        const firebaseUser = c.get('user');
+        const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
-        if (!firebaseUser?.uid) return c.json({ message: "Unauthorized." }, 401);
+        if (!authenticatedUser?.localId) return c.json({ message: "Unauthorized." }, 401);
         if (!habitId) return c.json({ message: "Habit ID required." }, 400);
+        const db = getDbClient(c);
 
         const body = await c.req.json();
         const habitRef = db.collection("habits").doc(habitId);
         const doc = await habitRef.get();
 
         if (!doc.exists) return c.json({ message: "Habit not found." }, 404);
-        if (doc.data()?.userId !== firebaseUser.uid) return c.json({ message: "Forbidden." }, 403);
+        // Ensure doc.data() is not null before accessing userId
+        const docData = doc.data();
+        if (docData?.userId !== authenticatedUser.localId) return c.json({ message: "Forbidden." }, 403);
+
 
         await habitRef.update(body);
         const updatedDoc = await habitRef.get();
@@ -111,13 +161,15 @@ app.put('/:habitId', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
 
 
 // POST /:habitId/complete - Mark a habit as complete
-app.post('/:habitId/complete', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
+// REMOVED: honoProtectWithFirebase
+app.post('/:habitId/complete', async (c: HonoCtx<HabitAppEnv>) => {
     try {
-        const firebaseUser = c.get('user');
+        const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
         const { value } = await c.req.json();
+        const db = getDbClient(c);
 
-        if (!firebaseUser?.uid) return c.json({ message: "Unauthorized." }, 401);
+        if (!authenticatedUser?.localId) return c.json({ message: "Unauthorized." }, 401);
         if (!habitId) return c.json({ message: "Habit ID required." }, 400);
         if (typeof value !== 'number') return c.json({ message: "Value must be a number." }, 400);
 
@@ -126,11 +178,11 @@ app.post('/:habitId/complete', honoProtectWithFirebase, async (c: HonoCtx<AuthEn
 
         if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
 
-        const habitData = habitDoc.data() as FirestoreHabit;
-        if (habitData.userId !== firebaseUser.uid) return c.json({ message: "Forbidden." }, 403);
+        const habitData = habitDoc.data() as FirestoreHabit; // Assuming FirestoreHabit type
+        if (habitData.userId !== authenticatedUser.localId) return c.json({ message: "Forbidden." }, 403);
 
         const currentDateStr = getCurrentDateString();
-        const serverTimestamp = admin.firestore.FieldValue.serverTimestamp();
+        const serverTimestamp = db.FieldValue.serverTimestamp(); // Using mocked FieldValue
 
         const newCompletion: HabitCompletionEntry = {
             date: currentDateStr,
@@ -139,7 +191,7 @@ app.post('/:habitId/complete', honoProtectWithFirebase, async (c: HonoCtx<AuthEn
         };
 
         await habitRef.update({
-            completions: admin.firestore.FieldValue.arrayUnion(newCompletion)
+            completions: db.FieldValue.arrayUnion(newCompletion) // Using mocked FieldValue
         });
 
         return c.json({ message: "Habit completion logged." }, 200);
@@ -151,18 +203,22 @@ app.post('/:habitId/complete', honoProtectWithFirebase, async (c: HonoCtx<AuthEn
 });
 
 // DELETE /:habitId - Archive a habit
-app.delete('/:habitId', honoProtectWithFirebase, async (c: HonoCtx<AuthEnv>) => {
+// REMOVED: honoProtectWithFirebase
+app.delete('/:habitId', async (c: HonoCtx<HabitAppEnv>) => {
     try {
-        const firebaseUser = c.get('user');
+        const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
-        if (!firebaseUser?.uid) return c.json({ message: "Unauthorized." }, 401);
+        if (!authenticatedUser?.localId) return c.json({ message: "Unauthorized." }, 401);
         if (!habitId) return c.json({ message: "Habit ID required." }, 400);
+        const db = getDbClient(c);
 
         const habitRef = db.collection("habits").doc(habitId);
         const doc = await habitRef.get();
 
         if (!doc.exists) return c.json({ message: "Habit not found." }, 404);
-        if (doc.data()?.userId !== firebaseUser.uid) return c.json({ message: "Forbidden." }, 403);
+        const docData = doc.data();
+        if (docData?.userId !== authenticatedUser.localId) return c.json({ message: "Forbidden." }, 403);
+
 
         await habitRef.update({ isActive: false });
 

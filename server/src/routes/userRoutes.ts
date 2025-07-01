@@ -1,41 +1,62 @@
-import { Hono, Context as HonoCtx } from 'hono'; // Import Context for typing
-import { honoProtectWithFirebase } from '@/middleware/authMiddleware';
-import { db, admin } from '@/config/firebaseAdmin'; // admin is used for firestore.FieldValue and DecodedIdToken type
-import type { DecodedIdToken } from 'firebase-admin/auth'; // Correct type
+import { Hono, Context as HonoCtx } from 'hono';
+// REMOVED: import { honoProtectWithFirebase } from '@/middleware/authMiddleware'; // Auth is global
+// REMOVED: import { db, admin } from '@/config/firebaseAdmin'; // firebase-admin is uninstalled
+// REMOVED: import type { DecodedIdToken } from 'firebase-admin/auth'; // No longer using firebase-admin types
 
-// Define a type for Hono context variables for this route module
-type AppEnv = {
+// Define the expected environment for this router, similar to habitRoutes
+type UserAppEnv = {
   Variables: {
-    user: DecodedIdToken;
+    user: any; // From the global authMiddleware (Firebase REST API user object)
+  };
+  Bindings: {
+    FIREBASE_WEB_API_KEY: string; // From global app env
+     // Potentially add DB binding here
   };
 };
 
-const app = new Hono<AppEnv>();
+// Placeholder for Firestore interaction logic (similar to habitRoutes.ts)
+const getDbClient = (c: HonoCtx<UserAppEnv>) => {
+  console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin (userRoutes).");
+  return {
+    collection: (name: string) => ({
+      doc: (id: string) => ({
+        get: async () => ({ exists: false, data: () => null }),
+        set: async (data: any) => {},
+      }),
+    }),
+    FieldValue: {
+        serverTimestamp: () => new Date().toISOString(),
+      },
+  };
+};
 
-app.post('/initialize', honoProtectWithFirebase, async (c: HonoCtx<AppEnv>) => {
+
+const app = new Hono<UserAppEnv>();
+
+// REMOVED: honoProtectWithFirebase from individual route
+app.post('/initialize', async (c: HonoCtx<UserAppEnv>) => {
   try {
-    const firebaseUser = c.get('user'); // User from honoProtectWithFirebase, now correctly typed
+    const authenticatedUser = c.get('user'); // User from global authMiddleware
 
-    if (!firebaseUser) {
-      // This case should ideally be handled by honoProtectWithFirebase already
-      return c.json({ message: 'User not authenticated' }, 401);
+    if (!authenticatedUser || !authenticatedUser.localId) {
+      // This case should ideally be handled by global authMiddleware already
+      return c.json({ message: 'User not authenticated or localId missing' }, 401);
     }
+    const db = getDbClient(c);
 
-    const { uid, email } = firebaseUser;
-    const displayName = firebaseUser.displayName || (firebaseUser as any).name; // Fallback to name if displayName not present, cast to any if name is not on DecodedIdToken by default
-    // Note: DecodedIdToken might not have 'name'. It usually has 'email', 'uid', 'picture'.
-    // If 'name' is from a custom claim or profile data elsewhere, ensure it's correctly populated in the token.
-    // For this example, we'll prioritize displayName.
+    const { localId, email } = authenticatedUser;
+    // The user object from Firebase REST API (accounts:lookup) might have users[0].displayName
+    const displayName = authenticatedUser.displayName || email; // Fallback to email if displayName is not present
 
-    const userRef = db.collection('users').doc(uid);
+    const userRef = db.collection('users').doc(localId);
     const doc = await userRef.get();
 
     if (!doc.exists) {
       const newUser = {
-        userId: uid,
+        userId: localId,
         email,
         displayName,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: db.FieldValue.serverTimestamp(), // Using mocked FieldValue
         // roles: ['user'], // Example default role
         // preferences: {}, // Example default preferences
       };
