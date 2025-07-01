@@ -18,14 +18,24 @@ const app = new Hono<{ Bindings: Bindings }>();
 // --- Middleware ---
 app.use('*', logger());
 app.use('*', secureHeaders());
-app.use('*', cors({
-  origin: [
-    'https://www.maximost.com',
-    'https://*.maximost-frontend.pages.dev',
-    'http://localhost:5173'
-  ],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
+
+// CORS Configuration
+// For development, '*' can be used. For production, specify allowed origins.
+// Example Production Origins:
+// const productionOrigins = [
+//   'https://maximost.pages.dev', // Replace with your main frontend production domain
+//   /\.maximost\.pages\.dev$/,    // Allows any subdomain of maximost.pages.dev
+//   'https://www.maximost.com'     // If you have a custom domain
+// ];
+// const allowedOrigin = process.env.NODE_ENV === 'production' ? productionOrigins : '*';
+
+app.use('/api/*', cors({
+  origin: '*', // Allows all origins for now, as per dev instructions.
+  // origin: allowedOrigin, // Use this for production deployment
+  allowHeaders: ['Authorization', 'Content-Type'],
+  allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'], // Added PUT
+  maxAge: 600,
+  credentials: true, // If you need to handle cookies or authorization headers
 }));
 
 // --- Route Registration ---
