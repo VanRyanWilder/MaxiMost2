@@ -8,16 +8,18 @@ await esbuild.build({
   format: 'esm',
   platform: 'node',
   target: 'esnext',
-  // Use the professional polyfill plugin
-plugins: [
-  polyfillNode({
-    // Add this globals configuration
-    globals: {
-      process: true,
-      buffer: true,
-    },
-  }),
-],
+  // Add this "define" configuration
+  define: {
+    'process.env.NODE_ENV': "'production'",
+  },
+  plugins: [
+    polyfillNode({
+      globals: {
+        process: true,
+        buffer: true,
+      },
+    }),
+  ],
 }).catch((e) => {
   console.error(e);
   process.exit(1);
