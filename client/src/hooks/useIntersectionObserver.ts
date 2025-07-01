@@ -56,4 +56,4 @@ function useIntersectionObserver(
   return isIntersecting;
 }
 
-export default useIntersectionObserver;
+export { useIntersectionObserver };
