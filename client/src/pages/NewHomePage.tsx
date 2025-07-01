@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // Import reusable components
-import { CTASection } from "../components/landing/CTASection";
-import { MeetTheCoachesSection } from "../components/landing/MeetTheCoachesSection";
-import { FeatureCard } from "../components/landing/FeatureCard";
-import { TestimonialCard } from "../components/landing/TestimonialCard";
-import { FAQItem } from "../components/landing/FAQItem";
-import { Accordion } from "../components/ui/accordion";
-import { useIntersectionObserver } from "../hooks/useIntersectionObserver"; // Assuming this is the correct path
+import { CTASection } from "@/components/landing/CTASection";
+import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
+import { FeatureCard } from "@/components/landing/FeatureCard";
+import { TestimonialCard } from "@/components/landing/TestimonialCard";
+import { FAQItem } from "@/components/landing/FAQItem";
+import { Accordion } from "@/components/ui/accordion";
+// Corrected import: Reverted to path alias
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 
 // Import Lucide icons
 import {
@@ -49,7 +50,6 @@ const faqData = [
 const NewHomePage: React.FC = () => {
   const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
 
-  // Corrected function name from the original code
   const handlePersonaHover = (glowColor: string | undefined) => {
     setActiveGlowColor(glowColor || null);
   };
@@ -74,7 +74,7 @@ const NewHomePage: React.FC = () => {
   const testimonialsRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const finalCtaRef = useRef<HTMLDivElement>(null);
-  const coachesRef = useRef<HTMLDivElement>(null); // Added ref for coaches section
+  const coachesRef = useRef<HTMLDivElement>(null);
 
   // Intersection observer hooks
   const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
@@ -83,7 +83,7 @@ const NewHomePage: React.FC = () => {
   const isTestimonialsVisible = useIntersectionObserver(testimonialsRef, { threshold: 0.1, triggerOnce: true });
   const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
   const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
-  const isCoachesVisible = useIntersectionObserver(coachesRef, { threshold: 0.1, triggerOnce: true }); // Added observer for coaches section
+  const isCoachesVisible = useIntersectionObserver(coachesRef, { threshold: 0.1, triggerOnce: true });
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
@@ -120,7 +120,7 @@ const NewHomePage: React.FC = () => {
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
             className="py-16 md:py-20 bg-background dark:bg-neutral-900"
-            onPersonaHover={handlePersonaHover} // Pass the handler
+            onPersonaHover={handlePersonaHover}
           />
         </div>
 
