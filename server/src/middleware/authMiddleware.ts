@@ -1,39 +1,39 @@
-// This file now only contains Hono-specific middleware.
-// Express-specific parts have been removed as 'express' is no longer a dependency.
+import { Hono } from 'hono';
 
-import { auth } from "@/config/firebaseAdmin"; // Updated path alias
-import type { DecodedIdToken } from "firebase-admin/auth";
-import { Context as HonoCtx } from 'hono';
+const app = new Hono();
 
-// --- Hono Middleware ---
-
-// Define a type for Hono context variables, making user available on c.var or c.get('user')
-export type AuthEnv = {
-  Variables: {
-    user: DecodedIdToken;
-  };
-};
-
-// Use HonoCtx<AuthEnv> for typed context
-export const honoProtectWithFirebase = async (c: HonoCtx<AuthEnv>, next: Function) => {
+// New Auth Middleware using REST API
+app.use('/api/*', async (c, next) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json({ message: 'Unauthorized: No token provided or invalid format.' }, 401);
+    return c.json({ error: 'Unauthorized' }, 401);
   }
+
   const idToken = authHeader.split('Bearer ')[1];
-  if (!idToken) {
-    return c.json({ message: 'Unauthorized: Token is missing after Bearer prefix.' }, 401);
-  }
+  const apiKey = c.env.FIREBASE_WEB_API_KEY; // AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w
+  const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`;
+
   try {
-    const decodedToken = await auth.verifyIdToken(idToken); // Use 'auth' from the top of the file
-    c.set('user', decodedToken);
-    await next();
-  } catch (error: any) { // Cast error to any to access .code and .message
-    console.error('Error verifying Firebase ID token for Hono:', error);
-    if (error.code === 'auth/id-token-expired') {
-      return c.json({ message: 'Unauthorized: Token expired.' }, 401);
+    const response = await fetch(verifyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: idToken }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      throw new Error(data.error?.message || 'Invalid token');
     }
-    // For other auth errors (e.g., invalid signature, malformed token), return 403.
-    return c.json({ message: 'Forbidden: Invalid token.', errorDetail: error.message }, 403);
+
+    // Optionally set the user data for downstream routes
+    c.set('user', data.users[0]);
+    await next();
+
+  } catch (error) {
+    return c.json({ error: 'Unauthorized', message: error.message }, 401);
   }
-};
+});
+
+// ... Your existing API routes come AFTER this middleware
+export default app;
