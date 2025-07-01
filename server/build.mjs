@@ -19,7 +19,7 @@ const nodeShimPlugin = {
 
     // The virtual 'empty' module exports nothing
     build.onLoad({ filter: /.*/, namespace: 'node-shim-empty' }, () => ({
-      contents: 'export default {}; module.exports = {};',
+      contents: 'export default {}', // Remove module.exports
       loader: 'js',
     }));
   },
