@@ -1,16 +1,26 @@
-import { Hono } from 'hono';
+import { createMiddleware } from 'hono/factory';
 
-const app = new Hono();
+// Define the shape of your environment variables
+type Bindings = {
+  FIREBASE_WEB_API_KEY: string;
+};
 
-// New Auth Middleware using REST API
-app.use('/api/*', async (c, next) => {
+// Define the shape of the variables you'll set in the context
+type Variables = {
+  user: any; // Or a more specific user type
+};
+
+export const authMiddleware = createMiddleware<{
+  Bindings: Bindings;
+  Variables: Variables;
+}>(async (c, next) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
 
   const idToken = authHeader.split('Bearer ')[1];
-  const apiKey = c.env.FIREBASE_WEB_API_KEY; // AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w
+  const apiKey = c.env.FIREBASE_WEB_API_KEY;
   const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`;
 
   try {
@@ -26,14 +36,9 @@ app.use('/api/*', async (c, next) => {
       throw new Error(data.error?.message || 'Invalid token');
     }
 
-    // Optionally set the user data for downstream routes
     c.set('user', data.users[0]);
     await next();
-
-  } catch (error) {
+  } catch (error: any) {
     return c.json({ error: 'Unauthorized', message: error.message }, 401);
   }
 });
-
-// ... Your existing API routes come AFTER this middleware
-export default app;
