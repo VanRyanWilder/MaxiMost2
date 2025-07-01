@@ -25,17 +25,21 @@ function useIntersectionObserver(
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          if (triggerOnce) {
-            observer.unobserve(element);
-          }
-        } else {
-          // Only set to false if not triggerOnce, otherwise it stays true once triggered
-          if (!triggerOnce) {
-            setIsIntersecting(false);
-          }
-        }
+        const targetId = entry.target.id || entry.target.className.split(" ")[0] || "UnknownElement";
+        console.log(`[IO Hook] Intersection event for ${targetId}. Is Intersecting: ${entry.isIntersecting}`);
+
+        setIsIntersecting(entry.isIntersecting); // Continuously update state
+
+        // Temporarily ignore triggerOnce to allow continuous state changes for debugging
+        // if (entry.isIntersecting) {
+        //   setIsIntersecting(true);
+        //   if (triggerOnce) {
+        //     observer.unobserve(element);
+        //   }
+        // } else {
+        //   // Always set to false if not intersecting, for this debug phase
+        //   setIsIntersecting(false);
+        // }
       },
       { threshold, root, rootMargin }
     );
@@ -49,7 +53,7 @@ function useIntersectionObserver(
         observer.unobserve(element);
       }
     };
-  }, [elementRef, threshold, root, rootMargin, triggerOnce]); // Restored triggerOnce to deps
+  }, [elementRef, threshold, root, rootMargin]); // Temporarily remove triggerOnce from deps
 
   return isIntersecting;
 }

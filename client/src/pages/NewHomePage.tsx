@@ -9,6 +9,14 @@ import { FAQItem } from "@/components/landing/FAQItem";
 import { Accordion } from "@/components/ui/accordion";
 // Corrected import: Reverted to path alias
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import { CTASection } from "@/components/landing/CTASection";
+import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
+import { FeatureCard } from "@/components/landing/FeatureCard";
+import { TestimonialCard } from "@/components/landing/TestimonialCard";
+import { FAQItem } from "@/components/landing/FAQItem";
+import { Accordion } from "@/components/ui/accordion";
+// Corrected import: Reverted to path alias
+import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 
 // Import Lucide icons
 import {
@@ -124,8 +132,18 @@ const NewHomePage: React.FC = () => {
           />
         </div>
 
+<<<<<<< HEAD
         {/* Section 3: Key Features */}
         <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+=======
+        {/* Section 3: Key Features - ULTRA-SIMPLIFIED INLINE STYLE TEST */}
+        <section
+          id="key-features"
+          ref={keyFeaturesRef}
+          className={keyFeaturesBaseClassesOnly} // Apply only base layout/bg classes
+          style={keyFeaturesInlineStyleTest} // Apply dynamic styles for animation test
+        >
+>>>>>>> e78abc586135e3708c2ed713118ac5d43d2c61b8
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
