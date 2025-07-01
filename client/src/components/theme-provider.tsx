@@ -44,10 +44,10 @@ export function ThemeProvider({
     // Use light mode always for now
     root.classList.add("light")
     
-    // Re-enable transitions after a short delay to prevent flashing
+    // Re-enable transitions after a very short delay (defer to next paint)
     const transitionTimeout = setTimeout(() => {
       root.classList.remove("disable-transitions")
-    }, 100)
+    }, 0) // Changed from 100ms to 0ms
     
     return () => clearTimeout(transitionTimeout)
   }, [])
