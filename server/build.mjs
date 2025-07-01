@@ -10,8 +10,10 @@ await esbuild.build({
   target: 'esnext',
   // Add this "define" configuration
   define: {
-    'process.env.NODE_ENV': "'production'",
-  },
+  'process.env.NODE_ENV': "'production'",
+  // ADD THIS NEW LINE to directly override the problematic check
+  'process.stdout.isTTY': 'false',
+},
   plugins: [
     polyfillNode({
       globals: {
