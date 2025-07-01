@@ -8,105 +8,71 @@ import authRoutes from './routes/authRoutes.js';
 import habitRoutes from './routes/habitRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
-// Define the environment bindings for Hono.
-type Bindings = {
-  // e.g., DB: D1Database
-}
+import { app } from './hono'; // Import our single, typed app instance
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { secureHeaders } from 'hono/secure-headers';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
-const app = new Hono<{ Bindings: Bindings }>();
+// Import route handlers
+// These will now extend the 'app' from './hono'
+import authRoutes from './routes/authRoutes.js';
+import habitRoutes from './routes/habitRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
-// Add this logging middleware at the very top
+
+// --- Global Middleware applied to the shared app instance ---
+
+// Optional: Request logging (can be kept here or moved to hono.ts if truly global)
 app.use('*', async (c, next) => {
-  console.log(`Request received for URL: ${c.req.url}`);
+  console.log(`Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
   await next();
 });
 
-// --- Middleware ---
-app.use('*', logger());
-app.use('*', secureHeaders());
+app.use('*', logger());        // Hono's built-in logger
+app.use('*', secureHeaders()); // Apply security headers
 
-// CORS Configuration
-// For development, '*' can be used. For production, specify allowed origins.
-// Example Production Origins:
-// const productionOrigins = [
-//   'https://maximost.pages.dev', // Replace with your main frontend production domain
-//   /\.maximost\.pages\.dev$/,    // Allows any subdomain of maximost.pages.dev
-//   'https://www.maximost.com'     // If you have a custom domain
-// ];
-// const allowedOrigin = process.env.NODE_ENV === 'production' ? productionOrigins : '*';
-
+// CORS Configuration for all /api/* routes
 app.use('/api/*', cors({
-  origin: '*', // Allows all origins for now, as per dev instructions.
-  // origin: allowedOrigin, // Use this for production deployment
-  allowHeaders: ['Authorization', 'Content-Type'],
-  allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'], // Added PUT
-  maxAge: 600,
-  credentials: true, // If you need to handle cookies or authorization headers
-}));
-
-// Import and use Firebase Auth middleware for protected routes
-import { authMiddleware } from './middleware/authMiddleware.js'; // Updated import name
-
-// Define Bindings and Variables for Hono app context if not already broadly defined
-// This ensures the app instance is compatible with the middleware's expected context
-type AppEnv = {
-  Bindings: {
-    FIREBASE_WEB_API_KEY: string;
-    // Add other bindings like DB, etc.
-  };
-  Variables: {
-    user: any; // Or a more specific user type from authMiddleware
-    // Add other context variables if any
-  };
-};
-
-const app = new Hono<AppEnv>(); // Initialize with the AppEnv
-
-// Add this logging middleware at the very top (keeping it from previous step)
-app.use('*', async (c, next) => {
-  console.log(`Request received for URL: ${c.req.url}`);
-  await next();
-});
-
-// --- Middleware ---
-// Logger and SecureHeaders can remain global
-app.use('*', logger());
-app.use('*', secureHeaders());
-
-// CORS Configuration
-app.use('/api/*', cors({
-  origin: '*',
+  origin: '*', // TODO: Restrict in production to specific frontend domains
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
   maxAge: 600,
   credentials: true,
 }));
 
-// Apply the new auth middleware globally to all /api/* routes that need protection
-// Note: /api/auth routes are typically not protected by this kind of middleware
-// as they are used for login/signup. If some /api/auth routes need protection,
-// apply middleware more granularly or exclude them here.
+// Authentication Middleware for protected API routes
+// Applied after CORS and general logging, but before specific route handlers for protected paths.
+// /api/auth routes are typically public for login/signup, so they are not included here.
 app.use('/api/habits/*', authMiddleware);
 app.use('/api/users/*', authMiddleware);
-// If you have other /api/* routes that need protection, add them here.
-// For example: app.use('/api/someother/*', authMiddleware);
+// Add other protected /api/* patterns here, e.g.:
+// app.use('/api/profile/*', authMiddleware);
 
 
 // --- Route Registration ---
-// These routes will now be processed after the authMiddleware for /api/habits and /api/users
+// Routes are registered on the same 'app' instance imported from './hono'.
+// The route files (authRoutes, habitRoutes, userRoutes) should now also import
+// this 'app' from './hono' and define their routes on it, instead of creating new Hono instances.
 app.route('/api/auth', authRoutes);
-app.route('/api/habits', habitRoutes);
-app.route('/api/users', userRoutes);
+app.route('/api/habits', habitRoutes); // habitRoutes should be of type Hono<AppEnv> or compatible
+app.route('/api/users', userRoutes);   // userRoutes should be of type Hono<AppEnv> or compatible
 
-// --- Basic & Health Check Routes ---
+
+// --- Basic & Health Check Routes (can also be on the main app) ---
 app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
 app.get('/health', (c) => c.text('OK'));
 
-// --- Error & Not Found Handlers ---
+
+// --- Error & Not Found Handlers (applied to the main app) ---
 app.onError((err, c) => {
-  console.error(`Error: ${err.message}`);
+  console.error(`Error: ${err.message}`, err.stack); // Log stack for more details
   return c.json({ success: false, message: 'Internal Server Error' }, 500);
 });
-app.notFound((c) => c.json({ success: false, message: 'Endpoint Not Found' }, 404));
 
-export default app;
+app.notFound((c) => {
+  console.log(`404 Not Found for URL: ${c.req.url}`);
+  return c.json({ success: false, message: 'Endpoint Not Found' }, 404);
+});
+
+export default app; // Export the single, configured app instance

@@ -3,24 +3,22 @@ import { Hono, Context as HonoCtx } from 'hono';
 // REMOVED: import { db, admin } from '@/config/firebaseAdmin'; // firebase-admin is uninstalled
 // REMOVED: import type { DecodedIdToken } from 'firebase-admin/auth'; // No longer using firebase-admin types
 
-// Define the expected environment for this router, similar to habitRoutes
-type UserAppEnv = {
-  Variables: {
-    user: any; // From the global authMiddleware (Firebase REST API user object)
-  };
-  Bindings: {
-    FIREBASE_WEB_API_KEY: string; // From global app env
-     // Potentially add DB binding here
-  };
-};
+import { app } from '../hono'; // Import our single, typed app instance
+import type { Context as HonoCtx } from 'hono';
+
+// No new Hono instance here. We extend the imported 'app'.
+// Types for context (c) will be inferred from the imported 'app'.
 
 // Placeholder for Firestore interaction logic (similar to habitRoutes.ts)
-const getDbClient = (c: HonoCtx<UserAppEnv>) => {
-  console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin (userRoutes).");
+const getDbClient = (c: HonoCtx) => { // Context type will be inferred from app
+  // console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin (userRoutes).");
   return {
     collection: (name: string) => ({
       doc: (id: string) => ({
-        get: async () => ({ exists: false, data: () => null }),
+        get: async () => ({
+          exists: false,
+          data: () => (null as any)
+        }),
         set: async (data: any) => {},
       }),
     }),
@@ -30,35 +28,47 @@ const getDbClient = (c: HonoCtx<UserAppEnv>) => {
   };
 };
 
-
-const app = new Hono<UserAppEnv>();
-
-// REMOVED: honoProtectWithFirebase from individual route
-app.post('/initialize', async (c: HonoCtx<UserAppEnv>) => {
+// Routes are defined on the imported 'app'
+app.post('/initialize', async (c) => { // No need for explicit HonoCtx<AppEnv>
   try {
-    const authenticatedUser = c.get('user'); // User from global authMiddleware
+    const authenticatedUser = c.get('user');
 
     if (!authenticatedUser || !authenticatedUser.localId) {
-      // This case should ideally be handled by global authMiddleware already
       return c.json({ message: 'User not authenticated or localId missing' }, 401);
     }
-    const db = getDbClient(c);
+    // const db = getDbClient(c);
 
     const { localId, email } = authenticatedUser;
-    // The user object from Firebase REST API (accounts:lookup) might have users[0].displayName
-    const displayName = authenticatedUser.displayName || email; // Fallback to email if displayName is not present
+    const displayName = authenticatedUser.displayName || email;
 
+    // Temporarily return mock response
+    const mockUser = {
+        userId: localId,
+        email,
+        displayName,
+        createdAt: new Date().toISOString(),
+    };
+    console.log(`User ${localId} initializing. DB logic pending.`);
+    // Simulate new user vs existing user for testing
+    if (localId === "new-user-test-id" || !doc.exists) { // Adjusted for mock
+        return c.json(mockUser, 201);
+    } else {
+        return c.json({ ...mockUser, existing: true, ...doc.data() }, 200); // Include mock doc.data()
+    }
+
+    // Actual DB logic (commented out for now):
+    /*
     const userRef = db.collection('users').doc(localId);
-    const doc = await userRef.get();
+    const doc = await userRef.get(); // This was missing in the mock logic branch
 
     if (!doc.exists) {
       const newUser = {
         userId: localId,
         email,
         displayName,
-        createdAt: db.FieldValue.serverTimestamp(), // Using mocked FieldValue
-        // roles: ['user'], // Example default role
-        // preferences: {}, // Example default preferences
+        createdAt: db.FieldValue.serverTimestamp(),
+        // roles: ['user'],
+        // preferences: {},
       };
       await userRef.set(newUser);
       c.status(201);
@@ -67,6 +77,7 @@ app.post('/initialize', async (c: HonoCtx<UserAppEnv>) => {
       c.status(200);
       return c.json(doc.data());
     }
+    */
   } catch (error) {
     console.error('Error initializing user:', error);
     const err = error as Error;

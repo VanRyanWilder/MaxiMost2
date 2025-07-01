@@ -1,18 +1,14 @@
 import { createMiddleware } from 'hono/factory';
+import type { Bindings, Variables } from '../hono'; // Import the shared types
 
-// Define the shape of your environment variables
-type Bindings = {
-  FIREBASE_WEB_API_KEY: string;
-};
-
-// Define the shape of the variables you'll set in the context
-type Variables = {
-  user: any; // Or a more specific user type
-};
+// The middleware factory will infer context types if used with the typed app instance.
+// However, explicitly typing it here with createMiddleware<{ Bindings, Variables }>()
+// ensures clarity and allows this middleware to be developed/tested independently
+// or used with other Hono apps sharing the same Env structure.
 
 export const authMiddleware = createMiddleware<{
-  Bindings: Bindings;
-  Variables: Variables;
+  Bindings: Bindings; // From hono.ts
+  Variables: Variables; // From hono.ts
 }>(async (c, next) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
