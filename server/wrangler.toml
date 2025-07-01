@@ -1,5 +1,5 @@
 name = "maximost-backend"
-main = "src/worker.ts"
+main = "dist/worker.js" # Corrected to point to the compiled output
 
 # This is the key change, as suggested by the error log.
 compatibility_date = "2024-09-23"
