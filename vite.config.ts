@@ -27,4 +27,14 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_BASE_URL || 'http://localhost:8787', // Fallback to local worker
+        changeOrigin: true,
+        secure: false, // Set to true if your backend uses HTTPS and has a valid certificate
+        rewrite: (path) => path.replace(/^\/api/, ''), // Optional: if your backend doesn't expect /api prefix
+      }
+    }
+  }
 });

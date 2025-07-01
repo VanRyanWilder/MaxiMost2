@@ -49,11 +49,21 @@ export async function apiClient<T>(
     }
   }
 
-  // Construct the full URL, assuming endpoint might not always start with /api
-  // and backend is on the same origin or proxied.
-  // For a separate backend URL, use: const fullUrl = `${process.env.REACT_APP_API_URL || ""}${endpoint}`;
-  const fullUrl = endpoint.startsWith("http") ? endpoint : `/api${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  // Construct the full URL using the VITE_API_BASE_URL environment variable
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  let fullUrl;
 
+  if (endpoint.startsWith("http")) {
+    fullUrl = endpoint;
+  } else if (apiBaseUrl) {
+    // Ensure no double slashes if endpoint starts with a slash
+    const normalizedEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    fullUrl = `${apiBaseUrl.replace(/\/$/, '')}/${normalizedEndpoint}`;
+  } else {
+    // Fallback for local development if VITE_API_BASE_URL is not set, assuming proxy is configured
+    fullUrl = `/api${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+    console.warn("VITE_API_BASE_URL is not set. Using relative path for API calls. Ensure proxy is configured for local development.");
+  }
 
   try {
     const response = await fetch(fullUrl, config);
