@@ -1,13 +1,3 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { logger } from 'hono/logger';
-import { secureHeaders } from 'hono/secure-headers';
-
-// Using relative paths with .js extension for compiled output
-import authRoutes from './routes/authRoutes.js';
-import habitRoutes from './routes/habitRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-
 import { app } from './hono'; // Import our single, typed app instance
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
@@ -16,10 +6,13 @@ import { authMiddleware } from './middleware/authMiddleware.js';
 
 // Import route handlers
 // These will now extend the 'app' from './hono'
+// Ensure these imports are not duplicated if already imported above.
+// If Hono, cors, logger, secureHeaders are only used here, remove the top-level Hono import.
+// For now, assuming they might be used elsewhere or it's a merge artifact.
+// Let's clean it up to have single imports.
 import authRoutes from './routes/authRoutes.js';
 import habitRoutes from './routes/habitRoutes.js';
 import userRoutes from './routes/userRoutes.js';
-
 
 // --- Global Middleware applied to the shared app instance ---
 
