@@ -5,9 +5,10 @@ await esbuild.build({
   bundle: true,
   outfile: 'dist/worker.js',
   format: 'esm',
-  platform: 'browser',
+  // CHANGE THIS LINE:
+  platform: 'node', // Correct platform for firebase-admin
   target: 'esnext',
-  // This is important for firebase-admin
+  // This line is correct and should be kept.
   external: ['node:*'],
 }).catch(() => process.exit(1));
 
