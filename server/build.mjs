@@ -4,22 +4,21 @@ import { builtinModules } from 'module';
 const nodeShimPlugin = {
   name: 'node-shim',
   setup(build) {
-    // Add a specific rule for node-fetch
-    build.onResolve({ filter: /^node-fetch$/ }, args => ({
+    // Rule for bare module specifiers (e.g., 'fs')
+    build.onResolve({ filter: new RegExp(`^(${builtinModules.join('|')})$`) }, args => ({
       path: args.path,
       namespace: 'node-shim-empty',
     }));
 
-    // For each built-in module, resolve it to a virtual module
-    for (const mod of builtinModules) {
-      if (mod === 'module') continue; // 'module' is special, don't shim it
-      const filter = new RegExp(`^${mod}$`);
-      build.onResolve({ filter }, args => ({ path: args.path, namespace: 'node-shim-empty' }));
-    }
+    // ADD THIS NEW RULE for "node:" prefixed specifiers
+    build.onResolve({ filter: /^node:/ }, args => ({
+      path: args.path,
+      namespace: 'node-shim-empty',
+    }));
 
     // The virtual 'empty' module exports nothing
     build.onLoad({ filter: /.*/, namespace: 'node-shim-empty' }, () => ({
-      contents: 'export default {}', // Remove module.exports
+      contents: 'export default {}',
       loader: 'js',
     }));
   },
