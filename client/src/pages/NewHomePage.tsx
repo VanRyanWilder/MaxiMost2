@@ -1,22 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
 // Import reusable components
-import { CTASection } from "@/components/landing/CTASection";
-import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
-import { FeatureCard } from "@/components/landing/FeatureCard";
-import { TestimonialCard } from "@/components/landing/TestimonialCard";
-import { FAQItem } from "@/components/landing/FAQItem";
-import { Accordion } from "@/components/ui/accordion";
-// Corrected import: Reverted to path alias
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
-import { CTASection } from "@/components/landing/CTASection";
-import { MeetTheCoachesSection } from "@/components/landing/MeetTheCoachesSection";
-import { FeatureCard } from "@/components/landing/FeatureCard";
-import { TestimonialCard } from "@/components/landing/TestimonialCard";
-import { FAQItem } from "@/components/landing/FAQItem";
-import { Accordion } from "@/components/ui/accordion";
-// Corrected import: Reverted to path alias
-import useIntersectionObserver from "@/hooks/useIntersectionObserver";
+import { CTASection } from "../components/landing/CTASection";
+import { MeetTheCoachesSection } from "../components/landing/MeetTheCoachesSection";
+import { FeatureCard } from "../components/landing/FeatureCard";
+import { TestimonialCard } from "../components/landing/TestimonialCard";
+import { FAQItem } from "../components/landing/FAQItem";
+import { Accordion } from "../components/ui/accordion";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 
 // Import Lucide icons
 import {
@@ -25,7 +16,7 @@ import {
   Smartphone
 } from "lucide-react";
 
-// Data structures (remain the same)
+// Data structures
 const keyFeaturesData = [
   { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
   { id: "feat-ai-coach", icon: <Brain size={32} />, title: "AI Habit Coach", description: "Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency." },
@@ -98,7 +89,6 @@ const NewHomePage: React.FC = () => {
       <main className="flex-grow">
         {/* Section 1: UVP / Hero Section */}
         <section id="uvp" className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden">
-          {/* Animated Background */}
           <div
             className="absolute inset-0 z-0"
             style={{
@@ -125,25 +115,15 @@ const NewHomePage: React.FC = () => {
 
         {/* Section 2: Meet The Coaches */}
         <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-          <MeetTheCoachesSection
-            title="Find the Coach That Drives You"
-            className="py-16 md:py-20 bg-background dark:bg-neutral-900"
-            onPersonaHover={handlePersonaHover}
-          />
+            <MeetTheCoachesSection
+              title="Find the Coach That Drives You"
+              className="py-16 md:py-20 bg-background dark:bg-neutral-900"
+              onPersonaHover={handlePersonaHover}
+            />
         </div>
 
-<<<<<<< HEAD
         {/* Section 3: Key Features */}
         <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-=======
-        {/* Section 3: Key Features - ULTRA-SIMPLIFIED INLINE STYLE TEST */}
-        <section
-          id="key-features"
-          ref={keyFeaturesRef}
-          className={keyFeaturesBaseClassesOnly} // Apply only base layout/bg classes
-          style={keyFeaturesInlineStyleTest} // Apply dynamic styles for animation test
-        >
->>>>>>> e78abc586135e3708c2ed713118ac5d43d2c61b8
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -164,26 +144,121 @@ const NewHomePage: React.FC = () => {
 
         {/* Section 5: Fitness Tracker Integration */}
         <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            {/* ... content for fitness trackers ... */}
+            <div className="container mx-auto px-4 text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                    Fitness Tracker Integration
+                </h2>
+                <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    Connect All Your Health Data
+                </p>
+                <p className="text-md text-muted-foreground mb-8 max-w-3xl mx-auto">
+                    Integration with your favorite fitness platforms automatically
+                    completes your habits based on your activity.
+                </p>
+                <div className="flex flex-wrap justify-center items-center gap-4 mb-10">
+                    {fitnessTrackers.map(tracker => (
+                        <div key={tracker.name} className="flex items-center p-2 bg-background dark:bg-neutral-700/50 rounded-md shadow">
+                            {tracker.icon}
+                            <span className="ml-2 text-sm font-medium text-foreground">{tracker.name}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="max-w-2xl mx-auto text-left space-y-2 text-muted-foreground mb-10">
+                    <p>✓ Auto-complete workout habits when your fitness tracker records activity.</p>
+                    <p>✓ Sleep habits marked complete when your tracker records sufficient sleep.</p>
+                    <p>✓ Heart rate and recovery metrics for holistic health tracking.</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
+                        <h4 className="text-lg font-semibold text-foreground mb-3">Fitbit Activity (Example)</h4>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <p><strong className="text-foreground">Steps:</strong> 9,857</p>
+                            <p><strong className="text-foreground">Miles:</strong> 4.3</p>
+                            <p><strong className="text-foreground">Calories:</strong> 2,478</p>
+                            <p><strong className="text-foreground">Active Min:</strong> 45</p>
+                            <p><strong className="text-foreground">Sleep:</strong> 7:15</p>
+                            <p><strong className="text-foreground">Resting BPM:</strong> 68</p>
+                        </div>
+                    </div>
+                    <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
+                        <h4 className="text-lg font-semibold text-foreground mb-3">Samsung Health (Example)</h4>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                            <p><strong className="text-foreground">Steps:</strong> 11,235</p>
+                            <p><strong className="text-foreground">Miles:</strong> 5.2</p>
+                            <p><strong className="text-foreground">Calories:</strong> 2,912</p>
+                            <p><strong className="text-foreground">Active Min:</strong> 65</p>
+                            <p><strong className="text-foreground">Sleep:</strong> 8:10</p>
+                            <p><strong className="text-foreground">Resting BPM:</strong> 71</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
         <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            {/* ... content for testimonials ... */}
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+              What People Are Saying
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-4xl mx-auto">
+              {testimonialsData.map((testimonial) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  imageSrc={testimonial.imageSrc}
+                  altText={testimonial.altText}
+                  name={testimonial.name}
+                  title={testimonial.title}
+                  quote={testimonial.quote}
+                />
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* Section 7: FAQ */}
         <section ref={faqRef} id="faq" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            {/* ... content for FAQ ... */}
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+              Frequently Asked Questions
+            </h2>
+            <Accordion type="single" collapsible className="w-full">
+              {faqData.map((faqItem) => (
+                <FAQItem
+                  key={faqItem.id}
+                  value={faqItem.id}
+                  question={faqItem.question}
+                  answer={faqItem.answer}
+                />
+              ))}
+            </Accordion>
+          </div>
         </section>
 
         {/* Section 8: Final CTA Section */}
         <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-700 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-            {/* ... content for final CTA ... */}
+          <CTASection
+            headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
+            description="Sign up for early access and unlock special benefits reserved for our first members."
+            buttonText="Get Early Access"
+            emailPlaceholder="Enter your email address"
+            rewardsText="Join our rewards program & refer friends for premium rewards & features"
+            showRewardsOptIn={true}
+            onSubmit={handleWaitlistSubmit}
+            className="container mx-auto max-w-3xl"
+          />
         </section>
 
         <footer className="py-8 border-t border-border">
-            {/* ... footer content ... */}
+            <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
+                <p className="mb-2">MaxiMost Logo (Placeholder)</p>
+                <div className="space-x-4 mb-2">
+                    <a href="#" className="hover:text-foreground">Privacy Policy</a>
+                    <a href="#" className="hover:text-foreground">Terms of Service</a>
+                    <a href="#" className="hover:text-foreground">Contact Us</a>
+                </div>
+                <p>© {new Date().getFullYear()} Maximost. All rights reserved.</p>
+            </div>
         </footer>
       </main>
     </div>
@@ -191,3 +266,4 @@ const NewHomePage: React.FC = () => {
 };
 
 export default NewHomePage;
+
