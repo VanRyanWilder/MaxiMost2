@@ -9,11 +9,15 @@ await esbuild.build({
   platform: 'node',
   target: 'esnext',
   // Use the professional polyfill plugin
-  plugins: [
-    polyfillNode({
-      // Options (if needed)
-    }),
-  ],
+plugins: [
+  polyfillNode({
+    // Add this globals configuration
+    globals: {
+      process: true,
+      buffer: true,
+    },
+  }),
+],
 }).catch((e) => {
   console.error(e);
   process.exit(1);
