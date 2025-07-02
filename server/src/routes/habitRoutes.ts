@@ -3,7 +3,7 @@ import type { AppEnv } from '../hono'; // Shared types
 import { authMiddleware } from '../middleware/authMiddleware'; // Auth middleware
 
 // Create a new Hono instance specifically for these habit routes.
-import { authMiddleware } from '../middleware/authMiddleware';
+// import { authMiddleware } from '../middleware/authMiddleware'; // Ensure this is not duplicated if already imported above for AppEnv
 
 const habitRoutes = new Hono<AppEnv>();
 

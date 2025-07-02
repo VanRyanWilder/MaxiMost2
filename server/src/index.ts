@@ -37,12 +37,20 @@ app.use('/api/*', cors({
 
 // --- Route Mounting ---
 // Mount the imported Hono instances (sub-applications) to their base paths.
-// authMiddleware is now handled within habitRoutes.ts.
-// If other routes like userRoutes need auth, they should also handle it internally
-// or have specific app.use('/api/users/*', authMiddleware) lines here.
 
-app.route('/api/auth', authRoutes);
+// For /api/habits, we keep app.route for other methods (POST, PUT, DELETE)
+// but add a specific app.get to test direct delegation.
+// authMiddleware is inside habitRoutes, so it will be applied by habitRoutes.fetch
 app.route('/api/habits', habitRoutes);
+app.get('/api/habits', (c) => {
+    console.log("Direct app.get('/api/habits') in index.ts triggered. Delegating to habitRoutes.fetch...");
+    return habitRoutes.fetch(c.req.raw, c.env, c.executionCtx);
+});
+
+// Assuming authRoutes are public
+app.route('/api/auth', authRoutes);
+
+// For userRoutes, if it needs auth for all its sub-routes, it should apply it internally.
 app.route('/api/users', userRoutes);
 
 
