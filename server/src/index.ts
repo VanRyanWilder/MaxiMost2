@@ -1,71 +1,86 @@
 import { Hono } from 'hono';
-import type { AppEnv } from './hono'; // Import the shared AppEnv type
-import { cors } from 'hono/cors';
+import type { AppEnv } from './hono'; // Assuming hono.ts still exports AppEnv
 import { logger } from 'hono/logger';
+import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
-import { authMiddleware } from './middleware/authMiddleware.js';
+import { authMiddleware } from './middleware/authMiddleware';
 
-// Import route handlers (which are individual Hono apps)
-import authRoutes from './routes/authRoutes.js';
-import habitRoutes from './routes/habitRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // Assuming userRoutes is also structured similarly
-
-// Create the main application instance, typed with AppEnv
 const app = new Hono<AppEnv>();
 
-// --- Global Middleware (applied to all requests to this 'app') ---
+// --- Global Middleware ---
+// Verbose request logging (can be kept for debugging)
 app.use('*', async (c, next) => {
-  console.log(`Main app: Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
+  console.log(`Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
   await next();
 });
 app.use('*', logger());
 app.use('*', secureHeaders());
 
-// --- API Sub-Router Setup ---
-const api = new Hono<AppEnv>();
-
-// CORS Middleware for all /api/* routes (applied on the 'api' sub-router)
-api.use('*', cors({ // Apply CORS to all routes handled by the 'api' sub-router
+app.use('/api/*', cors({
   origin: '*', // TODO: Restrict in production
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
-  maxAge: 600,
-  credentials: true,
+  maxAge: 600, // Optional: configure preflight caching
+  credentials: true, // Optional: if you need to handle cookies or auth headers from frontend
 }));
 
-// Apply authMiddleware specifically to paths on the 'api' sub-router that need protection
-api.use('/habits/*', authMiddleware);
-// Example: If userRoutes also needs protection for all its paths:
-// api.use('/users/*', authMiddleware);
-// Otherwise, userRoutes can handle its own auth for specific sub-paths if necessary.
+// --- API Route Definitions ---
 
-// Mount individual route handlers onto the 'api' sub-router
-api.route('/habits', habitRoutes);
-api.route('/auth', authRoutes); // Typically public, authMiddleware won't apply unless path matches /habits/* or /users/*
-api.route('/users', userRoutes);
+// Auth Routes (Public)
+// Example: GET /api/auth
+app.get('/api/auth', (c) => {
+  console.log("Accessed /api/auth route in index.ts");
+  return c.json({ message: 'Auth routes are operational.' });
+});
+
+// Example: POST /api/auth/login (add more as needed)
+// app.post('/api/auth/login', async (c) => {
+//   // ... login logic
+//   return c.json({ message: 'Login placeholder' });
+// });
 
 
-// --- Main App Route Registration ---
-// Mount the entire API sub-router at the /api base path on the main 'app'
-app.route('/api', api);
+// Habit Routes (Protected)
+// The authMiddleware is applied directly before the handler.
+app.get('/api/habits', authMiddleware, async (c) => {
+  try {
+    const user = c.get('user');
+    if (!user?.localId) {
+      console.error('/api/habits: User or user.localId not found in context after authMiddleware.');
+      return c.json({ message: "User ID not found in token." }, 400);
+    }
+    console.log(`User ${user.localId} fetching habits from index.ts (GET /api/habits)`);
+    // Return an empty array to satisfy the frontend
+    return c.json([], 200);
+  } catch (error: any) {
+    console.error("Error in /api/habits route:", error);
+    return c.json({ message: "Error fetching habits.", errorDetail: error.message }, 500);
+  }
+});
+
+// Example: POST /api/habits (add more as needed, remember authMiddleware)
+// app.post('/api/habits', authMiddleware, async (c) => {
+//   const user = c.get('user');
+//   console.log(`User ${user.localId} creating habit from index.ts`);
+//   // ... logic to create habit
+//   return c.json({ message: 'Habit created placeholder' }, 201);
+// });
 
 
-// --- Root & Health Check Routes (on the main 'app') ---
-// These should be defined after the /api route mounting to ensure correct precedence.
+// --- Root Health Check ---
+// This should be one of the last routes defined to avoid capturing other paths.
 app.get('/', (c) => {
-  console.log("Root / handler reached on main app");
+  console.log("Root / handler reached in index.ts");
   return c.json({ message: 'Maximost API is operational.' });
 });
-app.get('/health', (c) => {
-  console.log("Health /health handler reached on main app");
-  return c.text('OK');
-});
 
-// --- Error & Not Found Handlers (on the main 'app') ---
+// --- Error & Not Found Handlers ---
+// These should generally be the very last items added to the app.
 app.onError((err, c) => {
   console.error(`Error in ${c.req.path} (main app): ${err.message}`, err.stack);
   return c.json({ success: false, message: 'Internal Server Error', error: err.message }, 500);
 });
+
 app.notFound((c) => {
   console.log(`Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
   return c.json({ success: false, message: `Endpoint Not Found by Main Router: ${c.req.method} ${c.req.path}` }, 404);
