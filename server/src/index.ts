@@ -1,31 +1,25 @@
 import { Hono } from 'hono';
-import type { AppEnv } from './hono'; // Import the shared AppEnv type
+import type { AppEnv } from './hono'; // Assuming hono.ts still exports AppEnv (only types)
 import { logger } from 'hono/logger';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { authMiddleware } from './middleware/authMiddleware';
 
-// Import route handlers (which are individual Hono apps)
-import habitRoutes from './routes/habitRoutes.js';
-import authRoutes from './routes/authRoutes.js'; // Assuming authRoutes.ts will be re-created or adapted
-import userRoutes from './routes/userRoutes.js'; // Assuming userRoutes.ts will be re-created or adapted
-
 const app = new Hono<AppEnv>();
 
-// --- Global Middleware (applied to all requests to this 'app') ---
+// --- Global Middleware ---
+// Top-level TRACE logger (from previous debugging, can be kept or removed)
 app.use('*', async (c, next) => {
-  console.log(`[TRACE - index.ts] Request received for: ${c.req.url}, Path: ${c.req.path}, Method: ${c.req.method}`);
+  console.log(`[TRACE index.ts V4.52] Request: ${c.req.method} ${c.req.url}, Path: ${c.req.path}`);
   await next();
-  console.log(`[TRACE - index.ts] Response sent for: ${c.req.url} with status ${c.res.status}`);
+  console.log(`[TRACE index.ts V4.52] Response: ${c.req.method} ${c.req.url} - Status ${c.res.status}`);
 });
-app.use('*', logger());
-app.use('*', secureHeaders());
 
-// --- API Sub-Router Setup ---
-const api = new Hono<AppEnv>();
+app.use('*', logger()); // Hono's built-in logger
+app.use('*', secureHeaders()); // Apply security headers
 
-// CORS Middleware for all /api/* routes (applied on the 'api' sub-router)
-api.use('*', cors({
+// CORS for all /api/* routes
+app.use('/api/*', cors({
   origin: '*', // TODO: Restrict in production
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
@@ -33,41 +27,56 @@ api.use('*', cors({
   credentials: true,
 }));
 
-// Apply authMiddleware specifically to paths on the 'api' sub-router that need protection
-api.use('/habits/*', authMiddleware);
-// api.use('/users/*', authMiddleware); // Example for the future, if userRoutes needs blanket protection
+// --- API Route Definitions ---
 
-// Mount individual route handlers onto the 'api' sub-router
-api.route('/habits', habitRoutes);
-api.route('/auth', authRoutes);
-api.route('/users', userRoutes);
+// Auth Routes (Public)
+// GET /api/auth
+app.get('/api/auth', (c) => {
+  console.log('[TRACE index.ts V4.52] Matched /api/auth route.');
+  return c.json({ message: 'Auth routes are operational.' });
+});
+
+// Habit Routes (Protected)
+// GET /api/habits
+// The authMiddleware is applied directly before the handler.
+app.get('/api/habits', authMiddleware, async (c) => {
+  console.log('[TRACE index.ts V4.52] Matched /api/habits route (after authMiddleware).');
+  try {
+    const user = c.get('user'); // Should be set by authMiddleware
+    if (!user?.localId) {
+      console.error('[TRACE index.ts V4.52] /api/habits: User or user.localId not found in context.');
+      return c.json({ message: "User context error after authentication." }, 401);
+    }
+    console.log(`[TRACE index.ts V4.52] User ${user.localId} fetching habits.`);
+    // Return an empty array to satisfy the frontend
+    return c.json([], 200);
+  } catch (error: any) {
+    console.error("[TRACE index.ts V4.52] Error in /api/habits route:", error);
+    return c.json({ message: "Error fetching habits.", errorDetail: error.message }, 500);
+  }
+});
+
+// Example for other habit routes (add as needed):
+// app.post('/api/habits', authMiddleware, async (c) => { /* ... */ });
+// app.put('/api/habits/:id', authMiddleware, async (c) => { /* ... */ });
 
 
-// --- Main App Route Registration ---
-// Mount the entire API sub-router at the /api base path on the main 'app'
-app.route('/api', api);
-
-
-// --- Root & Health Check Routes (on the main 'app') ---
-// These should be defined after the /api route mounting to ensure correct precedence.
+// --- Root Health Check ---
+// This should be defined AFTER specific API routes to ensure correct precedence.
 app.get('/', (c) => {
-  console.log('[TRACE - index.ts] Matched / route.');
-  return c.json({ message: 'Maximost API is operational.' }); // Restored original message
-});
-app.get('/health', (c) => {
-  console.log('[TRACE - index.ts] Health /health handler reached.');
-  return c.text('OK');
+  console.log('[TRACE index.ts V4.52] Matched / route.');
+  return c.json({ message: 'Maximost API is operational.' }); // Original message
 });
 
-// --- Error & Not Found Handlers (on the main 'app') ---
+// --- Error & Not Found Handlers ---
 app.onError((err, c) => {
-  console.error(`[TRACE - index.ts] Error in ${c.req.path}: ${err.message}`, err.stack);
+  console.error(`[TRACE index.ts V4.52] Error in ${c.req.path}: ${err.message}`, err.stack);
   return c.json({ success: false, message: 'Internal Server Error', error: err.message }, 500);
 });
 
 app.notFound((c) => {
-  console.log(`[TRACE - index.ts] Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
-  return c.json({ success: false, message: `Endpoint Not Found by Main Router: ${c.req.method} ${c.req.path}` }, 404);
+  console.log(`[TRACE index.ts V4.52] Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
+  return c.json({ success: false, message: `Endpoint Not Found: ${c.req.method} ${c.req.path}` }, 404);
 });
 
 export default app;
