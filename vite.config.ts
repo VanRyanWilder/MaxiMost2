@@ -26,7 +26,8 @@ export default defineConfig({
   
   // This tells Vite where to put the final, built website files.
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    // CHANGE THIS LINE:
+    outDir: 'dist', // Must be 'dist' for Cloudflare Pages
     emptyOutDir: true,
   },
   server: {
