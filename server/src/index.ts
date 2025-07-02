@@ -35,19 +35,14 @@ app.use('/api/*', cors({
   credentials: true,
 }));
 
-// --- Authentication Middleware & Route Mounting ---
-// Apply authMiddleware directly to specific paths before mounting the respective router.
-import { authMiddleware } from './middleware/authMiddleware.js';
+// --- Route Mounting ---
+// Mount the imported Hono instances (sub-applications) to their base paths.
+// authMiddleware is now handled within habitRoutes.ts.
+// If other routes like userRoutes need auth, they should also handle it internally
+// or have specific app.use('/api/users/*', authMiddleware) lines here.
 
-app.use('/api/habits/*', authMiddleware);
-app.route('/api/habits', habitRoutes);
-
-// Assuming authRoutes are public
 app.route('/api/auth', authRoutes);
-
-// For userRoutes, if it needs auth for all its sub-routes, apply it here too.
-// Otherwise, userRoutes can apply middleware internally for specific sub-paths.
-// Example: app.use('/api/users/*', authMiddleware);
+app.route('/api/habits', habitRoutes);
 app.route('/api/users', userRoutes);
 
 
