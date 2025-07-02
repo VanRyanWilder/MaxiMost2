@@ -12,6 +12,8 @@ export default defineConfig({
     // The "@replit/vite-plugin-runtime-error-modal" has been removed.
     // The "@replit/vite-plugin-cartographer" has been removed.
   ],
+  // ADD THIS PROPERTY:
+  publicDir: 'public',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -24,7 +26,8 @@ export default defineConfig({
   
   // This tells Vite where to put the final, built website files.
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    // CHANGE THIS LINE:
+    outDir: 'dist', // Must be 'dist' for Cloudflare Pages
     emptyOutDir: true,
   },
   server: {
