@@ -1,22 +1,21 @@
-import { app } from './hono'; // Import our single, typed app instance
+import { Hono } from 'hono';
+import type { AppEnv } from './hono'; // Import the shared AppEnv type
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
 import { authMiddleware } from './middleware/authMiddleware.js';
 
-// Import route handlers
-// These will now extend the 'app' from './hono'
-// Ensure these imports are not duplicated if already imported above.
-// If Hono, cors, logger, secureHeaders are only used here, remove the top-level Hono import.
-// For now, assuming they might be used elsewhere or it's a merge artifact.
-// Let's clean it up to have single imports.
-import authRoutes from './routes/authRoutes.js';
-import habitRoutes from './routes/habitRoutes.js';
-import userRoutes from './routes/userRoutes.js';
+// Import route handlers (which are now individual Hono apps)
+import authRoutesInstance from './routes/authRoutes.js';
+import habitRoutesInstance from './routes/habitRoutes.js';
+import userRoutesInstance from './routes/userRoutes.js';
 
-// --- Global Middleware applied to the shared app instance ---
+// Create the main application instance, typed with AppEnv
+const app = new Hono<AppEnv>();
 
-// Optional: Request logging (can be kept here or moved to hono.ts if truly global)
+// --- Global Middleware applied to the main app instance ---
+
+// Verbose request logging (from previous debugging steps)
 app.use('*', async (c, next) => {
   console.log(`Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
   await next();
@@ -36,36 +35,32 @@ app.use('/api/*', cors({
 
 // Authentication Middleware for protected API routes
 // Applied after CORS and general logging, but before specific route handlers for protected paths.
-// /api/auth routes are typically public for login/signup, so they are not included here.
 app.use('/api/habits/*', authMiddleware);
 app.use('/api/users/*', authMiddleware);
-// Add other protected /api/* patterns here, e.g.:
-// app.use('/api/profile/*', authMiddleware);
+// Note: /api/auth routes are typically public, so authMiddleware is not applied to them here.
 
 
-// --- Route Registration ---
-// Routes are registered on the same 'app' instance imported from './hono'.
-// The route files (authRoutes, habitRoutes, userRoutes) should now also import
-// this 'app' from './hono' and define their routes on it, instead of creating new Hono instances.
-app.route('/api/auth', authRoutes);
-app.route('/api/habits', habitRoutes); // habitRoutes should be of type Hono<AppEnv> or compatible
-app.route('/api/users', userRoutes);   // userRoutes should be of type Hono<AppEnv> or compatible
+// --- Route Mounting ---
+// Mount the imported Hono instances (sub-applications) to their base paths.
+app.route('/api/auth', authRoutesInstance);
+app.route('/api/habits', habitRoutesInstance);
+app.route('/api/users', userRoutesInstance);
 
 
-// --- Basic & Health Check Routes (can also be on the main app) ---
+// --- Basic & Health Check Routes (on the main app) ---
 app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
 app.get('/health', (c) => c.text('OK'));
 
 
 // --- Error & Not Found Handlers (applied to the main app) ---
 app.onError((err, c) => {
-  console.error(`Error: ${err.message}`, err.stack); // Log stack for more details
-  return c.json({ success: false, message: 'Internal Server Error' }, 500);
+  console.error(`Error in ${c.req.path}: ${err.message}`, err.stack);
+  return c.json({ success: false, message: 'Internal Server Error', error: err.message }, 500);
 });
 
 app.notFound((c) => {
   console.log(`404 Not Found for URL: ${c.req.url}`);
-  return c.json({ success: false, message: 'Endpoint Not Found' }, 404);
+  return c.json({ success: false, message: `Endpoint Not Found: ${c.req.method} ${c.req.path}` }, 404);
 });
 
-export default app; // Export the single, configured app instance
+export default app; // Export the single, configured main app instance

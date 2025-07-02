@@ -1,78 +1,67 @@
 import { Hono } from 'hono';
-import type { Context as HonoCtx } from 'hono';
-// REMOVED: import { db, admin } from '@/config/firebaseAdmin'; // firebase-admin is uninstalled
-// REMOVED: import { honoProtectWithFirebase, AuthEnv } from '@/middleware/authMiddleware'; // Auth is global
-import type { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "@shared/types/firestore"; // Keep if types are still relevant
+import type { AppEnv } from '../hono'; // Import the shared AppEnv type
+import type { Context as HonoContext } from 'hono';
+// Assuming these types are still relevant for request/response bodies or eventual DB interaction
+import type { FirestoreHabit as HabitDoc, HabitCompletionEntry as CompletionDoc, FirestoreTimestamp as TimestampDoc } from "@shared/types/firestore";
 
-// Assuming db and admin (for serverTimestamp) will be handled differently or passed via context if still needed
-// For now, direct usage of db and admin from firebaseAdmin will cause errors.
-// This file will need significant rework if it's still meant to interact with Firestore
-// without firebase-admin. The new authMiddleware provides c.get('user') which is generic.
-
-import { app } from '../hono'; // Import our single, typed app instance
-import type { Context as HonoContext } from 'hono'; // Renamed to avoid conflict if HonoCtx is defined elsewhere
-import type { FirestoreHabit as HabitDoc, HabitCompletionEntry as CompletionDoc, FirestoreTimestamp as TimestampDoc } from "@shared/types/firestore"; // Aliased to avoid global scope issues if these are too generic
-
-// No new Hono instance here. We extend the imported 'app'.
-// Types for context (c) will be inferred from the imported 'app'.
-
-const getCurrentDateString = (): string => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+// Create a new Hono instance specifically for these habit routes.
+const habitRoutes = new Hono<AppEnv>();
 
 // Placeholder for Firestore interaction logic.
 // This will need to be replaced with actual logic that uses a Firestore client
 // compatible with Cloudflare Workers (e.g., using Firestore REST API or a lightweight client).
-const getDbClient = (c: HonoContext) => { // Using aliased HonoContext
-  // Example: return new FirestoreClient({ apiKey: c.env.FIREBASE_WEB_API_KEY, ... });
-  // console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin.");
-  // Returning a more compliant mock to avoid build errors for now.
-  return {
-    collection: (name: string) => ({
-      where: (...args: any[]) => ({
-        get: async () => ({
-          empty: true,
-          docs: [] as { id: string; data: () => any }[] // Ensure docs is an array of expected shape
-        })
-      }),
-      add: async (data: any) => ({
-        get: async () => ({
-          id: 'mock-id',
-          data: () => data
-        })
-      }),
-      doc: (id: string) => ({
-        get: async () => ({
-          exists: false,
-          data: () => (null as any) // Mock data() to return null
+const getDbClient = (c: HonoContext) => { // c will be typed based on AppEnv from habitRoutes instance
+    // Example: return new FirestoreClient({ apiKey: c.env.FIREBASE_WEB_API_KEY, ... });
+    // console.warn("Firestore client not implemented for Cloudflare Workers without firebase-admin.");
+    return {
+      collection: (name: string) => ({
+        where: (...args: any[]) => ({
+          get: async () => ({
+            empty: true,
+            docs: [] as { id: string; data: () => any }[]
+          })
         }),
-        update: async (data: any) => {},
-        set: async (data: any) => {},
+        add: async (data: any) => ({
+          get: async () => ({
+            id: 'mock-id',
+            data: () => data
+          })
+        }),
+        doc: (id: string) => ({
+          get: async () => ({
+            exists: false,
+            data: () => (null as any)
+          }),
+          update: async (data: any) => {},
+          set: async (data: any) => {},
+        }),
       }),
-    }),
-    FieldValue: {
-        serverTimestamp: () => new Date().toISOString(),
-        arrayUnion: (data: any) => data,
-      },
+      FieldValue: {
+          serverTimestamp: () => new Date().toISOString(),
+          arrayUnion: (data: any) => data,
+        },
+    };
   };
+
+const getCurrentDateString = (): string => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
 };
 
-
-// GET / - Fetch all active habits for the authenticated user
-app.get('/', async (c) => { // No need for HonoCtx<AppEnv> here, type is inferred
+// GET / - Corresponds to GET /api/habits/
+// Auth is handled by middleware in index.ts for paths matching /api/habits/*
+habitRoutes.get('/', async (c) => {
   try {
-    const authenticatedUser = c.get('user');
+    const authenticatedUser = c.get('user'); // User from global authMiddleware
     if (!authenticatedUser?.localId) {
       return c.json({ message: "User ID not found in token." }, 400);
     }
     // const db = getDbClient(c);
-    // Temporarily return empty array to pass build & test auth
     console.log(`User ${authenticatedUser.localId} fetching habits. DB logic pending.`);
-    return c.json([], 200);
+    return c.json([], 200); // Return empty array as per plan
 
     // Actual DB logic (commented out for now):
     /*
@@ -102,8 +91,8 @@ app.get('/', async (c) => { // No need for HonoCtx<AppEnv> here, type is inferre
   }
 });
 
-// POST / - Create a new habit
-app.post('/', async (c) => {
+// POST / - Corresponds to POST /api/habits/
+habitRoutes.post('/', async (c) => {
   try {
     const authenticatedUser = c.get('user');
     if (!authenticatedUser?.localId) {
@@ -118,7 +107,6 @@ app.post('/', async (c) => {
       return c.json({ message: "Missing required fields: title, category, and type." }, 400);
     }
 
-    // Temporarily return mock response
     const mockNewHabit = {
       habitId: `mock-${Date.now()}`,
       userId: authenticatedUser.localId,
@@ -155,8 +143,8 @@ app.post('/', async (c) => {
   }
 });
 
-// PUT /:habitId - Update an existing habit
-app.put('/:habitId', async (c) => {
+// PUT /:habitId - Corresponds to PUT /api/habits/:habitId
+habitRoutes.put('/:habitId', async (c) => {
     try {
         const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
@@ -165,7 +153,6 @@ app.put('/:habitId', async (c) => {
         // const db = getDbClient(c);
         const body = await c.req.json();
 
-        // Temporarily return mock response
         const mockUpdatedHabit = { habitId, ...body, userId: authenticatedUser.localId };
         console.log(`User ${authenticatedUser.localId} updating habit ${habitId}. DB logic pending. Payload:`, body);
         return c.json(mockUpdatedHabit, 200);
@@ -192,8 +179,8 @@ app.put('/:habitId', async (c) => {
 });
 
 
-// POST /:habitId/complete - Mark a habit as complete
-app.post('/:habitId/complete', async (c) => {
+// POST /:habitId/complete - Corresponds to POST /api/habits/:habitId/complete
+habitRoutes.post('/:habitId/complete', async (c) => {
     try {
         const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
@@ -204,7 +191,6 @@ app.post('/:habitId/complete', async (c) => {
         if (!habitId) return c.json({ message: "Habit ID required." }, 400);
         if (typeof value !== 'number') return c.json({ message: "Value must be a number." }, 400);
 
-        // Temporarily return mock response
         console.log(`User ${authenticatedUser.localId} completing habit ${habitId}. DB logic pending. Value: ${value}`);
         return c.json({ message: "Habit completion logged (mock)." }, 200);
 
@@ -215,13 +201,13 @@ app.post('/:habitId/complete', async (c) => {
 
         if (!habitDoc.exists) return c.json({ message: "Habit not found." }, 404);
 
-        const habitData = habitDoc.data() as HabitDoc; // Use aliased type
+        const habitData = habitDoc.data() as HabitDoc;
         if (habitData.userId !== authenticatedUser.localId) return c.json({ message: "Forbidden." }, 403);
 
         const currentDateStr = getCurrentDateString();
         const serverTimestamp = db.FieldValue.serverTimestamp();
 
-        const newCompletion: CompletionDoc = { // Use aliased type
+        const newCompletion: CompletionDoc = {
             date: currentDateStr,
             value,
             timestamp: serverTimestamp as any
@@ -240,8 +226,8 @@ app.post('/:habitId/complete', async (c) => {
     }
 });
 
-// DELETE /:habitId - Archive a habit
-app.delete('/:habitId', async (c) => {
+// DELETE /:habitId - Corresponds to DELETE /api/habits/:habitId
+habitRoutes.delete('/:habitId', async (c) => {
     try {
         const authenticatedUser = c.get('user');
         const habitId = c.req.param('habitId');
@@ -249,7 +235,6 @@ app.delete('/:habitId', async (c) => {
         if (!habitId) return c.json({ message: "Habit ID required." }, 400);
         // const db = getDbClient(c);
 
-        // Temporarily return mock response
         console.log(`User ${authenticatedUser.localId} archiving habit ${habitId}. DB logic pending.`);
         return c.json({ message: "Habit archived successfully (mock)." }, 200);
 
@@ -273,4 +258,4 @@ app.delete('/:habitId', async (c) => {
     }
 });
 
-export default app;
+export default habitRoutes; // Export this Hono instance

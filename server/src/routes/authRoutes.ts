@@ -1,16 +1,33 @@
-import { app } from '../hono'; // Import our single, typed app instance
+import { Hono } from 'hono';
+import type { AppEnv } from '../hono'; // Import the shared AppEnv type
 
-// No new Hono instance here. We extend the imported 'app'.
-// Types for context (c) will be inferred from the imported 'app'.
+// Create a new Hono instance specifically for these auth routes.
+// It's typed with AppEnv to ensure context compatibility if any middleware
+// within these routes were to use c.env or c.set/c.get for shared types.
+const authRoutes = new Hono<AppEnv>();
 
-// TODO: Implement authentication routes (e.g., login, signup, refresh token)
-// These routes are typically public and won't go through the authMiddleware applied in index.ts
-app.get('/', (c) => {
-  return c.json({ message: 'Auth routes placeholder - to be implemented' });
+// Define authentication-related routes.
+// These are typically public and won't have the global authMiddleware applied to them
+// by default when mounted in index.ts (unless index.ts applies it to /api/auth/* specifically).
+authRoutes.get('/', (c) => {
+  // The 'user' variable might not be set here if authMiddleware is not applied to this path.
+  // const user = c.get('user');
+  // console.log('User in authRoutes GET /:', user);
+  return c.json({ message: 'Auth routes are operational. User context may not be available here.' });
 });
 
-// Example:
-// app.post('/signup', async (c) => { /* ... */ });
-// app.post('/login', async (c) => { /* ... */ });
+// Example placeholder for a login route
+authRoutes.post('/login', async (c) => {
+  // const body = await c.req.json();
+  // Perform login logic...
+  return c.json({ message: 'Login endpoint placeholder' }, 200);
+});
 
-export default app; // Export the app instance itself, not a new Hono router
+// Example placeholder for a signup route
+authRoutes.post('/signup', async (c) => {
+  // const body = await c.req.json();
+  // Perform signup logic...
+  return c.json({ message: 'Signup endpoint placeholder' }, 201);
+});
+
+export default authRoutes; // Export this Hono instance
