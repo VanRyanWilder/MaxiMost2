@@ -31,8 +31,10 @@ app.get('/api/habits', authMiddleware, async (c) => {
   return c.json([], 200);
 });
 
-// --- Root Health Check (MOST GENERAL ROUTE LAST) ---
-app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
+// Root health check removed as Cloudflare's _routes.json handles path delegation.
+// Requests not matching /api/* will be served static assets by Cloudflare Pages,
+// and requests to /api/* will be routed to this Hono app.
+// A specific /api/health or similar can be added if a programmatic health check for the worker itself is needed.
 
 
 export default app;
