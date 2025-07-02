@@ -12,6 +12,8 @@ export default defineConfig({
     // The "@replit/vite-plugin-runtime-error-modal" has been removed.
     // The "@replit/vite-plugin-cartographer" has been removed.
   ],
+  // ADD THIS PROPERTY:
+  publicDir: 'public',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
