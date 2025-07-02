@@ -5,11 +5,11 @@ import { authMiddleware } from '../middleware/authMiddleware'; // Auth middlewar
 // Create a new Hono instance specifically for these habit routes.
 const habitRoutes = new Hono<AppEnv>();
 
-// Apply auth middleware to all routes defined in this file.
-// This means any request to /api/habits/* will first go through authMiddleware.
-habitRoutes.use('*', authMiddleware);
+// Auth middleware is now applied in index.ts for the /api/habits/* path
+// before this router is mounted. So, no habitRoutes.use('*', authMiddleware) here.
 
 // Define the root of the habits route (handles GET /api/habits)
+// User context (c.get('user')) is expected to be set by the middleware in index.ts
 habitRoutes.get('/', async (c) => {
   try {
     const user = c.get('user'); // User should be set by authMiddleware
