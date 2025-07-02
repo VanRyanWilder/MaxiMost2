@@ -3,31 +3,29 @@ import type { AppEnv } from './hono'; // Import the shared AppEnv type
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
-// Note: authMiddleware is NOT applied globally here anymore,
-// it will be applied within specific route files or on specific app.route mounts if needed.
-// For this plan (v4.42), authMiddleware is applied within habitRoutes.ts.
+import { authMiddleware } from './middleware/authMiddleware.js';
 
-// Import route handlers (which are now individual Hono apps)
-import authRoutes from './routes/authRoutes.js'; // authRoutes should define its own Hono<AppEnv>
-import habitRoutes from './routes/habitRoutes.js'; // habitRoutes defines its own Hono<AppEnv> and applies authMiddleware internally
-import userRoutes from './routes/userRoutes.js';   // userRoutes should also define its own Hono<AppEnv>
+// Import route handlers (which are individual Hono apps)
+import authRoutes from './routes/authRoutes.js';
+import habitRoutes from './routes/habitRoutes.js';
+import userRoutes from './routes/userRoutes.js'; // Assuming userRoutes is also structured similarly
 
 // Create the main application instance, typed with AppEnv
 const app = new Hono<AppEnv>();
 
-// --- Global Middleware applied to the main app instance ---
-
-// Verbose request logging
+// --- Global Middleware (applied to all requests to this 'app') ---
 app.use('*', async (c, next) => {
   console.log(`Main app: Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
   await next();
 });
+app.use('*', logger());
+app.use('*', secureHeaders());
 
-app.use('*', logger());        // Hono's built-in logger
-app.use('*', secureHeaders()); // Apply security headers
+// --- API Sub-Router Setup ---
+const api = new Hono<AppEnv>();
 
-// CORS Configuration for all /api/* routes
-app.use('/api/*', cors({
+// CORS Middleware for all /api/* routes (applied on the 'api' sub-router)
+api.use('*', cors({ // Apply CORS to all routes handled by the 'api' sub-router
   origin: '*', // TODO: Restrict in production
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
@@ -35,47 +33,40 @@ app.use('/api/*', cors({
   credentials: true,
 }));
 
-// --- Route Mounting ---
-// Mount the imported Hono instances (sub-applications) to their base paths.
+// Apply authMiddleware specifically to paths on the 'api' sub-router that need protection
+api.use('/habits/*', authMiddleware);
+// Example: If userRoutes also needs protection for all its paths:
+// api.use('/users/*', authMiddleware);
+// Otherwise, userRoutes can handle its own auth for specific sub-paths if necessary.
 
-// For /api/habits, we keep app.route for other methods (POST, PUT, DELETE)
-// but add a specific app.get to test direct delegation.
-// authMiddleware is inside habitRoutes, so it will be applied by habitRoutes.fetch
-app.route('/api/habits', habitRoutes);
-app.get('/api/habits', (c) => {
-    console.log("Direct app.get('/api/habits') in index.ts triggered. Delegating to habitRoutes.fetch...");
-    return habitRoutes.fetch(c.req.raw, c.env, c.executionCtx);
-});
-
-// Assuming authRoutes are public
-app.route('/api/auth', authRoutes);
-
-// For userRoutes, if it needs auth for all its sub-routes, it should apply it internally.
-app.route('/api/users', userRoutes);
+// Mount individual route handlers onto the 'api' sub-router
+api.route('/habits', habitRoutes);
+api.route('/auth', authRoutes); // Typically public, authMiddleware won't apply unless path matches /habits/* or /users/*
+api.route('/users', userRoutes);
 
 
-// --- Basic & Health Check Routes (on the main app) ---
-// This get('/') must be after app.route calls for /api to avoid conflicts
+// --- Main App Route Registration ---
+// Mount the entire API sub-router at the /api base path on the main 'app'
+app.route('/api', api);
+
+
+// --- Root & Health Check Routes (on the main 'app') ---
+// These should be defined after the /api route mounting to ensure correct precedence.
 app.get('/', (c) => {
-  console.log("Root / handler reached");
+  console.log("Root / handler reached on main app");
   return c.json({ message: 'Maximost API is operational.' });
 });
-
 app.get('/health', (c) => {
-  console.log("Health /health handler reached");
+  console.log("Health /health handler reached on main app");
   return c.text('OK');
 });
 
-
-// --- Error & Not Found Handlers (applied to the main app) ---
+// --- Error & Not Found Handlers (on the main 'app') ---
 app.onError((err, c) => {
-  console.error(`Error in ${c.req.path}: ${err.message}`, err.stack);
+  console.error(`Error in ${c.req.path} (main app): ${err.message}`, err.stack);
   return c.json({ success: false, message: 'Internal Server Error', error: err.message }, 500);
 });
-
 app.notFound((c) => {
-  // This will catch requests that don't match any defined Hono route,
-  // including those that might have been intended for sub-routers but didn't match there.
   console.log(`Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
   return c.json({ success: false, message: `Endpoint Not Found by Main Router: ${c.req.method} ${c.req.path}` }, 404);
 });
