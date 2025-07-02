@@ -3,14 +3,14 @@ import type { AppEnv } from './hono'; // Import the shared AppEnv type
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
-import { authMiddleware } from './middleware/authMiddleware.js';
+// Note: authMiddleware is NOT applied globally here anymore,
+// it will be applied within specific route files or on specific app.route mounts if needed.
+// For this plan (v4.42), authMiddleware is applied within habitRoutes.ts.
 
-// We will temporarily bypass the external route files for /api/habits and /api/auth
-// import authRoutesInstance from './routes/authRoutes.js';
-// import habitRoutesInstance from './routes/habitRoutes.js';
-// Still need userRoutes if it's being used for other things or to avoid build errors if referenced elsewhere
-import userRoutesInstance from './routes/userRoutes.js';
-
+// Import route handlers (which are now individual Hono apps)
+import authRoutes from './routes/authRoutes.js'; // authRoutes should define its own Hono<AppEnv>
+import habitRoutes from './routes/habitRoutes.js'; // habitRoutes defines its own Hono<AppEnv> and applies authMiddleware internally
+import userRoutes from './routes/userRoutes.js';   // userRoutes should also define its own Hono<AppEnv>
 
 // Create the main application instance, typed with AppEnv
 const app = new Hono<AppEnv>();
@@ -19,7 +19,7 @@ const app = new Hono<AppEnv>();
 
 // Verbose request logging
 app.use('*', async (c, next) => {
-  console.log(`Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
+  console.log(`Main app: Request received for URL: ${c.req.url}, Method: ${c.req.method}`);
   await next();
 });
 
@@ -35,39 +35,26 @@ app.use('/api/*', cors({
   credentials: true,
 }));
 
-// Authentication Middleware
-// Apply to /api/users/* if it's still active and needs protection
-app.use('/api/users/*', authMiddleware);
-// Note: /api/habits/* authMiddleware will be applied directly on its new route definition below.
-
-
-// --- Route Definitions ---
-
-// Define the GET /api/habits route directly in this file for debugging
-app.get('/api/habits', authMiddleware, async (c) => {
-  try {
-    const user = c.get('user');
-    if (!user?.localId) {
-      console.log('/api/habits: User ID not found in token after authMiddleware.');
-      return c.json({ message: "User ID not found in token." }, 400);
-    }
-    console.log(`User ${user.localId} fetching habits from index.ts direct route.`);
-    // Return an empty array to satisfy the frontend
-    return c.json([], 200);
-  } catch (error: any) {
-    console.error("Error in direct /api/habits route:", error);
-    return c.json({ message: "Error fetching habits.", errorDetail: error.message }, 500);
-  }
-});
-
-// Mount other routes (if any are kept active, e.g., userRoutes)
-// app.route('/api/auth', authRoutesInstance); // Commented out as per plan
-app.route('/api/users', userRoutesInstance);   // Assuming userRoutes might still be needed or for structural integrity
+// --- Route Mounting ---
+// Mount the imported Hono instances (sub-applications) to their base paths.
+// The authMiddleware is now applied *within* habitRoutes.ts for all its routes.
+// authRoutes are typically public. userRoutes might need authMiddleware applied here if not done internally.
+app.route('/api/auth', authRoutes);
+app.route('/api/habits', habitRoutes);
+app.route('/api/users', userRoutes); // If userRoutes needs auth, it should apply it internally or be wrapped here.
 
 
 // --- Basic & Health Check Routes (on the main app) ---
-app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
-app.get('/health', (c) => c.text('OK'));
+// This get('/') must be after app.route calls for /api to avoid conflicts
+app.get('/', (c) => {
+  console.log("Root / handler reached");
+  return c.json({ message: 'Maximost API is operational.' });
+});
+
+app.get('/health', (c) => {
+  console.log("Health /health handler reached");
+  return c.text('OK');
+});
 
 
 // --- Error & Not Found Handlers (applied to the main app) ---
@@ -77,8 +64,10 @@ app.onError((err, c) => {
 });
 
 app.notFound((c) => {
-  console.log(`404 Not Found for URL: ${c.req.url} (from main app.notFound)`);
-  return c.json({ success: false, message: `Endpoint Not Found: ${c.req.method} ${c.req.path}` }, 404);
+  // This will catch requests that don't match any defined Hono route,
+  // including those that might have been intended for sub-routers but didn't match there.
+  console.log(`Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
+  return c.json({ success: false, message: `Endpoint Not Found by Main Router: ${c.req.method} ${c.req.path}` }, 404);
 });
 
 export default app;
