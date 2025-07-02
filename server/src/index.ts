@@ -15,6 +15,9 @@ import userRoutes from './routes/userRoutes.js';   // userRoutes should also def
 // Create the main application instance, typed with AppEnv
 const app = new Hono<AppEnv>();
 
+// Create the API sub-router instance, also typed with AppEnv
+const api = new Hono<AppEnv>();
+
 // --- Global Middleware applied to the main app instance ---
 
 // Verbose request logging
@@ -38,20 +41,23 @@ app.use('/api/*', cors({
 // --- Route Mounting ---
 // Mount the imported Hono instances (sub-applications) to their base paths.
 
-// For /api/habits, we keep app.route for other methods (POST, PUT, DELETE)
-// but add a specific app.get to test direct delegation.
-// authMiddleware is inside habitRoutes, so it will be applied by habitRoutes.fetch
-app.route('/api/habits', habitRoutes);
-app.get('/api/habits', (c) => {
-    console.log("Direct app.get('/api/habits') in index.ts triggered. Delegating to habitRoutes.fetch...");
-    return habitRoutes.fetch(c.req.raw, c.env, c.executionCtx);
-});
-
-// Assuming authRoutes are public
-app.route('/api/auth', authRoutes);
+// Mount habitRoutes and authRoutes onto the api sub-router
+api.route('/habits', habitRoutes);
+api.route('/auth', authRoutes);
 
 // For userRoutes, if it needs auth for all its sub-routes, it should apply it internally.
-app.route('/api/users', userRoutes);
+// For now, let's mount it directly on the app, but it could also be on the api sub-router
+// if all user routes are intended to be under /api/users.
+// Based on the original structure, it was /api/users, so we'll keep it on the main app for now,
+// but prefixed with /api. If it should be part of the `api` sub-router, it would be:
+// api.route('/users', userRoutes);
+// And then the main app would mount `api` at `/api`.
+// Let's assume for now userRoutes are also part of the /api path but mounted separately on app.
+// app.route('/api/users', userRoutes); // userRoutes will be mounted via the api sub-router as well.
+api.route('/users', userRoutes); // Mount userRoutes onto the api sub-router
+
+// Mount the main api instance onto the main app at the /api path
+app.route('/api', api);
 
 
 // --- Basic & Health Check Routes (on the main app) ---
