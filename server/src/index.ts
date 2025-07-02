@@ -8,8 +8,13 @@ import { authMiddleware } from './middleware/authMiddleware';
 const app = new Hono<AppEnv>();
 
 // --- Global Middleware ---
-// Note: The top-level TRACE logger from v4.52 has been removed as per plan v4.53
-// to simplify and focus on route order.
+// Top-level TRACE logger (can be kept for initial debugging of path)
+app.use('*', async (c, next) => {
+  console.log(`[V4.54 TRACE] Request: ${c.req.method} ${c.req.url}, Path: ${c.req.path}`);
+  await next();
+  console.log(`[V4.54 TRACE] Response: ${c.req.method} ${c.req.url} - Status ${c.res.status}`);
+});
+
 app.use('*', logger()); // Hono's built-in logger
 app.use('*', secureHeaders()); // Apply security headers
 
@@ -18,16 +23,14 @@ app.use('/api/*', cors({
   origin: '*', // TODO: Restrict in production
   allowHeaders: ['Authorization', 'Content-Type'],
   allowMethods: ['POST', 'GET', 'OPTIONS', 'DELETE', 'PUT'],
-  // maxAge: 600, // Optional
-  // credentials: true, // Optional
 }));
 
-// --- API Route Definitions (MOST SPECIFIC ROUTES FIRST) ---
+// --- API Route Definitions ---
 
 // Auth Routes (Public)
 // GET /api/auth
 app.get('/api/auth', (c) => {
-  console.log('[V4.53] Matched /api/auth route.');
+  console.log('[V4.54] Matched /api/auth route.');
   return c.json({ message: 'Auth routes are operational.' });
 });
 
@@ -35,18 +38,18 @@ app.get('/api/auth', (c) => {
 // GET /api/habits
 // The authMiddleware is applied directly before the handler.
 app.get('/api/habits', authMiddleware, async (c) => {
-  console.log('[V4.53] Matched /api/habits route (after authMiddleware).');
+  console.log('[V4.54] Matched /api/habits route (after authMiddleware).');
   try {
     const user = c.get('user'); // Should be set by authMiddleware
     if (!user?.localId) {
-      console.error('[V4.53] /api/habits: User or user.localId not found in context.');
+      console.error('[V4.54] /api/habits: User or user.localId not found in context.');
       return c.json({ message: "User context error after authentication." }, 401);
     }
-    console.log(`[V4.53] User ${user.localId} fetching habits from index.ts (GET /api/habits)`);
+    console.log(`[V4.54] User ${user.localId} fetching habits from index.ts (GET /api/habits)`);
     // Return an empty array to satisfy the frontend
     return c.json([], 200);
   } catch (error: any) {
-    console.error("[V4.53] Error in /api/habits route:", error);
+    console.error("[V4.54] Error in /api/habits route:", error);
     return c.json({ message: "Error fetching habits.", errorDetail: error.message }, 500);
   }
 });
@@ -56,14 +59,21 @@ app.get('/api/habits', authMiddleware, async (c) => {
 // app.put('/api/habits/:id', authMiddleware, async (c) => { /* ... */ });
 
 
-// --- Root Health Check (MOST GENERAL ROUTE LAST) ---
-// This should be defined AFTER specific API routes to ensure correct precedence.
-app.get('/', (c) => {
-  console.log('[V4.53] Matched / route.');
-  return c.json({ message: 'Maximost API is operational.' }); // Original message
+// --- Root Health Check REMOVED ---
+// REMOVED: app.get('/', (c) => c.json({ message: 'Maximost API is operational.' }));
+
+// --- Error & Not Found Handlers ---
+// It's good practice to keep these, especially notFound.
+app.onError((err, c) => {
+  console.error(`[V4.54] Error in ${c.req.path}: ${err.message}`, err.stack);
+  return c.json({ success: false, message: 'Internal Server Error', error: err.message }, 500);
 });
 
-// Note: onError and notFound handlers from v4.52 are removed as per v4.53's simplification.
-// Hono has default handlers for these. If specific behavior is needed, they can be re-added.
+app.notFound((c) => {
+  // This will now handle requests to '/' as well, if Cloudflare Pages passes them to the worker.
+  // Or any other path not matched by the /api/* routes.
+  console.log(`[V4.54] Main app 404 Not Found for URL: ${c.req.url} (Path: ${c.req.path})`);
+  return c.json({ success: false, message: `Endpoint Not Found: ${c.req.method} ${c.req.path}` }, 404);
+});
 
 export default app;
