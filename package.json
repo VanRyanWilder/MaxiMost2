@@ -4,12 +4,12 @@
   "description": "",
   "main": "server/index.ts",
   "scripts": {
-    "dev": "concurrently \"npm:dev:*\"",
+    "build:client": "vite build",
+    "build:server": "npm run build --prefix server",
+    "build": "npm run build:server && npm run build:client",
+    "dev": "vite dev",
     "dev:client": "vite",
     "dev:server": "wrangler dev server/src/worker.ts --local",
-    "build:server": "npm run build --prefix server",
-    "build:client": "vite build",
-    "build": "npm run build:server && npm run build:client",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
     "test": "jest"
   },
