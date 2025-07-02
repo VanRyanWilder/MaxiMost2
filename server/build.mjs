@@ -1,11 +1,12 @@
 import esbuild from 'esbuild';
 
 await esbuild.build({
-  entryPoints: ['src/index.ts'], // Point to your main server entry file (usually index.ts for Hono)
+  entryPoints: ['src/index.ts'], // Point to your main server entry file
   bundle: true,
-  outfile: 'dist/worker.js', // Output for Cloudflare Workers
+  // CHANGE THIS LINE:
+  outfile: '../dist/_worker.js', // Output to the root dist folder
   format: 'esm',
-  platform: 'node', // Crucial for firebase-admin and other Node.js specific APIs
+  platform: 'node', // Correct platform for firebase-admin
   target: 'esnext', // Target modern JS
   // external: ['node:*'] // Keep if using node:* imports and nodejs_compat flag in wrangler.toml
                          // If firebase-admin is the main driver, nodejs_compat handles this.

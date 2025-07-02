@@ -6,7 +6,7 @@
   "scripts": {
     "build:client": "vite build",
     "build:server": "npm run build --prefix server",
-    "build": "npm run build:server && npm run build:client",
+    "build": "npm run build:client && npm run build:server",
     "dev": "vite dev",
     "dev:client": "vite",
     "dev:server": "wrangler dev server/src/worker.ts --local",
