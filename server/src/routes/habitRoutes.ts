@@ -7,8 +7,8 @@ import { authMiddleware } from '../middleware/authMiddleware'; // Auth middlewar
 
 const habitRoutes = new Hono<AppEnv>();
 
-// Apply auth middleware to all routes within this file
-habitRoutes.use('*', authMiddleware);
+// Auth middleware is now applied globally in index.ts for /api/* paths.
+// No need to apply it here again.
 
 // This now handles GET requests to /api/habits
 habitRoutes.get('/', async (c) => {
