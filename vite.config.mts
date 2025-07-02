@@ -1,30 +1,32 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { viteStaticCopy } from 'vite-plugin-static-copy'; // Import the plugin
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Set the root to the client directory
+  root: 'client',
   plugins: [
     react(),
-    // Add the static copy plugin configuration
     viteStaticCopy({
       targets: [
         {
-          src: 'public/_routes.json',
-          dest: '.' // Copy to the root of the 'dist' folder
+          // The source path is now relative to the new root
+          src: '../public/_routes.json',
+          dest: '..' // Copy to the root of the 'dist' folder
         }
       ]
     })
   ],
-  // We no longer need publicDir, as the plugin handles it explicitly
-  // publicDir: 'public', 
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './client/src'),
+      // The alias path needs to be adjusted for the new root
+      '@': path.resolve(__dirname, 'client/src'),
     },
   },
   build: {
-    outDir: 'dist',
+    // The output directory is now relative to the new root
+    outDir: '../dist',
   },
 });
