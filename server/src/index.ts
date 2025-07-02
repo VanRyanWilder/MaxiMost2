@@ -64,7 +64,8 @@ app.get('/api/habits', authMiddleware, async (c) => {
 // This should be one of the last routes defined to avoid capturing other paths.
 app.get('/', (c) => {
   console.log('[TRACE] Matched / route.');
-  return c.json({ message: 'Maximost API is operational.' });
+  // CHANGE THE MESSAGE HERE:
+  return c.json({ message: 'Deployment v4.50 is LIVE.' });
 });
 
 // --- Error & Not Found Handlers ---
