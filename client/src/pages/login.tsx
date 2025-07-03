@@ -31,8 +31,8 @@ export default function Login() {
     try {
       const user = await signInWithEmail(email, password);
       if (user) {
-        // Use the existing login function from context to handle auth state
-        await login(user.email || "user@example.com", "firebase-auth");
+        // Firebase auth state is handled by onAuthStateChanged in UserProvider.
+        // No need to call context's mock login anymore.
         setLocation("/dashboard");
       }
     } catch (error: any) {
@@ -70,8 +70,8 @@ export default function Login() {
       }
       
       if (user) {
-        // Use the existing login function from context to handle auth state
-        await login(user.email || "user@example.com", "firebase-auth");
+        // Firebase auth state is handled by onAuthStateChanged in UserProvider.
+        // No need to call context's mock login anymore.
         setLocation("/dashboard");
       }
     } catch (error) {

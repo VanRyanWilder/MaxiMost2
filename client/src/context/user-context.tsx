@@ -4,65 +4,27 @@ import { queryClient } from "@/lib/queryClient";
 import { onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
 
-// Create a static mock user for development
-const mockUser: User = {
-  id: 1,
-  username: "maximost_user",
-  password: "password123",
-  name: "MaxiMost User",
-  email: "user@maximost.com",
-  currentProgramId: 3,
-  programStartDate: new Date("2023-04-15"),
-  programProgress: 32,
-  firebaseUid: null,
-  subscriptionTier: "premium",
-  subscriptionStatus: "active",
-  subscriptionStartDate: new Date("2023-03-15"),
-  subscriptionEndDate: new Date("2024-03-15"),
-  trialEndsAt: null,
-  stripeCustomerId: "cus_123456",
-  stripeSubscriptionId: "sub_123456"
-};
-
-// Create a guest user
-const guestUser: User = {
-  id: 999,
-  username: "guest",
-  password: "",
-  name: "Guest User",
-  email: "guest@example.com",
-  currentProgramId: null,
-  programStartDate: null,
-  programProgress: null,
-  firebaseUid: null,
-  subscriptionTier: "free",
-  subscriptionStatus: "active",
-  subscriptionStartDate: null,
-  subscriptionEndDate: null,
-  trialEndsAt: null,
-  stripeCustomerId: null,
-  stripeSubscriptionId: null
-};
+// Represents backend user profile data. To be fetched after Firebase auth.
+// For now, it can be minimal or derived from FirebaseUser.
+// import type { User as BackendUserProfile } from "@shared/schema";
 
 interface UserContextType {
-  user: User | null;
-  firebaseUser: FirebaseUser | null;
-  userLoading: boolean;
-  userError: Error | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-  refetchUser: () => Promise<void>;
+  // user: BackendUserProfile | null; // Future: for backend profile data
+  firebaseUser: FirebaseUser | null; // Actual Firebase user object
+  userLoading: boolean; // True while checking auth state initially
+  userError: Error | null; // For any auth errors during initial load or operations
+  // login method removed - components should use Firebase SDK directly
+  logout: () => Promise<void>; // Make logout async
+  // refetchUser might be relevant for backend profile, not directly for FirebaseUser
 }
 
-// Create context with a default value to avoid undefined checks
+// Default context value
 const defaultUserContext: UserContextType = {
-  user: mockUser,
+  // user: null,
   firebaseUser: null,
-  userLoading: false,
+  userLoading: true, // Start as true until first auth check completes
   userError: null,
-  login: async () => {},
-  logout: () => {},
-  refetchUser: async () => {},
+  logout: async () => { await firebaseSignOut(); }, // Updated default logout
 };
 
 const UserContext = createContext<UserContextType>(defaultUserContext);
@@ -72,53 +34,62 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-  const [userLoading, setUserLoading] = useState(false);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  // const [user, setUser] = useState<BackendUserProfile | null>(null); // For backend profile
+  const [userLoading, setUserLoading] = useState(true); // True on initial load
   const [userError, setUserError] = useState<Error | null>(null);
-  const [user, setUser] = useState<User | null>(mockUser);
 
-  const login = async (username: string, password: string) => {
-    try {
-      setUserLoading(true);
-
-      // Check if this is a guest login
-      if (username === "guest@example.com" && password === "guest-password") {
-        console.log("Logging in as guest");
-        setUser(guestUser);
-        localStorage.setItem('userType', 'guest');
+  useEffect(() => {
+    setUserLoading(true);
+    const unsubscribe = onAuthStateChange((fbUser) => {
+      if (fbUser) {
+        setFirebaseUser(fbUser);
+        // setUser(mapFirebaseUserToBackendUser(fbUser)); // Placeholder to map/fetch backend profile
+        console.log("Firebase user signed in:", fbUser.uid);
       } else {
-        // For regular logins, use the mock user
-        console.log("Logging in as regular user");
-        setUser(mockUser);
-        localStorage.setItem('userType', 'regular');
+        setFirebaseUser(null);
+        // setUser(null);
+        console.log("Firebase user signed out.");
       }
+      setUserLoading(false);
+    });
 
-      setUserLoading(false);
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
+      setUserLoading(false); // Reset loading on unmount if needed
+    }
+  }, []);
+
+  // Logout function using Firebase signOut
+  const logout = async () => {
+    try {
+      await firebaseSignOut(); // This will trigger onAuthStateChanged
+      // queryClient.clear(); // Clear react-query cache if used for user-specific data
     } catch (error) {
-      console.error("Login error:", error);
-      setUserLoading(false);
-      setUserError(new Error("Login failed"));
-      throw new Error("Login failed");
+      console.error("Error signing out with Firebase:", error);
+      setUserError(error as Error);
+      // Potentially re-throw or handle more gracefully
     }
   };
 
-  const logout = () => {
-    // In a real app, we would call an API to logout
-    setUser(null);
-    queryClient.clear();
-  };
-
-  const refetchUser = async () => {
-    // In a real app, this would actually refetch the user
-    setUser(mockUser);
-  };
+  // Placeholder: Function to map Firebase user to your backend user structure or fetch it
+  // const mapFirebaseUserToBackendUser = (fbUser: FirebaseUser): BackendUserProfile => {
+  //   return {
+  //     id: 0, // This would come from your backend
+  //     firebaseUid: fbUser.uid,
+  //     email: fbUser.email || "",
+  //     name: fbUser.displayName || "",
+  //     // ... other fields
+  //   };
+  // };
 
   const value: UserContextType = {
-    user,
+    // user, // The backend profile user
+    firebaseUser, // The Firebase auth user
     userLoading,
     userError,
-    login,
     logout,
-    refetchUser,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
@@ -126,5 +97,8 @@ export function UserProvider({ children }: UserProviderProps) {
 
 export function useUser() {
   const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error("useUser must be used within a UserProvider");
+  }
   return context;
 }

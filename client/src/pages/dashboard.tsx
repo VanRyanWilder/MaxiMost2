@@ -62,13 +62,28 @@ export default function Dashboard() {
   const [completions, setCompletions] = useState<HabitCompletion[]>([]); // Initialize as empty
   const [showCustomHabitDialog, setShowCustomHabitDialog] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
-  const { user } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Updated to use firebaseUser and userLoading from the refactored context
+  const { firebaseUser, userLoading: authLoading, userError: authError } = useUser();
+  const [isLoading, setIsLoading] = useState(true); // This is for data fetching state
+  const [error, setError] = useState<string | null>(null); // For data fetching errors
 
   useEffect(() => {
+    // If auth state is still loading, don't do anything yet.
+    if (authLoading) {
+      setIsLoading(true); // Keep data loading true if auth is loading
+      return;
+    }
+
+    // If there was an auth error, display it and don't fetch.
+    if (authError) {
+      setError(`Authentication error: ${authError.message}`);
+      setIsLoading(false);
+      setHabits([]);
+      return;
+    }
+
     const fetchHabitsAndCompletions = async () => {
-      if (user) {
+      if (firebaseUser) { // Check for firebaseUser now
         setIsLoading(true);
         setError(null);
         try {
@@ -93,7 +108,7 @@ export default function Dashboard() {
     };
 
     fetchHabitsAndCompletions();
-  }, [user]);
+  }, [firebaseUser, authLoading, authError]);
 
   // Get selected date range for Weekly View - starts on Monday of current week
   const startOfCurrentWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
