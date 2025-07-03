@@ -8,7 +8,7 @@ import {
   FacebookAuthProvider,
   OAuthProvider, // For Apple
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
+  createUserWithEmailAndPassword, // ADD THIS: For the sign up page
   signOut as firebaseSignOut,
   signInAnonymously as firebaseSignInAnonymously, // Use this for guest login
   User
@@ -26,7 +26,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// --- FIX: Export the auth object so other parts of the app can use it ---
 export const auth = getAuth(app);
 
 // --- Social Login Functions ---
@@ -66,6 +65,17 @@ export const signInWithEmail = async (email, password) => {
     return userCredential.user;
   } catch (error) {
     console.error("Email sign-in failed", error);
+    throw error;
+  }
+};
+
+// --- NEWLY ADDED: Function for Email Sign Up ---
+export const signUpWithEmail = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Email sign-up failed", error);
     throw error;
   }
 };
