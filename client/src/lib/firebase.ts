@@ -3,7 +3,7 @@ import {
   getAuth,
   onAuthStateChanged as firebaseOnAuthStateChanged,
   signInWithRedirect, // Use this for social logins
-  getRedirectResult, // ADD THIS: To process the result after redirect
+  getRedirectResult, // To process the result after redirect
   GoogleAuthProvider,
   FacebookAuthProvider,
   OAuthProvider, // For Apple
@@ -26,9 +26,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// --- FIX: Export the auth object so other parts of the app can use it ---
+export const auth = getAuth(app);
 
-// --- Social Login Functions (Unchanged) ---
+// --- Social Login Functions ---
 
 export const signInWithGoogle = () => {
   const provider = new GoogleAuthProvider();
@@ -45,7 +46,7 @@ export const signInWithApple = () => {
   return signInWithRedirect(auth, provider);
 };
 
-// --- Anonymous Login Function (Unchanged) ---
+// --- Anonymous Login Function ---
 
 export const signInAnonymously = async () => {
   try {
@@ -77,7 +78,7 @@ export const signOut = () => {
   return firebaseSignOut(auth);
 };
 
-// --- NEWLY ADDED: Function to process redirect result ---
+// --- Function to process redirect result ---
 export const processRedirectResult = () => {
   return getRedirectResult(auth);
 };
