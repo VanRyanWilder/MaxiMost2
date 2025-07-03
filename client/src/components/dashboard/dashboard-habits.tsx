@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth"; // Import onAuthStateChanged
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -41,48 +41,52 @@ export function DashboardHabits() {
   const [activeView, setActiveView] = useState<'list' | 'calendar' | 'weekly'>('weekly');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // --- START: NEW DATA FETCHING LOGIC ---
+  // --- START: REVISED DATA FETCHING LOGIC ---
   useEffect(() => {
-    const fetchHabits = async () => {
-      setIsLoading(true);
-      setError(null);
-      const auth = getAuth();
-      const user = auth.currentUser;
+    const auth = getAuth();
+    
+    // Use onAuthStateChanged to listen for the user's sign-in state.
+    // This is more reliable than checking auth.currentUser directly on load.
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in, let's fetch their data.
+        setIsLoading(true);
+        setError(null);
+        try {
+          const token = await user.getIdToken();
+          const response = await fetch('/api/habits', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+          });
 
-      if (!user) {
+          if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+          }
+
+          const data = await response.json();
+          // Assuming the API returns an object like { habits: [], completions: [] }
+          setHabits(data.habits || []);
+          setCompletions(data.completions || []);
+
+        } catch (err: any) {
+          console.error("Error loading habits:", err);
+          setError(err.message || "Failed to load habits. Please try again.");
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // User is signed out.
         setError("You must be logged in to view habits.");
         setIsLoading(false);
-        return;
+        // A protected route component will likely handle the redirect to /login
       }
+    });
 
-      try {
-        const token = await user.getIdToken();
-        const response = await fetch('/api/habits', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error ${response.status}`);
-        }
-
-        const data = await response.json();
-        // Assuming the API returns an object like { habits: [], completions: [] }
-        setHabits(data.habits || []);
-        setCompletions(data.completions || []);
-
-      } catch (err: any) {
-        console.error("Error loading habits:", err);
-        setError(err.message || "Failed to load habits. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHabits();
-  }, []); // Empty dependency array means this runs once on component mount
-  // --- END: NEW DATA FETCHING LOGIC ---
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []); // Empty dependency array ensures this effect runs only once.
+  // --- END: REVISED DATA FETCHING LOGIC ---
 
   // Filter to show only top 5 habits
   const sortedHabits = [...habits]
@@ -136,14 +140,14 @@ export function DashboardHabits() {
   // --- START: NEW LOADING AND ERROR UI ---
   const renderContent = () => {
     if (isLoading) {
-      return <div className="text-center p-8">Loading your habits...</div>;
+      return <div className="text-center p-8">Authenticating & loading habits...</div>;
     }
 
     if (error) {
       return (
         <div className="text-center p-8 text-red-500">
           <AlertCircle className="mx-auto h-8 w-8 mb-2" />
-          <p className="font-semibold">Error loading habits</p>
+          <p className="font-semibold">Could not load habits</p>
           <p className="text-sm">{error}</p>
         </div>
       );
