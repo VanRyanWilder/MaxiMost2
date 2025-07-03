@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import type { User } from "@shared/schema";
 import { queryClient } from "@/lib/queryClient";
-import { onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase";
-import { User as FirebaseUser } from "firebase/auth";
+import { auth, onAuthStateChange, signOut as firebaseSignOut } from "@/lib/firebase"; // Import auth
+import { User as FirebaseUser, getRedirectResult } from "firebase/auth"; // Import getRedirectResult
 
 // Represents backend user profile data. To be fetched after Firebase auth.
 // For now, it can be minimal or derived from FirebaseUser.
@@ -41,24 +41,47 @@ export function UserProvider({ children }: UserProviderProps) {
 
   useEffect(() => {
     setUserLoading(true);
-    const unsubscribe = onAuthStateChange((fbUser) => {
-      if (fbUser) {
-        setFirebaseUser(fbUser);
-        // setUser(mapFirebaseUserToBackendUser(fbUser)); // Placeholder to map/fetch backend profile
-        console.log("Firebase user signed in:", fbUser.uid);
-      } else {
-        setFirebaseUser(null);
-        // setUser(null);
-        console.log("Firebase user signed out.");
-      }
-      setUserLoading(false);
-    });
 
-    // Cleanup subscription on unmount
-    return () => {
-      unsubscribe();
-      setUserLoading(false); // Reset loading on unmount if needed
-    }
+    // Check for redirect result first when the app loads
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          // This means the user just signed in via redirect.
+          // onAuthStateChanged will also fire and handle setting firebaseUser.
+          // You could potentially use result.user here if needed immediately,
+          // but onAuthStateChanged is the primary listener.
+          console.log("Firebase redirect result processed, user:", result.user.uid);
+        }
+        // If result is null, it means no redirect operation was pending or it was handled.
+      })
+      .catch((error) => {
+        // Handle errors from getRedirectResult, if any.
+        console.error("Error processing Firebase redirect result:", error);
+        setUserError(error as Error);
+      })
+      .finally(() => {
+        // Subscribe to onAuthStateChanged after processing redirect result (or in parallel)
+        // onAuthStateChanged will handle ongoing auth state.
+        const unsubscribe = onAuthStateChange(auth, (fbUser) => {
+          if (fbUser) {
+            setFirebaseUser(fbUser);
+            // setUser(mapFirebaseUserToBackendUser(fbUser)); // Placeholder
+            console.log("Firebase user via onAuthStateChanged:", fbUser.uid);
+          } else {
+            setFirebaseUser(null);
+            // setUser(null);
+            console.log("Firebase user signed out / no user via onAuthStateChanged.");
+          }
+          setUserLoading(false); // Auth state now determined
+        });
+
+        // Return cleanup for onAuthStateChanged
+        return unsubscribe;
+      });
+
+    // Note: The original cleanup for onAuthStateChanged is now returned from the .finally() block.
+    // If getRedirectResult itself needed cleanup, it would be more complex.
+    // For now, this structure should work.
   }, []);
 
   // Logout function using Firebase signOut

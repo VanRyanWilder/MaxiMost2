@@ -4,7 +4,9 @@ import {
   GoogleAuthProvider, 
   FacebookAuthProvider, 
   OAuthProvider,
-  signInWithPopup,
+  // signInWithPopup, // Removed as no longer used
+  signInWithRedirect, // Add this
+  getRedirectResult,  // Add this
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
@@ -36,8 +38,17 @@ const appleProvider = new OAuthProvider('apple.com');
 // Authentication functions
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
+    // Changed from signInWithPopup to signInWithRedirect
+    await signInWithRedirect(auth, googleProvider);
+    // signInWithRedirect doesn't return a result directly here.
+    // The result is obtained via getRedirectResult() when the app loads after redirect.
+    // For consistency, we can return null or let onAuthStateChanged handle user setting.
+    // However, the original function expected to return result.user.
+    // This will now be handled by getRedirectResult and onAuthStateChanged.
+    // So, this function might not need to return the user directly.
+    // Or, it could trigger getRedirectResult if called after redirect, but that's unusual.
+    // Let's simplify: this function now just initiates the redirect.
+    return null; // Or void, but callers might expect a UserCredential-like object or null
   } catch (error) {
     console.error("Error signing in with Google:", error);
     throw error;
@@ -46,8 +57,9 @@ export const signInWithGoogle = async () => {
 
 export const signInWithFacebook = async () => {
   try {
-    const result = await signInWithPopup(auth, facebookProvider);
-    return result.user;
+    // Changed from signInWithPopup to signInWithRedirect
+    await signInWithRedirect(auth, facebookProvider);
+    return null; // Result handled by getRedirectResult after redirect
   } catch (error) {
     console.error("Error signing in with Facebook:", error);
     throw error;
@@ -56,8 +68,9 @@ export const signInWithFacebook = async () => {
 
 export const signInWithApple = async () => {
   try {
-    const result = await signInWithPopup(auth, appleProvider);
-    return result.user;
+    // Changed from signInWithPopup to signInWithRedirect
+    await signInWithRedirect(auth, appleProvider);
+    return null; // Result handled by getRedirectResult after redirect
   } catch (error) {
     console.error("Error signing in with Apple:", error);
     throw error;
