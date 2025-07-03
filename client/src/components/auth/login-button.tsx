@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { 
   DropdownMenu, 
@@ -7,10 +7,8 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { LogIn, LogOut, User as UserIcon } from "lucide-react";
-import { signInWithGoogle, signOut } from "@/lib/firebase";
+import { signInWithGoogle, signOut, onAuthStateChange } from "@/lib/firebase";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState, useEffect } from 'react';
-import { onAuthStateChange } from '@/lib/firebase';
 
 export function LoginButton() {
   const [user, setUser] = useState(null);
@@ -32,6 +30,8 @@ export function LoginButton() {
     try {
       setIsLoggingIn(true);
       await signInWithGoogle();
+      // Note: Redirection logic does not belong here.
+      // It should be on the page that hosts the login form.
     } catch (error) {
       console.error("Login failed:", error);
     } finally {
