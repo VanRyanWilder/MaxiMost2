@@ -16,6 +16,7 @@ import {
   signOut 
 } from "@/lib/firebase";
 import { User as FirebaseUser } from "firebase/auth";
+// Temporary type fix to handle TypeScript errors
 import { useLocation } from "wouter";
 
 export function FirebaseUserComponent() {
@@ -24,26 +25,15 @@ export function FirebaseUserComponent() {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [, setLocation] = useLocation();
   
-  // Listen for Firebase auth state changes and handle redirects
+  // Listen for Firebase auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChange((firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
-
-      // --- START: NEW REDIRECTION LOGIC ---
-      // If the user is successfully logged in, redirect them.
-      if (firebaseUser) {
-        // Check if there's a redirect query parameter in the URL
-        const params = new URLSearchParams(window.location.search);
-        const redirectPath = params.get('redirect') || '/dashboard';
-        setLocation(redirectPath);
-      }
-      // --- END: NEW REDIRECTION LOGIC ---
     });
     
-    // Clean up the listener when the component unmounts
     return () => unsubscribe();
-  }, [setLocation]); // Add setLocation to dependency array
+  }, []);
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
     try {
@@ -60,7 +50,6 @@ export function FirebaseUserComponent() {
           await signInWithApple();
           break;
       }
-      // The useEffect hook will handle the redirect automatically
     } catch (error) {
       console.error(`${provider} login failed:`, error);
     } finally {
@@ -75,7 +64,7 @@ export function FirebaseUserComponent() {
   const handleLogout = async () => {
     try {
       await signOut();
-      // Redirect to home page after logout
+      // You might want to redirect to home or login page
       setLocation('/');
     } catch (error) {
       console.error("Logout failed:", error);
@@ -114,7 +103,6 @@ export function FirebaseUserComponent() {
     );
   }
 
-  // This part of the component will now only be shown when the user is logged out
   return (
     <div className="flex gap-2">
       <Button 

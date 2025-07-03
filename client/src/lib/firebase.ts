@@ -10,7 +10,8 @@ import {
   updateProfile,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  User
+  User,
+  signInAnonymously as firebaseSignInAnonymously
 } from "firebase/auth";
 
 /// Firebase configuration
@@ -103,4 +104,14 @@ export const signOut = async () => {
 // Function to listen to auth state changes
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
   return onAuthStateChanged(auth, callback);
+};
+
+export const signInAnonymously = async () => {
+  try {
+    const result = await firebaseSignInAnonymously(auth);
+    return result.user;
+  } catch (error) {
+    console.error("Error signing in anonymously:", error);
+    throw error;
+  }
 };
