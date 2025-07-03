@@ -1,3 +1,21 @@
-name = "maximost"
-compatibility_date = "2024-07-01"
+name = "maximost-frontend"
+compatibility_date = "2024-07-02"
 pages_build_output_dir = "dist"
+
+# These variables are for the PRODUCTION environment (main branch)
+[vars]
+VITE_FIREBASE_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w" 
+VITE_FIREBASE_AUTH_DOMAIN = "maximost-a0401.firebaseapp.com" 
+VITE_FIREBASE_PROJECT_ID = "maximost-a0401" 
+VITE_FIREBASE_STORAGE_BUCKET = "maximost-a0401.firebasestorage.app" 
+VITE_FIREBASE_MESSAGING_SENDER_ID = "161512806223" 
+VITE_FIREBASE_APP_ID = "161512806223:web:5bde0190d46718f8a5973a" 
+
+# These variables are for ALL PREVIEW environments (feature branches)
+[env.preview.vars]
+VITE_FIREBASE_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w" 
+VITE_FIREBASE_AUTH_DOMAIN = "maximost-a0401.firebaseapp.com" 
+VITE_FIREBASE_PROJECT_ID = "maximost-a0401" 
+VITE_FIREBASE_STORAGE_BUCKET = "maximost-a0401.firebasestorage.app" 
+VITE_FIREBASE_MESSAGING_SENDER_ID = "161512806223" 
+VITE_FIREBASE_APP_ID = "161512806223:web:5bde0190d46718f8a5973a"
