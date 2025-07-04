@@ -75,6 +75,13 @@ habitRoutes.get('/', async (c) => {
     const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
     const apiKey = c.env.VITE_FIREBASE_API_KEY;
 
+    // --- START: ADDED FOR DEBUGGING ---
+    console.log("--- DEBUGGING /api/habits ---");
+    console.log("User ID from middleware:", userId);
+    console.log("Project ID from env:", projectId);
+    console.log("API Key from env:", apiKey ? `Exists (ends with ...${apiKey.slice(-4)})` : "NOT FOUND");
+    // --- END: ADDED FOR DEBUGGING ---
+
     if (!projectId || !apiKey) {
       console.error("Firebase Project ID or API Key is not configured in the environment.");
       return c.json({ error: 'Server configuration error' }, 500);
@@ -85,6 +92,11 @@ habitRoutes.get('/', async (c) => {
 
     // 4. Append the API key as a query parameter.
     const urlWithKey = `${firestoreUrl}?key=${apiKey}`;
+    
+    // --- START: ADDED FOR DEBUGGING ---
+    console.log("Requesting Firestore URL:", urlWithKey);
+    console.log("--- END DEBUGGING ---");
+    // --- END: ADDED FOR DEBUGGING ---
 
     // 5. Make the fetch request to Firestore.
     const response = await fetch(urlWithKey);
