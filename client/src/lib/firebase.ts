@@ -1,71 +1,84 @@
+import { initializeApp } from "firebase/app";
 import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
-import { User as FirebaseUser } from "firebase/auth";
-import {
-  auth,
-  onAuthStateChange,
-  processRedirectResult, // CORRECTED: Import processRedirectResult
-} from "@/lib/firebase";
+  getAuth,
+  onAuthStateChanged as firebaseOnAuthStateChanged,
+  signInWithRedirect,
+  getRedirectResult,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  signInAnonymously as firebaseSignInAnonymously,
+  User
+} from "firebase/auth";
 
-interface UserContextType {
-  user: FirebaseUser | null;
-  loading: boolean;
-  error: Error | null;
-}
-
-const UserContext = createContext<UserContextType | undefined>(undefined);
-
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    // Set up the listener immediately.
-    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-
-    // Separately, process the redirect result on initial load.
-    // This will now call the correct exported function.
-    processRedirectResult() // CORRECTED: Call processRedirectResult
-      .then((result) => {
-        if (result) {
-          // A user was successfully signed in via redirect.
-          // The onAuthStateChanged listener above will handle setting the user state.
-          console.log("Redirect result processed successfully.");
-        }
-      })
-      .catch((err) => {
-        console.error("Error processing redirect result:", err);
-        setError(err);
-      })
-      .finally(() => {
-        // Fallback to ensure loading is false after attempting to process the redirect.
-        setLoading(false);
-      });
-
-    // Cleanup the listener when the component unmounts
-    return () => unsubscribe();
-  }, []);
-
-  return (
-    <UserContext.Provider value={{ user, loading, error }}>
-      {children}
-    </UserContext.Provider>
-  );
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+
+export const signInWithGoogle = () => {
+  const provider = new GoogleAuthProvider();
+  return signInWithRedirect(auth, provider);
+};
+
+export const signInWithFacebook = () => {
+  const provider = new FacebookAuthProvider();
+  return signInWithRedirect(auth, provider);
+};
+
+export const signInWithApple = () => {
+  const provider = new OAuthProvider('apple.com');
+  return signInWithRedirect(auth, provider);
+};
+
+export const signInAnonymously = async () => {
+  try {
+    const userCredential = await firebaseSignInAnonymously(auth);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Anonymous sign-in failed", error);
+    throw error;
   }
-  return context;
+};
+
+export const signInWithEmail = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Email sign-in failed", error);
+    throw error;
+  }
+};
+
+export const signUpWithEmail = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
+  } catch (error) {
+    console.error("Email sign-up failed", error);
+    throw error;
+  }
+};
+
+export const onAuthStateChange = (callback: (user: User | null) => void) => {
+  return firebaseOnAuthStateChanged(auth, callback);
+};
+
+export const signOut = () => {
+  return firebaseSignOut(auth);
+};
+
+export const processRedirectResult = () => {
+  return getRedirectResult(auth);
 };
