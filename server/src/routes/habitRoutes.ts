@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-// --- CORRECTED IMPORT SYNTAX ---
 // This 'import * as' syntax is more robust for handling complex module exports.
 import * as firebaseAuthMiddleware from '@hono/firebase-auth';
 
@@ -27,17 +26,15 @@ type FirestoreDocument = {
 
 const habitRoutes = new Hono();
 
-// --- NEW: Standard Firebase Authentication Middleware ---
-// This uses a dedicated library to handle token verification, which is more robust.
-// It will automatically verify the 'Authorization' header.
+// --- Authentication Middleware ---
 habitRoutes.use('*', async (c, next) => {
-  const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
+  // --- FIX: Use the backend-specific environment variable ---
+  const projectId = c.env.FIREBASE_PROJECT_ID;
   if (!projectId) {
-    console.error("Firebase Project ID is not configured in the environment.");
+    console.error("Backend FIREBASE_PROJECT_ID is not configured in the environment.");
     return c.json({ error: 'Server configuration error' }, 500);
   }
 
-  // The 'firebaseAuth' function is accessed from the imported module object.
   const auth = firebaseAuthMiddleware.firebaseAuth({
     projectId: projectId,
   });
@@ -55,12 +52,13 @@ habitRoutes.get('/', async (c) => {
     }
     const userId = user.uid;
 
-    // 2. Access environment variables for Firestore project ID and API key.
-    const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
-    const apiKey = c.env.VITE_FIREBASE_API_KEY;
+    // 2. Access backend-specific environment variables.
+    // --- FIX: Use the backend-specific environment variables ---
+    const projectId = c.env.FIREBASE_PROJECT_ID;
+    const apiKey = c.env.FIREBASE_API_KEY;
 
     if (!projectId || !apiKey) {
-      console.error("Firebase Project ID or API Key is not configured in the environment.");
+      console.error("Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is not configured.");
       return c.json({ error: 'Server configuration error' }, 500);
     }
 
@@ -81,17 +79,13 @@ habitRoutes.get('/', async (c) => {
 
     const responseData = await response.json();
 
-    // 6. Process the response from Firestore with added safety checks.
+    // 6. Process the response from Firestore.
     const habits = (responseData.documents || []).map((doc: FirestoreDocument) => {
-      // Ensure doc and doc.fields exist before processing
-      if (!doc || !doc.fields) {
-        return null; // Skip this document if it's malformed
-      }
+      if (!doc || !doc.fields) return null;
       
       const habitData: any = {};
       for (const key in doc.fields) {
         const valueObject = doc.fields[key];
-        // Ensure valueObject is valid before trying to get its keys
         if (valueObject && typeof valueObject === 'object') {
           const valueType = Object.keys(valueObject)[0];
           if (valueType) {
@@ -99,23 +93,18 @@ habitRoutes.get('/', async (c) => {
           }
         }
       }
-      // Ensure doc.name exists before splitting
       habitData.id = doc.name ? doc.name.split('/').pop() : null;
       return habitData;
-    }).filter(habit => habit !== null); // Filter out any null entries from malformed docs
+    }).filter(habit => habit !== null);
 
     const completions = [];
 
     return c.json({ habits, completions });
 
   } catch (error: any) {
-    // --- ADDED: More detailed error logging ---
     console.error('CRITICAL: Unhandled error in /api/habits route:', error.message);
-    console.error('Stack trace:', error.stack);
     return c.json({ error: 'An internal server error occurred' }, 500);
   }
 });
-
-// You would add other routes (POST, PUT, DELETE) for habits here.
 
 export default habitRoutes;
