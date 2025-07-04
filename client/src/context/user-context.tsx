@@ -26,26 +26,45 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-
-    processRedirectResult()
-      .then((result) => {
+    // This logic prevents race conditions by processing the redirect
+    // before the main auth state listener is fully relied upon.
+    const checkAuth = async () => {
+      try {
+        // First, attempt to process any pending redirect results from Google, etc.
+        const result = await processRedirectResult();
         if (result) {
-          console.log("Redirect result processed successfully.");
+          // If a user is found via redirect, this log will confirm it.
+          // The onAuthStateChanged listener below will then fire with the user.
+          console.log("Redirect result processed successfully for user:", result.user.uid);
         }
-      })
-      .catch((err) => {
+      } catch (err: any) {
+        // This catches errors if the redirect processing fails.
         console.error("Error processing redirect result:", err);
         setError(err);
-      })
-      .finally(() => {
-        setLoading(false);
+      }
+
+      // After attempting to process the redirect, set up the permanent listener.
+      // This listener becomes the single source of truth for the user's auth state.
+      const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
+        setUser(firebaseUser);
+        setLoading(false); // We are no longer loading once we have a user or know there is none.
       });
 
-    return () => unsubscribe();
+      // Return the cleanup function for the listener.
+      return unsubscribe;
+    };
+
+    const unsubscribePromise = checkAuth();
+
+    // The main cleanup function for the useEffect hook.
+    // It ensures that the onAuthStateChanged listener is properly detached.
+    return () => {
+      unsubscribePromise.then(unsubscribe => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      });
+    };
   }, []);
 
   return (
