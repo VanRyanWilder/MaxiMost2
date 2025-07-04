@@ -6,9 +6,11 @@ interface HabitButtonProps {
   habitId: string;
   date: Date;
   isCompleted: boolean;
-  onToggle: (habitId: string, date: Date) => void;
+  onToggle: (habitId: string, date: Date, value?: number) => void; // Updated to include optional value
   size?: 'sm' | 'md';
   habitColor?: string;
+  habitType?: "binary" | "quantitative";
+  onOpenLogModal?: (habitId: string, date: Date) => void; // For quantitative habits
 }
 
 // Function to get gradient color based on habit color
@@ -61,19 +63,34 @@ export const HabitButton: React.FC<HabitButtonProps> = ({
   isCompleted,
   onToggle,
   size = 'sm',
-  habitColor
+  habitColor,
+  habitType = "binary", // Default to binary
+  onOpenLogModal
 }) => {
   const isFutureDate = isFuture(date);
   const isToday = isSameDay(date, startOfToday());
   const colorGradient = getColorGradient(habitColor);
   const todayBorderColor = getBorderColor(habitColor, isToday);
   const pingColor = getPingColor(habitColor);
+
+  const handleClick = () => {
+    if (isFutureDate) return;
+
+    if (habitType === 'quantitative' && onOpenLogModal) {
+      onOpenLogModal(habitId, date);
+    } else {
+      // For binary, onToggle will handle 0/1.
+      // For quantitative, if onOpenLogModal is not provided (fallback) or if user clears via modal,
+      // onToggle might be called with undefined value, which toggleCompletion handles as clearing.
+      onToggle(habitId, date);
+    }
+  };
   
   return (
     <Button 
       variant={isCompleted ? "default" : "outline"}
       size={size === 'md' ? 'default' : 'sm'}
-      onClick={() => !isFutureDate && onToggle(habitId, date)}
+      onClick={handleClick}
       className={`w-[35px] h-[35px] p-1 mx-auto 
         ${isFutureDate ? 'opacity-50 cursor-not-allowed' : ''}
         ${isCompleted ? `bg-gradient-to-br ${colorGradient} shadow-md scale-105 transition-all` : ''}
