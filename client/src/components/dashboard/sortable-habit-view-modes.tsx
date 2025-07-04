@@ -14,7 +14,8 @@ import {
   eachDayOfInterval, 
   getDay,
   addMonths,
-  subMonths
+  subMonths,
+  differenceInDays
 } from 'date-fns';
 import { 
   DndContext, 
@@ -54,7 +55,7 @@ import { PlusCircle } from 'lucide-react';
 interface SortableHabitViewProps {
   habits: Habit[];
   completions: any[]; // Replace with proper type
-  onToggleHabit: (habitId: string, date: Date) => void;
+  onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
   onUpdateHabit?: (habit: Habit) => void;
   onDeleteHabit?: (habitId: string) => void;
@@ -404,89 +405,109 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               ))}
               
               {calendarDays.map((day, index) => {
-                const isCurrentMonth = day.getMonth() === currentMonth.getMonth();
-                const isToday = isSameDay(day, today);
+                const isCurrentDisplayMonth = day.getMonth() === monthToDisplay.getMonth(); // Use monthToDisplay
+                const isTodayDate = isSameDay(day, today);
                 
-                // Check if any habits are completed on this day
-                const completedHabits = completions.filter(c => 
+                const dailyCompletions = completions.filter(c =>
                   isSameDay(new Date(c.date), day) && c.completed
                 );
                 
-                const absoluteHabitsCount = filteredHabits.filter(h => h.isAbsolute).length;
-                const completedAbsoluteHabits = filteredHabits.filter(h => 
-                  h.isAbsolute && 
-                  completedHabits.some(c => c.habitId === h.id)
+                const relevantHabitsForDay = filteredHabits; // Assuming all filtered habits apply to any day for now
+
+                const absoluteHabitsOnDay = relevantHabitsForDay.filter(h => h.isAbsolute);
+                const completedAbsoluteOnDay = absoluteHabitsOnDay.filter(h =>
+                  dailyCompletions.some(c => c.habitId === h.id)
+                ).length;
+
+                const frequencyHabitsOnDay = relevantHabitsForDay.filter(h => !h.isAbsolute);
+                const completedFrequencyOnDay = frequencyHabitsOnDay.filter(h =>
+                  dailyCompletions.some(c => c.habitId === h.id)
                 ).length;
                 
-                const frequencyHabitsCount = filteredHabits.filter(h => !h.isAbsolute).length;
-                const completedFrequencyHabits = filteredHabits.filter(h => 
-                  !h.isAbsolute && 
-                  completedHabits.some(c => c.habitId === h.id)
-                ).length;
-                
-                // Calculate completion percentage for the cell
-                const totalHabits = filteredHabits.length;
-                const totalCompleted = completedHabits.length;
-                const completionPercentage = totalHabits > 0 
-                  ? (totalCompleted / totalHabits) * 100 
+                const totalHabitsForProgress = relevantHabitsForDay.length;
+                const totalCompletedForProgress = dailyCompletions.length; // This might be too simple if quantitative values matter for "done"
+
+                const completionPercentage = totalHabitsForProgress > 0
+                  ? (totalCompletedForProgress / totalHabitsForProgress) * 100
                   : 0;
                 
+                const handleDayCellClick = (clickedDate: Date) => {
+                  if (!isCurrentDisplayMonth) return; // Prevent action on non-current month days if button is not disabled by other means
+
+                  const newDayOffset = differenceInDays(clickedDate, today);
+                  setDayOffset(newDayOffset);
+
+                  let monthDiff = 0;
+                  let tempDate = startOfMonth(today);
+                  if (isBefore(startOfMonth(clickedDate), tempDate)) { // Compare start of months
+                    while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
+                      tempDate = subMonths(tempDate, 1);
+                      monthDiff--;
+                    }
+                  } else if (isAfter(startOfMonth(clickedDate), tempDate)) {
+                     while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
+                      tempDate = addMonths(tempDate, 1);
+                      monthDiff++;
+                    }
+                  }
+                  setMonthOffset(monthDiff);
+                  setWeekOffset(0);
+                  setViewMode('daily');
+                };
+
                 return (
-                  <div 
+                  <button
+                    type="button"
                     key={index} 
-                    className={`
-                      border rounded-md p-2 min-h-[80px] 
-                      ${isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400'} 
-                      ${isToday ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}
-                    `}
+                    onClick={() => handleDayCellClick(day)}
+                    className={cn(
+                      "border rounded-md p-2 min-h-[80px] text-left w-full flex flex-col justify-between",
+                      isCurrentDisplayMonth ? 'bg-white hover:bg-gray-50 dark:bg-neutral-800 dark:hover:bg-neutral-700' : 'bg-gray-50 text-gray-400 dark:bg-neutral-800/50 dark:text-neutral-500',
+                      isTodayDate ? 'border-blue-500 ring-1 ring-blue-500 dark:border-blue-700' : 'border-gray-200 dark:border-neutral-700'
+                    )}
+                    disabled={!isCurrentDisplayMonth}
                   >
-                    <div className="text-right text-sm mb-1">
+                    <div className={`text-right text-sm font-medium ${!isCurrentDisplayMonth ? 'text-gray-400 dark:text-neutral-600' : 'text-gray-700 dark:text-neutral-300'}`}>
                       {format(day, 'd')}
                     </div>
                     
-                    {filteredHabits.length > 0 && (
-                      <div className="mt-1">
-                        {absoluteHabitsCount > 0 && (
-                          <div 
-                            className={`text-xs ${
-                              completedAbsoluteHabits === absoluteHabitsCount && absoluteHabitsCount > 0
-                                ? 'text-green-600' 
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {completedAbsoluteHabits}/{absoluteHabitsCount} daily
-                            {completedAbsoluteHabits === absoluteHabitsCount && absoluteHabitsCount > 0 && ' ✓'}
+                    {isCurrentDisplayMonth && relevantHabitsForDay.length > 0 && (
+                      <div className="mt-1 space-y-1">
+                        {absoluteHabitsOnDay.length > 0 && (
+                          <div className="flex items-center justify-between text-xs">
+                            <span className={`${completedAbsoluteOnDay === absoluteHabitsOnDay.length ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-neutral-400'}`}>
+                              Daily
+                            </span>
+                            <span className={`font-semibold ${completedAbsoluteOnDay === absoluteHabitsOnDay.length ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-neutral-300'}`}>
+                              {completedAbsoluteOnDay}/{absoluteHabitsOnDay.length}
+                            </span>
                           </div>
                         )}
                         
-                        {frequencyHabitsCount > 0 && (
-                          <div 
-                            className={`text-xs ${
-                              completedFrequencyHabits > 0 
-                                ? 'text-blue-600' 
-                                : 'text-gray-500'
-                            }`}
-                          >
-                            {completedFrequencyHabits}/{frequencyHabitsCount} freq
+                        {frequencyHabitsOnDay.length > 0 && (
+                           <div className="flex items-center justify-between text-xs">
+                            <span className={`${completedFrequencyOnDay > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-neutral-400'}`}>
+                              Freq.
+                            </span>
+                            <span className={`font-semibold ${completedFrequencyOnDay > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-neutral-300'}`}>
+                              {completedFrequencyOnDay}/{frequencyHabitsOnDay.length}
+                            </span>
                           </div>
                         )}
                         
-                        <div className="mt-1">
-                          <Progress 
-                            value={completionPercentage} 
-                            className="h-1" 
-                            indicatorClassName={
-                              completionPercentage >= 100 
-                                ? "bg-green-500" 
-                                : completionPercentage > 50 
-                                  ? "bg-blue-500" 
-                                  : "bg-blue-300"
-                            }
-                          />
-                        </div>
+                        <Progress
+                          value={completionPercentage}
+                          className="h-1.5"
+                          indicatorClassName={
+                            completionPercentage >= 100 ? "bg-green-500" :
+                            completionPercentage > 50 ? "bg-blue-500" :
+                            completionPercentage > 0 ? "bg-yellow-500" :
+                            "bg-gray-300 dark:bg-neutral-600"
+                          }
+                        />
                       </div>
                     )}
-                  </div>
+                  </button>
                 );
               })}
             </div>

@@ -99,6 +99,73 @@ export default function SortableDashboard() {
     }
   };
 
+  // Updated toggleCompletion to accept an optional value for quantitative habits
+  const toggleCompletion = async (habitId: string, date: Date | string, quantValue?: number) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+      return;
+    }
+
+    const habit = habits.find(h => h.habitId === habitId);
+    if (!habit) {
+      toast({ title: "Error", description: "Habit not found.", variant: "destructive" });
+      return;
+    }
+
+    const dateObj = typeof date === "string" ? parseISO(date) : date;
+    // Note: Original code had a toast about logging for today only. This might need review
+    // if user can log for other days via a new UI. For now, keeping it focused on the value.
+
+    let completionApiValue: number;
+    const existingCompletion = (habit.completions || []).find(c => isSameDay(toDate(c.timestamp), dateObj));
+
+
+    if (habit.type === "binary") {
+      // Toggle: if exists and value > 0, set to 0 (uncomplete). Else, set to 1 (complete).
+      completionApiValue = (existingCompletion && existingCompletion.value > 0) ? 0 : 1;
+    } else if (habit.type === "quantitative") {
+      if (quantValue === undefined || quantValue === null) {
+        // If no value provided (e.g. user wants to "uncheck" or clear a quantitative log)
+        // We can set it to 0 or handle as a deletion of the entry for that day.
+        // For now, setting to 0 to indicate no value or clearing.
+        completionApiValue = 0;
+        toast({
+          title: "Quantitative Log Cleared",
+          description: `Log for "${habit.title}" on ${format(dateObj, "MMM d")} cleared.`,
+          variant: "info",
+        });
+      } else {
+        completionApiValue = quantValue;
+        toast({
+            title: "Quantitative Log",
+            description: `Logging ${quantValue} ${habit.targetUnit || ""} for "${habit.title}".`,
+            variant: "info",
+        });
+      }
+    } else {
+      toast({ title: "Error", description: "Unknown habit type. Cannot log completion.", variant: "destructive" });
+      return;
+    }
+
+    try {
+      // The backend /api/habits/:habitId/complete should be updated to accept this body structure
+      // and handle the { date, value } for creating/updating a completion entry.
+      // For now, the body structure is simplified as per previous structure.
+      // The backend will need to know which date this completion is for.
+      // The current backend placeholder for /complete doesn't use the body.
+      // This part assumes backend is updated to handle: { value: number, date: string (YYYY-MM-DD) }
+      await apiClient(`/habits/${habit.habitId}/complete`, {
+        method: "POST",
+        body: { value: completionApiValue, date: format(dateObj, "yyyy-MM-dd") },
+      });
+      toast({ title: "Success", description: `"${habit.title}" completion logged.` });
+      await fetchHabitsAsync(false); // Re-fetch habits to update UI
+    } catch (error: any) {
+      console.error(`Failed to log completion for habit "${habit.title}":`, error);
+      toast({ title: "Error", description: `Failed to log completion: ${error.message}`, variant: "destructive" });
+    }
+  };
+
   // Updated isHabitCompletedOnDate for V1.1
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
     const habit = habits.find(h => h.habitId === habitId);
@@ -120,7 +187,9 @@ export default function SortableDashboard() {
     return false;
   };
 
-  // Updated toggleCompletion for V1.1
+  // REMOVING THIS DUPLICATE/OLD VERSION of toggleCompletion
+  // The correct one is defined earlier and handles quantValue.
+  /*
   const toggleCompletion = async (habitId: string, date: Date | string) => {
     if (!user) {
       toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
@@ -171,6 +240,7 @@ export default function SortableDashboard() {
       toast({ title: "Error", description: `Failed to log completion: ${error.message}`, variant: "destructive" });
     }
   };
+  */
 
   const addHabit = async (habitData: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak">) => { /* ... as before ... */
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in to add habits.", variant: "destructive" }); return; }

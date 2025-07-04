@@ -28,6 +28,7 @@ import {
 import { TableSortableItem } from './table-sortable-item';
 import { HabitButton } from "./habit-button";
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
+import { QuantitativeLogModal } from './quantitative-log-modal'; // Import the modal
 
 // Color utility functions for habits
 const getColorStyle = (color: string, type: 'text' | 'bg' | 'border' | 'textMuted' = 'text') => {
@@ -117,7 +118,7 @@ interface WeeklyTableViewProps {
   habits: Habit[];
   completions: any[]; // Replace with proper type
   weekDates: Date[];
-  onToggleHabit: (habitId: string, date: Date) => void;
+  onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
   onEditHabit?: (habit: Habit) => void;
   onDeleteHabit?: (habitId: string) => void;
@@ -138,6 +139,9 @@ export function WeeklyTableViewFixedUpdated({
   selectedCategory,
   currentDay
 }: WeeklyTableViewProps) {
+  const [logModalOpen, setLogModalOpen] = useState(false);
+  const [loggingHabitInfo, setLoggingHabitInfo] = useState<{habit: Habit, date: Date} | null>(null);
+
   const today = startOfToday();
   const filteredHabits = selectedCategory === 'all' 
     ? habits 
@@ -391,7 +395,7 @@ export function WeeklyTableViewFixedUpdated({
                                 </div>
                               </div>
                               <div className="text-xs flex items-center">
-                                <span className={`truncate max-w-[150px] ${
+                                <span className={`block truncate max-w-[150px] ${
                                   habit.iconColor === 'red' ? 'text-red-700/80 dark:text-red-400/80' :
                                   habit.iconColor === 'orange' ? 'text-orange-700/80 dark:text-orange-400/80' :
                                   habit.iconColor === 'amber' ? 'text-amber-700/80 dark:text-amber-400/80' :
@@ -403,6 +407,20 @@ export function WeeklyTableViewFixedUpdated({
                                 }`}>
                                   {habit.description}
                                 </span>
+                                {habit.type === 'quantitative' && habit.targetValue && (
+                                  <span className={`block text-xs mt-0.5 ${
+                                    habit.iconColor === 'red' ? 'text-red-700/70 dark:text-red-400/70' :
+                                    habit.iconColor === 'orange' ? 'text-orange-700/70 dark:text-orange-400/70' :
+                                    habit.iconColor === 'amber' ? 'text-amber-700/70 dark:text-amber-400/70' :
+                                    habit.iconColor === 'yellow' ? 'text-yellow-700/70 dark:text-yellow-400/70' :
+                                    habit.iconColor === 'green' ? 'text-green-700/70 dark:text-green-400/70' :
+                                    habit.iconColor === 'indigo' ? 'text-indigo-700/70 dark:text-indigo-400/70' :
+                                    habit.iconColor === 'purple' ? 'text-purple-700/70 dark:text-purple-400/70' :
+                                    'text-blue-700/70 dark:text-blue-400/70'
+                                  }`}>
+                                    Target: {habit.targetValue} {habit.targetUnit || ''}
+                                  </span>
+                                )}
                                 {completedDaysCount > 0 && !allDaysCompleted && (
                                   <span className="ml-2 text-blue-600 dark:text-blue-300 font-medium">{completedDaysCount}/7 days</span>
                                 )}
@@ -442,10 +460,16 @@ export function WeeklyTableViewFixedUpdated({
                                 } ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
-                                  isCompleted={completed}
-                                  date={date}
                                   habitId={habit.id}
+                                  date={date}
+                                  isCompleted={completed}
                                   onToggle={onToggleHabit}
+                                  habitType={habit.type}
+                                  habitColor={habit.iconColor}
+                                  onOpenLogModal={() => {
+                                    setLoggingHabitInfo({ habit, date });
+                                    setLogModalOpen(true);
+                                  }}
                                 />
                               </div>
                             );
@@ -538,7 +562,20 @@ export function WeeklyTableViewFixedUpdated({
                                   {habit.description}
                                 </div>
                               )}
-
+                              {habit.type === 'quantitative' && habit.targetValue && (
+                                <div className={`text-xs mt-0.5 ${
+                                  habit.iconColor === 'red' ? 'text-red-700/70 dark:text-red-400/70' :
+                                  habit.iconColor === 'orange' ? 'text-orange-700/70 dark:text-orange-400/70' :
+                                  habit.iconColor === 'amber' ? 'text-amber-700/70 dark:text-amber-400/70' :
+                                  habit.iconColor === 'yellow' ? 'text-yellow-700/70 dark:text-yellow-400/70' :
+                                  habit.iconColor === 'green' ? 'text-green-700/70 dark:text-green-400/70' :
+                                  habit.iconColor === 'indigo' ? 'text-indigo-700/70 dark:text-indigo-400/70' :
+                                  habit.iconColor === 'purple' ? 'text-purple-700/70 dark:text-purple-400/70' :
+                                  'text-blue-700/70 dark:text-blue-400/70'
+                                }`}>
+                                  Target: {habit.targetValue} {habit.targetUnit || ''}
+                                </div>
+                              )}
                               {/* Enhanced progress visualization */}
                               <div className="text-xs mt-1">
                                 <div className="flex items-center justify-between mb-1">
@@ -619,10 +656,16 @@ export function WeeklyTableViewFixedUpdated({
                                 className={`text-center h-full flex items-center justify-center min-w-[40px] py-1.5 ${isCurrentDay ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                               >
                                 <HabitButton
-                                  isCompleted={completed}
-                                  date={date}
                                   habitId={habit.id}
+                                  date={date}
+                                  isCompleted={completed}
                                   onToggle={onToggleHabit}
+                                  habitType={habit.type}
+                                  habitColor={habit.iconColor}
+                                  onOpenLogModal={() => {
+                                    setLoggingHabitInfo({ habit, date });
+                                    setLogModalOpen(true);
+                                  }}
                                 />
                               </div>
                             );
@@ -656,6 +699,19 @@ export function WeeklyTableViewFixedUpdated({
           </DndContext>
         </div>
       </div>
+      {loggingHabitInfo && (
+        <QuantitativeLogModal
+          isOpen={logModalOpen}
+          onClose={() => {
+            setLogModalOpen(false);
+            setLoggingHabitInfo(null);
+          }}
+          habit={loggingHabitInfo.habit}
+          date={loggingHabitInfo.date}
+          onLog={onToggleHabit} // onToggleHabit now accepts the value
+          currentCompletions={completions}
+        />
+      )}
     </div>
   );
 }

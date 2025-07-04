@@ -30,7 +30,7 @@ interface DailyViewProps {
   habits: Habit[];
   completions: any[]; // Replace with proper type
   currentDay: Date;
-  onToggleHabit: (habitId: string, date: Date) => void;
+  onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
   onEditHabit?: (habit: Habit) => void;
   onDeleteHabit?: (habitId: string) => void;
@@ -51,6 +51,8 @@ export function DailyViewFixedUpdated({
 }: DailyViewProps) {
   const today = currentDay;
   const [showConfetti, setShowConfetti] = useState(false);
+  const [logModalOpen, setLogModalOpen] = useState(false);
+  const [loggingHabitInfo, setLoggingHabitInfo] = useState<{habit: Habit, date: Date} | null>(null);
   
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -332,6 +334,11 @@ export function DailyViewFixedUpdated({
                           </div>
                           <div className="text-sm text-gray-500">
                             {habit.description}
+                            {habit.type === 'quantitative' && habit.targetValue && (
+                              <span className="block text-xs mt-0.5">
+                                Target: {habit.targetValue} {habit.targetUnit || ''}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -339,12 +346,21 @@ export function DailyViewFixedUpdated({
                         <Button 
                           variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
                           size="sm"
-                          onClick={() => onToggleHabit(habit.id, today)}
+                          onClick={() => {
+                            if (habit.type === 'quantitative') {
+                              setLoggingHabitInfo({ habit, date: today });
+                              setLogModalOpen(true);
+                            } else {
+                              onToggleHabit(habit.id, today); // Binary toggle
+                            }
+                          }}
                           className="min-w-[100px]"
                         >
-                          {isHabitCompletedOnDate(habit.id, today) 
+                          {isHabitCompletedOnDate(habit.id, today) && habit.type !== 'quantitative'
                             ? <><Check className="mr-1 h-4 w-4" /> Completed</>
-                            : "Mark Done"
+                            : habit.type === 'quantitative'
+                              ? "Log Value"
+                              : "Mark Done"
                           }
                         </Button>
                         <DropdownMenu>
@@ -438,6 +454,11 @@ export function DailyViewFixedUpdated({
                           </div>
                           <div className="text-sm text-gray-500">
                             {habit.description}
+                            {habit.type === 'quantitative' && habit.targetValue && (
+                              <span className="block text-xs mt-0.5">
+                                Target: {habit.targetValue} {habit.targetUnit || ''}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -445,12 +466,21 @@ export function DailyViewFixedUpdated({
                         <Button 
                           variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
                           size="sm"
-                          onClick={() => onToggleHabit(habit.id, today)}
+                          onClick={() => {
+                            if (habit.type === 'quantitative') {
+                              setLoggingHabitInfo({ habit, date: today });
+                              setLogModalOpen(true);
+                            } else {
+                              onToggleHabit(habit.id, today); // Binary toggle
+                            }
+                          }}
                           className="min-w-[100px]"
                         >
-                          {isHabitCompletedOnDate(habit.id, today) 
+                          {isHabitCompletedOnDate(habit.id, today) && habit.type !== 'quantitative'
                             ? <><Check className="mr-1 h-4 w-4" /> Completed</>
-                            : "Mark Done"
+                            : habit.type === 'quantitative'
+                              ? "Log Value"
+                              : "Mark Done"
                           }
                         </Button>
                         <DropdownMenu>
@@ -488,6 +518,20 @@ export function DailyViewFixedUpdated({
             Add Habit
           </Button>
         </div>
+      )}
+
+      {loggingHabitInfo && (
+        <QuantitativeLogModal
+          isOpen={logModalOpen}
+          onClose={() => {
+            setLogModalOpen(false);
+            setLoggingHabitInfo(null);
+          }}
+          habit={loggingHabitInfo.habit}
+          date={loggingHabitInfo.date}
+          onLog={onToggleHabit} // onToggleHabit now accepts the value
+          currentCompletions={completions}
+        />
       )}
     </div>
   );
