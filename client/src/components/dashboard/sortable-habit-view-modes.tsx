@@ -14,7 +14,8 @@ import {
   eachDayOfInterval, 
   getDay,
   addMonths,
-  subMonths
+  subMonths,
+  differenceInDays
 } from 'date-fns';
 import { 
   DndContext, 
@@ -431,16 +432,50 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                   ? (totalCompleted / totalHabits) * 100 
                   : 0;
                 
+                const handleDayCellClick = (clickedDate: Date) => {
+                  const newDayOffset = differenceInDays(clickedDate, today);
+                  setDayOffset(newDayOffset);
+                  // Optional: Reset weekOffset and monthOffset if currentDay should be the sole source of truth for their starting points
+                  // For now, only dayOffset is changed, weekly/monthly will re-center around the new currentDay if user switches back.
+                  // Or, explicitly set week/month offsets to 0 to view the week/month of the clicked day.
+                  // Let's try setting weekOffset to 0 so if they go to weekly, it's that week.
+                  // Month offset is relative to today's month, so clicking a day in a different month
+                  // should ideally update monthOffset too.
+                  const newMonthOffset = differenceInDays(startOfMonth(clickedDate), startOfMonth(today)) / 30; // Approximate
+                  // More accurately:
+                  // Calculate difference in months:
+                  let monthDiff = 0;
+                  let tempDate = startOfMonth(today);
+                  if (isBefore(clickedDate, tempDate)) {
+                    while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
+                      tempDate = subMonths(tempDate, 1);
+                      monthDiff--;
+                    }
+                  } else if (isAfter(clickedDate, tempDate)) {
+                    while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
+                      tempDate = addMonths(tempDate, 1);
+                      monthDiff++;
+                    }
+                  }
+                  setMonthOffset(monthDiff);
+                  setWeekOffset(0); // Reset week offset to view the week of the clicked day
+
+                  setViewMode('daily');
+                };
+
                 return (
-                  <div 
+                  <button
+                    type="button"
                     key={index} 
+                    onClick={() => handleDayCellClick(day)}
                     className={`
-                      border rounded-md p-2 min-h-[80px] 
-                      ${isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400'} 
+                      border rounded-md p-2 min-h-[80px] text-left w-full
+                      ${isCurrentMonth ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}
                       ${isToday ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'}
                     `}
+                    disabled={!isCurrentMonth} // Optionally disable clicking on non-current month days
                   >
-                    <div className="text-right text-sm mb-1">
+                    <div className={`text-right text-sm mb-1 ${!isCurrentMonth ? 'text-gray-400' : ''}`}>
                       {format(day, 'd')}
                     </div>
                     

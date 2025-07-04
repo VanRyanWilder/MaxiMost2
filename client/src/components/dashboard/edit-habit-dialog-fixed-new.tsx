@@ -59,7 +59,7 @@ import {
 } from "lucide-react";
 
 // Import shared types
-import { Habit, HabitFrequency, HabitCategory } from "@/types/habit";
+import { Habit, HabitFrequency, HabitCategory, CompletionEntry } from "@/types/habit"; // Added CompletionEntry
 
 type EditHabitDialogProps = {
   open: boolean;
@@ -155,7 +155,11 @@ const DEFAULT_NEW_HABIT: Habit = {
   category: "mental", // Default to Mental Acuity & Growth category
   streak: 0,
   createdAt: new Date().toISOString(),
-  userChangedColor: false
+  userChangedColor: false,
+  type: "binary", // Default to binary
+  targetValue: undefined,
+  targetUnit: undefined,
+  completions: [] as CompletionEntry[], // Ensure completions is initialized
 };
 
 // Helper function to render an icon from our icon map
@@ -429,6 +433,66 @@ export function EditHabitDialog({
               </SelectContent>
             </Select>
           </div>
+
+          {/* Habit Type (Binary/Quantitative) */}
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="habitType" className="text-right">
+              Habit Type
+            </Label>
+            <Select
+              value={editedHabit.type || "binary"}
+              onValueChange={(value: "binary" | "quantitative") => {
+                setEditedHabit({
+                  ...editedHabit,
+                  type: value,
+                  // Reset targetValue and targetUnit if switching to binary
+                  targetValue: value === "binary" ? undefined : editedHabit.targetValue,
+                  targetUnit: value === "binary" ? undefined : editedHabit.targetUnit,
+                });
+              }}
+            >
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="binary">Binary (Done / Not Done)</SelectItem>
+                <SelectItem value="quantitative">Quantitative (Track a Value)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Target Value (Conditional) */}
+          {editedHabit.type === "quantitative" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="targetValue" className="text-right">
+                Target Value
+              </Label>
+              <Input
+                id="targetValue"
+                type="number"
+                value={editedHabit.targetValue || ""}
+                onChange={(e) => setEditedHabit({ ...editedHabit, targetValue: e.target.value ? parseFloat(e.target.value) : undefined })}
+                className="col-span-3"
+                placeholder="e.g., 64, 30, 10000"
+              />
+            </div>
+          )}
+
+          {/* Unit (Conditional) */}
+          {editedHabit.type === "quantitative" && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="targetUnit" className="text-right">
+                Unit
+              </Label>
+              <Input
+                id="targetUnit"
+                value={editedHabit.targetUnit || ""}
+                onChange={(e) => setEditedHabit({ ...editedHabit, targetUnit: e.target.value })}
+                className="col-span-3"
+                placeholder="e.g., oz, minutes, steps, pages"
+              />
+            </div>
+          )}
           
           {/* Icon Color */}
           <div className="grid grid-cols-4 items-start gap-4">
