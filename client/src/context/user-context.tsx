@@ -26,33 +26,30 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // This simplified logic is more robust and avoids race conditions.
+    // This is a more direct and robust way to handle initialization.
 
-    // 1. Immediately set up the permanent listener for auth state changes.
-    // This will be our single source of truth for the user's login status.
+    // First, process any pending redirect result.
+    processRedirectResult().catch((err) => {
+      // We catch and log any error during redirect processing.
+      console.error("Error processing redirect result:", err);
+      setError(err);
+    });
+
+    // Set up the permanent listener for auth state changes.
+    // This listener will fire after a redirect is processed, or on initial page load.
     const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
+      if (firebaseUser) {
+        setUser(firebaseUser);
+      } else {
+        setUser(null);
+      }
+      // We are no longer loading once we have a definitive user status.
       setLoading(false);
     });
 
-    // 2. Separately, process any pending redirect results on initial load.
-    // If a user is found here, it will trigger the onAuthStateChanged listener
-    // above, which will then correctly update the application state.
-    processRedirectResult()
-      .then((result) => {
-        if (result) {
-          console.log("Redirect sign-in successful.");
-        }
-        // If result is null, it simply means there was no pending redirect.
-      })
-      .catch((err) => {
-        console.error("Error processing redirect result:", err);
-        setError(err);
-      });
-
-    // 3. Return the cleanup function for the permanent listener.
+    // Return the cleanup function for the listener.
     return () => unsubscribe();
-  }, []); // The empty dependency array ensures this runs only once on mount.
+  }, []); // The empty dependency array ensures this runs only once.
 
   return (
     <UserContext.Provider value={{ user, loading, error }}>
@@ -68,3 +65,5 @@ export const useUser = () => {
   }
   return context;
 };
+
+
