@@ -1,8 +1,6 @@
 import { Hono } from 'hono';
-import { bearerAuth } from 'hono/bearer-auth';
 
 // This is a placeholder for your actual habit type.
-// It should match the structure you have defined elsewhere.
 type Habit = {
   id: string;
   title: string;
@@ -26,24 +24,54 @@ type FirestoreDocument = {
 
 const habitRoutes = new Hono();
 
-// Middleware to verify the Firebase JWT token from the frontend.
-// The 'verifyToken' function would be a utility you create that uses
-// the Firebase REST API to validate the token. This is a crucial security step.
-// For this example, we'll assume a middleware has already run and placed
-// the user's UID in the context (e.g., c.get('userId')).
+// --- NEW: Authentication Middleware ---
+// This middleware runs on every request to /api/habits/*
+// It verifies the user's token before allowing the request to proceed.
+habitRoutes.use('*', async (c, next) => {
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized: Missing or invalid token' }, 401);
+  }
+
+  const token = authHeader.split(' ')[1];
+  const googleApiUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${c.env.VITE_FIREBASE_API_KEY}`;
+
+  try {
+    const response = await fetch(googleApiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: token }),
+    });
+
+    if (!response.ok) {
+      return c.json({ error: 'Unauthorized: Invalid token' }, 401);
+    }
+
+    const data: any = await response.json();
+    const userId = data?.users?.[0]?.localId;
+
+    if (!userId) {
+      return c.json({ error: 'Unauthorized: Could not identify user' }, 401);
+    }
+
+    // Set the userId in the context for the next function to use.
+    c.set('userId', userId);
+    await next();
+
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    return c.json({ error: 'Internal server error during authentication' }, 500);
+  }
+});
+
 
 // GET /api/habits - Fetch all habits for the authenticated user
 habitRoutes.get('/', async (c) => {
   try {
-    // 1. Get the authenticated user's ID from the context.
-    // This assumes a middleware has already verified the token and set the userId.
+    // 1. Get the authenticated user's ID from the context (set by the middleware).
     const userId = c.get('userId');
-    if (!userId) {
-      return c.json({ error: 'Unauthorized: User ID not found in token' }, 401);
-    }
 
     // 2. Access environment variables for Firestore project ID and API key.
-    // These are set in your wrangler.toml file.
     const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
     const apiKey = c.env.VITE_FIREBASE_API_KEY;
 
@@ -53,45 +81,37 @@ habitRoutes.get('/', async (c) => {
     }
 
     // 3. Construct the URL for the Firestore REST API.
-    // This URL targets the 'habits' sub-collection for the specific user.
     const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/habits`;
 
     // 4. Append the API key as a query parameter.
-    // This is the critical fix for the "API key not valid" error.
     const urlWithKey = `${firestoreUrl}?key=${apiKey}`;
 
-    // 5. Make the authenticated fetch request to Firestore.
-    const response = await fetch(urlWithKey, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    // 5. Make the fetch request to Firestore.
+    const response = await fetch(urlWithKey);
 
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Firestore API error:', errorData);
-      return c.json({ error: 'Failed to fetch habits from database' }, response.status);
+      // Pass the specific error from Firestore to the frontend.
+      return c.json({ error: errorData.error.message || 'Failed to fetch habits from database' }, response.status);
     }
 
     const responseData = await response.json();
 
-    // 6. Process the response from Firestore to a more friendly format.
-    // The Firestore REST API returns a complex object that we need to simplify.
+    // 6. Process the response from Firestore.
     const habits = responseData.documents?.map((doc: FirestoreDocument) => {
       const habitData: any = {};
       for (const key in doc.fields) {
-        // This simple version assumes all fields are stringValue.
-        // A real implementation would need to handle different types (integerValue, booleanValue, etc.)
-        habitData[key] = Object.values(doc.fields[key])[0];
+        // This improved version handles different Firestore data types.
+        const valueObject = doc.fields[key];
+        const valueType = Object.keys(valueObject)[0];
+        habitData[key] = valueObject[valueType];
       }
-      // Extract the document ID from the full 'name' path
       habitData.id = doc.name.split('/').pop();
       return habitData;
     }) || [];
 
-    // For now, we return an empty completions array as in the original code.
-    // This would be fetched from a separate 'completions' collection in a real app.
+    // This would be fetched from a separate 'completions' collection.
     const completions = [];
 
     return c.json({ habits, completions });
