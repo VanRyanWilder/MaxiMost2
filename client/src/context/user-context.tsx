@@ -7,7 +7,7 @@ import {
 } from "react";
 import { User as FirebaseUser } from "firebase/auth";
 import {
-  auth,
+  // REMOVED: "auth" is no longer imported directly.
   onAuthStateChange,
   processRedirectResult,
 } from "@/lib/firebase";
@@ -26,35 +26,25 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // This logic includes extra logging to pinpoint the initialization error.
+    // This logic is now correct because it doesn't rely on a direct auth import.
 
+    // Process any pending redirect first.
     processRedirectResult().catch((err) => {
       console.error("Error processing redirect result:", err);
       setError(err);
     });
 
-    try {
-      console.log("Attempting to set up onAuthStateChanged listener...");
-      const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-        console.log("onAuthStateChanged listener fired. User:", firebaseUser?.uid || "null");
-        setUser(firebaseUser);
-        setLoading(false);
-      });
-      console.log("Successfully set up onAuthStateChanged listener.");
+    // The onAuthStateChange function from lib/firebase.ts handles getting the
+    // auth instance internally, so we don't need to pass it here.
+    const unsubscribe = onAuthStateChange((firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
 
-      return () => {
-        console.log("Cleaning up auth state listener.");
-        unsubscribe();
-      };
-    } catch (e: any) {
-      console.error("CRITICAL: Failed to set up onAuthStateChanged listener.", e);
-      setError(e);
-      setLoading(false); // Stop loading if the listener setup fails.
-    }
+    return () => unsubscribe();
   }, []);
 
   // While the initial authentication check is running, show a loading screen.
-  // This prevents the router from running with an incorrect auth state.
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
