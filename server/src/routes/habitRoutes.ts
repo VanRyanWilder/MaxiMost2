@@ -81,24 +81,37 @@ habitRoutes.get('/', async (c) => {
 
     const responseData = await response.json();
 
-    // 6. Process the response from Firestore.
-    const habits = responseData.documents?.map((doc: FirestoreDocument) => {
+    // 6. Process the response from Firestore with added safety checks.
+    const habits = (responseData.documents || []).map((doc: FirestoreDocument) => {
+      // Ensure doc and doc.fields exist before processing
+      if (!doc || !doc.fields) {
+        return null; // Skip this document if it's malformed
+      }
+      
       const habitData: any = {};
       for (const key in doc.fields) {
         const valueObject = doc.fields[key];
-        const valueType = Object.keys(valueObject)[0];
-        habitData[key] = valueObject[valueType];
+        // Ensure valueObject is valid before trying to get its keys
+        if (valueObject && typeof valueObject === 'object') {
+          const valueType = Object.keys(valueObject)[0];
+          if (valueType) {
+            habitData[key] = valueObject[valueType];
+          }
+        }
       }
-      habitData.id = doc.name.split('/').pop();
+      // Ensure doc.name exists before splitting
+      habitData.id = doc.name ? doc.name.split('/').pop() : null;
       return habitData;
-    }) || [];
+    }).filter(habit => habit !== null); // Filter out any null entries from malformed docs
 
     const completions = [];
 
     return c.json({ habits, completions });
 
-  } catch (error) {
-    console.error('Error in /api/habits route:', error);
+  } catch (error: any) {
+    // --- ADDED: More detailed error logging ---
+    console.error('CRITICAL: Unhandled error in /api/habits route:', error.message);
+    console.error('Stack trace:', error.stack);
     return c.json({ error: 'An internal server error occurred' }, 500);
   }
 });
