@@ -26,39 +26,32 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // This new logic ensures that the redirect result is fully processed
-    // before the main authentication state listener is established.
-    
-    let unsubscribe = () => {}; // Initialize an empty cleanup function.
+    // This simplified logic is more robust and avoids race conditions.
 
-    const initializeAuth = async () => {
-      try {
-        // First, wait for any pending redirect operations to complete.
-        const result = await processRedirectResult();
+    // 1. Immediately set up the permanent listener for auth state changes.
+    // This will be our single source of truth for the user's login status.
+    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+
+    // 2. Separately, process any pending redirect results on initial load.
+    // If a user is found here, it will trigger the onAuthStateChanged listener
+    // above, which will then correctly update the application state.
+    processRedirectResult()
+      .then((result) => {
         if (result) {
-          // This log confirms a user was signed in via redirect.
-          console.log("Redirect result processed successfully for user:", result.user.uid);
+          console.log("Redirect sign-in successful.");
         }
-      } catch (err: any) {
+        // If result is null, it simply means there was no pending redirect.
+      })
+      .catch((err) => {
         console.error("Error processing redirect result:", err);
         setError(err);
-      } finally {
-        // AFTER the redirect is handled, set up the permanent listener.
-        // This becomes the single source of truth for the user's auth state.
-        unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-          setUser(firebaseUser);
-          setLoading(false); // We are no longer loading once we have the definitive user state.
-        });
-      }
-    };
+      });
 
-    initializeAuth();
-
-    // The main cleanup function for the useEffect hook.
-    // It will call the real unsubscribe function once it's assigned.
-    return () => {
-      unsubscribe();
-    };
+    // 3. Return the cleanup function for the permanent listener.
+    return () => unsubscribe();
   }, []); // The empty dependency array ensures this runs only once on mount.
 
   return (
