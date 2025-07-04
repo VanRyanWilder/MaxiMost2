@@ -3,10 +3,10 @@ import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
 
 // Import the new homepage
-import NewHomePage from "@/pages/NewHomePage"; // Added this import
+import NewHomePage from "@/pages/NewHomePage";
 
-// Other page imports (ensure these are maintained)
-import Dashboard from "@/pages/sortable-dashboard-new"; // Was sortable-dashboard-new
+// Other page imports
+import Dashboard from "@/pages/sortable-dashboard-new";
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
 import MindSpirit from "@/pages/mind-spirit";
@@ -14,12 +14,10 @@ import Nutrition from "@/pages/nutrition";
 import Resources from "@/pages/resources";
 import Programs from "@/pages/programs";
 import Tasks from "@/pages/tasks";
-// import Habits from "@/pages/habits"; // Original, replaced by IntegratedHabits
-import UnifiedHabits from "@/pages/unified-habits"; // Still here, check usage
-import IntegratedHabits from "@/pages/integrated-habits"; // Current for /habits
+import IntegratedHabits from "@/pages/integrated-habits";
 import HabitTracker from "@/pages/habit-tracker";
 import HabitStacks from "@/pages/habit-stacks";
-import Supplements from "@/pages/supplements-unified"; // Was supplements-unified
+import Supplements from "@/pages/supplements-unified";
 import FitnessTrackerConnect from "@/pages/fitness-tracker-connect";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
@@ -28,14 +26,13 @@ import Sugar from "@/pages/sugar";
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
-// import Home from "@/pages/home"; // Old Home component, will be replaced by NewHomePage for / and /home routes
 import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
 import Progress from "@/pages/progress";
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
 import Motivation from "@/pages/motivation";
-import Experts from "@/pages/experts-unified"; // Was experts-unified
+import Experts from "@/pages/experts-unified";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
@@ -45,17 +42,21 @@ import FirebaseConfig from "@/pages/firebase-config";
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
-  const { user, userLoading } = useUser();
+  // --- FIX: Changed 'userLoading' to 'loading' to match the context provider ---
+  const { user, loading } = useUser();
   const [location] = useLocation();
   
-  if (userLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  // This will now correctly show the loading state while Firebase initializes.
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading...</div>;
   }
   
+  // After loading is false, this check will correctly redirect if there's no user.
   if (!user) {
     return <Redirect to={`/login?redirect=${encodeURIComponent(location)}`} />;
   }
   
+  // If there is a user, the component will be rendered.
   return <Component {...rest} />;
 }
 
@@ -65,21 +66,27 @@ function App() {
       {/* Public routes */}
       <Route path="/">
         {() => {
-          const { user } = useUser(); // No userLoading check needed here as PrivateRoute handles it
+          const { user, loading } = useUser();
+          
+          // Wait for auth check to complete before deciding on redirect
+          if (loading) {
+            return <div className="min-h-screen flex items-center justify-center bg-gray-900"></div>; // Or a splash screen
+          }
+          
           if (user) {
-            // If user is logged in and tries to go to "/", redirect to dashboard
+            // If user is logged in, redirect to dashboard
             return <Redirect to="/dashboard" />;
           }
           // If user is not logged in, show the new homepage
           return <NewHomePage />;
         }}
       </Route>
-      <Route path="/home" component={NewHomePage} /> {/* /home now also shows NewHomePage */}
+      <Route path="/home" component={NewHomePage} />
 
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
       
-      {/* Protected routes - Ensure all existing private routes are maintained */}
+      {/* Protected routes */}
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
       </Route>
@@ -149,7 +156,7 @@ function App() {
       <Route path="/experts">
         <PrivateRoute component={Experts} />
       </Route>
-      <Route path="/experts-unified"> {/* This might be redundant if /experts is the canonical one */}
+      <Route path="/experts-unified">
         <PrivateRoute component={Experts} />
       </Route>
       <Route path="/habit-building">
@@ -158,18 +165,14 @@ function App() {
       <Route path="/branding">
         <PrivateRoute component={Branding} />
       </Route>
-      <Route path="/contact" component={Contact} /> {/* Assuming Contact can be public or handles its own auth */}
-      <Route path="/pricing" component={Pricing} /> {/* Assuming Pricing can be public */}
-      <Route path="/firebase-config" component={FirebaseConfig} /> {/* Assuming this is a dev/test page */}
+      <Route path="/contact" component={Contact} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/firebase-config" component={FirebaseConfig} />
       <Route path="/fitness-tracker-connect">
         <PrivateRoute component={FitnessTrackerConnect} />
       </Route>
-      
-      {/* Test pages that were removed in earlier cleanup are confirmed not present here */}
-      {/* <Route path="/habit-view-test"><PrivateRoute component={HabitViewTest} /></Route> */}
-      {/* <Route path="/sortable-view-test"><PrivateRoute component={SortableViewTest} /></Route> */}
 
-      {/* 404 Not Found route - Must be last */}
+      {/* 404 Not Found route */}
       <Route component={NotFound} />
     </Switch>
   );
