@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 // --- CORRECTED IMPORT SYNTAX ---
-// Use a default import for the firebase-auth middleware
-import firebaseAuth from '@hono/firebase-auth';
+// This 'import * as' syntax is more robust for handling complex module exports.
+import * as firebaseAuthMiddleware from '@hono/firebase-auth';
 
 // This is a placeholder for your actual habit type.
 type Habit = {
@@ -37,7 +37,8 @@ habitRoutes.use('*', async (c, next) => {
     return c.json({ error: 'Server configuration error' }, 500);
   }
 
-  const auth = firebaseAuth({
+  // The 'firebaseAuth' function is accessed from the imported module object.
+  const auth = firebaseAuthMiddleware.firebaseAuth({
     projectId: projectId,
   });
   return auth(c, next);
