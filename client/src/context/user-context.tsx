@@ -28,35 +28,29 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // This is the most robust pattern for handling Firebase auth initialization.
+    // This logic ensures the redirect is processed and the auth state is stable
+    // before the rest of the app is allowed to render.
 
-    // 1. Set up the auth state listener immediately. This is the single
-    //    source of truth for whether a user is logged in.
-    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false); // We are no longer loading once we get the first update.
-      
-      // If a user is found by this listener, we ensure they are on the dashboard.
-      if (firebaseUser) {
-        const params = new URLSearchParams(window.location.search);
-        const redirectPath = params.get('redirect');
-        // Only redirect if we are not already on a protected route, to avoid loops.
-        if (window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/') {
-          setLocation(redirectPath || "/dashboard");
-        }
-      }
-    });
-
-    // 2. Separately, process any pending redirect results. If a user is found,
-    //    it will trigger the onAuthStateChanged listener above to update the state.
     processRedirectResult().catch((err) => {
       console.error("Error processing redirect result:", err);
       setError(err);
     });
 
-    // 3. Return the cleanup function for the listener.
+    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false); // The initial loading is complete once this fires.
+    });
+
     return () => unsubscribe();
-  }, [setLocation]);
+  }, []);
+
+  // --- CRITICAL FIX ---
+  // While the initial authentication check is running, we render nothing.
+  // This prevents the router and other components from running with an
+  // intermediate or incorrect auth state, which resolves the race condition.
+  if (loading) {
+    return null; // Or a full-page spinner component
+  }
 
   return (
     <UserContext.Provider value={{ user, loading, error }}>
