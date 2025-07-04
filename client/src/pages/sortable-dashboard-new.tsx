@@ -298,7 +298,36 @@ export default function SortableDashboard() {
         onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits.map(h => ({...h, habitId: h.id})))}
       />);
   }
-  const handleAddFromLibrary = (habitTemplate: any) => { /* ... placeholder ... */ };
+  const handleAddFromLibrary = async (habitTemplate: any) => {
+    if (!user) {
+      toast({ title: "Authentication Error", description: "You must be logged in to add habits.", variant: "destructive" });
+      return;
+    }
+
+    // Construct the payload for the addHabit function
+    // The habitTemplate comes from habitSuggestions in habit-library-new.tsx
+    const newHabitData = {
+      title: habitTemplate.title,
+      description: habitTemplate.description || "",
+      category: habitTemplate.category as HabitCategory, // Ensure type assertion if necessary
+      type: habitTemplate.type || "binary", // Default to binary if not specified
+      targetValue: habitTemplate.type === "quantitative" ? habitTemplate.targetValue : undefined,
+      targetUnit: habitTemplate.type === "quantitative" ? habitTemplate.targetUnit : undefined,
+      isBadHabit: habitTemplate.isBadHabit || false,
+      trigger: habitTemplate.isBadHabit ? habitTemplate.trigger : undefined,
+      replacementHabit: habitTemplate.isBadHabit ? habitTemplate.replacementHabit : undefined,
+      icon: habitTemplate.icon || "activity",
+      iconColor: habitTemplate.iconColor || "gray",
+      impact: habitTemplate.impact || 5,
+      effort: habitTemplate.effort || 2,
+      timeCommitment: habitTemplate.timeCommitment || "5 min",
+      frequency: habitTemplate.frequency as HabitFrequency || "daily", // Ensure type assertion
+      isAbsolute: typeof habitTemplate.isAbsolute === 'boolean' ? habitTemplate.isAbsolute : (habitTemplate.frequency === 'daily'),
+    };
+
+    // Call the existing addHabit function which handles API call and state update
+    await addHabit(newHabitData);
+  };
 
   return (
     <SettingsProvider>
