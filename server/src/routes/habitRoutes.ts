@@ -24,9 +24,9 @@ type FirestoreDocument = {
 
 const habitRoutes = new Hono();
 
-// --- NEW: Authentication Middleware ---
-// This middleware runs on every request to /api/habits/*
-// It verifies the user's token before allowing the request to proceed.
+// --- TEMPORARILY DISABLED FOR DEBUGGING ---
+// The authentication middleware is commented out to isolate the Firestore API call.
+/*
 habitRoutes.use('*', async (c, next) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -54,7 +54,6 @@ habitRoutes.use('*', async (c, next) => {
       return c.json({ error: 'Unauthorized: Could not identify user' }, 401);
     }
 
-    // Set the userId in the context for the next function to use.
     c.set('userId', userId);
     await next();
 
@@ -63,24 +62,25 @@ habitRoutes.use('*', async (c, next) => {
     return c.json({ error: 'Internal server error during authentication' }, 500);
   }
 });
-
+*/
 
 // GET /api/habits - Fetch all habits for the authenticated user
 habitRoutes.get('/', async (c) => {
   try {
-    // 1. Get the authenticated user's ID from the context (set by the middleware).
-    const userId = c.get('userId');
+    // --- TEMPORARY DEBUGGING STEP ---
+    // Using a hardcoded user ID because the middleware is disabled.
+    // Replace 'test-user-id' with a real user ID from your Firebase Auth console
+    // for a user that you know has habits in the database.
+    const userId = 'test-user-id'; 
+    console.log(`--- DEBUGGING: Using hardcoded userId: ${userId} ---`);
+
 
     // 2. Access environment variables for Firestore project ID and API key.
     const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
     const apiKey = c.env.VITE_FIREBASE_API_KEY;
 
-    // --- START: ADDED FOR DEBUGGING ---
-    console.log("--- DEBUGGING /api/habits ---");
-    console.log("User ID from middleware:", userId);
     console.log("Project ID from env:", projectId);
     console.log("API Key from env:", apiKey ? `Exists (ends with ...${apiKey.slice(-4)})` : "NOT FOUND");
-    // --- END: ADDED FOR DEBUGGING ---
 
     if (!projectId || !apiKey) {
       console.error("Firebase Project ID or API Key is not configured in the environment.");
@@ -93,10 +93,7 @@ habitRoutes.get('/', async (c) => {
     // 4. Append the API key as a query parameter.
     const urlWithKey = `${firestoreUrl}?key=${apiKey}`;
     
-    // --- START: ADDED FOR DEBUGGING ---
     console.log("Requesting Firestore URL:", urlWithKey);
-    console.log("--- END DEBUGGING ---");
-    // --- END: ADDED FOR DEBUGGING ---
 
     // 5. Make the fetch request to Firestore.
     const response = await fetch(urlWithKey);
@@ -104,7 +101,6 @@ habitRoutes.get('/', async (c) => {
     if (!response.ok) {
       const errorData = await response.json();
       console.error('Firestore API error:', errorData);
-      // Pass the specific error from Firestore to the frontend.
       return c.json({ error: errorData.error.message || 'Failed to fetch habits from database' }, response.status);
     }
 
@@ -114,7 +110,6 @@ habitRoutes.get('/', async (c) => {
     const habits = responseData.documents?.map((doc: FirestoreDocument) => {
       const habitData: any = {};
       for (const key in doc.fields) {
-        // This improved version handles different Firestore data types.
         const valueObject = doc.fields[key];
         const valueType = Object.keys(valueObject)[0];
         habitData[key] = valueObject[valueType];
@@ -123,7 +118,6 @@ habitRoutes.get('/', async (c) => {
       return habitData;
     }) || [];
 
-    // This would be fetched from a separate 'completions' collection.
     const completions = [];
 
     return c.json({ habits, completions });
@@ -133,7 +127,5 @@ habitRoutes.get('/', async (c) => {
     return c.json({ error: 'An internal server error occurred' }, 500);
   }
 });
-
-// You would add other routes (POST, PUT, DELETE) for habits here.
 
 export default habitRoutes;
