@@ -187,7 +187,9 @@ export default function SortableDashboard() {
     return false;
   };
 
-  // Updated toggleCompletion for V1.1
+  // REMOVING THIS DUPLICATE/OLD VERSION of toggleCompletion
+  // The correct one is defined earlier and handles quantValue.
+  /*
   const toggleCompletion = async (habitId: string, date: Date | string) => {
     if (!user) {
       toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
@@ -238,6 +240,7 @@ export default function SortableDashboard() {
       toast({ title: "Error", description: `Failed to log completion: ${error.message}`, variant: "destructive" });
     }
   };
+  */
 
   const addHabit = async (habitData: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak">) => { /* ... as before ... */
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in to add habits.", variant: "destructive" }); return; }
