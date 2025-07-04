@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
-import { firebaseAuth } from 'hono/firebase-auth';
+// --- CORRECTED IMPORT PATH ---
+import { firebaseAuth } from '@hono/firebase-auth';
 
 // This is a placeholder for your actual habit type.
 type Habit = {
