@@ -1,74 +1,105 @@
 import { Hono } from 'hono';
-import type { AppEnv } from '../hono'; // Shared types
-import { authMiddleware } from '../middleware/authMiddleware'; // Correct Auth middleware
+import { firebaseAuth } from 'hono/firebase-auth';
 
-// Create a new Hono instance specifically for these habit routes.
-const habitRoutes = new Hono<AppEnv>();
+// This is a placeholder for your actual habit type.
+type Habit = {
+  id: string;
+  title: string;
+  // ... other habit properties
+};
 
-// Note: authMiddleware is typically applied globally in server/src/index.ts for /api/* routes,
-// so it might not be needed here if already covered.
-// However, having the import is not an error if it's not used directly in this file.
-// The main thing is to NOT have the incorrect 'hono/firebase-auth' import.
+// This is the structure of the response from the Firestore REST API
+type FirestoreDocument = {
+  name: string;
+  fields: {
+    [key: string]: {
+      stringValue?: string;
+      integerValue?: string;
+      booleanValue?: boolean;
+      // ... other value types
+    };
+  };
+  createTime: string;
+  updateTime: string;
+};
 
-// This now handles GET requests to /api/habits
+const habitRoutes = new Hono();
+
+// --- NEW: Standard Firebase Authentication Middleware ---
+// This uses a dedicated library to handle token verification, which is more robust.
+// It will automatically verify the 'Authorization' header.
+habitRoutes.use('*', async (c, next) => {
+  const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
+  if (!projectId) {
+    console.error("Firebase Project ID is not configured in the environment.");
+    return c.json({ error: 'Server configuration error' }, 500);
+  }
+
+  const auth = firebaseAuth({
+    projectId: projectId,
+  });
+  return auth(c, next);
+});
+
+
+// GET /api/habits - Fetch all habits for the authenticated user
 habitRoutes.get('/', async (c) => {
-  const user = c.get('user'); // Provided by the global authMiddleware
-  if (!user?.localId) {
-    console.error('HabitRoutes GET /: User or user.localId not found in context.');
-    return c.json({ message: "User ID not found in token." }, 400);
-  }
-  console.log(`User ${user.localId} fetching habits from habitRoutes.ts`);
-
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
-
-  if (!PROJECT_ID || !API_KEY) {
-    console.error("Firebase Project ID or API Key is not configured in environment variables for habitRoutes.");
-    return c.json({ message: "Server configuration error." }, 500);
-  }
-
-  const firestoreDocumentPath = `users/${user.localId}/habits`;
-  const firestoreRestUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${firestoreDocumentPath}?key=${API_KEY}`;
-
-  console.log(`Constructed Firestore URL (example): ${firestoreRestUrl}`);
-
   try {
-    // Actual fetch logic is commented out as per previous steps,
-    // focusing on correcting build errors and demonstrating API key usage.
-    console.log("Placeholder: Intended to fetch from Firestore with API key. Returning empty array for now.");
-    return c.json([], 200);
+    // 1. Get the authenticated user's data from the context (set by the middleware).
+    const user = c.get('firebaseAuth');
+    if (!user) {
+      return c.json({ error: 'Unauthorized: User not found in token' }, 401);
+    }
+    const userId = user.uid;
 
-  } catch (err: any) {
-    console.error("Error in habitRoutes GET /:", err);
-    return c.json({ message: "Failed to process habits request", error: err.message }, 500);
+    // 2. Access environment variables for Firestore project ID and API key.
+    const projectId = c.env.VITE_FIREBASE_PROJECT_ID;
+    const apiKey = c.env.VITE_FIREBASE_API_KEY;
+
+    if (!projectId || !apiKey) {
+      console.error("Firebase Project ID or API Key is not configured in the environment.");
+      return c.json({ error: 'Server configuration error' }, 500);
+    }
+
+    // 3. Construct the URL for the Firestore REST API.
+    const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/users/${userId}/habits`;
+
+    // 4. Append the API key as a query parameter.
+    const urlWithKey = `${firestoreUrl}?key=${apiKey}`;
+
+    // 5. Make the fetch request to Firestore.
+    const response = await fetch(urlWithKey);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Firestore API error:', errorData);
+      return c.json({ error: errorData.error.message || 'Failed to fetch habits from database' }, response.status);
+    }
+
+    const responseData = await response.json();
+
+    // 6. Process the response from Firestore.
+    const habits = responseData.documents?.map((doc: FirestoreDocument) => {
+      const habitData: any = {};
+      for (const key in doc.fields) {
+        const valueObject = doc.fields[key];
+        const valueType = Object.keys(valueObject)[0];
+        habitData[key] = valueObject[valueType];
+      }
+      habitData.id = doc.name.split('/').pop();
+      return habitData;
+    }) || [];
+
+    const completions = [];
+
+    return c.json({ habits, completions });
+
+  } catch (error) {
+    console.error('Error in /api/habits route:', error);
+    return c.json({ error: 'An internal server error occurred' }, 500);
   }
 });
 
-habitRoutes.post('/', async (c) => {
-    const user = c.get('user');
-    console.log(`User ${user?.localId} attempting to POST to /api/habits. Logic pending.`);
-    return c.json({ message: "Create habit endpoint placeholder" }, 201);
-});
-
-habitRoutes.put('/:id', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to PUT /api/habits/${habitId}. Logic pending.`);
-    return c.json({ message: `Update habit ${habitId} placeholder` }, 200);
-});
-
-habitRoutes.delete('/:id', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to DELETE /api/habits/${habitId}. Logic pending.`);
-    return c.json({ message: `Delete habit ${habitId} placeholder` }, 200);
-});
-
-habitRoutes.post('/:id/complete', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to POST /api/habits/${habitId}/complete. Logic pending.`);
-    return c.json({ message: `Complete habit ${habitId} placeholder` }, 200);
-});
+// You would add other routes (POST, PUT, DELETE) for habits here.
 
 export default habitRoutes;

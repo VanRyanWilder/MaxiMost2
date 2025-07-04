@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hono/firebase-auth": "^1.4.2",
     "cors": "^2.8.5",
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.2",
