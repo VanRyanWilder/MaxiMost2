@@ -75,6 +75,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: <CheckSquare className="w-5 h-5 text-green-500" />,
       description: "Your all-in-one habit tracking center"
     },
+    {
+      path: "/explore",
+      name: "Explore",
+      icon: <Zap className="w-5 h-5 text-purple-500" />, // Placeholder icon
+      description: "Discover insights, motivation & resources"
+    },
     { 
       path: "/supplements", 
       name: "Top Supplements", 
@@ -86,6 +92,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       name: "Habit Building", 
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
       description: "Learn proven methods to build lasting habits"
+    },
+    {
+      path: "/atomic-habits-guide",
+      name: "Atomic Habits Guide",
+      icon: <BadgeCheck className="w-5 h-5 text-blue-500" />, // Using BadgeCheck as a placeholder
+      description: "Visual guide to the Four Laws"
     },
     { 
       path: "/ai-features", 

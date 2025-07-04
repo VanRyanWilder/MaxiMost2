@@ -7,6 +7,8 @@ import NewHomePage from "@/pages/NewHomePage";
 
 // Other page imports
 import Dashboard from "@/pages/sortable-dashboard-new";
+import ExplorePage from "@/pages/explore"; // Import the new Explore page
+import AtomicHabitsGuidePage from "@/pages/atomic-habits-guide"; // Import Atomic Habits Guide page
 import Profile from "@/pages/profile";
 import Workouts from "@/pages/workouts";
 import MindSpirit from "@/pages/mind-spirit";
@@ -90,6 +92,9 @@ function App() {
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
       </Route>
+      <Route path="/explore"> {/* Add route for ExplorePage */}
+        <PrivateRoute component={ExplorePage} />
+      </Route>
       <Route path="/profile">
         <PrivateRoute component={Profile} />
       </Route>
@@ -161,6 +166,9 @@ function App() {
       </Route>
       <Route path="/habit-building">
         <PrivateRoute component={HabitBuilding} />
+      </Route>
+      <Route path="/atomic-habits-guide"> {/* Add route for Atomic Habits Guide */}
+        <PrivateRoute component={AtomicHabitsGuidePage} />
       </Route>
       <Route path="/branding">
         <PrivateRoute component={Branding} />

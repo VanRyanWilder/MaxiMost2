@@ -16,6 +16,15 @@ import {
   Smartphone
 } from "lucide-react";
 
+// Helper function to convert hex color to RGB string "r,g,b"
+const hexToRgbString = (hex: string): string | null => {
+  if (!hex) return null;
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`
+    : null;
+};
+
 // Data structures
 const keyFeaturesData = [
   { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
@@ -94,15 +103,16 @@ const NewHomePage: React.FC = () => {
           className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
         >
           <div
-            className="absolute inset-0 z-0"
+            className="absolute inset-0 z-0 hero-background-animation" // Added class
             style={{
-              animation: 'heroGradientAnimation 15s ease infinite alternate',
-              backgroundSize: '200% 200%',
-              backgroundImage: activeGlowColor
+              // animation: 'heroGradientAnimation 15s ease infinite alternate', // Removed
+              backgroundSize: '200% 200%', // Kept for base gradient
+              backgroundImage: activeGlowColor // Base gradient
                 ? `linear-gradient(-45deg, #0A192F, ${activeGlowColor}, #0A192F)`
                 : 'linear-gradient(-45deg, #0A192F, #1E3A8A, #3B82F6, #0A192F)',
-              transition: 'background-image 0.5s ease-in-out',
-            }}
+              transition: 'background-image 0.5s ease-in-out, --hero-glow-color-rgb 0.5s ease-in-out', // Added CSS var transition
+              ['--hero-glow-color-rgb' as string]: activeGlowColor ? hexToRgbString(activeGlowColor) : '0,128,255', // Default to a blue if no activeGlowColor
+            } as React.CSSProperties}
           />
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center">
@@ -118,7 +128,7 @@ const NewHomePage: React.FC = () => {
           </div>
         </section>
 
-        <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
             className="py-16 md:py-20 bg-background dark:bg-neutral-900"
@@ -127,7 +137,7 @@ const NewHomePage: React.FC = () => {
         </div>
 
         {/* Section 3: Key Features */}
-        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -137,7 +147,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 4: Six Key Performance Areas */}
-        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -147,7 +157,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 5: Fitness Tracker Integration */}
-        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Fitness Tracker Integration
@@ -200,7 +210,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -221,7 +231,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 7: FAQ */}
-        <section ref={faqRef} id="faq" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={faqRef} id="faq" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -240,7 +250,7 @@ const NewHomePage: React.FC = () => {
         </section>
 
         {/* Section 8: Final CTA Section */}
-        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-700 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-700 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <CTASection
             headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
             description="Sign up for early access and unlock special benefits reserved for our first members."

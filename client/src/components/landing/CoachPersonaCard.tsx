@@ -48,12 +48,12 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
 
   const cardStyle: React.CSSProperties = {
     transition: "all 0.3s ease-in-out",
-    boxShadow: isHovered ? `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}` : "var(--tw-shadow, 0 0 #0000)", // Use Tailwind shadow if not hovered
-    transform: isHovered ? "translateY(-5px)" : "translateY(0px)",
+    boxShadow: isHovered ? `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}` : "var(--tw-shadow, 0 0 #0000)",
+    transform: isHovered ? "translateY(-8px) scale(1.03)" : "translateY(0px) scale(1)",
   };
 
   // Ensure Tailwind classes for border and bg are applied, but allow hover style to dominate
-  const combinedClassName = `flex flex-col h-full overflow-hidden rounded-lg
+  const combinedClassName = `flex flex-col h-full overflow-hidden rounded-lg cursor-pointer
     ${coach.borderColor || "border-border"}
     ${coach.cardBgColor || "bg-card"}
     ${className}`;
