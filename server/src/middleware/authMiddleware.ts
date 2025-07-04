@@ -20,7 +20,17 @@ export const authMiddleware = createMiddleware<{
   }
 
   const idToken = authHeader.split('Bearer ')[1];
-  const apiKey = c.env.FIREBASE_WEB_API_KEY;
+  const apiKey = c.env.VITE_FIREBASE_API_KEY; // Corrected to VITE_FIREBASE_API_KEY as per wrangler and other usage
+
+  console.log('[AuthMiddleware] Attempting to verify token. Key used:', apiKey ? 'SET' : 'UNDEFINED');
+  // For security, don't log the full key in production, but for debugging:
+  // console.log('[AuthMiddleware] API Key value:', apiKey);
+
+  if (!apiKey) {
+    console.error('[AuthMiddleware] CRITICAL: VITE_FIREBASE_API_KEY is UNDEFINED.');
+    return c.json({ error: 'Unauthorized: Server configuration error' }, 500); // Should be 500 if server misconfigured
+  }
+
   const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`;
 
   try {
