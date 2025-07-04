@@ -39,7 +39,7 @@ const FourLawsSection: React.FC<{
   </Card>
 );
 
-export default function AtomicHabitsGuidePage() {
+const AtomicHabitsGuidePage: React.FC = () => { // Added React.FC type
   return (
     <PageContainer>
       <div className="py-8 px-4 md:px-6">
@@ -131,4 +131,6 @@ export default function AtomicHabitsGuidePage() {
       </div>
     </PageContainer>
   );
-}
+};
+
+export default AtomicHabitsGuidePage; // Ensure default export is present
