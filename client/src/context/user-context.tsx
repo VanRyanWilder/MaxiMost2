@@ -26,35 +26,39 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // This simplified logic is more robust.
-    // It first checks for a redirect result and then sets up the auth listener.
+    // This new logic ensures that the redirect result is fully processed
+    // before the main authentication state listener is established.
+    
+    let unsubscribe = () => {}; // Initialize an empty cleanup function.
 
-    // Process the potential redirect result from Google, etc.
-    processRedirectResult()
-      .then((result) => {
+    const initializeAuth = async () => {
+      try {
+        // First, wait for any pending redirect operations to complete.
+        const result = await processRedirectResult();
         if (result) {
-          // A user was successfully signed in via redirect.
-          // The onAuthStateChanged listener below will handle setting the user state.
-          console.log("Redirect result processed successfully.");
+          // This log confirms a user was signed in via redirect.
+          console.log("Redirect result processed successfully for user:", result.user.uid);
         }
-        // If result is null, the user just landed on the page normally.
-      })
-      .catch((err) => {
+      } catch (err: any) {
         console.error("Error processing redirect result:", err);
         setError(err);
-      });
+      } finally {
+        // AFTER the redirect is handled, set up the permanent listener.
+        // This becomes the single source of truth for the user's auth state.
+        unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
+          setUser(firebaseUser);
+          setLoading(false); // We are no longer loading once we have the definitive user state.
+        });
+      }
+    };
 
-    // Set up the permanent listener for auth state changes.
-    // This is the single source of truth. It will fire after a redirect
-    // is processed, or on initial page load with a cached user.
-    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      // We are no longer loading once this observer gives us the user's status.
-      setLoading(false);
-    });
+    initializeAuth();
 
-    // Cleanup the listener when the component unmounts.
-    return () => unsubscribe();
+    // The main cleanup function for the useEffect hook.
+    // It will call the real unsubscribe function once it's assigned.
+    return () => {
+      unsubscribe();
+    };
   }, []); // The empty dependency array ensures this runs only once on mount.
 
   return (
