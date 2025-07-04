@@ -11,7 +11,6 @@ import {
   onAuthStateChange,
   processRedirectResult,
 } from "@/lib/firebase";
-import { useLocation } from "wouter";
 
 interface UserContextType {
   user: FirebaseUser | null;
@@ -25,31 +24,43 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // This logic ensures the redirect is processed and the auth state is stable
-    // before the rest of the app is allowed to render.
+    // This logic includes extra logging to pinpoint the initialization error.
 
     processRedirectResult().catch((err) => {
       console.error("Error processing redirect result:", err);
       setError(err);
     });
 
-    const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false); // The initial loading is complete once this fires.
-    });
+    try {
+      console.log("Attempting to set up onAuthStateChanged listener...");
+      const unsubscribe = onAuthStateChange(auth, (firebaseUser) => {
+        console.log("onAuthStateChanged listener fired. User:", firebaseUser?.uid || "null");
+        setUser(firebaseUser);
+        setLoading(false);
+      });
+      console.log("Successfully set up onAuthStateChanged listener.");
 
-    return () => unsubscribe();
+      return () => {
+        console.log("Cleaning up auth state listener.");
+        unsubscribe();
+      };
+    } catch (e: any) {
+      console.error("CRITICAL: Failed to set up onAuthStateChanged listener.", e);
+      setError(e);
+      setLoading(false); // Stop loading if the listener setup fails.
+    }
   }, []);
 
-  // --- CRITICAL FIX ---
-  // While the initial authentication check is running, we render nothing.
-  // This prevents the router and other components from running with an
-  // intermediate or incorrect auth state, which resolves the race condition.
+  // While the initial authentication check is running, show a loading screen.
+  // This prevents the router from running with an incorrect auth state.
   if (loading) {
-    return null; // Or a full-page spinner component
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
+        Initializing Authentication...
+      </div>
+    );
   }
 
   return (
