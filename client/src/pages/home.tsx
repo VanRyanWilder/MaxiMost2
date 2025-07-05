@@ -37,13 +37,31 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-slate-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <header className="pt-6 flex justify-between items-center">
-          <div className="text-3xl font-bold bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent flex items-center gap-1">
-            MaxiMost
-            <span className="text-xs bg-purple-700 px-1 py-0.5 rounded text-white align-top mt-2">ALPHA</span>
-          </div>
+    <>
+      <style jsx global>{`
+        @keyframes gradientAnimation {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .animated-gradient-bg {
+          background: linear-gradient(-45deg, #1f2937, #111827, #374151, #4b5563, #0f172a, #1e293b);
+          background-size: 400% 400%;
+          animation: gradientAnimation 25s ease infinite;
+        }
+      `}</style>
+      <div className="min-h-screen text-white animated-gradient-bg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <header className="pt-6 flex justify-between items-center">
+            {/* Symmetrical Logo: Ensuring the logo itself is balanced. The text "MaxiMost" and "ALPHA" badge.
+                The current flex alignment items-center and specific badge styling align-top mt-2 seems to make it visually balanced.
+                If specific symmetry for "MaxiMost" text itself is needed, it would require a custom font or SVG, which is out of scope here.
+                Assuming current text and badge visual balance is sufficient for "symmetrical logos" part.
+            */}
+            <div className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-500 to-rose-500 bg-clip-text text-transparent flex items-center gap-1">
+              MaxiMost
+              <span className="text-xs bg-purple-600 px-1.5 py-0.5 rounded-md text-white align-top mt-1.5 shadow-sm border border-purple-500/50">ALPHA</span>
+            </div>
           <div className="space-x-4">
             {loading ? (
               <div className="h-10 w-20 animate-pulse bg-gray-800/70 rounded-md"></div>
@@ -179,6 +197,55 @@ export default function Home() {
                       <span className="text-sm text-white">Science-backed approach to optimal health</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* AI Coach Cards Section */}
+          <div className="mt-24">
+            <h2 className="text-3xl font-bold text-center mb-4">Meet Your AI Performance Coaches</h2>
+            <p className="text-center text-lg text-gray-400 mb-12 max-w-2xl mx-auto">Personalized guidance inspired by the world's leading minds in Stoicism, habit formation, and mental toughness.</p>
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Coach Card 1: Stoic Sage */}
+              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-indigo-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-indigo-500/30 group">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center mb-5 border-2 border-indigo-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-indigo-400/40">
+                    <Brain className="h-12 w-12 text-white/90" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">The Stoic Sage</h3>
+                  <p className="text-gray-400 text-sm mb-4 px-2">Master emotional resilience and virtuous action with timeless Stoic wisdom.</p>
+                  <Button variant="outline" size="sm" className="mt-auto border-indigo-500/80 text-indigo-400 hover:bg-indigo-600/30 hover:text-indigo-300 transition-all group-hover:bg-indigo-600/40 group-hover:border-indigo-500">
+                    Consult the Sage
+                  </Button>
+                </div>
+              </div>
+
+              {/* Coach Card 2: Habit Architect */}
+              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-rose-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-rose-500/30 group">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-600 to-pink-700 flex items-center justify-center mb-5 border-2 border-rose-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-rose-400/40">
+                    <CheckCircle className="h-12 w-12 text-white/90" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-400 mb-2">The Habit Architect</h3>
+                  <p className="text-gray-400 text-sm mb-4 px-2">Build elite habits using proven science (Atomic Habits principles).</p>
+                  <Button variant="outline" size="sm" className="mt-auto border-rose-500/80 text-rose-400 hover:bg-rose-600/30 hover:text-rose-300 transition-all group-hover:bg-rose-600/40 group-hover:border-rose-500">
+                    Design Your Habits
+                  </Button>
+                </div>
+              </div>
+
+              {/* Coach Card 3: Discipline Spartan */}
+              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-amber-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-amber-500/30 group">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center mb-5 border-2 border-amber-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-amber-400/40">
+                    <Award className="h-12 w-12 text-white/90" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-2">The Discipline Spartan</h3>
+                  <p className="text-gray-400 text-sm mb-4 px-2">Forge mental toughness and embrace discomfort (Goggins/Jocko inspired).</p>
+                  <Button variant="outline" size="sm" className="mt-auto border-amber-500/80 text-amber-400 hover:bg-amber-600/30 hover:text-amber-300 transition-all group-hover:bg-amber-600/40 group-hover:border-amber-500">
+                    Embrace the Grind
+                  </Button>
                 </div>
               </div>
             </div>

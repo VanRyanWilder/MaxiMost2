@@ -12,18 +12,18 @@ export function DailyMotivation({
   author = "Mark Twain"
 }: DailyMotivationProps) {
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold flex items-center">
-          <BookOpen className="h-4 w-4 mr-2 text-blue-500" />
-          Daily Motivation
+    <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+      <CardHeader className="pb-3 border-b border-white/20">
+        <CardTitle className="text-xl font-bold flex items-center tracking-tight">
+          <Zap className="h-5 w-5 mr-2 text-yellow-300" /> {/* Changed icon */}
+          Daily Spark of Wisdom
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <blockquote className="italic text-sm text-muted-foreground">
+      <CardContent className="pt-5 pb-6">
+        <blockquote className="text-lg md:text-xl italic leading-relaxed">
           "{quote}"
         </blockquote>
-        <p className="text-xs mt-2 text-right font-medium">- {author}</p>
+        <p className="text-sm mt-4 text-right font-semibold opacity-90">- {author}</p>
       </CardContent>
     </Card>
   );

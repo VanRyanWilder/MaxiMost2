@@ -63,101 +63,84 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   }, []);
 
   const navItems = [
+    // Core Navigation
     {
       path: "/home",
       name: "Home",
       icon: <Home className="w-5 h-5" />,
-      description: "Welcome to MaxiMost"
+      description: "App overview and quick actions"
     },
     { 
       path: "/dashboard", 
       name: "Habit Dashboard", 
       icon: <CheckSquare className="w-5 h-5 text-green-500" />,
-      description: "Your all-in-one habit tracking center"
+      description: "Track and manage your habits"
+    },
+    {
+      path: "/progress",
+      name: "Track Progress",
+      icon: <LineChart className="w-5 h-5 text-blue-500" />, // Changed icon
+      description: "Visualize your habit trends & stats"
+    },
+    { 
+      path: "/ai-features",
+      name: "AI Coach", // Renamed for clarity
+      icon: <Sparkles className="w-5 h-5 text-amber-500" />,
+      description: "Personalized insights & suggestions"
     },
     {
       path: "/explore",
-      name: "Explore",
-      icon: <Zap className="w-5 h-5 text-purple-500" />, // Placeholder icon
-      description: "Discover insights, motivation & resources"
+      name: "Explore Content", // Renamed for clarity
+      icon: <Zap className="w-5 h-5 text-purple-500" />,
+      description: "Discover resources & motivation"
     },
-    { 
-      path: "/supplements", 
-      name: "Top Supplements", 
-      icon: <Trophy className="w-5 h-5 text-amber-500" />,
-      description: "Expert-recommended supplements with highest ROI"
-    },
+    // Learning & Knowledge Section (could be grouped visually or implicitly)
     { 
       path: "/habit-building", 
-      name: "Habit Building", 
+      name: "Habit Science", // Renamed
       icon: <BookOpen className="w-5 h-5 text-indigo-500" />,
-      description: "Learn proven methods to build lasting habits"
+      description: "Learn methods to build lasting habits"
     },
     {
       path: "/atomic-habits-guide",
       name: "Atomic Habits Guide",
-      icon: <BadgeCheck className="w-5 h-5 text-blue-500" />, // Using BadgeCheck as a placeholder
+      icon: <BadgeCheck className="w-5 h-5 text-blue-500" />,
       description: "Visual guide to the Four Laws"
     },
     { 
-      path: "/ai-features", 
-      name: "AI Features", 
-      icon: <Sparkles className="w-5 h-5 text-amber-500" />,
-      description: "AI-powered habit suggestions and insights"
-    },
-
-    
-    // Categories section
-    { 
       path: "/principles", 
       name: "Stoic Principles", 
-      icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
-      description: "High ROI principles from top performers"
+      icon: <TrendingUp className="w-5 h-5 text-teal-500" />, // Changed icon color
+      description: "Wisdom for resilience & focus"
     },
     { 
-      path: "/experts-unified", 
-      name: "Health Experts", 
-      icon: <Users className="w-5 h-5 text-emerald-500" />,
-      description: "Follow the top evidence-based health experts"
-    },
-    { 
-      path: "/research", 
-      name: "Scientific Research", 
-      icon: <BookOpenText className="w-5 h-5 text-indigo-500" />,
-      description: "Evidence-based health & fitness research"
+      path: "/supplements",
+      name: "Supplement Guides", // Renamed
+      icon: <Pill className="w-5 h-5 text-orange-500" />, // Changed icon
+      description: "Evidence-based supplement info"
     },
     { 
       path: "/sugar", 
-      name: "Sugar Dangers", 
+      name: "Sugar Impact", // Renamed
       icon: <Skull className="w-5 h-5 text-red-500" />,
-      description: "The harmful effects of sugar on health"
+      description: "Understand sugar's effects"
     },
-    
-    // Additional resources
-    { 
-      path: "/progress", 
-      name: "Track Progress", 
-      icon: <BarChart3 className="w-5 h-5 text-blue-500" />,
-      description: "Monitor your body stats and health metrics"
-    },
-    { 
-      path: "/motivation", 
-      name: "Motivation", 
-      icon: <Heart className="w-5 h-5 text-red-500" />,
-      description: "Daily motivation and inspiration"
-    },
+    // Removed some of the more generic/redundant items like "Scientific Research", "Health Experts"
+    // as they can be sub-sections within Explore or specific guides.
+    // Community & Support
     { 
       path: "/community", 
       name: "Community", 
-      icon: <MessageSquare className="w-5 h-5 text-purple-500" />,
-      description: "Connect with like-minded individuals"
+      icon: <Users className="w-5 h-5 text-pink-500" />, // Changed icon
+      description: "Connect with others (future)" // Assuming community is future
     },
     { 
       path: "/contact", 
-      name: "Contact Us", 
-      icon: <Mail className="w-5 h-5 text-blue-500" />,
-      description: "Get in touch with MaxiMost team"
+      name: "Support", // Renamed
+      icon: <Mail className="w-5 h-5 text-gray-500" />,
+      description: "Get help or provide feedback"
     }
+    // Motivation page is removed, as DailyMotivation card will be enhanced on dashboard or moved to Explore.
   ];
 
   // Handle navigation using wouter (location/setLocation already defined above)
