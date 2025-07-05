@@ -1,447 +1,282 @@
-import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
-import { 
-  CheckCircle, 
-  Award, 
-  Brain, 
-  BookOpen, 
-  AlertTriangle, 
-  Pill, 
-  FileText,
-  TrendingUp,
-  BarChart, 
-  HeartPulse,
-  Percent,
-  Clock,
-  Zap,
-  LogIn
-} from "lucide-react";
-import { FirebaseUserComponent } from "@/components/auth/firebase-user";
-import { useState, useEffect } from "react";
-import { onAuthStateChange } from "@/lib/firebase";
+import React, { useState, useEffect, useRef } from "react";
 
-export default function Home() {
-  const [, setLocation] = useLocation();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  
-  // Listen for Firebase auth state changes
-  useEffect(() => {
-    const unsubscribe = onAuthStateChange((firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-    
-    // Clean up subscription
-    return () => unsubscribe();
-  }, []);
+// Import reusable components
+import { CTASection } from "../components/landing/CTASection";
+import { MeetTheCoachesSection } from "../components/landing/MeetTheCoachesSection";
+import { FeatureCard } from "../components/landing/FeatureCard";
+import { TestimonialCard } from "../components/landing/TestimonialCard";
+import { FAQItem } from "../components/landing/FAQItem";
+import { Accordion } from "../components/ui/accordion";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
+
+// Import Lucide icons
+import {
+  Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
+  Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Users2, Landmark,
+  Smartphone
+} from "lucide-react";
+
+// Helper function to convert hex color to RGB string "r,g,b"
+const hexToRgbString = (hex: string): string | null => {
+  if (!hex) return null;
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? `${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)}`
+    : null;
+};
+
+// Data structures
+const keyFeaturesData = [
+  { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
+  { id: "feat-ai-coach", icon: <Brain size={32} />, title: "AI Habit Coach", description: "Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency." },
+  { id: "feat-break-bad", icon: <Zap size={32} />, title: "Break Bad Habits & Addictions", description: "Specialized tools to identify, track, and overcome negative patterns, including addiction recovery support." },
+  { id: "feat-one-percent", icon: <TrendingUp size={32} />, title: "1% Better Every Day", description: "Make consistent improvements following the \"compound effect\" principle. 1% better each day leads to 37x improvement in a year." },
+  { id: "feat-science", icon: <FlaskConical size={32} />, title: "Scientific Approach", description: "Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Gary Brecka for optimal health outcomes." },
+  { id: "feat-resilience", icon: <ShieldCheck size={32} />, title: "Mental Resilience", description: "Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges." },
+];
+const performanceAreasData = [
+  { id: "area-physical", icon: <Dumbbell size={32} />, title: "Physical Training", description: "Strength, cardio, mobility, and recovery" },
+  { id: "area-nutrition", icon: <NutritionIcon size={32} />, title: "Nutrition & Fueling", description: "Diet, hydration, and supplements" },
+  { id: "area-sleep", icon: <Bed size={32} />, title: "Sleep & Hygiene", description: "Quality rest and recovery cycles" },
+  { id: "area-mental", icon: <Lightbulb size={32} />, title: "Mental Acuity & Growth", description: "Focus, learning, and mindfulness" },
+  { id: "area-relationships", icon: <Users2 size={32} />, title: "Relationships", description: "Social connections and communication" },
+  { id: "area-financial", icon: <Landmark size={32} />, title: "Financial Habits", description: "Saving, investing, and wealth building" },
+];
+const testimonialsData = [
+    { id: "t-hormozi", imageSrc: "/placeholder-avatar.png", altText: "Alex Hormozi", name: "Alex Hormozi", title: "Founder, Acquisition.com", quote: "MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers." },
+    { id: "t-urban", imageSrc: "/placeholder-avatar.png", altText: "Melissa Urban", name: "Melissa Urban", title: "Co-Founder & CEO, Whole30", quote: "I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier." },
+    { id: "t-huberman", imageSrc: "/placeholder-avatar.png", altText: "Andrew Huberman", name: "Andrew Huberman", title: "Neuroscientist & Professor", quote: "The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed." },
+    { id: "t-patrick", imageSrc: "/placeholder-avatar.png", altText: "Rhonda Patrick", name: "Rhonda Patrick", title: "Biochemist & Health Expert", quote: "The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!" },
+];
+const faqData = [
+    { id: "faq-1", question: "What makes Maximost different from other habit trackers?", answer: "Maximost isn't just a habit tracker—it's an AI-powered life operating system that applies both ancient Stoic wisdom and modern performance science. We integrate with 5 fitness trackers, provide automatic habit completion, offer streak milestones, and focus on the \"maximum bang for your buck\" principle to truly transform your life one habit at a time." },
+    { id: "faq-2", question: "How does the fitness tracker integration work?", answer: "Maximost connects seamlessly with Fitbit, Samsung Health, Apple Health, Google Fit, and Garmin. Once connected, relevant activities like steps, workouts, sleep data, and more will automatically mark corresponding habits as complete without manual input, making consistent tracking effortless." },
+    { id: "faq-3", question: "What are the six key performance areas?", answer: "Maximost tracks habits across six critical life domains: Physical Training (red), Nutrition & Fueling (orange), Sleep & Hygiene (indigo), Mental Acuity & Growth (yellow), Relationships & Community (blue), and Financial Habits (green). This holistic approach ensures you're developing in all areas that truly matter for a fulfilling life." },
+    { id: "faq-4", question: "How does the streak system motivate long-term habit formation?", answer: "Our streak system counts consecutive days of habit completion while providing milestone celebrations (3, 7, 14, 30, 60, 90, 180, 365 days). The system is designed with flexibility—continuing if you complete habits today or yesterday—while also encouraging consistent daily action for maximum habit formation." },
+];
+
+// NOTE: Renamed NewHomePage to Home to match the routing in App.tsx
+const Home: React.FC = () => {
+  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
+
+  const handlePersonaHover = (glowColor: string | undefined) => {
+    setActiveGlowColor(glowColor || null);
+  };
+
+  const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
+    console.log("Waitlist form submitted:", formData);
+    alert(`Thank you, ${formData.email}! You've been added to the waitlist.`);
+  };
+
+  const fitnessTrackers = [
+    { name: "Fitbit", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
+    { name: "Samsung Health", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
+    { name: "Apple Health", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
+    { name: "Google Fit", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
+    { name: "Garmin", icon: <Smartphone className="inline-block h-6 w-6 mr-1" /> },
+  ];
+
+  // Refs for sections to be animated
+  const keyFeaturesRef = useRef<HTMLDivElement>(null);
+  const performanceAreasRef = useRef<HTMLDivElement>(null);
+  const fitnessTrackersRef = useRef<HTMLDivElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const faqRef = useRef<HTMLDivElement>(null);
+  const finalCtaRef = useRef<HTMLDivElement>(null);
+  const coachesRef = useRef<HTMLDivElement>(null);
+
+  // Intersection observer hooks
+  const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
+  const isPerformanceAreasVisible = useIntersectionObserver(performanceAreasRef, { threshold: 0.1, triggerOnce: true });
+  const isFitnessTrackersVisible = useIntersectionObserver(fitnessTrackersRef, { threshold: 0.1, triggerOnce: true });
+  const isTestimonialsVisible = useIntersectionObserver(testimonialsRef, { threshold: 0.1, triggerOnce: true });
+  const isFaqVisible = useIntersectionObserver(faqRef, { threshold: 0.1, triggerOnce: true });
+  const isFinalCtaVisible = useIntersectionObserver(finalCtaRef, { threshold: 0.1, triggerOnce: true });
+  const isCoachesVisible = useIntersectionObserver(coachesRef, { threshold: 0.1, triggerOnce: true });
+
 
   return (
-    <>
-      <style jsx global>{`
-        @keyframes gradientAnimation {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animated-gradient-bg {
-          background: linear-gradient(-45deg, #1f2937, #111827, #374151, #4b5563, #0f172a, #1e293b);
-          background-size: 400% 400%;
-          animation: gradientAnimation 25s ease infinite;
-        }
-      `}</style>
-      <div className="min-h-screen text-white animated-gradient-bg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <header className="pt-6 flex justify-between items-center">
-            {/* Symmetrical Logo: Ensuring the logo itself is balanced. The text "MaxiMost" and "ALPHA" badge.
-                The current flex alignment items-center and specific badge styling align-top mt-2 seems to make it visually balanced.
-                If specific symmetry for "MaxiMost" text itself is needed, it would require a custom font or SVG, which is out of scope here.
-                Assuming current text and badge visual balance is sufficient for "symmetrical logos" part.
-            */}
-            <div className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-500 to-rose-500 bg-clip-text text-transparent flex items-center gap-1">
-              MaxiMost
-              <span className="text-xs bg-purple-600 px-1.5 py-0.5 rounded-md text-white align-top mt-1.5 shadow-sm border border-purple-500/50">ALPHA</span>
-            </div>
-          <div className="space-x-4">
-            {loading ? (
-              <div className="h-10 w-20 animate-pulse bg-gray-800/70 rounded-md"></div>
-            ) : user ? (
-              <FirebaseUserComponent />
-            ) : (
-              <>
-                <Button 
-                  variant="outline" 
-                  className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
-                  onClick={() => setLocation("/login")}
-                >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Log in
-                </Button>
-                <Button 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:text-white"
-                  onClick={() => setLocation("/signup")}
-                >
-                  Sign up
-                </Button>
-              </>
-            )}
-          </div>
-        </header>
-        
-        <main className="mt-16 sm:mt-24">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-            <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
-                <span className="block">Unlock your</span>
-                <span className="block bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500 bg-clip-text text-transparent">
-                  MaxiMost Potential
-                </span>
-              </h1>
-              <p className="mt-3 text-base text-gray-300 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Get the maximum bang for your buck. Our evidence-based system focuses on the vital few habits that deliver 80% of your results with just 20% of the effort.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <span className="bg-indigo-900/40 text-indigo-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" /> High-ROI Focus
-                </span>
-                <span className="bg-purple-900/40 text-purple-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <FileText className="h-3 w-3" /> Scientific Principles
-                </span>
-                <span className="bg-rose-900/40 text-rose-200 text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <Percent className="h-3 w-3" /> Compound Gains
-                </span>
-              </div>
-              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left">
-                <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 justify-center lg:justify-start">
-                  {user ? (
-                    <Button 
-                      size="lg" 
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600"
-                      onClick={() => setLocation("/dashboard")}
-                    >
-                      Go to Dashboard
-                    </Button>
-                  ) : (
-                    <Button 
-                      size="lg" 
-                      className="bg-gradient-to-r from-indigo-500 to-purple-600"
-                      onClick={() => setLocation("/signup")}
-                    >
-                      Get Started
-                    </Button>
-                  )}
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="text-white hover:text-white border-white hover:border-white bg-gray-800/70"
-                    onClick={() => setLocation("/dashboard")}
-                  >
-                    Habit Building
-                  </Button>
-                </div>
-              </div>
-            </div>
-            <div className="mt-12 sm:mt-16 lg:mt-0 lg:col-span-6">
-              <div className="bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-indigo-800/50">
-                <div className="px-6 py-8 sm:p-10 sm:pb-6">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 rounded-full bg-indigo-600/60 flex items-center justify-center mr-3">
-                      <TrendingUp className="h-5 w-5 text-indigo-100" />
-                    </div>
-                    <div className="font-semibold text-xl text-white">1% Better Every Day</div>
-                  </div>
-                  
-                  <p className="text-gray-300 mb-6">Compound growth through small, consistent improvements:</p>
-                  
-                  <div className="bg-gray-800 rounded-lg p-4 mb-4 border border-indigo-700/50">
-                    <div className="flex items-start gap-3">
-                      <Percent className="h-5 w-5 text-indigo-400 mt-0.5" />
-                      <div>
-                        <div className="font-medium text-white">The Compound Effect</div>
-                        <p className="text-sm text-gray-300">1% improvement daily = 37.8x better in one year</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex justify-center -mt-2 mb-4">
-                    <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-                    </svg>
-                  </div>
-                  
-                  <p className="text-center text-sm font-medium text-indigo-300 mb-4">Focus only on what moves the needle</p>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
-                      <BarChart className="h-4 w-4 text-indigo-300" />
-                      <span className="text-sm text-white">Maximum ROI</span>
-                    </div>
-                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-indigo-300" />
-                      <span className="text-sm text-white">Minimal Time</span>
-                    </div>
-                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-indigo-300" />
-                      <span className="text-sm text-white">Evidence-Based</span>
-                    </div>
-                    <div className="bg-indigo-800/70 rounded-lg p-3 border border-indigo-700/50 flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-indigo-300" />
-                      <span className="text-sm text-white">Actionable Steps</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="px-6 pt-4 pb-8 bg-gradient-to-r from-indigo-900/90 to-indigo-950 sm:p-10 sm:pt-6">
-                  <div className="flex items-center justify-center">
-                    <div className="flex items-center space-x-1">
-                      <CheckCircle className="h-5 w-5 text-green-400" />
-                      <span className="text-sm text-white">Science-backed approach to optimal health</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
+      <main className="flex-grow">
+        {/* Section 1: UVP / Hero Section */}
+        <section
+          id="uvp"
+          className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
+        >
+          <div
+            className="absolute inset-0 z-0 hero-background-animation"
+            style={{
+              backgroundSize: '200% 200%',
+              backgroundImage: activeGlowColor
+                ? `linear-gradient(-45deg, #0A192F, ${activeGlowColor}, #0A192F)`
+                : 'linear-gradient(-45deg, #0A192F, #1E3A8A, #3B82F6, #0A192F)',
+              transition: 'background-image 0.5s ease-in-out, --hero-glow-color-rgb 0.5s ease-in-out',
+              ['--hero-glow-color-rgb' as string]: activeGlowColor ? hexToRgbString(activeGlowColor) : '0,128,255',
+            } as React.CSSProperties}
+          />
 
-          {/* AI Coach Cards Section */}
-          <div className="mt-24">
-            <h2 className="text-3xl font-bold text-center mb-4">Meet Your AI Performance Coaches</h2>
-            <p className="text-center text-lg text-gray-400 mb-12 max-w-2xl mx-auto">Personalized guidance inspired by the world's leading minds in Stoicism, habit formation, and mental toughness.</p>
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Coach Card 1: Stoic Sage */}
-              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-indigo-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-indigo-500/30 group">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center mb-5 border-2 border-indigo-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-indigo-400/40">
-                    <Brain className="h-12 w-12 text-white/90" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">The Stoic Sage</h3>
-                  <p className="text-gray-400 text-sm mb-4 px-2">Master emotional resilience and virtuous action with timeless Stoic wisdom.</p>
-                  <Button variant="outline" size="sm" className="mt-auto border-indigo-500/80 text-indigo-400 hover:bg-indigo-600/30 hover:text-indigo-300 transition-all group-hover:bg-indigo-600/40 group-hover:border-indigo-500">
-                    Consult the Sage
-                  </Button>
-                </div>
-              </div>
+          <div className="relative z-10 container mx-auto max-w-4xl text-center">
+            <CTASection
+              headline="Forge Your Elite Habits. Master Your Mind."
+              description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
+              buttonText="Get Started Free"
+              emailPlaceholder="Enter your email to begin"
+              rewardsText="Join now for early access and exclusive benefits."
+              showRewardsOptIn={false}
+              onSubmit={handleWaitlistSubmit}
+            />
+          </div>
+        </section>
 
-              {/* Coach Card 2: Habit Architect */}
-              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-rose-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-rose-500/30 group">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-600 to-pink-700 flex items-center justify-center mb-5 border-2 border-rose-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-rose-400/40">
-                    <CheckCircle className="h-12 w-12 text-white/90" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-400 mb-2">The Habit Architect</h3>
-                  <p className="text-gray-400 text-sm mb-4 px-2">Build elite habits using proven science (Atomic Habits principles).</p>
-                  <Button variant="outline" size="sm" className="mt-auto border-rose-500/80 text-rose-400 hover:bg-rose-600/30 hover:text-rose-300 transition-all group-hover:bg-rose-600/40 group-hover:border-rose-500">
-                    Design Your Habits
-                  </Button>
-                </div>
-              </div>
+        <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <MeetTheCoachesSection
+            title="Find the Coach That Drives You"
+            className="py-16 md:py-20 bg-background dark:bg-neutral-900"
+            onPersonaHover={handlePersonaHover}
+          />
+        </div>
 
-              {/* Coach Card 3: Discipline Spartan */}
-              <div className="bg-slate-800/70 rounded-xl p-6 shadow-2xl border border-slate-700/80 hover:border-amber-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-amber-500/30 group">
-                <div className="flex flex-col items-center text-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center mb-5 border-2 border-amber-500/50 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-amber-400/40">
-                    <Award className="h-12 w-12 text-white/90" />
-                  </div>
-                  <h3 className="text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400 mb-2">The Discipline Spartan</h3>
-                  <p className="text-gray-400 text-sm mb-4 px-2">Forge mental toughness and embrace discomfort (Goggins/Jocko inspired).</p>
-                  <Button variant="outline" size="sm" className="mt-auto border-amber-500/80 text-amber-400 hover:bg-amber-600/30 hover:text-amber-300 transition-all group-hover:bg-amber-600/40 group-hover:border-amber-500">
-                    Embrace the Grind
-                  </Button>
+        {/* Section 3: Key Features */}
+        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {keyFeaturesData.map((feature) => ( <FeatureCard key={feature.id} icon={feature.icon} title={feature.title} description={feature.description} /> ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Six Key Performance Areas */}
+        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {performanceAreasData.map((area) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} /> ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: Fitness Tracker Integration */}
+        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Fitness Tracker Integration
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Connect All Your Health Data
+            </p>
+            <p className="text-md text-muted-foreground mb-8 max-w-3xl mx-auto">
+              Integration with your favorite fitness platforms automatically
+              completes your habits based on your activity.
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-4 mb-10">
+              {fitnessTrackers.map(tracker => (
+                <div key={tracker.name} className="flex items-center p-2 bg-background dark:bg-neutral-700/50 rounded-md shadow">
+                  {tracker.icon}
+                  <span className="ml-2 text-sm font-medium text-foreground">{tracker.name}</span>
+                </div>
+              ))}
+            </div>
+            <div className="max-w-2xl mx-auto text-left space-y-2 text-muted-foreground mb-10">
+              <p>✓ Auto-complete workout habits when your fitness tracker records activity.</p>
+              <p>✓ Sleep habits marked complete when your tracker records sufficient sleep.</p>
+              <p>✓ Heart rate and recovery metrics for holistic health tracking.</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
+                <h4 className="text-lg font-semibold text-foreground mb-3">Fitbit Activity (Example)</h4>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <p><strong className="text-foreground">Steps:</strong> 9,857</p>
+                  <p><strong className="text-foreground">Miles:</strong> 4.3</p>
+                  <p><strong className="text-foreground">Calories:</strong> 2,478</p>
+                  <p><strong className="text-foreground">Active Min:</strong> 45</p>
+                  <p><strong className="text-foreground">Sleep:</strong> 7:15</p>
+                  <p><strong className="text-foreground">Resting BPM:</strong> 68</p>
+                </div>
+              </div>
+              <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
+                <h4 className="text-lg font-semibold text-foreground mb-3">Samsung Health (Example)</h4>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                  <p><strong className="text-foreground">Steps:</strong> 11,235</p>
+                  <p><strong className="text-foreground">Miles:</strong> 5.2</p>
+                  <p><strong className="text-foreground">Calories:</strong> 2,912</p>
+                  <p><strong className="text-foreground">Active Min:</strong> 65</p>
+                  <p><strong className="text-foreground">Sleep:</strong> 8:10</p>
+                  <p><strong className="text-foreground">Resting BPM:</strong> 71</p>
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Core knowledge areas for maximum performance */}
-          <div className="mt-24">
-            <h2 className="text-3xl font-bold text-center mb-12">MaxiMost Cornerstones</h2>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Principles Section */}
-              <div className="bg-indigo-900/50 rounded-xl p-6 backdrop-blur-sm border border-indigo-800/40 hover:border-indigo-700/40 transition-all group">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-indigo-600 to-indigo-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <BookOpen className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Habit Building</h3>
-                <p className="text-white/80 mb-4">Core philosophy from the world's top performers on how to build lasting habits with minimal effort for maximum results.</p>
-                <ul className="space-y-2">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-white/90">Discipline = Freedom</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-white/90">The 1% Rule</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-indigo-400" />
-                    <span className="text-white/90">Atomic Habits</span>
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <Button 
-                    variant="link" 
-                    className="text-indigo-400 pl-0 hover:text-indigo-300"
-                    onClick={() => setLocation("/dashboard")}
-                  >
-                    Explore habit building →
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Sugar Section */}
-              <div className="bg-rose-900/50 rounded-xl p-6 backdrop-blur-sm border border-rose-800/40 hover:border-rose-700/40 transition-all group">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-rose-600 to-rose-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <AlertTriangle className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Sugar: The Hidden Poison</h3>
-                <p className="text-white/80 mb-4">Comprehensive breakdown of how sugar affects your health and practical steps to eliminate it.</p>
-                <ul className="space-y-2">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-white/90">Inflammation pathways</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-white/90">Metabolic impacts</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-rose-400" />
-                    <span className="text-white/90">Sugar elimination guide</span>
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <Button 
-                    variant="link" 
-                    className="text-rose-400 pl-0 hover:text-rose-300"
-                    onClick={() => setLocation("/sugar")}
-                  >
-                    Learn about sugar dangers →
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Supplements Section */}
-              <div className="bg-amber-900/50 rounded-xl p-6 backdrop-blur-sm border border-amber-800/40 hover:border-amber-700/40 transition-all group">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Pill className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">Science-Backed Supplements</h3>
-                <p className="text-white/80 mb-4">Evidence-based supplement rankings showing only the most effective options with the highest return.</p>
-                <ul className="space-y-2">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-white/90">Value rankings</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-white/90">Verified efficacy</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-amber-400" />
-                    <span className="text-white/90">Cost-effectiveness analysis</span>
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <Button 
-                    variant="link" 
-                    className="text-amber-400 pl-0 hover:text-amber-300"
-                    onClick={() => setLocation("/supplements")}
-                  >
-                    View supplement rankings →
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Research Section */}
-              <div className="bg-emerald-900/20 rounded-xl p-6 backdrop-blur-sm border border-emerald-800/40 hover:border-emerald-700/40 transition-all group">
-                <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <FileText className="h-7 w-7 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-emerald-100 mb-3">Health Research</h3>
-                <p className="text-gray-300 mb-4">Cutting-edge scientific research from leading health experts, simplified and actionable.</p>
-                <ul className="space-y-2">
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-400" />
-                    <span className="text-gray-300">Latest peer-reviewed studies</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-400" />
-                    <span className="text-gray-300">Expert breakdowns</span>
-                  </li>
-                  <li className="flex items-center space-x-2">
-                    <CheckCircle className="h-4 w-4 text-emerald-400" />
-                    <span className="text-gray-300">Practical applications</span>
-                  </li>
-                </ul>
-                <div className="mt-4">
-                  <Button 
-                    variant="link" 
-                    className="text-emerald-400 pl-0 hover:text-emerald-300"
-                    onClick={() => setLocation("/research")}
-                  >
-                    Explore research →
-                  </Button>
-                </div>
-              </div>
+        </section>
+
+        {/* Section 6: Social Proof (Testimonials) */}
+        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 bg-background dark:bg-neutral-900 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+              What People Are Saying
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-4xl mx-auto">
+              {testimonialsData.map((testimonial) => (
+                <TestimonialCard
+                  key={testimonial.id}
+                  imageSrc={testimonial.imageSrc}
+                  altText={testimonial.altText}
+                  name={testimonial.name}
+                  title={testimonial.title}
+                  quote={testimonial.quote}
+                />
+              ))}
             </div>
           </div>
-          
-          {/* Why it works section */}
-          <div className="mt-24 bg-gradient-to-r from-indigo-900/30 to-purple-900/30 rounded-2xl p-8 border border-indigo-800/30 backdrop-blur-sm">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold mb-3">Why Our Approach Works</h2>
-              <p className="text-gray-300 max-w-2xl mx-auto">Focus on the vital few actions that produce the majority of results. Master the art of doing less, but better.</p>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50">
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center mb-4">
-                  <Award className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">The 80/20 Principle</h3>
-                <p className="text-gray-300">Focus on the 20% of actions that deliver 80% of results. Eliminate everything else to maximize efficiency.</p>
-              </div>
-              
-              <div className="bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50">
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center mb-4">
-                  <Brain className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Evidence-Based</h3>
-                <p className="text-gray-300">Every recommendation backed by peer-reviewed research and expert consensus, not anecdotes or opinions.</p>
-              </div>
-              
-              <div className="bg-gray-800/50 rounded-xl p-6 backdrop-blur-sm border border-gray-700/50">
-                <div className="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center mb-4">
-                  <HeartPulse className="h-6 w-6 text-indigo-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Sustainable Change</h3>
-                <p className="text-gray-300">Small, consistent improvements that compound over time rather than unsustainable massive efforts.</p>
-              </div>
-            </div>
+        </section>
+
+        {/* Section 7: FAQ */}
+        <section ref={faqRef} id="faq" className={`py-16 md:py-20 bg-muted/20 dark:bg-neutral-800/30 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="container mx-auto px-4 max-w-3xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+              Frequently Asked Questions
+            </h2>
+            <Accordion type="single" collapsible className="w-full">
+              {faqData.map((faqItem) => (
+                <FAQItem
+                  key={faqItem.id}
+                  value={faqItem.id}
+                  question={faqItem.question}
+                  answer={faqItem.answer}
+                />
+              ))}
+            </Accordion>
           </div>
-          
-          {/* Call to action */}
-          <div className="mt-20 text-center">
-            <div className="inline-block p-0.5 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500">
-              <div className="bg-gray-900 rounded-md px-8 py-6">
-                <h3 className="text-2xl font-bold mb-2">Ready to maximize your health ROI?</h3>
-                <p className="text-gray-300 mb-4">Join MaxiMost today and focus on what truly matters for your health.</p>
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500 hover:from-indigo-600 hover:via-purple-600 hover:to-rose-600"
-                  onClick={() => setLocation("/signup")}
-                >
-                  Get Started Now
-                </Button>
-              </div>
+        </section>
+
+        {/* Section 8: Final CTA Section */}
+        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-700 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <CTASection
+            headline="Get Notified at Launch & Receive an Exclusive Early Adopter Bonus!"
+            description="Sign up for early access and unlock special benefits reserved for our first members."
+            buttonText="Get Early Access"
+            emailPlaceholder="Enter your email address"
+            rewardsText="Join our rewards program & refer friends for premium rewards & features"
+            showRewardsOptIn={true}
+            onSubmit={handleWaitlistSubmit}
+            className="container mx-auto max-w-3xl"
+          />
+        </section>
+
+        <footer className="py-8 border-t border-border">
+            <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
+                <p className="mb-2">MaxiMost Logo (Placeholder)</p>
+                <div className="space-x-4 mb-2">
+                    <a href="#" className="hover:text-foreground">Privacy Policy</a>
+                    <a href="#" className="hover:text-foreground">Terms of Service</a>
+                    <a href="#" className="hover:text-foreground">Contact Us</a>
+                </div>
+                <p>© {new Date().getFullYear()} Maximost. All rights reserved.</p>
             </div>
-          </div>
-        </main>
-        
-        <footer className="mt-24 pb-12 text-center text-gray-400 text-sm">
-          <p>© 2025 MaxiMost. All rights reserved.</p>
         </footer>
-      </div>
+      </main>
     </div>
   );
-}
+};
+
+export default Home;

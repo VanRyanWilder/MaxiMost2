@@ -2,8 +2,8 @@ import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
 
-// Import the new homepage
-import NewHomePage from "@/pages/NewHomePage";
+// Import the intended homepage
+import Home from "@/pages/home"; // Changed from NewHomePage
 
 // Other page imports
 import Dashboard from "@/pages/sortable-dashboard-new";
@@ -79,11 +79,11 @@ function App() {
             // If user is logged in, redirect to dashboard
             return <Redirect to="/dashboard" />;
           }
-          // If user is not logged in, show the new homepage
-          return <NewHomePage />;
+          // If user is not logged in, show the intended homepage
+          return <Home />;
         }}
       </Route>
-      <Route path="/home" component={NewHomePage} />
+      <Route path="/home" component={Home} />
 
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
