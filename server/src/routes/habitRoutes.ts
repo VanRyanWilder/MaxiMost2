@@ -112,8 +112,9 @@ habitRoutes.post('/', async (c) => {
         return c.json({ message: "Invalid request body." }, 400);
     }
 
-    if (!newHabitData || typeof newHabitData.name !== 'string' || newHabitData.name.trim() === '') {
-        return c.json({ message: "Habit name is required." }, 400);
+    // Frontend sends 'title', ensure this is used for validation and field name
+    if (!newHabitData || typeof newHabitData.title !== 'string' || newHabitData.title.trim() === '') {
+        return c.json({ message: "Habit title is required." }, 400);
     }
 
     // Construct Firestore document path (user's habits collection)
@@ -122,19 +123,32 @@ habitRoutes.post('/', async (c) => {
     const firestoreRestUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${firestoreCollectionPath}?key=${API_KEY}`;
 
     // Prepare the Firestore document structure.
-    // Firestore expects fields to be wrapped in type descriptors (e.g., { stringValue: "example" }).
-    const firestoreDocument = {
-        fields: {
-            name: { stringValue: newHabitData.name },
-            // Add any other fields from newHabitData, ensuring they are correctly typed.
-            // Example: description: { stringValue: newHabitData.description || "" }
-            // For now, only 'name' is mandatory.
-        }
+    // Frontend sends 'title', so we save 'title'.
+    const fields: any = {
+        title: { stringValue: newHabitData.title },
     };
-    if (newHabitData.description) {
-        firestoreDocument.fields.description = { stringValue: newHabitData.description };
-    }
-    // Add other potential fields as needed, e.g., frequency, reminderTime, etc.
+
+    if (newHabitData.description) fields.description = { stringValue: newHabitData.description };
+    if (newHabitData.icon) fields.icon = { stringValue: newHabitData.icon };
+    if (newHabitData.iconColor) fields.iconColor = { stringValue: newHabitData.iconColor };
+    if (newHabitData.category) fields.category = { stringValue: newHabitData.category };
+    if (newHabitData.frequency) fields.frequency = { stringValue: newHabitData.frequency };
+    if (newHabitData.timeCommitment) fields.timeCommitment = { stringValue: newHabitData.timeCommitment };
+
+    if (typeof newHabitData.impact === 'number') fields.impact = { integerValue: String(newHabitData.impact) };
+    if (typeof newHabitData.effort === 'number') fields.effort = { integerValue: String(newHabitData.effort) };
+    if (typeof newHabitData.isAbsolute === 'boolean') fields.isAbsolute = { booleanValue: newHabitData.isAbsolute };
+
+    // Add default streak and createdAt, though Firestore timestamps are better for createdAt.
+    // For now, let's ensure streak is initialized. The backend GET already handles various types.
+    fields.streak = { integerValue: '0' };
+    // Firestore can also add server-side timestamps if configured in the document write.
+    // For now, client sends data, backend saves what's given.
+    // Let's add a server-generated 'createdAt' timestamp in ISO format.
+    fields.createdAt = { stringValue: new Date().toISOString() };
+
+
+    const firestoreDocument = { fields };
 
     try {
         const response = await fetch(firestoreRestUrl, {

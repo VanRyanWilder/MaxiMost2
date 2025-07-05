@@ -250,13 +250,22 @@ export default function Dashboard() {
   };
   
   // Function to add a new habit
-  const addHabit = (habit?: Habit) => {
-    if (habit) {
-      // If we have a habit object, add it directly
-      setHabits([...habits, habit]);
-    } else {
-      // If no habit provided, open the dialog for creating a new one
-      setShowCustomHabitDialog(true);
+  const addHabit = async (newHabitData: Omit<Habit, 'id' | 'createdAt' | 'streak'>) => {
+    // Show loading state or disable button if needed here
+    try {
+      const createdHabit = await apiClient<Habit>('/habits', {
+        method: 'POST',
+        body: JSON.stringify(newHabitData), // Send data like name, description, icon, category etc.
+      });
+      // Add the habit returned by the API (which includes the server-generated id and createdAt)
+      setHabits(prevHabits => [...(prevHabits || []), createdHabit]);
+      setShowCustomHabitDialog(false); // Close dialog on success
+    } catch (err) {
+      console.error("Failed to add habit:", err);
+      // Display error to user, e.g., using a toast notification
+      setError("Failed to save habit. Please try again."); // Or a more specific error state for the dialog
+    } finally {
+      // Hide loading state
     }
   };
   
@@ -387,51 +396,50 @@ export default function Dashboard() {
                         
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
                           {[
-                            { title: "Make Bed", icon: <CheckSquare className="h-4 w-4 text-blue-500" />, description: "Start the day right", category: "mind" },
-                            { title: "Pray", icon: <Sun className="h-4 w-4 text-blue-500" />, description: "Daily prayer practice", category: "mind" },
-                            { title: "Lift Weights", icon: <Dumbbell className="h-4 w-4 text-blue-500" />, description: "Strength training", category: "fitness" },
-                            { title: "Brush Teeth", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Oral hygiene", category: "health" },
-                            { title: "Wash Face", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Skincare", category: "health" },
-                            { title: "Meditate", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Mental clarity", category: "mind" },
-                            { title: "Call Friend", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Social connection", category: "social" },
-                            { title: "Drink Water", icon: <Droplets className="h-4 w-4 text-blue-500" />, description: "Stay hydrated", category: "health" },
-                            { title: "Journal", icon: <BookOpen className="h-4 w-4 text-blue-500" />, description: "Express thoughts", category: "mind" },
-                            { title: "Brain Dump", icon: <Brain className="h-4 w-4 text-blue-500" />, description: "Clear your mind", category: "mind" },
-                            { title: "Eat That Frog", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Do hardest task first", category: "mind" },
-                            { title: "Cardio", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Heart health", category: "fitness" },
-                            { title: "Supplements", icon: <Activity className="h-4 w-4 text-blue-500" />, description: "Daily vitamins", category: "health" },
-                            { title: "Custom", icon: <PlusCircle className="h-4 w-4 text-blue-500" />, description: "Create custom habit", category: "other" }
-                          ].map((habit, index) => (
+                            { title: "Make Bed", iconName: "checkSquare", IconComponent: CheckSquare, description: "Start the day right", category: "mind" as HabitCategory },
+                            { title: "Pray", iconName: "sun", IconComponent: Sun, description: "Daily prayer practice", category: "mind" as HabitCategory },
+                            { title: "Lift Weights", iconName: "dumbbell", IconComponent: Dumbbell, description: "Strength training", category: "fitness" as HabitCategory },
+                            { title: "Brush Teeth", iconName: "activity", IconComponent: Activity, description: "Oral hygiene", category: "health" as HabitCategory },
+                            { title: "Wash Face", iconName: "droplets", IconComponent: Droplets, description: "Skincare", category: "health" as HabitCategory },
+                            { title: "Meditate", iconName: "brain", IconComponent: Brain, description: "Mental clarity", category: "mind" as HabitCategory },
+                            { title: "Call Friend", iconName: "users", IconComponent: Users, description: "Social connection", category: "social" as HabitCategory },
+                            { title: "Drink Water", iconName: "droplets", IconComponent: Droplets, description: "Stay hydrated", category: "health" as HabitCategory },
+                            { title: "Journal", iconName: "bookOpen", IconComponent: BookOpen, description: "Express thoughts", category: "mind" as HabitCategory },
+                            { title: "Brain Dump", iconName: "brain", IconComponent: Brain, description: "Clear your mind", category: "mind" as HabitCategory },
+                            { title: "Eat That Frog", iconName: "activity", IconComponent: Activity, description: "Do hardest task first", category: "mind" as HabitCategory },
+                            { title: "Cardio", iconName: "activity", IconComponent: Activity, description: "Heart health", category: "fitness" as HabitCategory },
+                            { title: "Supplements", iconName: "pill", IconComponent: Pill, description: "Daily vitamins", category: "health" as HabitCategory },
+                            { title: "Custom", iconName: "plusCircle", IconComponent: PlusCircle, description: "Create custom habit", category: "other" as HabitCategory }
+                          ].map((quickHabit, index) => (
                             <div key={index} className="border rounded-md bg-gray-50/50 p-2 transition-colors hover:border-blue-200 hover:bg-blue-50/30">
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  {habit.icon}
-                                  <span className="text-sm font-medium">{habit.title}</span>
+                                  <quickHabit.IconComponent className="h-4 w-4 text-blue-500" />
+                                  <span className="text-sm font-medium">{quickHabit.title}</span>
                                 </div>
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  onClick={() => {
-                                    if (habit.title === "Custom") {
+                                  onClick={async () => {
+                                    if (quickHabit.title === "Custom") {
                                       setShowCustomHabitDialog(true);
                                     } else {
-                                      const newHabit = {
-                                        id: `h-${Date.now()}-q${index}`,
-                                        title: habit.title,
-                                        description: habit.description,
-                                        icon: habit.icon.type.name.toLowerCase(),
-                                        iconColor: 'blue',
-                                        impact: 8,
-                                        effort: 3,
-                                        timeCommitment: '5 min',
-                                        frequency: 'daily',
+                                      const habitDataForApi: Omit<Habit, 'id' | 'createdAt' | 'streak'> = {
+                                        title: quickHabit.title,
+                                        description: quickHabit.description,
+                                        icon: quickHabit.iconName,
+                                        // iconColor: 'blue', // Will be set by dialog or backend based on category
+                                        impact: 5, // Default impact
+                                        effort: 3, // Default effort
+                                        timeCommitment: '5 min', // Default time
+                                        frequency: 'daily', // Default frequency
                                         isAbsolute: true,
-                                        category: habit.category,
-                                        streak: 0,
-                                        createdAt: new Date()
+                                        category: quickHabit.category,
+                                        // iconColor is intentionally omitted to be derived from category or default
                                       };
-                                      setHabits([...habits, newHabit]);
-                                      alert(`Added "${habit.title}" to your habits!`);
+                                      await addHabit(habitDataForApi);
+                                      // Consider a toast notification for success
+                                      // alert(`Added "${quickHabit.title}" to your habits!`); // Alert can be intrusive
                                     }
                                   }}
                                   className="h-6 w-6 p-0"
@@ -439,7 +447,7 @@ export default function Dashboard() {
                                   <PlusCircle className="h-4 w-4 text-blue-500" />
                                 </Button>
                               </div>
-                              <p className="text-xs text-muted-foreground mt-1">{habit.description}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{quickHabit.description}</p>
                             </div>
                           ))}
                         </div>
@@ -461,57 +469,45 @@ export default function Dashboard() {
                                 variant="outline" 
                                 size="sm" 
                                 className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
-                                onClick={() => {
-                                  const morningHabits = [
+                                onClick={async () => {
+                                  const morningHabitTemplates = [
                                     {
-                                      id: `h-${Date.now()}-1`,
                                       title: "Morning Meditation",
                                       description: "10 minutes of focused breathing",
-                                      icon: "brain",
-                                      impact: 9,
-                                      effort: 2,
-                                      timeCommitment: '10 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "mind" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      icon: "brain", // iconName
+                                      impact: 9, effort: 2, timeCommitment: '10 min',
+                                      frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "mind" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-2`,
                                       title: "Morning Hydration",
                                       description: "Drink 16oz of water immediately after waking",
-                                      icon: "droplets",
-                                      impact: 9,
-                                      effort: 1,
-                                      timeCommitment: '2 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      icon: "droplets", // iconName
+                                      impact: 9, effort: 1, timeCommitment: '2 min',
+                                      frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-3`,
                                       title: "Gratitude Journaling",
                                       description: "Write down 3 things you're grateful for",
-                                      icon: "bookopen",
-                                      impact: 9,
-                                      effort: 3,
-                                      timeCommitment: '10 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "mind" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      icon: "bookOpen", // iconName
+                                      impact: 9, effort: 3, timeCommitment: '10 min',
+                                      frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "mind" as HabitCategory,
                                     }
                                   ];
                                   
-                                  setHabits([...habits, ...morningHabits]);
-                                  alert("Added 3 morning routine habits successfully!");
+                                  try {
+                                    const habitPromises = morningHabitTemplates.map(template => {
+                                      const { ...habitDataForApi } = template; // Spread to ensure no id, createdAt, streak
+                                      return addHabit(habitDataForApi);
+                                    });
+                                    await Promise.all(habitPromises);
+                                    alert("Added Morning Routine stack successfully!"); // Or use a toast
+                                  } catch (error) {
+                                    console.error("Failed to add Morning Routine stack:", error);
+                                    alert("Error adding habit stack. Some habits may not have been added."); // Or use a toast
+                                  }
                                 }}
                               >
-                                Add All 3 Habits
+                                Add All {morningHabitTemplates.length} Habits
                               </Button>
                             </div>
                           </div>
@@ -555,74 +551,32 @@ export default function Dashboard() {
                                 variant="outline" 
                                 size="sm" 
                                 className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
-                                onClick={() => {
-                                  const hubermanHabits = [
+                                onClick={async () => {
+                                  const hubermanHabitTemplates = [
                                     {
-                                      id: `h-${Date.now()}-h1`,
-                                      title: "Morning Sunlight",
-                                      description: "Get 2-10 minutes of morning sunlight exposure within 30-60 minutes of waking",
-                                      icon: "sun",
-                                      impact: 9,
-                                      effort: 1,
-                                      timeCommitment: '5 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Morning Sunlight", description: "Get 2-10 minutes of morning sunlight exposure within 30-60 minutes of waking",
+                                      icon: "sun", impact: 9, effort: 1, timeCommitment: '5 min', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-h2`,
-                                      title: "Delay Caffeine",
-                                      description: "Wait 90-120 minutes after waking before consuming caffeine",
-                                      icon: "clock",
-                                      impact: 7,
-                                      effort: 3,
-                                      timeCommitment: '0 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Delay Caffeine", description: "Wait 90-120 minutes after waking before consuming caffeine",
+                                      icon: "clock", impact: 7, effort: 3, timeCommitment: '0 min', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-h3`,
-                                      title: "Cold Exposure",
-                                      description: "Brief cold exposure via shower or cold plunge",
-                                      icon: "droplets",
-                                      impact: 8,
-                                      effort: 6,
-                                      timeCommitment: '2 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: false,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Cold Exposure", description: "Brief cold exposure via shower or cold plunge",
+                                      icon: "droplets", impact: 8, effort: 6, timeCommitment: '2 min', frequency: 'daily' as HabitFrequency, isAbsolute: false, category: "health" as HabitCategory,
                                     }
                                   ];
-                                  
-                                  // Clone the current habits array first to prevent any reference issues
-                                  const updatedHabits = [...habits];
-                                  
-                                  // Add each habit individually to ensure they all get added
-                                  hubermanHabits.forEach(habit => {
-                                    updatedHabits.push({
-                                      ...habit,
-                                      // Ensure iconColor is set based on category
-                                      iconColor: habit.category === 'physical' ? '#ef4444' : 
-                                               habit.category === 'mental' ? '#eab308' : 
-                                               habit.category === 'nutrition' ? '#f97316' : 
-                                               habit.category === 'sleep' ? '#a855f7' : 
-                                               habit.category === 'relationships' ? '#3b82f6' : '#22c55e'
-                                    });
-                                  });
-                                  
-                                  // Update the habits state with all new habits
-                                  setHabits(updatedHabits);
-                                  alert("Added Huberman Lab stack successfully!");
+                                  try {
+                                    const habitPromises = hubermanHabitTemplates.map(template => addHabit(template));
+                                    await Promise.all(habitPromises);
+                                    alert("Added Huberman Lab stack successfully!");
+                                  } catch (error) {
+                                    console.error("Failed to add Huberman Lab stack:", error);
+                                    alert("Error adding Huberman Lab stack.");
+                                  }
                                 }}
                               >
-                                Add All 3 Habits
+                                Add All {hubermanHabitTemplates.length} Habits
                               </Button>
                             </div>
                           </div>
@@ -666,74 +620,32 @@ export default function Dashboard() {
                                 variant="outline" 
                                 size="sm" 
                                 className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
-                                onClick={() => {
-                                  const jockoHabits = [
+                                onClick={async () => {
+                                  const jockoHabitTemplates = [
                                     {
-                                      id: `h-${Date.now()}-j1`,
-                                      title: "4:30 AM Wake-Up",
-                                      description: "Wake up at 4:30 AM for early start advantage",
-                                      icon: "sun",
-                                      impact: 8,
-                                      effort: 8,
-                                      timeCommitment: '0 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "mind" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "4:30 AM Wake-Up", description: "Wake up at 4:30 AM for early start advantage",
+                                      icon: "sun", impact: 8, effort: 8, timeCommitment: '0 min', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "mind" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-j2`,
-                                      title: "Morning Workout",
-                                      description: "Intense workout (weight training or calisthenics)",
-                                      icon: "dumbbell",
-                                      impact: 9,
-                                      effort: 7,
-                                      timeCommitment: '45 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: false,
-                                      category: "fitness" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Morning Workout", description: "Intense workout (weight training or calisthenics)",
+                                      icon: "dumbbell", impact: 9, effort: 7, timeCommitment: '45 min', frequency: 'daily' as HabitFrequency, isAbsolute: false, category: "fitness" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-j3`,
-                                      title: "Strategic Planning",
-                                      description: "Plan your day with strategic priorities",
-                                      icon: "bookopen",
-                                      impact: 8,
-                                      effort: 3,
-                                      timeCommitment: '10 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "mind" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Strategic Planning", description: "Plan your day with strategic priorities",
+                                      icon: "bookOpen", impact: 8, effort: 3, timeCommitment: '10 min', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "mind" as HabitCategory,
                                     }
                                   ];
-                                  
-                                  // Clone the current habits array first to prevent any reference issues
-                                  const updatedHabits = [...habits];
-                                  
-                                  // Add each habit individually to ensure they all get added
-                                  jockoHabits.forEach(habit => {
-                                    updatedHabits.push({
-                                      ...habit,
-                                      // Ensure iconColor is set based on category
-                                      iconColor: habit.category === 'physical' ? '#ef4444' : 
-                                               habit.category === 'mental' ? '#eab308' : 
-                                               habit.category === 'nutrition' ? '#f97316' : 
-                                               habit.category === 'sleep' ? '#a855f7' : 
-                                               habit.category === 'relationships' ? '#3b82f6' : '#22c55e'
-                                    });
-                                  });
-                                  
-                                  // Update the habits state with all new habits
-                                  setHabits(updatedHabits);
-                                  alert("Added Jocko Willink stack successfully!");
+                                  try {
+                                    const habitPromises = jockoHabitTemplates.map(template => addHabit(template));
+                                    await Promise.all(habitPromises);
+                                    alert("Added Jocko Willink stack successfully!");
+                                  } catch (error) {
+                                    console.error("Failed to add Jocko Willink stack:", error);
+                                    alert("Error adding Jocko Willink stack.");
+                                  }
                                 }}
                               >
-                                Add All 3 Habits
+                                Add All {jockoHabitTemplates.length} Habits
                               </Button>
                             </div>
                           </div>
@@ -777,84 +689,36 @@ export default function Dashboard() {
                                 variant="outline" 
                                 size="sm" 
                                 className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
-                                onClick={() => {
-                                  const breckaHabits = [
+                                onClick={async () => {
+                                  const breckaHabitTemplates = [
                                     {
-                                      id: `h-${Date.now()}-br1`,
-                                      title: "Track blood sugar",
-                                      description: "Monitor glucose levels to optimize metabolism",
-                                      icon: "activity",
-                                      iconColor: "blue",
-                                      impact: 9,
-                                      effort: 3,
-                                      timeCommitment: '1 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: false,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Track blood sugar", description: "Monitor glucose levels to optimize metabolism",
+                                      icon: "activity", iconColor: "blue", impact: 9, effort: 3, timeCommitment: '1 min', frequency: 'daily' as HabitFrequency, isAbsolute: false, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-br2`,
-                                      title: "Optimize sleep",
-                                      description: "Prioritize sleep quality through environment and timing",
-                                      icon: "bed",
-                                      iconColor: "indigo",
-                                      impact: 10,
-                                      effort: 5,
-                                      timeCommitment: '8 hours',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Optimize sleep", description: "Prioritize sleep quality through environment and timing",
+                                      icon: "bed", iconColor: "indigo", impact: 10, effort: 5, timeCommitment: '8 hours', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-br3`,
-                                      title: "Supplement protocol",
-                                      description: "Take targeted supplements based on biomarkers",
-                                      icon: "pill",
-                                      iconColor: "green",
-                                      impact: 8,
-                                      effort: 2,
-                                      timeCommitment: '2 min',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Supplement protocol", description: "Take targeted supplements based on biomarkers",
+                                      icon: "pill", iconColor: "green", impact: 8, effort: 2, timeCommitment: '2 min', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-br4`,
-                                      title: "Protein intake",
-                                      description: "Consume 1g protein per pound of body weight",
-                                      icon: "utensils",
-                                      iconColor: "red",
-                                      impact: 8,
-                                      effort: 5,
-                                      timeCommitment: 'All day',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Protein intake", description: "Consume 1g protein per pound of body weight",
+                                      icon: "utensils", iconColor: "red", impact: 8, effort: 5, timeCommitment: 'All day', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     }
                                   ];
-                                  
-                                  // Clone the current habits array first to prevent any reference issues
-                                  const updatedHabits = [...habits];
-                                  
-                                  // Add each habit individually to ensure they all get added
-                                  breckaHabits.forEach(habit => {
-                                    updatedHabits.push(habit);
-                                  });
-                                  
-                                  // Update the habits state with all new habits
-                                  setHabits(updatedHabits);
-                                  alert("Added Dr. Brecka Protocol stack successfully!");
+                                  try {
+                                    const habitPromises = breckaHabitTemplates.map(template => addHabit(template));
+                                    await Promise.all(habitPromises);
+                                    alert("Added Dr. Brecka Protocol stack successfully!");
+                                  } catch (error) {
+                                    console.error("Failed to add Dr. Brecka Protocol stack:", error);
+                                    alert("Error adding Dr. Brecka Protocol stack.");
+                                  }
                                 }}
                               >
-                                Add All 4 Habits
+                                Add All {breckaHabitTemplates.length} Habits
                               </Button>
                             </div>
                           </div>
@@ -906,74 +770,32 @@ export default function Dashboard() {
                                 variant="outline" 
                                 size="sm" 
                                 className="h-7 px-3 text-xs border-blue-200 hover:border-blue-300 hover:bg-blue-50/50"
-                                onClick={() => {
-                                  const fitnessHabits = [
+                                onClick={async () => {
+                                  const fitnessHabitTemplates = [
                                     {
-                                      id: `h-${Date.now()}-f1`,
-                                      title: "Strength Training",
-                                      description: "Resistance training for muscle growth and strength",
-                                      icon: "dumbbell",
-                                      impact: 9,
-                                      effort: 7,
-                                      timeCommitment: '45 min',
-                                      frequency: '3x-week' as HabitFrequency,
-                                      isAbsolute: false,
-                                      category: "fitness" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Strength Training", description: "Resistance training for muscle growth and strength",
+                                      icon: "dumbbell", impact: 9, effort: 7, timeCommitment: '45 min', frequency: '3x-week' as HabitFrequency, isAbsolute: false, category: "fitness" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-f2`,
-                                      title: "Protein Intake",
-                                      description: "Consume adequate protein (1g per lb of bodyweight)",
-                                      icon: "apple",
-                                      impact: 8,
-                                      effort: 5,
-                                      timeCommitment: 'All day',
-                                      frequency: 'daily' as HabitFrequency,
-                                      isAbsolute: true,
-                                      category: "health" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Protein Intake", description: "Consume adequate protein (1g per lb of bodyweight)",
+                                      icon: "apple", impact: 8, effort: 5, timeCommitment: 'All day', frequency: 'daily' as HabitFrequency, isAbsolute: true, category: "health" as HabitCategory,
                                     },
                                     {
-                                      id: `h-${Date.now()}-f3`,
-                                      title: "Post-workout Stretch",
-                                      description: "5-10 minutes of stretching after workout",
-                                      icon: "activity",
-                                      impact: 7,
-                                      effort: 3,
-                                      timeCommitment: '15 min',
-                                      frequency: '3x-week' as HabitFrequency,
-                                      isAbsolute: false,
-                                      category: "fitness" as HabitCategory,
-                                      streak: 0,
-                                      createdAt: new Date()
+                                      title: "Post-workout Stretch", description: "5-10 minutes of stretching after workout",
+                                      icon: "activity", impact: 7, effort: 3, timeCommitment: '15 min', frequency: '3x-week' as HabitFrequency, isAbsolute: false, category: "fitness" as HabitCategory,
                                     }
                                   ];
-                                  
-                                  // Clone current habits array to prevent reference issues
-                                  const updatedHabits = [...habits];
-                                  
-                                  // Add each habit individually to ensure they all get added
-                                  fitnessHabits.forEach(habit => {
-                                    updatedHabits.push({
-                                      ...habit,
-                                      // Ensure iconColor is set based on category
-                                      iconColor: habit.category === 'physical' ? '#ef4444' : 
-                                               habit.category === 'mental' ? '#eab308' : 
-                                               habit.category === 'nutrition' ? '#f97316' : 
-                                               habit.category === 'sleep' ? '#a855f7' : 
-                                               habit.category === 'relationships' ? '#3b82f6' : '#22c55e'
-                                    });
-                                  });
-                                  
-                                  // Update the habits state with all new habits
-                                  setHabits(updatedHabits);
-                                  alert("Added 3 fitness habits successfully!");
+                                  try {
+                                    const habitPromises = fitnessHabitTemplates.map(template => addHabit(template));
+                                    await Promise.all(habitPromises);
+                                    alert("Added Fitness stack successfully!");
+                                  } catch (error) {
+                                    console.error("Failed to add Fitness stack:", error);
+                                    alert("Error adding Fitness stack.");
+                                  }
                                 }}
                               >
-                                Add All 3 Habits
+                                Add All {fitnessHabitTemplates.length} Habits
                               </Button>
                             </div>
                           </div>
@@ -1026,16 +848,24 @@ export default function Dashboard() {
             }
           }}
           habit={editingHabit}
-          onSave={(updatedHabit) => {
+          onSave={(habitFromDialog) => {
             if (editingHabit) {
               // If we're editing an existing habit
-              editHabit(updatedHabit);
+              // editHabit will need similar API call logic (PUT request)
+              editHabit(habitFromDialog); // Placeholder: This also needs to be an async API call
             } else {
               // If we're adding a new habit
-              addHabit(updatedHabit);
+              const { id, createdAt, streak, ...newHabitData } = habitFromDialog;
+              addHabit(newHabitData); // Call the async addHabit
             }
-            setEditingHabit(null);
-            setShowCustomHabitDialog(false);
+            // Dialog closing is now handled within addHabit/editHabit on success
+            // For edit, we might want to close it here or after successful save.
+            // For add, addHabit already closes it.
+            // Let's ensure editingHabit is cleared.
+            if (editingHabit) { // Only clear if it was an edit operation
+                setEditingHabit(null);
+                setShowCustomHabitDialog(false); // Explicitly close for edit for now
+            }
           }}
           onDelete={deleteHabit}
         />
