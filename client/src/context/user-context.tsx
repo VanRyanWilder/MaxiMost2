@@ -26,25 +26,52 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // This logic is now correct because it doesn't rely on a direct auth import.
+    // setLoading(true) explicitly at the start of effect, though initial state is true.
+    // This handles potential re-runs if deps were ever added, though not the case here.
+    setLoading(true);
+    let authStateEstablishedByObserver = false;
+    let redirectProcessed = false;
 
-    // Process any pending redirect first.
-    processRedirectResult().catch((err) => {
-      console.error("Error processing redirect result:", err);
-      setError(err);
-    });
+    const checkLoadingComplete = () => {
+      if (authStateEstablishedByObserver && redirectProcessed) {
+        setLoading(false);
+      }
+    };
 
-    // The onAuthStateChange function from lib/firebase.ts handles getting the
-    // auth instance internally, so we don't need to pass it here.
-    const unsubscribe = onAuthStateChange((firebaseUser) => {
+    // Process any pending redirect.
+    // getRedirectResult should only be called once per page load.
+    processRedirectResult()
+      .then(userCredential => {
+        if (userCredential && userCredential.user) {
+          // If getRedirectResult successfully authenticates a user,
+          // onAuthStateChanged will also fire with this user.
+          // We don't need to setUser here; let onAuthStateChanged be the single source of truth for user state.
+          console.log("Redirect sign-in successful for user:", userCredential.user.uid);
+        }
+        // If userCredential is null, it means no redirect operation was pending or it didn't result in a user.
+      })
+      .catch(err => {
+        console.error("Error processing redirect result:", err);
+        setError(err); // Set error state to display to the user if needed.
+      })
+      .finally(() => {
+        redirectProcessed = true;
+        checkLoadingComplete();
+      });
+
+    // Listen for auth state changes.
+    const unsubscribe = onAuthStateChange(firebaseUser => {
       setUser(firebaseUser);
-      setLoading(false);
+      authStateEstablishedByObserver = true;
+      checkLoadingComplete();
     });
 
+    // Cleanup subscription on unmount.
     return () => unsubscribe();
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount.
 
-  // While the initial authentication check is running, show a loading screen.
+  // While the initial authentication check is running (loading is true), show a loading screen.
+  // This prevents rendering children, including PrivateRoute, prematurely.
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
