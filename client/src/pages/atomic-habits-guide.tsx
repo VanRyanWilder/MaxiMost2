@@ -1,8 +1,7 @@
 import React from 'react';
 import { PageContainer } from "@/components/layout/page-container";
-// Commenting out other imports for now to minimize potential error sources
-// import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-// import { CheckCircle, Eye, Heart, Gift, Zap, TrendingUp, Target, Puzzle, Lightbulb, ShieldAlert } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"; // Uncommented Card imports
+// import { CheckCircle, Eye, Heart, Gift, Zap, TrendingUp, Target, Puzzle, Lightbulb, ShieldAlert } from 'lucide-react'; // Lucide icons for FourLawsSection still commented
 
 // Commenting out FourLawsSection for now
 /*
@@ -58,7 +57,7 @@ const AtomicHabitsGuidePage: React.FC = () => {
 
         {/* Sections previously here are commented out for debugging */}
 
-        {/* <section className="mt-16 text-center">
+        <section className="mt-16 text-center">
           <Card className="inline-block shadow-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-neutral-800 dark:to-neutral-700 p-8 rounded-xl">
             <CardHeader>
               <CardTitle className="text-2xl md:text-3xl font-bold text-primary mb-2">
@@ -74,7 +73,7 @@ const AtomicHabitsGuidePage: React.FC = () => {
               </a>
             </CardContent>
           </Card>
-        </section> */}
+        </section>
 
       </div>
     </PageContainer>
