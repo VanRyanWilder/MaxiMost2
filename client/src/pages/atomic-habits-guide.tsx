@@ -1,7 +1,7 @@
 import React from 'react';
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { CheckCircle, Eye, Heart, Gift, Zap, TrendingUp, Target, Puzzle, Lightbulb, ShieldAlert } from 'lucide-react';
+import { CheckCircle, Eye, Heart, Gift, Zap, TrendingUp, Target, Puzzle, Lightbulb, ShieldAlert, Users, Brain, Timer, CheckSquare, Calendar } from 'lucide-react';
 
 const FourLawsSection: React.FC<{
   lawNumber: string;
