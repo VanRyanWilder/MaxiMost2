@@ -98,8 +98,7 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
-        {/* Section 1: UVP / Hero Section - COMMENTED OUT FOR J-20 DEBUGGING */}
-        {/*
+        {/* Section 1: UVP / Hero Section - DEBUGGING J-20: CTASection still commented out */}
         <section
           id="uvp"
           className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
@@ -117,7 +116,7 @@ const Home: React.FC = () => {
           />
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center">
-            <CTASection
+            {/* <CTASection
               headline="Forge Your Elite Habits. Master Your Mind."
               description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
               buttonText="Get Started Free"
@@ -125,10 +124,10 @@ const Home: React.FC = () => {
               rewardsText="Join now for early access and exclusive benefits."
               showRewardsOptIn={false}
               onSubmit={handleWaitlistSubmit}
-            />
+            /> */}
+            <h1>Hero Section Wrapper Active - CTASection Commented</h1>
           </div>
         </section>
-        */}
 
         <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <MeetTheCoachesSection
