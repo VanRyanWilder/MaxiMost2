@@ -55,7 +55,6 @@ const faqData = [
     { id: "faq-4", question: "How does the streak system motivate long-term habit formation?", answer: "Our streak system counts consecutive days of habit completion while providing milestone celebrations (3, 7, 14, 30, 60, 90, 180, 365 days). The system is designed with flexibility—continuing if you complete habits today or yesterday—while also encouraging consistent daily action for maximum habit formation." },
 ];
 
-// NOTE: Renamed NewHomePage to Home to match the routing in App.tsx
 const Home: React.FC = () => {
   const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
 
@@ -98,7 +97,7 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
-        {/* Section 1: UVP / Hero Section - DEBUGGING J-20: CTASection still commented out */}
+        {/* Section 1: UVP / Hero Section */}
         <section
           id="uvp"
           className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
@@ -116,7 +115,7 @@ const Home: React.FC = () => {
           />
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center">
-            {/* <CTASection
+            <CTASection
               headline="Forge Your Elite Habits. Master Your Mind."
               description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
               buttonText="Get Started Free"
@@ -124,8 +123,7 @@ const Home: React.FC = () => {
               rewardsText="Join now for early access and exclusive benefits."
               showRewardsOptIn={false}
               onSubmit={handleWaitlistSubmit}
-            /> */}
-            <h1>Hero Section Wrapper Active - CTASection Commented</h1>
+            />
           </div>
         </section>
 
