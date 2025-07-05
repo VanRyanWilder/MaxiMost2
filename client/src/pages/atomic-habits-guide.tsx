@@ -67,7 +67,7 @@ const AtomicHabitsGuidePage: React.FC = () => {
             ]}
           />
 
-          {/*
+
           <FourLawsSection
             lawNumber="2nd"
             title="Make It Attractive"
@@ -81,7 +81,7 @@ const AtomicHabitsGuidePage: React.FC = () => {
               { point: "Reframe Your Mindset", detail: "Highlight the benefits of good habits over the drawbacks.", icon: <Brain size={20}/> },
             ]}
           />
-
+          {/*
           <FourLawsSection
             lawNumber="3rd"
             title="Make It Easy"
