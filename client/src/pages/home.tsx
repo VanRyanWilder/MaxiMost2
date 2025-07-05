@@ -115,7 +115,7 @@ const Home: React.FC = () => {
           />
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center">
-            <CTASection
+            {/* <CTASection
               headline="Forge Your Elite Habits. Master Your Mind."
               description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
               buttonText="Get Started Free"
@@ -123,7 +123,8 @@ const Home: React.FC = () => {
               rewardsText="Join now for early access and exclusive benefits."
               showRewardsOptIn={false}
               onSubmit={handleWaitlistSubmit}
-            />
+            /> */}
+            <h1>CTASection in Hero is commented out</h1>
           </div>
         </section>
 
