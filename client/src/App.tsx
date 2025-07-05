@@ -4,6 +4,7 @@ import NotFound from "@/pages/not-found";
 
 // Import the intended homepage
 import Home from "@/pages/home"; // Changed from NewHomePage
+import TestPage from "@/pages/TestPage"; // Added for J-18
 
 // Other page imports
 import Dashboard from "@/pages/sortable-dashboard-new";
@@ -84,6 +85,7 @@ function App() {
         }}
       </Route>
       <Route path="/home" component={Home} />
+      <Route path="/test-page" component={Home} /> {/* J-19: Changed TestPage to Home */}
 
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />

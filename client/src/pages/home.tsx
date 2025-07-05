@@ -98,7 +98,8 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <main className="flex-grow">
-        {/* Section 1: UVP / Hero Section */}
+        {/* Section 1: UVP / Hero Section - COMMENTED OUT FOR J-20 DEBUGGING */}
+        {/*
         <section
           id="uvp"
           className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
@@ -127,6 +128,7 @@ const Home: React.FC = () => {
             />
           </div>
         </section>
+        */}
 
         <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <MeetTheCoachesSection
