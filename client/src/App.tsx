@@ -85,7 +85,7 @@ function App() {
         }}
       </Route>
       <Route path="/home" component={Home} />
-      <Route path="/test-page" component={Home} /> {/* J-19: Changed TestPage to Home */}
+      <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
 
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
