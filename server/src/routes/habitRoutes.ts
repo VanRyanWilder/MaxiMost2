@@ -46,7 +46,7 @@ habitRoutes.get('/', async (c) => {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ message: "Unknown error fetching habits." }));
       console.error(`Firestore error: ${response.status}`, errorData);
-      return c.json({ message: "Error fetching habits from Firestore.", details: errorData }, response.status);
+      return c.json({ message: "Error fetching habits from Firestore.", details: errorData }, { status: response.status });
     }
 
     const responseData = await response.json();
@@ -162,7 +162,7 @@ habitRoutes.post('/', async (c) => {
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ message: "Unknown error creating habit." }));
             console.error(`Firestore error during POST: ${response.status}`, errorData);
-            return c.json({ message: "Error creating habit in Firestore.", details: errorData }, response.status);
+            return c.json({ message: "Error creating habit in Firestore.", details: errorData }, { status: response.status });
         }
 
         const createdDocument = await response.json();

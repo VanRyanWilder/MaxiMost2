@@ -1,4 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Particles from "react-particles";
+import type { Engine } from "tsparticles-engine";
+import { loadStarsPreset } from "tsparticles-preset-stars";
 
 // Import reusable components
 import { CTASection } from "../components/landing/CTASection";
@@ -84,6 +87,32 @@ const Home: React.FC = () => {
   const finalCtaRef = useRef<HTMLDivElement>(null);
   const coachesRef = useRef<HTMLDivElement>(null);
 
+  // tsParticles setup
+  const particlesInit = useCallback(async (engine: Engine) => {
+    console.log(engine);
+    // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
+    // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
+    // starting from v2 you can add only the features you need reducing the bundle size
+    await loadStarsPreset(engine);
+  }, []);
+
+  const particlesOptions = {
+    preset: "stars",
+    background: {
+      color: {
+        value: "#0A192F", // Same as the hero section's initial gradient start
+      },
+    },
+    particles: {
+      move: {
+        speed: 0.5, // Slower speed for a more subtle effect
+      },
+      size: {
+        value: 1, // Smaller particles
+      },
+    },
+  };
+
   // Intersection observer hooks
   const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
   const isPerformanceAreasVisible = useIntersectionObserver(performanceAreasRef, { threshold: 0.1, triggerOnce: true });
@@ -96,12 +125,25 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
+      <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6">
+        <div className="container mx-auto flex items-center">
+          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo" className="h-8 md:h-10" />
+          {/* Navigation links can be added here later if needed */}
+        </div>
+      </header>
       <main className="flex-grow">
         {/* Section 1: UVP / Hero Section */}
         <section
           id="uvp"
           className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
         >
+          <Particles
+            id="tsparticles-hero"
+            init={particlesInit}
+            options={particlesOptions as any} // Cast to any to avoid type issues with preset options
+            className="absolute inset-0 z-0"
+          />
+          {/* The existing gradient div can be removed or kept as a fallback/overlay if desired
           <div
             className="absolute inset-0 z-0 hero-background-animation"
             style={{
@@ -112,7 +154,7 @@ const Home: React.FC = () => {
               transition: 'background-image 0.5s ease-in-out, --hero-glow-color-rgb 0.5s ease-in-out',
               ['--hero-glow-color-rgb' as string]: activeGlowColor ? hexToRgbString(activeGlowColor) : '0,128,255',
             } as React.CSSProperties}
-          />
+          /> */}
 
           <div className="relative z-10 container mx-auto max-w-4xl text-center">
             {/* <CTASection

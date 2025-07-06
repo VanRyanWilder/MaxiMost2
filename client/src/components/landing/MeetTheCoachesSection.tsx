@@ -1,6 +1,6 @@
-import React from "react";
-import { coachPersonaData, CoachPersona } from "@/data/coachPersonaData"; // Import the data and type
-import { CoachPersonaCard } from "./CoachPersonaCard"; // Import the card component
+import React, { useState } from "react"; // Added useState
+import { coachPersonaData, CoachPersona } from "@/data/coachPersonaData";
+import { CoachPersonaCard } from "./CoachPersonaCard";
 
 interface MeetTheCoachesSectionProps {
   title: string;
@@ -15,6 +15,12 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
   onPersonaHover,
   onPersonaLeave,
 }) => {
+  const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
+
+  const handleCoachSelect = (coachId: string) => {
+    setSelectedCoachId(prevId => prevId === coachId ? null : coachId); // Toggle selection
+  };
+
   return (
     <section className={`py-12 md:py-16 lg:py-20 ${className}`}>
       <div className="container mx-auto px-4">
@@ -27,7 +33,9 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
               <CoachPersonaCard
                 key={coach.id}
                 coach={coach}
-                onHoverStart={() => onPersonaHover && onPersonaHover(coach.glowColorRgb)} // Pass glowColorRgb
+                isSelected={selectedCoachId === coach.id}
+                onSelect={() => handleCoachSelect(coach.id)}
+                onHoverStart={() => onPersonaHover && onPersonaHover(coach.glowColorRgb)}
                 onHoverEnd={() => onPersonaLeave && onPersonaLeave()}
               />
             ))}

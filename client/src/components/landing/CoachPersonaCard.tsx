@@ -5,6 +5,8 @@ import { CoachPersona } from "@/data/coachPersonaData"; // Import the data struc
 
 interface CoachPersonaCardProps {
   coach: CoachPersona;
+  isSelected: boolean; // New prop
+  onSelect: () => void; // New prop
   className?: string;
   onHoverStart?: () => void;
   onHoverEnd?: () => void;
@@ -26,6 +28,8 @@ import { useState } from "react"; // Import useState for hover state
 
 export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
   coach,
+  isSelected,
+  onSelect,
   className,
   onHoverStart,
   onHoverEnd,
@@ -46,35 +50,41 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     }
   };
 
+  const baseBoxShadow = "var(--tw-shadow, 0 0 #0000)";
+  const hoverBoxShadow = `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}`;
+  // Use a slightly more intense shadow for selected state, or a distinct border
+  const selectedBoxShadow = `0 0 30px 8px ${coach.glowColor || coach.iconColor || "#FFFFFF50"}`;
+
   const cardStyle: React.CSSProperties = {
     transition: "all 0.3s ease-in-out",
-    boxShadow: isHovered ? `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}` : "var(--tw-shadow, 0 0 #0000)",
-    transform: isHovered ? "translateY(-8px) scale(1.03)" : "translateY(0px) scale(1)",
+    boxShadow: isSelected ? selectedBoxShadow : (isHovered ? hoverBoxShadow : baseBoxShadow),
+    transform: (isHovered || isSelected) ? "translateY(-8px) scale(1.03)" : "translateY(0px) scale(1)",
+    // Example of a distinct border for selected state:
+    // border: isSelected ? `2px solid ${coach.glowColor || 'hsl(var(--primary))'}` : `1px solid ${coach.borderColor ? 'var(--tw-shadow)' : 'hsl(var(--border))'}`
   };
+
+  // Dynamically adjust border based on selection
+  const selectedBorderClass = isSelected ? `ring-2 ring-offset-2 ${coach.glowColor ? '' : 'ring-primary'}` : '';
+  const borderStyleOverride = isSelected ? { borderColor: coach.glowColor || 'hsl(var(--primary))' } : {};
+
 
   // Ensure Tailwind classes for border and bg are applied, but allow hover style to dominate
   const combinedClassName = `flex flex-col h-full overflow-hidden rounded-lg cursor-pointer
-    ${coach.borderColor || "border-border"}
+    ${isSelected ? '' : (coach.borderColor || "border-border")} // Default border only if not selected with ring
     ${coach.cardBgColor || "bg-card"}
+    ${selectedBorderClass}
     ${className}`;
 
   return (
     <Card
       className={combinedClassName}
-      style={cardStyle}
+      style={{...cardStyle, ...borderStyleOverride}}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onClick={onSelect} // Call onSelect when card is clicked
     >
-      {coach.imageUrl && (
-        <div className="w-full h-40 overflow-hidden">
-          <img
-            src={coach.imageUrl}
-            alt={coach.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
-      <CardHeader className="items-center text-center p-6">
+      {/* coach.imageUrl rendering removed to use only Lucide icons */}
+      <CardHeader className="items-center text-center p-6 pt-8"> {/* Added pt-8 for more space at the top after image removal */}
         <div className={`mb-4 p-3 rounded-full inline-block ${coach.iconColor ? "" : "text-primary"}`}>
           <div className={coach.iconColor || "text-primary"}>
             <DynamicLucideIcon name={coach.iconName} size={40} />

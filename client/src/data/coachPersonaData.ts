@@ -20,7 +20,7 @@ export const coachPersonaData: CoachPersona[] = [
   {
     id: "stoic",
     name: "The Stoic",
-    title: "The Stoic Coach",
+    title: "The Stoic", // Updated title
     description: "Calm, reflective, and logical. This coach focuses on building inner resilience by emphasizing the \"dichotomy of control\" (what you can vs. cannot control) and reframing obstacles as opportunities for growth. The core principle is that true victory lies in virtuous, disciplined action, regardless of external outcomes.",
     iconName: "Scale", // Lucide icon suggestion: Scale, Library, Brain, Anchor
     iconColor: "text-blue-600", // Deep, wise blues
@@ -34,7 +34,7 @@ export const coachPersonaData: CoachPersona[] = [
   {
     id: "operator",
     name: "The Operator",
-    title: "The Operator Coach",
+    title: "The Operator", // Updated title
     description: "Direct, intense, and action-oriented. Inspired by disciplined leaders like Jocko Willink and the mental toughness of David Goggins, this coach emphasizes extreme ownership, discipline over motivation, and embracing discomfort to \"callous the mind\". The focus is on executing the mission, no excuses.",
     iconName: "Shield", // Lucide icon suggestion: Shield, Zap, TrendingUp, Target, Compass
     iconColor: "text-green-600", // Military greens (olive drab) - using a slightly more vibrant green for UI
@@ -48,7 +48,7 @@ export const coachPersonaData: CoachPersona[] = [
   {
     id: "nurturer",
     name: "The Nurturer",
-    title: "The Nurturer Coach",
+    title: "The Nurturer", // Updated title
     description: "Encouraging, empathetic, and supportive. This coach uses principles from positive psychology and compassion-based coaching to foster a growth mindset. It celebrates effort over perfection, validates feelings, and builds confidence through positive reinforcement. The focus is on sustainable progress through self-kindness.",
     iconName: "Sprout", // Lucide icon suggestion: Sprout, Heart, Smile, Users, Award
     iconColor: "text-yellow-500", // Warm, earthy greens; soft teals; sunlit yellows or oranges

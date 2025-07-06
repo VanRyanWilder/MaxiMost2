@@ -21,22 +21,27 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
   const [location] = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     main: true,
-    'habit-categories': true,
-    health: false,
-    resources: true
+    learn: true,
+    pillars: true,
+    tools: false,
+    community: false,
   });
   
-  const toggleSection = (section: string) => {
+  const toggleSection = (sectionKey: string) => {
     setExpandedSections(prev => ({
       ...prev,
-      [section]: !prev[section]
+      [sectionKey]: !prev[sectionKey]
     }));
   };
   
-  const mainLinks = sidebarLinks.filter(link => link.section === 'main');
-  const habitCategoryLinks = sidebarLinks.filter(link => link.section === 'habit-categories');
-  const healthLinks = sidebarLinks.filter(link => link.section === 'health');
-  const resourceLinks = sidebarLinks.filter(link => link.section === 'resources');
+  // Dynamically create link groups based on section property
+  const sections: { key: string; title: string; links: SidebarLink[] }[] = [
+    { key: 'main', title: 'Main', links: sidebarLinks.filter(link => link.section === 'main') },
+    { key: 'learn', title: 'Learn & Grow', links: sidebarLinks.filter(link => link.section === 'learn') },
+    { key: 'pillars', title: 'Health Pillars', links: sidebarLinks.filter(link => link.section === 'pillars') },
+    { key: 'tools', title: 'Tools & Extras', links: sidebarLinks.filter(link => link.section === 'tools') },
+    { key: 'community', title: 'Community & Resources', links: sidebarLinks.filter(link => link.section === 'community') },
+  ];
   
   const renderNavItem = (link: SidebarLink) => {
     const isActive = location === link.href || 
@@ -181,10 +186,9 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
         {/* Navigation */}
         <ScrollArea className="flex-1 pb-4">
           <div className="px-2 py-4">
-            {renderSection("Main", mainLinks, "main")}
-            {renderSection("Habit Categories", habitCategoryLinks, "habit-categories")}
-            {renderSection("Health & Wellness", healthLinks, "health")}
-            {renderSection("Resources", resourceLinks, "resources")}
+            {sections.map(section =>
+              section.links.length > 0 && renderSection(section.title, section.links, section.key)
+            )}
           </div>
         </ScrollArea>
         

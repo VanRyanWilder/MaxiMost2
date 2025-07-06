@@ -43,7 +43,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
   return (
     <section className={`py-12 px-4 bg-muted/40 dark:bg-background/40 rounded-lg shadow ${className}`}>
       <div className="container mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-4">
+        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-4"> {/* Changed text-foreground to text-white */}
           {headline}
         </h2>
         <p className="mb-8 text-lg text-slate-100"> {/* Changed from text-muted-foreground */}
