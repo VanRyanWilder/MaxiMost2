@@ -5,6 +5,7 @@ import NotFound from "@/pages/not-found";
 // Import the intended homepage
 import Home from "@/pages/home"; // Changed from NewHomePage
 import TestPage from "@/pages/TestPage"; // Added for J-18
+import Canary2 from "@/pages/Canary2"; // Added for Canary 2 Test
 
 // Other page imports
 import Dashboard from "@/pages/sortable-dashboard-new";
@@ -86,6 +87,7 @@ function App() {
       </Route>
       <Route path="/home" component={Home} />
       <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
+      <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
 
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
