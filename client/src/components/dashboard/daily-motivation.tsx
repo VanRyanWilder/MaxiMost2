@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Zap } from 'lucide-react'; // Added Zap to imports
 
 interface DailyMotivationProps {
   quote?: string;
