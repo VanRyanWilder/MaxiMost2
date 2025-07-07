@@ -34,6 +34,7 @@ export const CTASection: React.FC<CTASectionProps> = ({
   showEmailInput = true, // Default to true for existing behavior
   className,
   isLoading = false,
+  buttonVariant = 'primary', // Added buttonVariant to destructuring with default
 }) => {
   const [email, setEmail] = useState("");
   const [rewardsOptIn, setRewardsOptIn] = useState(false);
