@@ -194,12 +194,12 @@ const Home: React.FC = () => {
           <img
             src="/images/maximost-logo-0.png"
             alt="MaxiMost Logo Left"
-            className="h-20 w-20 md:h-24 md:w-24" /* Removed filter, assuming new logo is light/white */
+            className="h-24 w-24 md:h-28 md:w-28" /* Increased size, filter was already removed */
           />
           <img
             src="/images/maximost-logo-0.png"
             alt="MaxiMost Logo Right"
-            className="h-20 w-20 md:h-24 md:w-24" /* Removed filter */
+            className="h-24 w-24 md:h-28 md:w-28" /* Increased size, filter was already removed */
           />
           {/* Navigation links can be added here later if needed */}
         </div>
@@ -276,12 +276,19 @@ const Home: React.FC = () => {
               completes your habits based on your activity.
             </p>
             <div className="flex flex-wrap justify-center items-center gap-4 mb-10">
-              {fitnessTrackers.map(tracker => (
-                <div key={tracker.name} className="flex items-center p-2 bg-background dark:bg-neutral-700/50 rounded-md shadow">
-                  {tracker.icon}
-                  <span className="ml-2 text-sm font-medium text-foreground">{tracker.name}</span>
-                </div>
-              ))}
+              {fitnessTrackers.map((tracker, index) => {
+                const iconColorClasses = [
+                  "text-sky-400", "text-emerald-400", "text-amber-400",
+                  "text-rose-400", "text-violet-400", "text-teal-400"
+                ];
+                const iconColorClass = iconColorClasses[index % iconColorClasses.length];
+                return (
+                  <div key={tracker.name} className="flex items-center p-2 bg-background dark:bg-neutral-800/60 rounded-lg shadow-md hover:scale-105 hover:bg-neutral-700/70 transition-all cursor-default"> {/* Adjusted background and hover */}
+                    <span className={`${iconColorClass} mr-2`}>{tracker.icon}</span> {/* Icon color wrapper, adjusted margin */}
+                    <span className="ml-1 text-sm font-medium text-neutral-200">{tracker.name}</span> {/* Text color for name */}
+                  </div>
+                );
+              })}
             </div>
             <div className="max-w-2xl mx-auto text-left space-y-2 text-neutral-200 mb-10"> {/* Changed text color */}
               <p>✓ Auto-complete workout habits when your fitness tracker records activity.</p>
@@ -289,8 +296,10 @@ const Home: React.FC = () => {
               <p>✓ Heart rate and recovery metrics for holistic health tracking.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300"> {/* Premium card style */}
-                <h4 className="text-lg font-semibold text-white mb-3">Fitbit Activity (Example)</h4> {/* White title */}
+              <div
+                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[0ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+              >
+                <h4 className="text-lg font-semibold text-white mb-3">Fitbit Activity (Example)</h4>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   <p><strong className="text-white">Steps:</strong> 9,857</p>
                   <p><strong className="text-white">Miles:</strong> 4.3</p>
@@ -300,8 +309,10 @@ const Home: React.FC = () => {
                   <p><strong className="text-white">Resting BPM:</strong> 68</p>
                 </div>
               </div>
-              <div className="p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300"> {/* Premium card style */}
-                <h4 className="text-lg font-semibold text-white mb-3">Samsung Health (Example)</h4> {/* White title */}
+              <div
+                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[100ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+              >
+                <h4 className="text-lg font-semibold text-white mb-3">Samsung Health (Example)</h4>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   <p><strong className="text-white">Steps:</strong> 11,235</p>
                   <p><strong className="text-white">Miles:</strong> 5.2</p>

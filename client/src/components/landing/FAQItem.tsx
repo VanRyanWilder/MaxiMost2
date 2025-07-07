@@ -19,11 +19,11 @@ export const FAQItem: React.FC<FAQItemProps> = ({
   className,
 }) => {
   return (
-    <AccordionItem value={value} className={`border-white/20 ${className}`}> {/* Added border for item separation */}
-      <AccordionTrigger className="text-left hover:no-underline text-white text-lg font-semibold"> {/* Question text white & styled */}
+    <AccordionItem value={value} className={`border-white/20 hover:bg-white/5 transition-colors duration-300 rounded-md ${className}`}> {/* Added hover effect & rounded */}
+      <AccordionTrigger className="text-left hover:no-underline text-white text-lg font-semibold px-4 py-3"> {/* Adjusted padding */}
         {question}
       </AccordionTrigger>
-      <AccordionContent className="text-neutral-300 pt-2 pb-4"> {/* Answer text lighter gray & padding adjusted */}
+      <AccordionContent className="text-neutral-300 pt-2 pb-4 px-4"> {/* Adjusted padding */}
         {/* Using dangerouslySetInnerHTML assuming answer might contain simple HTML like <br> or links.
             If answer is plain text, <p>{answer}</p> is safer.
             For this example, we will use a <p> tag for safety.

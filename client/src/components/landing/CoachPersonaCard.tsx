@@ -90,13 +90,14 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
       <div
         className="p-4 text-center border-b border-white/20 transition-all duration-300"
         style={{
-          // Apply a subtle background to the title box, or make it transparent
-          backgroundColor: isSelected || isHovered ? (coach.glowColor ? `${coach.glowColor}30` : 'rgba(255,255,255,0.05)') : 'rgba(255,255,255,0.02)',
+          backgroundColor: isSelected || isHovered
+            ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)') // More opaque themed or dark bg on hover/select
+            : 'rgba(0,0,0,0.2)', // Subtle dark bg for default state
           // Optional: add a specific glow to title box on hover/select
           // boxShadow: isSelected || isHovered ? `0 0 15px 2px ${coach.glowColor || coach.iconColor || '#FFFFFF30'}` : 'none',
         }}
       >
-        <CardTitle className="text-2xl font-bold tracking-tight"> {/* Adjusted title size for balance */}
+        <CardTitle className="text-2xl font-bold tracking-tight text-white"> {/* Ensure title text is white */}
           {coach.title}
         </CardTitle>
       </div>
