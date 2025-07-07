@@ -1,5 +1,5 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -90,7 +90,7 @@ interface ActivityData {
 }
 
 export default function BodyStats() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
   const [date, setDate] = useState<Date>(new Date());
   const [activeTab, setActiveTab] = useState("composition");
   
@@ -454,13 +454,7 @@ export default function BodyStats() {
   };
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs and Sidebar/MobileHeader removed
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-3xl font-bold mb-6">Body Composition & Biomarkers</h1>
             
@@ -850,8 +844,5 @@ export default function BodyStats() {
               </TabsContent>
             </Tabs>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }
