@@ -26,15 +26,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   const delayValue = Math.min(animationDelayIndex * 100, 500);
   const delayClass = `delay-[${delayValue}ms]`;
 
-  const iconColorClasses = [
-    "text-sky-400",    // Light Blue
-    "text-emerald-400", // Green
-    "text-amber-400",   // Yellow/Orange
-    "text-rose-400",    // Pink/Red
-    "text-violet-400",  // Indigo/Violet
-    "text-teal-400"     // Teal
-  ];
-  const iconColorClass = iconColorClasses[animationDelayIndex % iconColorClasses.length];
+  // Removed iconColorClasses and iconColorClass logic from here. Color is now set on the icon prop in home.tsx
 
   return (
     <Card
@@ -42,11 +34,12 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
                   bg-black/30 border border-white/10 shadow-lg rounded-xl
                   transition-all ease-out duration-700 ${delayClass}
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}
+                  hover:scale-105 hover:-rotate-1
                   ${className}`}
     >
       {icon && (
-        <div className={`mb-4 ${iconColorClass}`}> {/* Use dynamic color class */}
-          {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40, className: "opacity-90" })}
+        <div className="mb-4"> {/* Removed iconColorClass from wrapper, color comes from icon prop's className */}
+          {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40, className: `${(icon as React.ReactElement<LucideProps>).props.className || ''} opacity-90` })}
         </div>
       )}
       <CardTitle className="mb-2 text-xl font-semibold text-white">{title}</CardTitle>

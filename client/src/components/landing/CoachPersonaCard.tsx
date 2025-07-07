@@ -88,47 +88,48 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     >
       {/* Title Box - Above Image */}
       <div
-        className="py-5 px-4 text-center border-b border-white/20 transition-all duration-300" // Increased padding
+        className="py-4 px-4 text-center border-b border-white/20 transition-all duration-300" // Adjusted padding
         style={{
           backgroundColor: isSelected || isHovered
-            ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)') // More opaque themed or dark bg on hover/select
-            : 'rgba(0,0,0,0.2)', // Subtle dark bg for default state
+            ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)')
+            : 'rgba(0,0,0,0.2)',
         }}
       >
-        <CardTitle className="text-2xl font-bold tracking-tight text-white">
+        <CardTitle
+            className="text-3xl font-extrabold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]" // Larger, bolder, text shadow
+        >
           {coach.title}
         </CardTitle>
       </div>
 
-      {/* Image Container (takes remaining space) and Text Overlay */}
-      <div className="relative flex-grow overflow-hidden"> {/* flex-grow to take remaining space, overflow-hidden for image */}
+      {/* Image Container (Portrait Aspect Ratio) and Text Overlay */}
+      <div className="relative flex-grow overflow-hidden aspect-[3/4]"> {/* Enforce portrait aspect ratio for image area */}
         {/* Background Image */}
         {coach.imageUrl ? (
           <div className="absolute inset-0 z-0">
             <img
               src={coach.imageUrl}
               alt={`${coach.title} background`}
-              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" // Slightly less aggressive scale on image
+              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
             />
             {/* Gradient overlay from bottom for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div> {/* Adjusted gradient */}
           </div>
         ) : (
-          // Fallback for icon if no image
-          <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-neutral-700/50"}`}> {/* Darker fallback */}
+          <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-neutral-700/50"}`}>
               <DynamicLucideIcon name={coach.iconName} size={56} color={coach.iconColor || "rgba(255,255,255,0.7)"} />
           </div>
         )}
 
         {/* Content Overlay for description and quote, pushed to bottom */}
-        <div className="relative z-10 flex flex-col h-full p-4 justify-end"> {/* Padding adjusted, justify-end */}
-          {/* Spacer is no longer needed here as justify-end handles it */}
-          <div className="mt-auto"> {/* This div is less critical now but groups text */}
+        {/* This div now fills the aspect-[3/4] container */}
+        <div className="relative z-10 flex flex-col h-full p-4 justify-end">
+          <div className="mt-auto">
             <CardContent className="p-0 mb-2">
-              <p className="text-xs opacity-90">{coach.description}</p> {/* Smaller description */}
+              <p className="text-sm opacity-90 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]">{coach.description}</p> {/* Text shadow, reverted to text-sm */}
             </CardContent>
             <CardFooter className="p-0 text-left border-t border-white/20 pt-2 pb-1">
-              <blockquote className="italic text-[10px] opacity-80 leading-tight"> {/* Smaller quote */}
+              <blockquote className="text-xs opacity-80 leading-tight [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]"> {/* Text shadow, reverted to text-xs */}
                 "{coach.sampleQuote}"
               </blockquote>
             </CardFooter>

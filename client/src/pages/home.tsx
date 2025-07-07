@@ -30,12 +30,12 @@ const hexToRgbString = (hex: string): string | null => {
 
 // Data structures
 const keyFeaturesData = [
-  { id: "feat-multi-view", icon: <Users size={32} />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
-  { id: "feat-ai-coach", icon: <Brain size={32} />, title: "AI Habit Coach", description: "Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency." },
-  { id: "feat-break-bad", icon: <Zap size={32} />, title: "Break Bad Habits & Addictions", description: "Specialized tools to identify, track, and overcome negative patterns, including addiction recovery support." },
-  { id: "feat-one-percent", icon: <TrendingUp size={32} />, title: "1% Better Every Day", description: "Make consistent improvements following the \"compound effect\" principle. 1% better each day leads to 37x improvement in a year." },
-  { id: "feat-science", icon: <FlaskConical size={32} />, title: "Scientific Approach", description: "Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Gary Brecka for optimal health outcomes." },
-  { id: "feat-resilience", icon: <ShieldCheck size={32} />, title: "Mental Resilience", description: "Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges." },
+  { id: "feat-multi-view", icon: <Users size={32} className="text-sky-400" />, title: "Multi-view Tracking", description: "Daily, weekly, and monthly views for both absolute (did/didn't do) and frequency-based (2x, 3x per week) habits." },
+  { id: "feat-ai-coach", icon: <Brain size={32} className="text-emerald-400" />, title: "AI Habit Coach", description: "Get personalized guidance and recommendations from your automated AI coach to optimize your habit formation and consistency." },
+  { id: "feat-break-bad", icon: <Zap size={32} className="text-amber-400" />, title: "Break Bad Habits & Addictions", description: "Specialized tools to identify, track, and overcome negative patterns, including addiction recovery support." },
+  { id: "feat-one-percent", icon: <TrendingUp size={32} className="text-sky-400" />, title: "1% Better Every Day", description: "Make consistent improvements following the \"compound effect\" principle. 1% better each day leads to 37x improvement in a year." },
+  { id: "feat-science", icon: <FlaskConical size={32} className="text-emerald-400" />, title: "Scientific Approach", description: "Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Gary Brecka for optimal health outcomes." },
+  { id: "feat-resilience", icon: <ShieldCheck size={32} className="text-amber-400" />, title: "Mental Resilience", description: "Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges." },
 ];
 const performanceAreasData = [
   { id: "area-physical", icon: <Dumbbell size={32} />, title: "Physical Training", description: "Strength, cardio, mobility, and recovery" },
@@ -176,6 +176,11 @@ const Home: React.FC = () => {
     return baseOptions;
   }, []);
 
+const SectionDivider = () => (
+  <div className="py-12 md:py-16">
+    <div className="h-px w-full bg-white/10 shadow-[0_0_15px_0px_rgba(255,255,255,0.2)]"></div>
+  </div>
+);
 
   // Intersection observer hooks
   const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
@@ -243,6 +248,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        <SectionDivider />
+
         <div ref={coachesRef} className={`transition-all duration-1000 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
@@ -251,6 +258,8 @@ const Home: React.FC = () => {
             onPersonaSelectGlow={handlePersonaSelectGlow} // Pass the new handler for click-based theming
           />
         </div>
+
+        <SectionDivider />
 
         {/* Section 3: Key Features */}
         <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
@@ -261,6 +270,8 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+
+        <SectionDivider />
 
         {/* Section 5: Fitness Tracker Integration (Moved Up) */}
         <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
@@ -326,6 +337,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        <SectionDivider />
+
         {/* Section 4: Six Key Performance Areas (Moved Down) */}
         <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4">
@@ -335,6 +348,8 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+
+        <SectionDivider />
 
         {/* Section 6: Social Proof (Testimonials) */}
         <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
@@ -359,6 +374,8 @@ const Home: React.FC = () => {
           </div>
         </section>
 
+        <SectionDivider />
+
         {/* Section 7: FAQ */}
         <section ref={faqRef} id="faq" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4 max-w-3xl">
@@ -377,6 +394,8 @@ const Home: React.FC = () => {
             </Accordion>
           </div>
         </section>
+
+        <SectionDivider />
 
         {/* Section 8: Final CTA Section */}
         <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-1000 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
