@@ -88,16 +88,14 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     >
       {/* Title Box - Above Image */}
       <div
-        className="p-4 text-center border-b border-white/20 transition-all duration-300"
+        className="py-5 px-4 text-center border-b border-white/20 transition-all duration-300" // Increased padding
         style={{
           backgroundColor: isSelected || isHovered
             ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)') // More opaque themed or dark bg on hover/select
             : 'rgba(0,0,0,0.2)', // Subtle dark bg for default state
-          // Optional: add a specific glow to title box on hover/select
-          // boxShadow: isSelected || isHovered ? `0 0 15px 2px ${coach.glowColor || coach.iconColor || '#FFFFFF30'}` : 'none',
         }}
       >
-        <CardTitle className="text-2xl font-bold tracking-tight text-white"> {/* Ensure title text is white */}
+        <CardTitle className="text-2xl font-bold tracking-tight text-white">
           {coach.title}
         </CardTitle>
       </div>

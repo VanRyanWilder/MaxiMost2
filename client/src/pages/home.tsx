@@ -283,9 +283,9 @@ const Home: React.FC = () => {
                 ];
                 const iconColorClass = iconColorClasses[index % iconColorClasses.length];
                 return (
-                  <div key={tracker.name} className="flex items-center p-2 bg-background dark:bg-neutral-800/60 rounded-lg shadow-md hover:scale-105 hover:bg-neutral-700/70 transition-all cursor-default"> {/* Adjusted background and hover */}
-                    <span className={`${iconColorClass} mr-2`}>{tracker.icon}</span> {/* Icon color wrapper, adjusted margin */}
-                    <span className="ml-1 text-sm font-medium text-neutral-200">{tracker.name}</span> {/* Text color for name */}
+                  <div key={tracker.name} className="flex items-center p-3 bg-neutral-800/50 dark:bg-neutral-800/60 rounded-lg shadow-md hover:scale-105 hover:bg-neutral-700/70 transition-all cursor-default"> {/* Consistent dark bg, increased padding */}
+                    <span className={`${iconColorClass} mr-2`}>{tracker.icon}</span>
+                    <span className="ml-1 text-sm font-medium text-neutral-100">{tracker.name}</span> {/* Slightly brighter text */}
                   </div>
                 );
               })}
@@ -396,9 +396,9 @@ const Home: React.FC = () => {
             <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
                 <p className="mb-2">MaxiMost Logo (Placeholder)</p>
                 <div className="space-x-4 mb-2">
-                    <a href="#" className="hover:text-foreground">Privacy Policy</a>
-                    <a href="#" className="hover:text-foreground">Terms of Service</a>
-                    <a href="#" className="hover:text-foreground">Contact Us</a>
+                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Privacy Policy</a>
+                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Terms of Service</a>
+                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Contact Us</a>
                 </div>
                 <p>© {new Date().getFullYear()} Maximost. All rights reserved.</p>
             </div>
