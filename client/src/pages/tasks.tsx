@@ -1,23 +1,27 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { useState } from "react";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed: AppLayout handles sidebar
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed: AppLayout's TopHeader handles mobile toggle
+import { useState } from "react"; // useState might still be used for other things, or can be removed if not
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyTasks } from "@/components/tasks/daily-tasks";
 import { TaskCustomization } from "@/components/tasks/task-customization";
 import { JournalingWidget } from "@/components/tasks/journaling-widget";
 
 export default function Tasks() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
+    // The outer div and flex container are now handled by AppLayout.
+    // PageContainer might be used here if it's a standard content wrapper, or just the content.
+    // For now, assuming PageContainer is handled by AppLayout or not strictly needed for this page's direct render.
+    // <div className="bg-gray-50 font-sans"> // Removed: AppLayout handles bg
+      // <MobileHeader onMenuClick={() => setSidebarOpen(true)} /> // Removed
       
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      // <div className="flex min-h-screen"> // Removed
+        // <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} /> // Removed
         
-        <main className="flex-1 lg:ml-64">
-          <div className="container mx-auto px-4 py-6">
+        // <main className="flex-1 lg:ml-64"> // Removed lg:ml-64, flex-1 might be handled by AppLayout's main slot
+        // The direct <main> tag will be provided by AppLayout. This component returns its content.
+          <div className="container mx-auto px-4 py-6"> {/* This can be the root or wrapped in a PageContainer if desired */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>
                 <h1 className="text-3xl font-bold">BeastMode Toolbox</h1>
@@ -79,8 +83,5 @@ export default function Tasks() {
               </TabsContent>
             </Tabs>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }
