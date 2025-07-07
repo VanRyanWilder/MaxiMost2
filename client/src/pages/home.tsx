@@ -178,8 +178,8 @@ const Home: React.FC = () => {
   }, []);
 
 const SectionDivider = () => (
-  <div className="py-12 md:py-16">
-    <div className="h-px w-full bg-white/10 shadow-[0_0_15px_0px_rgba(255,255,255,0.2)]"></div>
+  <div className="py-8 md:py-10"> {/* Reduced vertical spacing */}
+    <div className="h-px w-full bg-white/10 shadow-[0_0_15px_0px_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:shadow-[0_0_20px_2px_rgba(255,255,255,0.35)] hover:bg-white/20"></div>
   </div>
 );
 

@@ -88,22 +88,22 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     >
       {/* Title Box - Above Image */}
       <div
-        className="py-3 px-4 text-center border-b border-white/20 transition-all duration-300" // Reduced vertical padding
+        className="py-2 px-3 text-center border-b border-white/20 transition-all duration-300"
         style={{
           backgroundColor: isSelected || isHovered
-            ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)')
-            : 'rgba(0,0,0,0.2)',
+            ? (coach.glowColor ? `${coach.glowColor}A0` : 'rgba(0,0,0,0.6)') // Slightly more opaque title bg on hover
+            : 'rgba(0,0,0,0.3)', // Slightly more opaque title bg default
         }}
       >
         <CardTitle
-            className="text-2xl font-extrabold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]" // Reduced size, kept weight & shadow
+            className="text-lg font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.7)]" // Further reduced title size, font-bold instead of extrabold
         >
           {coach.title}
         </CardTitle>
       </div>
 
-      {/* Image Container (Adjusted Portrait Aspect Ratio) and Text Overlay */}
-      <div className="relative flex-grow overflow-hidden aspect-[4/5]"> {/* Adjusted aspect ratio to make it less tall */}
+      {/* Image Container (Maintained Portrait Aspect Ratio) and Text Overlay */}
+      <div className="relative flex-grow overflow-hidden aspect-[4/5]"> {/* Kept aspect ratio, overall card height will be driven by content in grid */}
         {/* Background Image */}
         {coach.imageUrl ? (
           <div className="absolute inset-0 z-0">
@@ -113,22 +113,22 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
               className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
             />
             {/* Gradient overlay from bottom for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div> {/* Adjusted gradient for new text sizes */}
           </div>
         ) : (
           <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-neutral-700/50"}`}>
-              <DynamicLucideIcon name={coach.iconName} size={56} color={coach.iconColor || "rgba(255,255,255,0.7)"} />
+              <DynamicLucideIcon name={coach.iconName} size={40} color={coach.iconColor || "rgba(255,255,255,0.6)"} /> {/* Smaller fallback icon */}
           </div>
         )}
 
         {/* Content Overlay for description and quote, pushed to bottom */}
-        <div className="relative z-10 flex flex-col h-full p-3 justify-end"> {/* Reduced padding */}
+        <div className="relative z-10 flex flex-col h-full p-2 justify-end"> {/* Reduced padding to p-2 */}
           <div className="mt-auto">
-            <CardContent className="p-0 mb-1.5"> {/* Reduced margin-bottom */}
-              <p className="text-xs opacity-90 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)] leading-snug">{coach.description}</p> {/* Smaller desc, tighter leading */}
+            <CardContent className="p-0 mb-1">
+              <p className="text-[10px] opacity-80 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-snug">{coach.description}</p> {/* text-[10px], tighter leading */}
             </CardContent>
-            <CardFooter className="p-0 text-left border-t border-white/20 pt-1.5 pb-1"> {/* Reduced padding */}
-              <blockquote className="text-[11px] opacity-80 leading-snug [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]"> {/* Slightly smaller quote, tighter leading */}
+            <CardFooter className="p-0 text-left border-t border-white/20 pt-1">
+              <blockquote className="text-[9px] opacity-70 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-snug"> {/* text-[9px], tighter leading */}
                 "{coach.sampleQuote}"
               </blockquote>
             </CardFooter>

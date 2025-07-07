@@ -30,7 +30,7 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
   return (
     <section className={`py-12 md:py-16 lg:py-20 ${className}`}>
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16"> {/* Changed to text-white */}
           {title}
         </h2>
         {coachPersonaData.length > 0 ? (
