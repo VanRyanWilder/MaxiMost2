@@ -1,6 +1,6 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { useState } from "react";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed unused import
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed unused import
+// import { useState } from "react"; // Removed unused import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageContainer } from "@/components/layout/page-container";
 import { StreakHabitTracker } from "@/components/dashboard/streak-habit-tracker";

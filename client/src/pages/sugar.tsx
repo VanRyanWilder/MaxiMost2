@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -292,12 +292,10 @@ export default function SugarPage() {
   const regularResources = filteredResources.filter(r => !r.featured);
   
   return (
-    <div className="relative flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1">
-        <main className="flex-1">
-          <PageContainer>
-            <div className="container mx-auto px-4 py-6 max-w-7xl">
+    // Outer divs and Sidebar removed
+    // PageContainer can be the root if it provides necessary styling, or wrap its content
+    <PageContainer>
+            <div className="container mx-auto px-4 py-6 max-w-7xl"> {/* This container might be redundant if PageContainer handles it */}
               <div className="flex flex-col">
                 {/* Header */}
                 <div className="mb-8">
@@ -567,9 +565,11 @@ export default function SugarPage() {
                 </div>
               </div>
             </div>
-          </PageContainer>
-        </main>
-      </div>
-    </div>
+          {/* </PageContainer> // Closing PageContainer if it's not the root element returned */}
+          {/* The structure implies PageContainer might be better inside the returned component by AppLayout's children.
+              For now, keeping PageContainer as the root returned by this page component.
+           */}
+    </PageContainer> // This should be the root if the inner container is removed or if PageContainer is the intended wrapper.
+    // Let's assume PageContainer is the main content wrapper for this page.
   );
 }

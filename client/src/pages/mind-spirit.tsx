@@ -1,6 +1,6 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { useState } from "react";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
+// import { useState } from "react"; // Removed
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -19,7 +19,7 @@ interface StoicPractice {
 }
 
 export default function MindSpirit() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
   
   const meditationGuides: MeditationGuide[] = [
     {
@@ -91,13 +91,7 @@ export default function MindSpirit() {
   ];
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs, Sidebar, MobileHeader removed
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-3xl font-bold mb-6">Mind & Spirit Development</h1>
             
@@ -159,8 +153,5 @@ export default function MindSpirit() {
               </TabsContent>
             </Tabs>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }

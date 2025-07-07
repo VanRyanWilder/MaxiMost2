@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ interface Post {
 }
 
 export default function Community() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("popular");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -177,13 +177,7 @@ export default function Community() {
   };
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs and Sidebar/MobileHeader removed
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
@@ -419,8 +413,5 @@ export default function Community() {
               </div>
             </div>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }

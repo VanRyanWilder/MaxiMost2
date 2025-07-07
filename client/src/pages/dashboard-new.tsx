@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
@@ -206,7 +206,7 @@ export default function Dashboard() {
   const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed
   const [habits, setHabits] = useState<Habit[]>([]); // Initialize with empty array
   // const [completions, setCompletions] = useState<HabitCompletion[]>([]); // Removed, completions are part of habits
   const [isLoading, setIsLoading] = useState(true);
@@ -593,19 +593,12 @@ export default function Dashboard() {
   const additionalHabits = habits.filter(h => !h.isAbsolute);
 
   return (
-    <>
-      <div className="flex min-h-screen bg-background">
-        {/* Sidebar */}
-        <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-        
-        {/* Main content area */}
-        <main className="flex-1">
-          <PageContainer>
-            {/* Mobile Header */}
-            <MobileHeader pageTitle="MaxiMost Habit AI" />
-            
-            {/* Profile and Stats Summary */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
+    // Outer layout divs, Sidebar, MobileHeader removed
+    // AppLayout will provide the overall page structure
+    <PageContainer>
+      <h1 className="text-3xl font-bold mb-6">Dashboard (New)</h1>
+      {/* Profile and Stats Summary */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
               {/* Progress Cards */}
               <ProgressCard 
                 number={28} 
@@ -1479,6 +1472,7 @@ export default function Dashboard() {
         habit={selectedHabit}
         onSave={handleSaveHabit} // Use the new handleSaveHabit
       />
-    </>
+    </PageContainer>
+    // Removed closing tags for outer divs that are no longer needed
   );
 }

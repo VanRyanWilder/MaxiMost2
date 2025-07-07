@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
@@ -203,7 +203,7 @@ function getIconComponent(iconName: string, iconColor?: string, className: strin
 export default function Dashboard() {
   const { user } = useUser();
   const { toast } = useToast();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
   const [completions, setCompletions] = useState<HabitCompletion[]>(initialCompletions);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -408,19 +408,11 @@ export default function Dashboard() {
   const additionalHabits = habits.filter(h => !h.isAbsolute);
 
   return (
-    <>
-      <div className="flex min-h-screen bg-background">
-        {/* Sidebar */}
-        <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-        
-        {/* Main content area */}
-        <main className="flex-1">
-          <PageContainer>
-            {/* Mobile Header */}
-            <MobileHeader pageTitle="MaxiMost Habit AI" />
-            
-            {/* Profile and Stats Summary */}
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
+    // Outer div, Sidebar, MobileHeader removed
+    <PageContainer>
+      <h1 className="text-3xl font-bold mb-6">New Integrated Dashboard</h1>
+      {/* Profile and Stats Summary */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4 mb-6">
               {/* Progress Cards */}
               <ProgressCard 
                 number={28} 
@@ -1337,6 +1329,6 @@ export default function Dashboard() {
           setEditHabitDialogOpen(false);
         }}
       />
-    </>
+    </PageContainer>
   );
 }

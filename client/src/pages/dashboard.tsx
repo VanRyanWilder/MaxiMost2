@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ import { HabitSkeleton } from "@/components/dashboard/habit-skeleton"; // Import
 // ];
 
 export default function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed
   // Initialize habits as null to represent loading state
   const [habits, setHabits] = useState<Habit[] | null>(null);
   const [completions, setCompletions] = useState<HabitCompletion[]>([]); // Initialize as empty
@@ -283,16 +283,7 @@ export default function Dashboard() {
   };
   
   return (
-    <>
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      
-      <div className="flex flex-col min-h-screen">
-        <MobileHeader 
-          isSidebarOpen={isSidebarOpen} 
-          setIsSidebarOpen={setIsSidebarOpen}
-          pageTitle="Habit Dashboard"
-        />
-        
+    // Sidebar and MobileHeader removed, outer div structure simplified
         <PageContainer>
           <div className="pt-4 pb-8">
             <div className="mb-6">
@@ -421,7 +412,7 @@ export default function Dashboard() {
           }}
           onDelete={deleteHabit}
         />
-      </div>
-    </>
+      {/* </div> // Removed corresponding outer div closing tag */}
+    </PageContainer> // Assuming PageContainer is the root for this page's content now
   );
 }

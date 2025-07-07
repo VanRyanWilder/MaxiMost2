@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +28,7 @@ interface MotivationalSpeech {
 }
 
 export default function Motivation() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isPlaying, setIsPlaying] = useState<number | null>(null);
@@ -181,13 +181,7 @@ export default function Motivation() {
   };
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs, Sidebar, MobileHeader removed
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>

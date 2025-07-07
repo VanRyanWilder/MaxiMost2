@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; 
 import { Button } from "@/components/ui/button";
@@ -427,7 +427,7 @@ export default function IntegratedDashboard() {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false); // Removed
   const { toast } = useToast();
   
   // Set up drag and drop sensors
@@ -675,19 +675,10 @@ export default function IntegratedDashboard() {
   const stats = calculateStats();
 
   return (
-    <>
-      <div className="flex min-h-screen bg-background">
-        {/* Sidebar */}
-        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-        
-        {/* Main content area */}
-        <main className="flex-1">
-          <PageContainer>
-            {/* Mobile Header */}
-            <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
-            
-            {/* Dashboard header and stats */}
-            <div className="flex justify-between items-center mb-6">
+    // Outer div, Sidebar, MobileHeader removed
+    <PageContainer>
+      {/* Dashboard header and stats */}
+      <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold">
                 MaxiMost Habit Tracker
               </h1>
@@ -1285,6 +1276,6 @@ export default function IntegratedDashboard() {
           setEditHabitDialogOpen(false);
         }}
       />
-    </>
+    </PageContainer>
   );
 }

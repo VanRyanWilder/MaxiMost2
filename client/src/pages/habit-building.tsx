@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { useState } from "react"; // Removed
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -45,7 +45,7 @@ interface HabitMethod {
 }
 
 export default function HabitBuilding() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
 
   // Top books on habit building
   const habitBooks: HabitBook[] = [
@@ -256,13 +256,7 @@ export default function HabitBuilding() {
   const psychologyMethods = habitMethods.filter(method => method.category === "psychology");
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs, Sidebar, MobileHeader removed
           <div className="container mx-auto px-4 py-6 max-w-6xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
@@ -680,8 +674,5 @@ export default function HabitBuilding() {
               </CardContent>
             </Card>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }

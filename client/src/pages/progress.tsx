@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { useState } from "react"; // Removed
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { ProgressVisualization } from "@/components/dashboard/progress-visualization";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,16 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, TrendingUp, Calendar, Activity, Brain } from "lucide-react";
 
 export default function Progress() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs, Sidebar, MobileHeader removed
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <div>
@@ -143,8 +137,5 @@ export default function Progress() {
               </TabsContent>
             </Tabs>
           </div>
-        </main>
-      </div>
-    </div>
   );
 }

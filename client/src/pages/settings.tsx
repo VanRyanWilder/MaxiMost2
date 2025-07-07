@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Sidebar } from "@/components/layout/sidebar";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
 import { useTheme } from "@/components/theme-provider";
-import { MobileHeader } from "@/components/layout/mobile-header";
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
 import { PageContainer } from "@/components/layout/page-container";
 import { HeaderWithSettings } from "@/components/layout/header-with-settings";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Bell, Moon, Sun, Volume2, User, Shield, Clock, Eye, Target, BellRing } from 'lucide-react';
 
 export default function Settings() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed
   const { theme, setTheme } = useTheme();
   const { user } = useUser();
   
@@ -37,11 +37,9 @@ export default function Settings() {
   const [showSupplement, setShowSupplement] = useState(true);
 
   return (
-    <>
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-      <MobileHeader setIsSidebarOpen={setIsSidebarOpen} />
-      
+    // Sidebar, MobileHeader, and outer fragment removed. PageContainer is the root.
       <PageContainer>
+        {/* HeaderWithSettings already provides an H1 title "Settings" */}
         <HeaderWithSettings title="Settings" description="Customize your MaxiMost experience" />
         
         <div className="space-y-6">
