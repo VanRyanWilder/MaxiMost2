@@ -21,14 +21,18 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   className,
 }) => {
   return (
-    <Card className={`flex flex-col items-center text-center p-6 md:items-start md:text-left ${className}`}>
+    <Card
+      className={`flex flex-col items-center text-center p-6 md:items-start md:text-left
+                  bg-black/30 border border-white/10 shadow-lg rounded-xl
+                  ${className}`}
+    >
       {icon && (
-        <div className="mb-4 text-primary"> {/* Default color, can be overridden by icon prop itself */}
-          {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40 })}
+        <div className="mb-4 text-white"> {/* Icon color changed to white for better contrast */}
+          {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40, className: "opacity-90" })}
         </div>
       )}
-      <CardTitle className="mb-2 text-xl font-semibold">{title}</CardTitle>
-      <CardContent className="text-muted-foreground p-0"> {/* Remove CardContent default padding */}
+      <CardTitle className="mb-2 text-xl font-semibold text-white">{title}</CardTitle> {/* Title color to white */}
+      <CardContent className="text-neutral-300 p-0"> {/* Description color to a lighter gray */}
         <p>{description}</p>
       </CardContent>
     </Card>

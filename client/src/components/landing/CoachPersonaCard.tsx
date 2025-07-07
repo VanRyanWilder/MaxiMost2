@@ -79,43 +79,57 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
 
   return (
     <Card
-      className={combinedClassName}
-      style={cardStyle} // borderStyleOverride removed as ring handles selected state border better
+      className={`${combinedClassName} relative overflow-hidden group`} // Added relative and group for overlay styling
+      style={cardStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={onSelect} // Call onSelect when card is clicked
+      onClick={onSelect}
     >
+      {/* Background Image */}
       {coach.imageUrl ? (
-        <div className="aspect-[3/2] w-full overflow-hidden">
+        <div className="absolute inset-0 z-0">
           <img
             src={coach.imageUrl}
-            alt={coach.title}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+            alt={`${coach.title} background`}
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110" // Image zoom on card hover
           />
+          {/* Gradient overlay from bottom for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         </div>
       ) : (
-        // Fallback to icon if no imageUrl is provided
-        <CardHeader className="items-center text-center p-6 pt-8">
-          <div className={`mb-4 p-3 rounded-full inline-block ${coach.iconColor ? "" : "text-primary"}`}>
-            <div className={coach.iconColor || "text-primary"}>
-              <DynamicLucideIcon name={coach.iconName} size={40} />
-            </div>
-          </div>
-        </CardHeader>
+        // Fallback for icon if no image, though cards should ideally always have images now
+        <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-card"}`}>
+            <DynamicLucideIcon name={coach.iconName} size={64} color={coach.iconColor || "hsl(var(--primary))"} />
+        </div>
       )}
-      <CardHeader className={`items-center text-center p-6 ${coach.imageUrl ? 'pt-4' : 'pt-0'}`}>
-        {/* If there's an image, icon is not shown here to avoid redundancy, unless desired otherwise */}
-        {/* If icon should also be shown with image, add it here conditionally */}
-        <CardTitle className="text-2xl font-bold text-foreground">{coach.title}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-grow px-6 pb-4 text-center">
-        <p className="text-muted-foreground text-sm mb-4">{coach.description}</p>
-      </CardContent>
-      <CardFooter className="p-6 bg-muted/50 dark:bg-card/50 text-center border-t">
-        <blockquote className="italic text-sm text-foreground/80">
-          "{coach.sampleQuote}"
-        </blockquote>
-      </CardFooter>
+
+      {/* Content Overlay */}
+      <div className="relative z-10 flex flex-col h-full p-6 text-white"> {/* Ensure text is white or very light for dark overlay */}
+        {/* Top section for icon if no image, or can be used for small badge/logo later */}
+        {!coach.imageUrl && (
+            <div className="flex-shrink-0 mb-auto text-center opacity-50"> {/* Pushes content to bottom if icon is shown as main element*/}
+                 {/* Icon was here, but design implies image is primary. Fallback above handles no-image. */}
+            </div>
+        )}
+
+        {/* Spacer to push content to the bottom if there's an image */}
+        {coach.imageUrl && <div className="flex-grow min-h-[40%]"></div>}
+
+
+        <div className="mt-auto"> {/* This div will be pushed to the bottom */}
+          <CardTitle className="text-3xl font-extrabold mb-2 tracking-tight leading-tight"> {/* Bolder, larger title */}
+            {coach.title}
+          </CardTitle>
+          <CardContent className="p-0 mb-3">
+            <p className="text-sm opacity-90 line-clamp-3">{coach.description}</p> {/* Line clamp for description */}
+          </CardContent>
+          <CardFooter className="p-0 text-left border-t border-white/20 pt-3">
+            <blockquote className="italic text-xs opacity-80">
+              "{coach.sampleQuote}"
+            </blockquote>
+          </CardFooter>
+        </div>
+      </div>
     </Card>
   );
 };

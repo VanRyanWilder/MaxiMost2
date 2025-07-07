@@ -27,15 +27,21 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
     .toUpperCase();
 
   return (
-    <Card className={`flex flex-col items-center text-center p-6 shadow-lg rounded-lg ${className}`}>
-      <Avatar className="w-20 h-20 mb-4">
-        <AvatarImage src={imageSrc} alt={altText} />
-        <AvatarFallback>{initials}</AvatarFallback>
-      </Avatar>
-      <h3 className="text-xl font-semibold text-foreground mb-1">{name}</h3>
-      <p className="text-sm text-muted-foreground mb-4">{title}</p>
-      <CardContent className="text-base text-foreground p-0">
-        <p className="italic">"{quote}"</p>
+    <Card
+      className={`flex flex-col p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-white ${className}`}
+    >
+      <div className="flex items-center mb-4">
+        <Avatar className="w-12 h-12 mr-4"> {/* Slightly smaller avatar for a more compact header */}
+          <AvatarImage src={imageSrc} alt={altText} />
+          <AvatarFallback className="text-black">{initials}</AvatarFallback> {/* Fallback text color for visibility if image fails */}
+        </Avatar>
+        <div className="flex-grow">
+          <h3 className="text-lg font-semibold text-white">{name}</h3>
+          <p className="text-xs text-neutral-300">{title}</p>
+        </div>
+      </div>
+      <CardContent className="text-sm text-neutral-200 p-0"> {/* Adjusted quote text color and size */}
+        <p className="italic leading-relaxed">"{quote}"</p>
       </CardContent>
     </Card>
   );
