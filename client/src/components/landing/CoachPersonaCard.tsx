@@ -85,13 +85,27 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={onSelect} // Call onSelect when card is clicked
     >
-      {/* coach.imageUrl rendering removed to use only Lucide icons */}
-      <CardHeader className="items-center text-center p-6 pt-8"> {/* Added pt-8 for more space at the top after image removal */}
-        <div className={`mb-4 p-3 rounded-full inline-block ${coach.iconColor ? "" : "text-primary"}`}>
-          <div className={coach.iconColor || "text-primary"}>
-            <DynamicLucideIcon name={coach.iconName} size={40} />
-          </div>
+      {coach.imageUrl ? (
+        <div className="aspect-[3/2] w-full overflow-hidden">
+          <img
+            src={coach.imageUrl}
+            alt={coach.title}
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+          />
         </div>
+      ) : (
+        // Fallback to icon if no imageUrl is provided
+        <CardHeader className="items-center text-center p-6 pt-8">
+          <div className={`mb-4 p-3 rounded-full inline-block ${coach.iconColor ? "" : "text-primary"}`}>
+            <div className={coach.iconColor || "text-primary"}>
+              <DynamicLucideIcon name={coach.iconName} size={40} />
+            </div>
+          </div>
+        </CardHeader>
+      )}
+      <CardHeader className={`items-center text-center p-6 ${coach.imageUrl ? 'pt-4' : 'pt-0'}`}>
+        {/* If there's an image, icon is not shown here to avoid redundancy, unless desired otherwise */}
+        {/* If icon should also be shown with image, add it here conditionally */}
         <CardTitle className="text-2xl font-bold text-foreground">{coach.title}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow px-6 pb-4 text-center">
