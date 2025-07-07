@@ -59,10 +59,16 @@ const faqData = [
 ];
 
 const Home: React.FC = () => {
-  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null);
+  const [activeGlowColor, setActiveGlowColor] = useState<string | null>(null); // For hero gradient on hover - might be deprecated by particle effect
+  const [particleThemeColor, setParticleThemeColor] = useState<string | undefined>(undefined); // For particle theming on click
 
   const handlePersonaHover = (glowColor: string | undefined) => {
-    setActiveGlowColor(glowColor || null);
+    // This function was for the CSS gradient hero background, which is commented out.
+    // setActiveGlowColor(glowColor || null);
+  };
+
+  const handlePersonaSelectGlow = (glowColorRgb: string | undefined) => {
+    setParticleThemeColor(glowColorRgb);
   };
 
   const handleWaitlistSubmit = (formData: { email: string; rewardsOptIn: boolean }) => {
@@ -97,22 +103,79 @@ const Home: React.FC = () => {
     await loadStarsPreset(engine);
   }, []);
 
-  const particlesOptions = {
-    preset: "stars",
-    background: {
-      color: {
-        value: "#0A192F", // Same as the hero section's initial gradient start
+  const getParticlesOptions = useCallback((themeColorRgb: string | undefined) => {
+    const baseOptions = {
+      preset: "stars",
+      background: {
+        color: {
+          value: "#0A192F", // Base background color
+        },
       },
-    },
-    particles: {
-      move: {
-        speed: 0.5, // Slower speed for a more subtle effect
+      particles: {
+        number: {
+          value: 80, // Default from preset, can adjust
+        },
+        color: {
+          value: "#FFFFFF", // Default particle color (white)
+        },
+        shape: {
+          type: "circle",
+        },
+        opacity: {
+          value: {min: 0.1, max: 0.8}, // Make stars slightly more visible
+          animation: {
+            enable: true,
+            speed: 0.5,
+            minimumValue: 0.1,
+            sync: false
+          }
+        },
+        size: {
+          value: {min: 0.5, max: 1.5}, // Slightly varied star sizes
+        },
+        move: {
+          enable: true,
+          speed: 0.3, // Slower speed for a more subtle effect
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false,
+        },
+        links: { // Disable links for a cleaner star field
+            enable: false,
+        }
       },
-      size: {
-        value: 1, // Smaller particles
+      interactivity: { // Disable interactivity for performance and subtlety
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: false,
+          },
+          onclick: {
+            enable: false,
+          },
+          resize: true
+        }
       },
-    },
-  };
+      detectRetina: true,
+    };
+
+    if (themeColorRgb) {
+      // If a theme color is selected, tint the stars
+      // Using HSL to maintain brightness but apply hue might be too complex here.
+      // Let's try making some stars take on the theme color directly.
+      // This might be too strong. A more subtle approach would be to blend.
+      // For simplicity, let's just change the general particle color.
+      // The RGB string needs to be formatted as "rgb(r,g,b)" for tsparticles color value.
+      baseOptions.particles.color.value = `rgb(${themeColorRgb})`;
+      // Could also make a small portion of particles this color, e.g.
+      // baseOptions.particles.color.value = ["#FFFFFF", `rgb(${themeColorRgb})`];
+      // baseOptions.particles.number.value = 100; // increase if some are themed
+    }
+    return baseOptions;
+  }, []);
+
 
   // Intersection observer hooks
   const isKeyFeaturesVisible = useIntersectionObserver(keyFeaturesRef, { threshold: 0.1, triggerOnce: true });
@@ -142,7 +205,7 @@ const Home: React.FC = () => {
           <Particles
             id="tsparticles-hero"
             init={particlesInit}
-            options={particlesOptions as any} // Cast to any to avoid type issues with preset options
+            options={getParticlesOptions(particleThemeColor) as any} // Use dynamic options
             className="absolute inset-0 z-0"
           />
           {/* The existing gradient div can be removed or kept as a fallback/overlay if desired
@@ -163,46 +226,46 @@ const Home: React.FC = () => {
               headline="Forge Your Elite Habits. Master Your Mind."
               description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
               buttonText="Get Started Free"
-              emailPlaceholder="Enter your email to begin"
-              rewardsText="Join now for early access and exclusive benefits."
-              showRewardsOptIn={false}
-              onSubmit={handleWaitlistSubmit}
+              showEmailInput={false} // Remove email input
+              buttonLink="/sign-in"   // Link to /sign-in
+              // onSubmit, emailPlaceholder, rewardsText, showRewardsOptIn are no longer needed here
               className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20" // Glassmorphism for Hero CTA
             />
             {/* <h1>CTASection in Hero is commented out</h1> */}
           </div>
         </section>
 
-        <div ref={coachesRef} className={`transition-all duration-700 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div ref={coachesRef} className={`transition-all duration-1000 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
-            className="py-16 md:py-20 bg-background dark:bg-neutral-900"
-            onPersonaHover={handlePersonaHover}
+            className="py-16 md:py-20 bg-background dark:bg-neutral-900" // This bg might be overridden by HP-03 if not careful
+            onPersonaHover={handlePersonaHover} // Keep for potential future use or remove if CSS hero glow is fully deprecated
+            onPersonaSelectGlow={handlePersonaSelectGlow} // Pass the new handler for click-based theming
           />
         </div>
 
         {/* Section 3: Key Features */}
-        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {keyFeaturesData.map((feature) => ( <FeatureCard key={feature.id} icon={feature.icon} title={feature.title} description={feature.description} /> ))}
+              {keyFeaturesData.map((feature, index) => ( <FeatureCard key={feature.id} icon={feature.icon} title={feature.title} description={feature.description} animationDelayIndex={index} isVisible={isKeyFeaturesVisible} /> ))}
             </div>
           </div>
         </section>
 
         {/* Section 4: Six Key Performance Areas */}
-        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {performanceAreasData.map((area) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} /> ))}
+              {performanceAreasData.map((area, index) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} animationDelayIndex={index} isVisible={isPerformanceAreasVisible} /> ))}
             </div>
           </div>
         </section>
 
         {/* Section 5: Fitness Tracker Integration */}
-        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Fitness Tracker Integration
@@ -222,32 +285,32 @@ const Home: React.FC = () => {
                 </div>
               ))}
             </div>
-            <div className="max-w-2xl mx-auto text-left space-y-2 text-muted-foreground mb-10">
+            <div className="max-w-2xl mx-auto text-left space-y-2 text-neutral-200 mb-10"> {/* Changed text color */}
               <p>✓ Auto-complete workout habits when your fitness tracker records activity.</p>
               <p>✓ Sleep habits marked complete when your tracker records sufficient sleep.</p>
               <p>✓ Heart rate and recovery metrics for holistic health tracking.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
-                <h4 className="text-lg font-semibold text-foreground mb-3">Fitbit Activity (Example)</h4>
+              <div className="p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300"> {/* Premium card style */}
+                <h4 className="text-lg font-semibold text-white mb-3">Fitbit Activity (Example)</h4> {/* White title */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  <p><strong className="text-foreground">Steps:</strong> 9,857</p>
-                  <p><strong className="text-foreground">Miles:</strong> 4.3</p>
-                  <p><strong className="text-foreground">Calories:</strong> 2,478</p>
-                  <p><strong className="text-foreground">Active Min:</strong> 45</p>
-                  <p><strong className="text-foreground">Sleep:</strong> 7:15</p>
-                  <p><strong className="text-foreground">Resting BPM:</strong> 68</p>
+                  <p><strong className="text-white">Steps:</strong> 9,857</p>
+                  <p><strong className="text-white">Miles:</strong> 4.3</p>
+                  <p><strong className="text-white">Calories:</strong> 2,478</p>
+                  <p><strong className="text-white">Active Min:</strong> 45</p>
+                  <p><strong className="text-white">Sleep:</strong> 7:15</p>
+                  <p><strong className="text-white">Resting BPM:</strong> 68</p>
                 </div>
               </div>
-              <div className="p-6 bg-background dark:bg-neutral-800 rounded-lg shadow">
-                <h4 className="text-lg font-semibold text-foreground mb-3">Samsung Health (Example)</h4>
+              <div className="p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300"> {/* Premium card style */}
+                <h4 className="text-lg font-semibold text-white mb-3">Samsung Health (Example)</h4> {/* White title */}
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  <p><strong className="text-foreground">Steps:</strong> 11,235</p>
-                  <p><strong className="text-foreground">Miles:</strong> 5.2</p>
-                  <p><strong className="text-foreground">Calories:</strong> 2,912</p>
-                  <p><strong className="text-foreground">Active Min:</strong> 65</p>
-                  <p><strong className="text-foreground">Sleep:</strong> 8:10</p>
-                  <p><strong className="text-foreground">Resting BPM:</strong> 71</p>
+                  <p><strong className="text-white">Steps:</strong> 11,235</p>
+                  <p><strong className="text-white">Miles:</strong> 5.2</p>
+                  <p><strong className="text-white">Calories:</strong> 2,912</p>
+                  <p><strong className="text-white">Active Min:</strong> 65</p>
+                  <p><strong className="text-white">Sleep:</strong> 8:10</p>
+                  <p><strong className="text-white">Resting BPM:</strong> 71</p>
                 </div>
               </div>
             </div>
@@ -255,13 +318,13 @@ const Home: React.FC = () => {
         </section>
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-4xl mx-auto">
-              {testimonialsData.map((testimonial) => (
+              {testimonialsData.map((testimonial, index) => (
                 <TestimonialCard
                   key={testimonial.id}
                   imageSrc={testimonial.imageSrc}
@@ -269,6 +332,7 @@ const Home: React.FC = () => {
                   name={testimonial.name}
                   title={testimonial.title}
                   quote={testimonial.quote}
+                  animationDelayIndex={index}
                 />
               ))}
             </div>
@@ -276,7 +340,7 @@ const Home: React.FC = () => {
         </section>
 
         {/* Section 7: FAQ */}
-        <section ref={faqRef} id="faq" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={faqRef} id="faq" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -295,7 +359,7 @@ const Home: React.FC = () => {
         </section>
 
         {/* Section 8: Final CTA Section */}
-        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-700 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-1000 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <CTASection
             headline="Start Forging Your Elite Habits Today."
             description="Take control of your life, build unbreakable habits, and master your mind with MaxiMost."

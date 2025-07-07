@@ -7,6 +7,7 @@ interface MeetTheCoachesSectionProps {
   className?: string;
   onPersonaHover?: (glowColorRgb: string | undefined) => void;
   onPersonaLeave?: () => void;
+  onPersonaSelectGlow?: (glowColorRgb: string | undefined) => void; // New prop for click-based glow
 }
 
 export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
@@ -14,11 +15,16 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
   className,
   onPersonaHover,
   onPersonaLeave,
+  onPersonaSelectGlow,
 }) => {
   const [selectedCoachId, setSelectedCoachId] = useState<string | null>(null);
 
-  const handleCoachSelect = (coachId: string) => {
-    setSelectedCoachId(prevId => prevId === coachId ? null : coachId); // Toggle selection
+  const handleCoachSelect = (coach: CoachPersona) => { // Changed to accept full coach object
+    const newSelectedId = selectedCoachId === coach.id ? null : coach.id;
+    setSelectedCoachId(newSelectedId);
+    if (onPersonaSelectGlow) {
+      onPersonaSelectGlow(newSelectedId ? coach.glowColorRgb : undefined);
+    }
   };
 
   return (

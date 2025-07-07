@@ -12,6 +12,7 @@ interface FeatureCardProps {
   title: string;
   description: string;
   className?: string; // Allow additional styling
+  animationDelayIndex?: number;
 }
 
 export const FeatureCard: React.FC<FeatureCardProps> = ({
@@ -19,12 +20,29 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   title,
   description,
   className,
+  animationDelayIndex = 0,
 }) => {
+  // Create a set of predefined delay classes to cycle through or use arbitrary values
+  // Using a base delay and incrementing: e.g., 0ms, 100ms, 200ms for first 3 items, then repeat or cap
+  const delayValue = Math.min(animationDelayIndex * 100, 500); // Cap delay at 500ms for example
+  const delayClass = `delay-[${delayValue}ms]`; // Uses Tailwind's arbitrary value support
+
   return (
     <Card
       className={`flex flex-col items-center text-center p-6 md:items-start md:text-left
                   bg-black/30 border border-white/10 shadow-lg rounded-xl
-                  ${className}`}
+                  transform transition-all opacity-0 translate-y-16 ${delayClass} ease-out duration-1000
+                  ${className}`} // Added base animation classes here, section wrapper will trigger visibility
+                  // The actual trigger will be when the PARENT section becomes visible.
+                  // This card itself doesn't use IntersectionObserver directly, its parent section does.
+                  // So, these classes define its start state and how it transitions.
+                  // The parent section's visibility will switch a class that makes this visible.
+                  // This approach is problematic if the card itself is meant to animate individually based on its own visibility.
+                  // For now, assuming the whole section fades in, and cards stagger *within* that.
+                  // The parent section in home.tsx controls the "group" animation.
+                  // This card needs to be part of that group animation.
+                  // Let's assume the parent section already handles the main fade-in.
+                  // The delay here is for staggered effect *after* parent is visible.
     >
       {icon && (
         <div className="mb-4 text-white"> {/* Icon color changed to white for better contrast */}
