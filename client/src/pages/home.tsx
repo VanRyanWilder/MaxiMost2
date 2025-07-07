@@ -243,7 +243,7 @@ const SectionDivider = () => (
               showEmailInput={false} // Remove email input
               buttonLink="/login"   // Corrected link to /login
               // onSubmit, emailPlaceholder, rewardsText, showRewardsOptIn are no longer needed here
-              className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20 hover:shadow-2xl hover:border-white/30 transition-all duration-300 ease-in-out" // Added hover effect for Hero CTA Card
+              className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-2xl border-2 border-white/25 hover:shadow-[0_0_35px_5px_rgba(255,255,255,0.3)] hover:border-white/40 transition-all duration-300 ease-in-out" // Enhanced base shadow, border, and hover effect for Hero CTA Card
             />
             {/* <h1>CTASection in Hero is commented out</h1> */}
           </div>

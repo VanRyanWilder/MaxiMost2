@@ -82,8 +82,8 @@ export const CTASection: React.FC<CTASectionProps> = ({
               size="lg"
               className={`text-lg transition-all duration-200 ease-in-out
                 ${buttonVariant === 'secondary'
-                  ? 'bg-slate-200 text-blue-700 hover:bg-slate-300 hover:shadow-lg hover:text-blue-800'
-                  : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50'
+                  ? 'bg-slate-200 text-blue-800 hover:bg-slate-100 hover:shadow-[0_0_15px_2px_rgba(59,130,246,0.3)] hover:text-blue-900 hover:scale-105' // Darker blue text, lighter bg on hover, blue glow shadow
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50 animate-pulse-glow'
                 }`}
               disabled={isLoading}
             >
@@ -95,8 +95,8 @@ export const CTASection: React.FC<CTASectionProps> = ({
             size="lg"
             className={`text-lg transition-all duration-200 ease-in-out
               ${buttonVariant === 'secondary'
-                ? 'bg-slate-200 text-blue-700 hover:bg-slate-300 hover:shadow-lg hover:text-blue-800 hover:scale-105'  // Added scale for secondary too
-                : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50'
+                ? 'bg-slate-200 text-blue-800 hover:bg-slate-100 hover:shadow-[0_0_15px_2px_rgba(59,130,246,0.3)] hover:text-blue-900 hover:scale-105' // Darker blue text, lighter bg on hover, blue glow shadow
+                : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50 animate-pulse-glow'
               }`}
             disabled={isLoading}
             onClick={handleButtonClick}

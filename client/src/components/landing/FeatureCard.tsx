@@ -42,28 +42,33 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
 
   const baseClasses = `flex flex-col items-center text-center transition-all ease-out duration-700 ${delayClass} ${isVisible ? finalTransformClass : initialTransformClass}`;
 
-  const premiumStyleClasses = `p-6 md:items-start md:text-left bg-black/30 border border-white/10 shadow-lg rounded-xl hover:scale-105 hover:-rotate-1`;
-  const simpleStyleClasses = `p-2 md:p-3 items-center text-center hover:scale-105`; // Adjusted padding for simple style
+  // Unified card styling for background, border, shadow.
+  const cardLookClasses = `bg-black/30 border border-white/10 shadow-lg rounded-xl hover:scale-105`;
 
-  const currentStyleClasses = cardStyleType === 'simple' ? simpleStyleClasses : premiumStyleClasses;
+  // Premium style specific padding, text alignment, and hover rotation.
+  const premiumStyleSpecifics = `p-6 md:items-start md:text-left hover:-rotate-1`;
+  // Simple style specific padding and text alignment. No description.
+  const simpleStyleSpecifics = `p-4 items-center text-center`; // Increased padding for simple style to look better with a border
+
+  const currentStyleSpecifics = cardStyleType === 'simple' ? simpleStyleSpecifics : premiumStyleSpecifics;
 
   return (
-    <div // Changed from Card to div for simpler style to avoid Card's inherent padding/structure
-      className={`${baseClasses} ${currentStyleClasses} ${className}`}
+    <div
+      className={`${baseClasses} ${cardLookClasses} ${currentStyleSpecifics} ${className}`}
     >
       {icon && (
-        <div className={cardStyleType === 'simple' ? "mb-2" : "mb-4"}>
+        <div className={cardStyleType === 'simple' ? "mb-3" : "mb-4"}> {/* Adjusted mb for simple */}
           {React.cloneElement(icon as React.ReactElement<LucideProps>, {
-            size: cardStyleType === 'simple' ? 32 : 40,
+            size: cardStyleType === 'simple' ? 36 : 40, // Slightly adjusted simple icon size
             // For simple style, use the icon's own class for color. For premium, add opacity.
             className: `${(icon as React.ReactElement<LucideProps>).props.className || ''} ${cardStyleType === 'premium' ? 'opacity-90' : ''}`.trim()
           })}
         </div>
       )}
-      <CardTitle className={`text-white ${cardStyleType === 'simple' ? 'text-lg font-medium' : 'mb-2 text-xl font-semibold'}`}>
+      <CardTitle className={`text-white ${cardStyleType === 'simple' ? 'text-xl font-semibold' : 'mb-2 text-xl font-semibold'}`}> {/* Simple title matches premium */}
         {title}
       </CardTitle>
-      {cardStyleType === 'premium' && (
+      {cardStyleType === 'premium' && ( // Description only for premium
         <CardContent className="text-neutral-300 p-0">
           <p>{description}</p>
         </CardContent>
