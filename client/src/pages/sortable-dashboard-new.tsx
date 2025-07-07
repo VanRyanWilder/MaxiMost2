@@ -2,9 +2,9 @@
 import { useState, useEffect, useCallback } from "react";
 // ... other imports ...
 import { cleanHabitTitle } from "@/utils/clean-habit-title";
-import { Sidebar } from "@/components/layout/sidebar";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed: AppLayout handles sidebar
 import { useTheme } from "@/components/theme-provider";
-import { MobileHeader } from "@/components/layout/mobile-header";
+import { MobileHeader } from "@/components/layout/mobile-header"; // This might also be redundant if TopHeader in AppLayout handles mobile well
 import { PageContainer } from "@/components/layout/page-container";
 import { HeaderWithSettings } from "@/components/layout/header-with-settings";
 import { SettingsProvider } from "@/components/settings/settings-panel";
@@ -42,7 +42,7 @@ import { toast } from "@/hooks/use-toast";
 // toDate function removed from here, will be imported from @/lib/utils
 
 export default function SortableDashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed: AppLayout handles sidebar state
   const [currentDate, setCurrentDate] = useState(new Date());
   const [habits, setHabits] = useState<FirestoreHabit[]>([]);
   const [isLoadingHabits, setIsLoadingHabits] = useState<boolean>(true);
@@ -484,22 +484,21 @@ export default function SortableDashboard() {
 
   return (
     <SettingsProvider>
-      <div className="flex min-h-screen bg-background"><Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} /><main className="flex-1"><PageContainer><div className="flex justify-end items-center mb-4"><HeaderWithSettings /></div><div className="flex flex-col lg:flex-row gap-6"><div className="flex-1">
-            {/* Habit Stacks Section - Added before the main Habit Dashboard card */}
-            {mockStacks.length > 0 && user && !userLoading && (
-              <Card className="mb-6 shadow-md">
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Your Habit Stacks</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  {mockStacks.map(stack => (
-                    <HabitStackCard key={stack.id} stack={stack} onCompleteStack={handleCompleteStack} />
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+      {/* The main flex container and Sidebar are now handled by AppLayout */}
+      <PageContainer>
+        <h1 className="text-3xl font-bold mb-6 tracking-tight">Dashboard Overview</h1>
+        <div className="flex justify-end items-center mb-4">
+          {/* MobileHeader might be redundant if TopHeader in AppLayout handles mobile menu toggle adequately */}
+          {/* <MobileHeader onToggleSidebar={() => setIsSidebarOpen(true)} /> */}
+          <HeaderWithSettings /> {/* This component itself might act as a sub-header for the dashboard content */}
+        </div>
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex-1">
+            {/* Habit Stacks Section REMOVED from here */}
+            {/* Today's Log Card REMOVED from here (was in right column) */}
+            {/* Habit Library REMOVED from here (was in right column) */}
 
-            <Card className="mb-8">
+            <Card className="mb-8"> {/* This is the main Habit Tracker card */}
               <CardHeader className="pb-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <CardTitle className="text-lg font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle>
@@ -520,7 +519,15 @@ export default function SortableDashboard() {
             </Button>
           ))}
         </div>
-      <Tabs defaultValue="tracker" className="w-full"><TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2"><TabsTrigger value="tracker" className="flex items-center gap-1"><CheckSquare className="h-4 w-4" /><span>Habit Tracker</span></TabsTrigger><TabsTrigger value="progress" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /><span>Progress Visualization</span></TabsTrigger></TabsList><TabsContent value="tracker" className="mt-0">{habitContent}</TabsContent><TabsContent value="progress" className="mt-0"><HabitProgressVisualization habits={habits} /></TabsContent></Tabs></CardContent></Card></div><div className="w-full lg:w-80 space-y-6">{dailyMotivationCard}{todaysLogCard}<HabitLibrary onAddHabit={handleAddFromLibrary} /></div></div></PageContainer></main></div>
+      <Tabs defaultValue="tracker" className="w-full"><TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2"><TabsTrigger value="tracker" className="flex items-center gap-1"><CheckSquare className="h-4 w-4" /><span>Habit Tracker</span></TabsTrigger><TabsTrigger value="progress" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /><span>Progress Visualization</span></TabsTrigger></TabsList><TabsContent value="tracker" className="mt-0">{habitContent}</TabsContent><TabsContent value="progress" className="mt-0"><HabitProgressVisualization habits={habits} /></TabsContent></Tabs></CardContent></Card></div>
+          {/* Right sidebar column: Only Daily Spark of Wisdom should remain */}
+          <div className="w-full lg:w-80 space-y-6">
+            {dailyMotivationCard}
+            {/* {todaysLogCard} REMOVED */}
+            {/* <HabitLibrary onAddHabit={handleAddFromLibrary} /> REMOVED */}
+          </div>
+        </div>
+      </PageContainer>
       <ConfettiCelebration trigger={showPerfectDayConfetti} type="perfectDay" onComplete={() => setShowPerfectDayConfetti(false)} />
       <ConfettiCelebration trigger={showPerfectWeekConfetti} type="perfectWeek" onComplete={() => setShowPerfectWeekConfetti(false)} />
       <EditHabitDialog
