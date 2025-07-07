@@ -24,8 +24,14 @@ habitRoutes.get('/', async (c) => {
   }
 
   try {
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+    // idToken is optional for listDocuments in firestoreClient, but good practice to ensure it's passed if present for Firestore rules.
+    // If authMiddleware is strict, idToken should always be present.
+    // For now, we make it optional in the client call, matching the client's current optional idToken param.
+
     const collectionPath = `users/${user.localId}/habits`;
-    const habits = await firestoreClient.listDocuments(collectionPath, API_KEY, PROJECT_ID);
+    const habits = await firestoreClient.listDocuments(collectionPath, API_KEY, PROJECT_ID, idToken);
     console.log(`Successfully fetched ${habits.length} habits for user ${user.localId}.`);
     return c.json(habits, 200);
   } catch (error: any) {
@@ -71,8 +77,11 @@ habitRoutes.post('/', async (c) => {
   };
 
   try {
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+
     const collectionPath = `users/${user.localId}/habits`;
-    const createdHabit = await firestoreClient.addDocument(collectionPath, dataToSave, API_KEY, PROJECT_ID);
+    const createdHabit = await firestoreClient.addDocument(collectionPath, dataToSave, API_KEY, PROJECT_ID, idToken);
     console.log(`Successfully created habit ${createdHabit.id} for user ${user.localId}.`);
     return c.json(createdHabit, 201);
   } catch (error: any) {
@@ -98,8 +107,11 @@ habitRoutes.get('/:habitId', async (c) => {
   }
 
   try {
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+
     const documentPath = `users/${user.localId}/habits/${habitId}`;
-    const habit = await firestoreClient.getDocument(documentPath, API_KEY, PROJECT_ID);
+    const habit = await firestoreClient.getDocument(documentPath, API_KEY, PROJECT_ID, idToken);
     if (!habit) {
       return c.json({ message: "Habit not found." }, 404);
     }
@@ -143,9 +155,12 @@ habitRoutes.put('/:habitId', async (c) => {
   dataToUpdate.updatedAt = new Date().toISOString(); // Add/update timestamp
 
   try {
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+
     const documentPath = `users/${user.localId}/habits/${habitId}`;
     // Optional: Fetch document first to ensure it exists and belongs to user (or rely on Firestore rules)
-    const updatedHabit = await firestoreClient.updateDocument(documentPath, dataToUpdate, API_KEY, PROJECT_ID);
+    const updatedHabit = await firestoreClient.updateDocument(documentPath, dataToUpdate, API_KEY, PROJECT_ID, idToken);
     console.log(`Successfully updated habit ${habitId} for user ${user.localId}.`);
     return c.json(updatedHabit, 200);
   } catch (error: any) {
@@ -172,9 +187,12 @@ habitRoutes.delete('/:habitId', async (c) => {
   }
 
   try {
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+
     const documentPath = `users/${user.localId}/habits/${habitId}`;
     // Optional: Check if document exists before attempting delete if client needs specific feedback
-    await firestoreClient.deleteDocument(documentPath, API_KEY, PROJECT_ID);
+    await firestoreClient.deleteDocument(documentPath, API_KEY, PROJECT_ID, idToken);
     console.log(`Successfully deleted habit ${habitId} for user ${user.localId}.`);
     return c.json({ message: `Habit ${habitId} deleted successfully.` }, 200); // Or 204 No Content
   } catch (error: any) {
@@ -228,7 +246,10 @@ habitRoutes.post('/:habitId/complete', async (c) => {
     const completionDocumentPath = `users/${user.localId}/habits/${habitId}/completions/${completionData.date}`;
 
     // Using updateDocument with date as ID effectively creates or overwrites the completion for that date.
-    const savedCompletion = await firestoreClient.updateDocument(completionDocumentPath, completionRecord, API_KEY, PROJECT_ID);
+    const authHeader = c.req.header('Authorization');
+    const idToken = authHeader?.split('Bearer ')[1];
+
+    const savedCompletion = await firestoreClient.updateDocument(completionDocumentPath, completionRecord, API_KEY, PROJECT_ID, idToken);
 
     // TODO: Update habit's main document (e.g., streak, lastCompleted) if necessary. This might involve another Firestore call.
     // This logic can get complex and might be better handled by Firestore Functions or more sophisticated client logic.

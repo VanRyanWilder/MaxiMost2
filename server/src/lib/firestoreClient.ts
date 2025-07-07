@@ -94,13 +94,18 @@ function objectToFirestoreFields(data: any): any {
 }
 
 
-export async function listDocuments(collectionPath: string, apiKey: string, projectId: string): Promise<any[]> {
+export async function listDocuments(collectionPath: string, apiKey: string, projectId: string, idToken?: string): Promise<any[]> {
   const url = getFirestoreUrl(projectId, collectionPath, apiKey);
   console.log(`Firestore Client: Listing documents from ${url}`);
 
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (idToken) {
+    headers['Authorization'] = `Bearer ${idToken}`;
+  }
+
   const response = await fetch(url, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: headers,
   });
 
   if (!response.ok) {
@@ -113,16 +118,20 @@ export async function listDocuments(collectionPath: string, apiKey: string, proj
   return responseData.documents?.map(transformFirestoreDocument) || [];
 }
 
-export async function addDocument(collectionPath: string, data: any, apiKey: string, projectId: string): Promise<any> {
+export async function addDocument(collectionPath: string, data: any, apiKey: string, projectId: string, idToken?: string): Promise<any> {
   // Firestore auto-generates an ID if documentId is not part of collectionPath
   const url = getFirestoreUrl(projectId, collectionPath, apiKey);
   console.log(`Firestore Client: Adding document to ${url}`);
 
   const firestoreDocument = { fields: objectToFirestoreFields(data) };
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (idToken) {
+    headers['Authorization'] = `Bearer ${idToken}`;
+  }
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: headers,
     body: JSON.stringify(firestoreDocument),
   });
 
@@ -136,13 +145,18 @@ export async function addDocument(collectionPath: string, data: any, apiKey: str
   return transformFirestoreDocument(createdDocument);
 }
 
-export async function getDocument(documentPath: string, apiKey: string, projectId: string): Promise<any | null> {
+export async function getDocument(documentPath: string, apiKey: string, projectId: string, idToken?: string): Promise<any | null> {
   const url = getFirestoreUrl(projectId, documentPath, apiKey);
   console.log(`Firestore Client: Getting document from ${url}`);
 
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (idToken) {
+    headers['Authorization'] = `Bearer ${idToken}`;
+  }
+
   const response = await fetch(url, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: headers,
   });
 
   if (!response.ok) {
@@ -157,26 +171,28 @@ export async function getDocument(documentPath: string, apiKey: string, projectI
   return transformFirestoreDocument(responseData);
 }
 
-export async function updateDocument(documentPath: string, data: any, apiKey: string, projectId: string, updateMask: string[] = []): Promise<any> {
+export async function updateDocument(documentPath: string, data: any, apiKey: string, projectId: string, idToken?: string, updateMask: string[] = []): Promise<any> {
   let url = getFirestoreUrl(projectId, documentPath, apiKey);
   if (updateMask.length > 0) {
-    // To update only specific fields, use updateMask.fieldPaths=field1&updateMask.fieldPaths=field2
-    // This tells Firestore to only update the fields listed in the mask.
-    // Otherwise, it's a full replacement of the document (excluding fields not in `data`).
-    // For partial updates (patch), the method is PATCH. For full updates/replacement (put), it's PUT.
-    // The current `data` structure implies a full update of provided fields.
-    // If you want to ensure only specific fields are updated, use updateMask.
-    // Example: updateMask.fieldPaths=title&updateMask.fieldPaths=description
     const maskParams = updateMask.map(field => `updateMask.fieldPaths=${field}`).join('&');
-    url = `${getFirestoreUrl(projectId, documentPath)}?key=${apiKey}&${maskParams}`;
+    // Ensure apiKey is part of the base URL if adding maskParams, or add it separately
+    if (url.includes('?key=')) {
+        url = `${url}&${maskParams}`;
+    } else {
+        url = `${url}?key=${apiKey}&${maskParams}`;
+    }
   }
    console.log(`Firestore Client: Updating document at ${url}`);
 
   const firestoreDocument = { fields: objectToFirestoreFields(data) };
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (idToken) {
+    headers['Authorization'] = `Bearer ${idToken}`;
+  }
 
   const response = await fetch(url, {
-    method: 'PATCH', // PATCH is generally preferred for updates to allow partial updates via updateMask
-    headers: { 'Content-Type': 'application/json' },
+    method: 'PATCH',
+    headers: headers,
     body: JSON.stringify(firestoreDocument),
   });
 
@@ -190,13 +206,18 @@ export async function updateDocument(documentPath: string, data: any, apiKey: st
   return transformFirestoreDocument(updatedDocument);
 }
 
-export async function deleteDocument(documentPath: string, apiKey: string, projectId: string): Promise<void> {
+export async function deleteDocument(documentPath: string, apiKey: string, projectId: string, idToken?: string): Promise<void> {
   const url = getFirestoreUrl(projectId, documentPath, apiKey);
   console.log(`Firestore Client: Deleting document at ${url}`);
 
+  const headers: HeadersInit = { 'Content-Type': 'application/json' };
+  if (idToken) {
+    headers['Authorization'] = `Bearer ${idToken}`;
+  }
+
   const response = await fetch(url, {
     method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
+    headers: headers,
   });
 
   if (!response.ok) {

@@ -20,7 +20,7 @@ export const authMiddleware = createMiddleware<{
   }
 
   const idToken = authHeader.split('Bearer ')[1];
-  const apiKey = c.env.FIREBASE_AUTH_API_KEY;
+  const apiKey = c.env.FIREBASE_WEB_API_KEY;
   const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`;
 
   try {
