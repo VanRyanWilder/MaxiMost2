@@ -37,13 +37,14 @@ const keyFeaturesData = [
   { id: "feat-science", icon: <FlaskConical size={32} className="text-emerald-400" />, title: "Scientific Approach", description: "Based on evidence-backed protocols from leading experts like Dr. Peter Attia and Gary Brecka for optimal health outcomes." },
   { id: "feat-resilience", icon: <ShieldCheck size={32} className="text-amber-400" />, title: "Mental Resilience", description: "Build unwavering discipline inspired by methods from David Goggins and Jocko Willink to stay consistent through challenges." },
 ];
+const iconColorCycle = ["text-sky-400", "text-emerald-400", "text-amber-400", "text-rose-400", "text-violet-400", "text-teal-400"];
 const performanceAreasData = [
-  { id: "area-physical", icon: <Dumbbell size={32} />, title: "Physical Training", description: "Strength, cardio, mobility, and recovery" },
-  { id: "area-nutrition", icon: <NutritionIcon size={32} />, title: "Nutrition & Fueling", description: "Diet, hydration, and supplements" },
-  { id: "area-sleep", icon: <Bed size={32} />, title: "Sleep & Hygiene", description: "Quality rest and recovery cycles" },
-  { id: "area-mental", icon: <Lightbulb size={32} />, title: "Mental Acuity & Growth", description: "Focus, learning, and mindfulness" },
-  { id: "area-relationships", icon: <Users size={32} />, title: "Relationships", description: "Social connections and communication" }, // Changed Users2 to Users
-  { id: "area-financial", icon: <Landmark size={32} />, title: "Financial Habits", description: "Saving, investing, and wealth building" },
+  { id: "area-physical", icon: <Dumbbell size={32} className={iconColorCycle[0]} />, title: "Physical Training", description: "Strength, cardio, mobility, and recovery" },
+  { id: "area-nutrition", icon: <NutritionIcon size={32} className={iconColorCycle[1]} />, title: "Nutrition & Fueling", description: "Diet, hydration, and supplements" },
+  { id: "area-sleep", icon: <Bed size={32} className={iconColorCycle[2]} />, title: "Sleep & Hygiene", description: "Quality rest and recovery cycles" },
+  { id: "area-mental", icon: <Lightbulb size={32} className={iconColorCycle[3]} />, title: "Mental Acuity & Growth", description: "Focus, learning, and mindfulness" },
+  { id: "area-relationships", icon: <Users size={32} className={iconColorCycle[4]} />, title: "Relationships", description: "Social connections and communication" },
+  { id: "area-financial", icon: <Landmark size={32} className={iconColorCycle[5]} />, title: "Financial Habits", description: "Saving, investing, and wealth building" },
 ];
 const testimonialsData = [
     { id: "t-hormozi", imageSrc: "https://placehold.co/100x100/1E293B/FFFFFF?text=AH", altText: "Alex Hormozi", name: "Alex Hormozi", title: "Founder, Acquisition.com", quote: "MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers." },
@@ -253,9 +254,9 @@ const SectionDivider = () => (
         <div ref={coachesRef} className={`transition-all duration-1000 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
-            className="py-16 md:py-20 bg-background dark:bg-neutral-900" // This bg might be overridden by HP-03 if not careful
-            onPersonaHover={handlePersonaHover} // Keep for potential future use or remove if CSS hero glow is fully deprecated
-            onPersonaSelectGlow={handlePersonaSelectGlow} // Pass the new handler for click-based theming
+            className="py-16 md:py-20" // Removed bg-background dark:bg-neutral-900
+            onPersonaHover={handlePersonaHover}
+            onPersonaSelectGlow={handlePersonaSelectGlow}
           />
         </div>
 

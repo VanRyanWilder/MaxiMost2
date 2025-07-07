@@ -88,7 +88,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     >
       {/* Title Box - Above Image */}
       <div
-        className="py-4 px-4 text-center border-b border-white/20 transition-all duration-300" // Adjusted padding
+        className="py-3 px-4 text-center border-b border-white/20 transition-all duration-300" // Reduced vertical padding
         style={{
           backgroundColor: isSelected || isHovered
             ? (coach.glowColor ? `${coach.glowColor}90` : 'rgba(0,0,0,0.5)')
@@ -96,14 +96,14 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         }}
       >
         <CardTitle
-            className="text-3xl font-extrabold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]" // Larger, bolder, text shadow
+            className="text-2xl font-extrabold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]" // Reduced size, kept weight & shadow
         >
           {coach.title}
         </CardTitle>
       </div>
 
-      {/* Image Container (Portrait Aspect Ratio) and Text Overlay */}
-      <div className="relative flex-grow overflow-hidden aspect-[3/4]"> {/* Enforce portrait aspect ratio for image area */}
+      {/* Image Container (Adjusted Portrait Aspect Ratio) and Text Overlay */}
+      <div className="relative flex-grow overflow-hidden aspect-[4/5]"> {/* Adjusted aspect ratio to make it less tall */}
         {/* Background Image */}
         {coach.imageUrl ? (
           <div className="absolute inset-0 z-0">
@@ -113,7 +113,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
               className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
             />
             {/* Gradient overlay from bottom for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div> {/* Adjusted gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
           </div>
         ) : (
           <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-neutral-700/50"}`}>
@@ -122,14 +122,13 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         )}
 
         {/* Content Overlay for description and quote, pushed to bottom */}
-        {/* This div now fills the aspect-[3/4] container */}
-        <div className="relative z-10 flex flex-col h-full p-4 justify-end">
+        <div className="relative z-10 flex flex-col h-full p-3 justify-end"> {/* Reduced padding */}
           <div className="mt-auto">
-            <CardContent className="p-0 mb-2">
-              <p className="text-sm opacity-90 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]">{coach.description}</p> {/* Text shadow, reverted to text-sm */}
+            <CardContent className="p-0 mb-1.5"> {/* Reduced margin-bottom */}
+              <p className="text-xs opacity-90 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)] leading-snug">{coach.description}</p> {/* Smaller desc, tighter leading */}
             </CardContent>
-            <CardFooter className="p-0 text-left border-t border-white/20 pt-2 pb-1">
-              <blockquote className="text-xs opacity-80 leading-tight [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]"> {/* Text shadow, reverted to text-xs */}
+            <CardFooter className="p-0 text-left border-t border-white/20 pt-1.5 pb-1"> {/* Reduced padding */}
+              <blockquote className="text-[11px] opacity-80 leading-snug [text-shadow:0_1px_1px_rgba(0,0,0,0.7)]"> {/* Slightly smaller quote, tighter leading */}
                 "{coach.sampleQuote}"
               </blockquote>
             </CardFooter>
