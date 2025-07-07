@@ -21,6 +21,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
   className,
   animationDelayIndex = 0,
+  isVisible = false, // Added isVisible prop
 }) => {
   // Create a set of predefined delay classes to cycle through or use arbitrary values
   // Using a base delay and incrementing: e.g., 0ms, 100ms, 200ms for first 3 items, then repeat or cap
@@ -31,8 +32,9 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
     <Card
       className={`flex flex-col items-center text-center p-6 md:items-start md:text-left
                   bg-black/30 border border-white/10 shadow-lg rounded-xl
-                  transform transition-all opacity-0 translate-y-16 ${delayClass} ease-out duration-1000
-                  ${className}`} // Added base animation classes here, section wrapper will trigger visibility
+                  transition-all ease-out duration-700 ${delayClass}
+                  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}
+                  ${className}`} // Animation classes now depend on isVisible
                   // The actual trigger will be when the PARENT section becomes visible.
                   // This card itself doesn't use IntersectionObserver directly, its parent section does.
                   // So, these classes define its start state and how it transitions.

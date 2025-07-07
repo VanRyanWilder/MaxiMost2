@@ -227,7 +227,7 @@ const Home: React.FC = () => {
               description="Harness the power of AI to build extraordinary discipline. Our system integrates performance science with flexible coaching philosophies to match your drive."
               buttonText="Get Started Free"
               showEmailInput={false} // Remove email input
-              buttonLink="/sign-in"   // Link to /sign-in
+              buttonLink="/login"   // Corrected link to /login
               // onSubmit, emailPlaceholder, rewardsText, showRewardsOptIn are no longer needed here
               className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20" // Glassmorphism for Hero CTA
             />
@@ -365,7 +365,7 @@ const Home: React.FC = () => {
             headline="Start Forging Your Elite Habits Today."
             description="Take control of your life, build unbreakable habits, and master your mind with MaxiMost."
             buttonText="Sign Up & Get Started"
-            buttonLink="/signup" // Direct to signup page
+            buttonLink="/login" // Corrected link to /login
             showEmailInput={false} // Hide email input
             showRewardsOptIn={false} // Hide rewards text
             // onSubmit prop is not needed when showEmailInput is false and buttonLink is used
