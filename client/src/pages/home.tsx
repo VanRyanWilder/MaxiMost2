@@ -126,8 +126,9 @@ const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6">
-        <div className="container mx-auto flex items-center">
-          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo" className="h-8 md:h-10" />
+        <div className="container mx-auto flex items-center justify-between">
+          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Left" className="h-8 md:h-10" />
+          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Right" className="h-8 md:h-10" />
           {/* Navigation links can be added here later if needed */}
         </div>
       </header>

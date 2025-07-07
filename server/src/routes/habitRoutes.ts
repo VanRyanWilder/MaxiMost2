@@ -1,214 +1,245 @@
 import { Hono } from 'hono';
 import type { AppEnv } from '../hono'; // Shared types
 import { authMiddleware } from '../middleware/authMiddleware'; // Correct Auth middleware
+import * as firestoreClient from '../lib/firestoreClient'; // Import the new client
 
 const habitRoutes = new Hono<AppEnv>();
 
-// GET /api/habits - Simplified for diagnosing environment variable issues
+// Apply authMiddleware to all routes in this file
+habitRoutes.use('*', authMiddleware);
+
+// GET /api/habits - Fetch all habits for the authenticated user
 habitRoutes.get('/', async (c) => {
   const user = c.get('user');
   if (!user?.localId) {
-    console.error('HabitRoutes GET /: User or user.localId not found in context.');
     return c.json({ message: "User ID not found in token." }, 400);
   }
-  console.log(`User ${user.localId} attempting to fetch habits.`);
-
-  // --- J-12: Debugging 500 Internal Server Error ---
-  // Simplified to check environment variable access.
 
   const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
   const API_KEY = c.env.VITE_FIREBASE_API_KEY;
 
-  console.log("Attempting to read env vars in GET /api/habits:");
-  console.log("VITE_FIREBASE_PROJECT_ID:", PROJECT_ID ? "SET" : "UNDEFINED");
-  console.log("VITE_FIREBASE_API_KEY:", API_KEY ? "SET" : "UNDEFINED");
-
   if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in the worker environment for habitRoutes.");
-    return c.json({ message: "Server configuration error: Firebase environment variables not set." }, 500);
+    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.get.");
+    return c.json({ message: "Server configuration error." }, 500);
   }
-
-  // If env vars are set, proceed with actual Firestore fetch.
-  console.log("Firebase env vars seem to be set. Proceeding with Firestore fetch.");
-  const firestoreDocumentPath = `users/${user.localId}/habits`;
-  // Construct the URL to list documents in the user's habits collection
-  const firestoreRestUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${firestoreDocumentPath}?key=${API_KEY}`;
-  console.log(`Firestore List Documents URL: ${firestoreRestUrl}`);
 
   try {
-    const response = await fetch(firestoreRestUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: "Unknown error fetching habits." }));
-      console.error(`Firestore error: ${response.status}`, errorData);
-      return c.json({ message: "Error fetching habits from Firestore.", details: errorData }, { status: response.status });
-    }
-
-    const responseData = await response.json();
-    // Firestore returns a list of document objects, each containing fields.
-    // We need to map these to a simpler array of habit objects.
-    const habits = responseData.documents?.map((doc: any) => {
-      // Extract fields and add the document ID (habit ID)
-      const fields = doc.fields;
-      const habit: any = {};
-      for (const key in fields) {
-        // Firestore stores values in typed properties (e.g., stringValue, integerValue)
-        // We need to extract the actual value.
-        if (fields[key].stringValue !== undefined) {
-          habit[key] = fields[key].stringValue;
-        } else if (fields[key].integerValue !== undefined) {
-          habit[key] = parseInt(fields[key].integerValue, 10);
-        } else if (fields[key].booleanValue !== undefined) {
-          habit[key] = fields[key].booleanValue;
-        } else if (fields[key].mapValue !== undefined) {
-          // Handle nested map values if necessary, for now, simple properties
-          habit[key] = fields[key].mapValue; // This might need further processing
-        } else if (fields[key].arrayValue !== undefined) {
-          habit[key] = fields[key].arrayValue.values?.map((v: any) => v.stringValue); // Assuming array of strings
-        }
-        // Add other type handlers as needed (e.g., timestampValue, doubleValue)
-      }
-      // The document ID is part of the 'name' field (e.g., projects/.../databases/(default)/documents/users/USER_ID/habits/HABIT_ID)
-      // We extract the last part as the habit ID.
-      habit.id = doc.name.split('/').pop();
-      return habit;
-    }) || [];
-
+    const collectionPath = `users/${user.localId}/habits`;
+    const habits = await firestoreClient.listDocuments(collectionPath, API_KEY, PROJECT_ID);
     console.log(`Successfully fetched ${habits.length} habits for user ${user.localId}.`);
     return c.json(habits, 200);
-
-  } catch (error) {
-    console.error("Exception during fetch to Firestore:", error);
-    return c.json({ message: "Server exception while fetching habits." }, 500);
+  } catch (error: any) {
+    console.error("Error fetching habits using firestoreClient:", error);
+    return c.json({ message: error.message || "Server exception while fetching habits.", details: error.details }, error.status || 500);
   }
 });
 
-// Placeholder for POST /api/habits
+// POST /api/habits - Create a new habit for the authenticated user
 habitRoutes.post('/', async (c) => {
-    const user = c.get('user');
-    if (!user?.localId) {
-        console.error('HabitRoutes POST /: User or user.localId not found in context.');
-        return c.json({ message: "User ID not found in token." }, 400);
-    }
+  const user = c.get('user');
+  if (!user?.localId) {
+    return c.json({ message: "User ID not found in token." }, 400);
+  }
 
-    const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-    const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
+  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
 
-    if (!PROJECT_ID || !API_KEY) {
-        console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in the worker environment for POST /api/habits.");
-        return c.json({ message: "Server configuration error: Firebase environment variables not set." }, 500);
-    }
+  if (!PROJECT_ID || !API_KEY) {
+    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.post.");
+    return c.json({ message: "Server configuration error." }, 500);
+  }
 
-    let newHabitData;
-    try {
-        newHabitData = await c.req.json();
-    } catch (error) {
-        console.error("Error parsing JSON body for POST /api/habits:", error);
-        return c.json({ message: "Invalid request body." }, 400);
-    }
+  let newHabitData;
+  try {
+    newHabitData = await c.req.json();
+  } catch (error) {
+    return c.json({ message: "Invalid request body." }, 400);
+  }
 
-    // Frontend sends 'title', ensure this is used for validation and field name
-    if (!newHabitData || typeof newHabitData.title !== 'string' || newHabitData.title.trim() === '') {
-        return c.json({ message: "Habit title is required." }, 400);
-    }
+  if (!newHabitData || typeof newHabitData.title !== 'string' || newHabitData.title.trim() === '') {
+    return c.json({ message: "Habit title is required." }, 400);
+  }
 
-    // Construct Firestore document path (user's habits collection)
-    // Firestore will auto-generate an ID for the new document in this collection.
-    const firestoreCollectionPath = `users/${user.localId}/habits`;
-    const firestoreRestUrl = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents/${firestoreCollectionPath}?key=${API_KEY}`;
+  // Add server-generated fields
+  const dataToSave = {
+    ...newHabitData,
+    userId: user.localId, // Ensure userId is associated with the habit
+    createdAt: new Date().toISOString(),
+    streak: 0,
+    isActive: true, // Default to active
+    completions: [], // Initialize with empty completions array
+  };
 
-    // Prepare the Firestore document structure.
-    // Frontend sends 'title', so we save 'title'.
-    const fields: any = {
-        title: { stringValue: newHabitData.title },
-    };
-
-    if (newHabitData.description) fields.description = { stringValue: newHabitData.description };
-    if (newHabitData.icon) fields.icon = { stringValue: newHabitData.icon };
-    if (newHabitData.iconColor) fields.iconColor = { stringValue: newHabitData.iconColor };
-    if (newHabitData.category) fields.category = { stringValue: newHabitData.category };
-    if (newHabitData.frequency) fields.frequency = { stringValue: newHabitData.frequency };
-    if (newHabitData.timeCommitment) fields.timeCommitment = { stringValue: newHabitData.timeCommitment };
-
-    if (typeof newHabitData.impact === 'number') fields.impact = { integerValue: String(newHabitData.impact) };
-    if (typeof newHabitData.effort === 'number') fields.effort = { integerValue: String(newHabitData.effort) };
-    if (typeof newHabitData.isAbsolute === 'boolean') fields.isAbsolute = { booleanValue: newHabitData.isAbsolute };
-
-    // Add default streak and createdAt, though Firestore timestamps are better for createdAt.
-    // For now, let's ensure streak is initialized. The backend GET already handles various types.
-    fields.streak = { integerValue: '0' };
-    // Firestore can also add server-side timestamps if configured in the document write.
-    // For now, client sends data, backend saves what's given.
-    // Let's add a server-generated 'createdAt' timestamp in ISO format.
-    fields.createdAt = { stringValue: new Date().toISOString() };
-
-
-    const firestoreDocument = { fields };
-
-    try {
-        const response = await fetch(firestoreRestUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(firestoreDocument),
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: "Unknown error creating habit." }));
-            console.error(`Firestore error during POST: ${response.status}`, errorData);
-            return c.json({ message: "Error creating habit in Firestore.", details: errorData }, { status: response.status });
-        }
-
-        const createdDocument = await response.json();
-
-        // Construct the habit object to return, similar to GET, but from the created document.
-        const habitId = createdDocument.name.split('/').pop();
-        const returnedHabit: any = { id: habitId };
-        for (const key in createdDocument.fields) {
-            if (createdDocument.fields[key].stringValue !== undefined) {
-                returnedHabit[key] = createdDocument.fields[key].stringValue;
-            } else if (createdDocument.fields[key].integerValue !== undefined) {
-                returnedHabit[key] = parseInt(createdDocument.fields[key].integerValue, 10);
-            } // Add other types as necessary
-        }
-
-        console.log(`Successfully created habit ${habitId} for user ${user.localId}.`);
-        return c.json(returnedHabit, 201); // 201 Created
-
-    } catch (error) {
-        console.error("Exception during POST to Firestore:", error);
-        return c.json({ message: "Server exception while creating habit." }, 500);
-    }
+  try {
+    const collectionPath = `users/${user.localId}/habits`;
+    const createdHabit = await firestoreClient.addDocument(collectionPath, dataToSave, API_KEY, PROJECT_ID);
+    console.log(`Successfully created habit ${createdHabit.id} for user ${user.localId}.`);
+    return c.json(createdHabit, 201);
+  } catch (error: any) {
+    console.error("Error creating habit using firestoreClient:", error);
+    return c.json({ message: error.message || "Server exception while creating habit.", details: error.details }, error.status || 500);
+  }
 });
 
-// Placeholder for PUT /api/habits/:id
-habitRoutes.put('/:id', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to PUT /api/habits/${habitId}. Logic pending. Body:`, await c.req.json().catch(() => ({})));
-    return c.json({ message: `Update habit ${habitId} placeholder. Habit not updated.` }, 200);
+// GET /api/habits/:habitId - Fetch a specific habit
+habitRoutes.get('/:habitId', async (c) => {
+  const user = c.get('user');
+  const habitId = c.req.param('habitId');
+  if (!user?.localId) {
+    return c.json({ message: "User ID not found in token." }, 400);
+  }
+
+  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
+  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+
+  if (!PROJECT_ID || !API_KEY) {
+    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.get single.");
+    return c.json({ message: "Server configuration error." }, 500);
+  }
+
+  try {
+    const documentPath = `users/${user.localId}/habits/${habitId}`;
+    const habit = await firestoreClient.getDocument(documentPath, API_KEY, PROJECT_ID);
+    if (!habit) {
+      return c.json({ message: "Habit not found." }, 404);
+    }
+    // Ensure the fetched habit belongs to the user (though path implies it)
+    if (habit.userId && habit.userId !== user.localId) {
+        return c.json({ message: "Forbidden: Habit does not belong to user." }, 403);
+    }
+    return c.json(habit, 200);
+  } catch (error: any) {
+    console.error(`Error fetching habit ${habitId}:`, error);
+    return c.json({ message: error.message || "Server exception while fetching habit.", details: error.details }, error.status || 500);
+  }
 });
 
-// Placeholder for DELETE /api/habits/:id
-habitRoutes.delete('/:id', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to DELETE /api/habits/${habitId}. Logic pending.`);
-    return c.json({ message: `Delete habit ${habitId} placeholder. Habit not deleted.` }, 200);
+
+// PUT /api/habits/:habitId - Update a specific habit
+habitRoutes.put('/:habitId', async (c) => {
+  const user = c.get('user');
+  const habitId = c.req.param('habitId');
+  if (!user?.localId) {
+    return c.json({ message: "User ID not found in token." }, 400);
+  }
+
+  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
+  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+
+  if (!PROJECT_ID || !API_KEY) {
+     console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.put.");
+    return c.json({ message: "Server configuration error." }, 500);
+  }
+
+  let habitUpdateData;
+  try {
+    habitUpdateData = await c.req.json();
+  } catch (error) {
+    return c.json({ message: "Invalid request body." }, 400);
+  }
+
+  // Remove fields that should not be directly updatable or are path parameters
+  const { id, userId, createdAt, completions, ...dataToUpdate } = habitUpdateData;
+  dataToUpdate.updatedAt = new Date().toISOString(); // Add/update timestamp
+
+  try {
+    const documentPath = `users/${user.localId}/habits/${habitId}`;
+    // Optional: Fetch document first to ensure it exists and belongs to user (or rely on Firestore rules)
+    const updatedHabit = await firestoreClient.updateDocument(documentPath, dataToUpdate, API_KEY, PROJECT_ID);
+    console.log(`Successfully updated habit ${habitId} for user ${user.localId}.`);
+    return c.json(updatedHabit, 200);
+  } catch (error: any) {
+    console.error(`Error updating habit ${habitId}:`, error);
+    if (error.status === 404) return c.json({ message: "Habit not found to update." }, 404);
+    return c.json({ message: error.message || "Server exception while updating habit.", details: error.details }, error.status || 500);
+  }
 });
 
-// Placeholder for POST /api/habits/:id/complete
-habitRoutes.post('/:id/complete', async (c) => {
-    const user = c.get('user');
-    const habitId = c.req.param('id');
-    console.log(`User ${user?.localId} attempting to POST /api/habits/${habitId}/complete. Logic pending. Body:`, await c.req.json().catch(() => ({})));
-    return c.json({ message: `Complete habit ${habitId} placeholder. Completion not saved.` }, 200);
+// DELETE /api/habits/:habitId - Delete a specific habit
+habitRoutes.delete('/:habitId', async (c) => {
+  const user = c.get('user');
+  const habitId = c.req.param('habitId');
+  if (!user?.localId) {
+    return c.json({ message: "User ID not found in token." }, 400);
+  }
+
+  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
+  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+
+   if (!PROJECT_ID || !API_KEY) {
+    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.delete.");
+    return c.json({ message: "Server configuration error." }, 500);
+  }
+
+  try {
+    const documentPath = `users/${user.localId}/habits/${habitId}`;
+    // Optional: Check if document exists before attempting delete if client needs specific feedback
+    await firestoreClient.deleteDocument(documentPath, API_KEY, PROJECT_ID);
+    console.log(`Successfully deleted habit ${habitId} for user ${user.localId}.`);
+    return c.json({ message: `Habit ${habitId} deleted successfully.` }, 200); // Or 204 No Content
+  } catch (error: any) {
+    console.error(`Error deleting habit ${habitId}:`, error);
+     if (error.status === 404) return c.json({ message: "Habit not found to delete." }, 404);
+    return c.json({ message: error.message || "Server exception while deleting habit.", details: error.details }, error.status || 500);
+  }
+});
+
+// POST /api/habits/:habitId/complete - Mark a habit as complete for a specific date
+// This endpoint needs careful consideration for idempotency and how completions are stored.
+// Assuming completions are subcollections or arrays within the habit document.
+// For this example, let's assume we add a completion entry to a 'completions' subcollection.
+habitRoutes.post('/:habitId/complete', async (c) => {
+  const user = c.get('user');
+  const habitId = c.req.param('habitId');
+  if (!user?.localId) {
+    return c.json({ message: "User ID not found in token." }, 400);
+  }
+
+  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
+  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+
+  if (!PROJECT_ID || !API_KEY) {
+    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.complete.");
+    return c.json({ message: "Server configuration error." }, 500);
+  }
+
+  let completionData;
+  try {
+    completionData = await c.req.json(); // Expects { date: "YYYY-MM-DD", value?: number }
+  } catch (error) {
+    return c.json({ message: "Invalid request body for completion." }, 400);
+  }
+
+  if (!completionData.date || typeof completionData.date !== 'string') {
+    return c.json({ message: "Completion date (YYYY-MM-DD) is required." }, 400);
+  }
+
+  // The document ID for a completion could be the date string itself if unique per day.
+  // Path: users/{userId}/habits/{habitId}/completions/{YYYY-MM-DD}
+  const completionRecord = {
+    date: completionData.date,
+    value: typeof completionData.value === 'number' ? completionData.value : 1, // Default to 1 if not specified
+    completedAt: new Date().toISOString(),
+  };
+
+  try {
+    // Path for the completion document. Using date as ID assumes one completion entry per day per habit.
+    // If multiple completions per day are possible, a different ID strategy is needed.
+    const completionDocumentPath = `users/${user.localId}/habits/${habitId}/completions/${completionData.date}`;
+
+    // Using updateDocument with date as ID effectively creates or overwrites the completion for that date.
+    const savedCompletion = await firestoreClient.updateDocument(completionDocumentPath, completionRecord, API_KEY, PROJECT_ID);
+
+    // TODO: Update habit's main document (e.g., streak, lastCompleted) if necessary. This might involve another Firestore call.
+    // This logic can get complex and might be better handled by Firestore Functions or more sophisticated client logic.
+    // For now, just saving the completion entry.
+
+    console.log(`Successfully marked habit ${habitId} complete for date ${completionData.date} for user ${user.localId}.`);
+    return c.json(savedCompletion, 201);
+  } catch (error: any) {
+    console.error(`Error marking habit ${habitId} complete:`, error);
+    return c.json({ message: error.message || "Server exception while marking habit complete.", details: error.details }, error.status || 500);
+  }
 });
 
 export default habitRoutes;

@@ -50,35 +50,37 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
     }
   };
 
-  const baseBoxShadow = "var(--tw-shadow, 0 0 #0000)";
-  const hoverBoxShadow = `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF30"}`;
-  // Use a slightly more intense shadow for selected state, or a distinct border
-  const selectedBoxShadow = `0 0 30px 8px ${coach.glowColor || coach.iconColor || "#FFFFFF50"}`;
+  const baseBoxShadow = "var(--tw-shadow, 0 0 #0000)"; // Default, no shadow
+  const hoverGlossEffect = `inset 0 2px 4px rgba(255,255,255,0.1), 0 0 15px 3px ${coach.iconColor || "#FFFFFF20"}`; // Subtle gloss and softer glow
+  const selectedGlowEffect = `0 0 35px 10px ${coach.glowColor || coach.iconColor || "#FFFFFF70"}`; // More prominent glow for selected
 
   const cardStyle: React.CSSProperties = {
-    transition: "all 0.3s ease-in-out",
-    boxShadow: isSelected ? selectedBoxShadow : (isHovered ? hoverBoxShadow : baseBoxShadow),
-    transform: (isHovered || isSelected) ? "translateY(-8px) scale(1.03)" : "translateY(0px) scale(1)",
-    // Example of a distinct border for selected state:
-    // border: isSelected ? `2px solid ${coach.glowColor || 'hsl(var(--primary))'}` : `1px solid ${coach.borderColor ? 'var(--tw-shadow)' : 'hsl(var(--border))'}`
+    transition: "all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)", // Smoother transition
+    boxShadow: isSelected ? selectedGlowEffect : (isHovered ? hoverGlossEffect : baseBoxShadow),
+    transform: isSelected
+      ? "translateY(-10px) scale(1.05)" // Slightly more pronounced for selected
+      : (isHovered
+          ? "translateY(-6px) scale(1.02) perspective(1000px) rotateX(2deg) rotateY(1deg)" // 3D effect for hover
+          : "translateY(0px) scale(1) perspective(1000px) rotateX(0deg) rotateY(0deg)"), // Reset perspective/rotation
+    // border: isSelected ? `2px solid ${coach.glowColor || 'hsl(var(--primary))'}` : `1px solid hsl(var(--border))` // Using ring for selected border
   };
 
-  // Dynamically adjust border based on selection
-  const selectedBorderClass = isSelected ? `ring-2 ring-offset-2 ${coach.glowColor ? '' : 'ring-primary'}` : '';
-  const borderStyleOverride = isSelected ? { borderColor: coach.glowColor || 'hsl(var(--primary))' } : {};
+  // Determine ring color based on coach.glowColor or fallback to primary
+  const ringColorClass = coach.glowColor ? `ring-[${coach.glowColor}]` : 'ring-primary';
+  const selectedStateClasses = isSelected ? `ring-2 ring-offset-2 ${ringColorClass} ring-offset-background` : '';
 
-
-  // Ensure Tailwind classes for border and bg are applied, but allow hover style to dominate
-  const combinedClassName = `flex flex-col h-full overflow-hidden rounded-lg cursor-pointer
-    ${isSelected ? '' : (coach.borderColor || "border-border")} // Default border only if not selected with ring
+  // Ensure Tailwind classes for border and bg are applied
+  const combinedClassName = `flex flex-col h-full overflow-hidden rounded-xl cursor-pointer group
+    border border-border
     ${coach.cardBgColor || "bg-card"}
-    ${selectedBorderClass}
+    ${selectedStateClasses}
     ${className}`;
+    // Added rounded-xl for a more "collectible" feel, group for potential future inner element styling on hover
 
   return (
     <Card
       className={combinedClassName}
-      style={{...cardStyle, ...borderStyleOverride}}
+      style={cardStyle} // borderStyleOverride removed as ring handles selected state border better
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onSelect} // Call onSelect when card is clicked

@@ -27,19 +27,13 @@ app.use('/api/*', cors({
 }));
 
 // --- Public API Routes ---
-// Mount authRoutes (e.g., for login, signup) before applying global authMiddleware
-// These routes within authRoutes.ts should not expect `c.get('user')` to be set by this global middleware
+// Mount authRoutes (e.g., for login, signup) which handle their own (or no) auth
 app.route('/api/auth', authRoutes);
 
-// --- Global Authentication Middleware for Protected API Routes ---
-// Apply the new authMiddleware to all subsequent /api/* routes that are not public
-// (i.e., all routes except those already matched by /api/auth)
-app.use('/api/*', authMiddleware);
-
 // --- Protected API Routes ---
-// These routes will have `c.get('user')` available if authMiddleware is successful
+// These route modules are now expected to handle their own authentication middleware internally.
 app.route('/api/habits', habitRoutes);
-app.route('/api/users', userRoutes);
+app.route('/api/users', userRoutes); // Assuming userRoutes will also apply its own authMiddleware if needed.
 
 // Optional: A root path for the API itself, if accessed directly
 // This should not conflict with Cloudflare Pages _routes.json,

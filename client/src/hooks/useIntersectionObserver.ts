@@ -25,18 +25,18 @@ function useIntersectionObserver(
     }
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Update state only when it changes
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          if (triggerOnce) {
+        if (triggerOnce) {
+          if (entry.isIntersecting) {
+            setIsIntersecting(true);
+            // Important: unobserve the element *after* setting state,
+            // to ensure the state update based on this intersection is processed.
             observer.unobserve(element);
           }
-        } else if (!triggerOnce) {
-          // Only set to false if not triggerOnce, to prevent premature hiding
-          // and allow elements to stay visible if they scroll out and back in
-          // without triggerOnce.
-          // For triggerOnce, it should remain true once triggered.
-          setIsIntersecting(false);
+          // If triggerOnce is true, isIntersecting is set once and then never changed by this observer.
+        } else {
+          // If not triggerOnce, continuously update based on intersection state.
+          // This ensures that if it scrolls out of view, isIntersecting becomes false.
+          setIsIntersecting(entry.isIntersecting);
         }
       },
       { threshold, root, rootMargin }

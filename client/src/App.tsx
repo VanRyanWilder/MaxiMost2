@@ -171,7 +171,7 @@ function App() {
       <Route path="/habit-building">
         <PrivateRoute component={HabitBuilding} />
       </Route>
-      <Route path="/atomic-habits-guide"> {/* Add route for Atomic Habits Guide */}
+      <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
         <PrivateRoute component={AtomicHabitsGuidePage} />
       </Route>
       <Route path="/branding">
