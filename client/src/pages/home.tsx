@@ -192,14 +192,14 @@ const Home: React.FC = () => {
       <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6">
         <div className="container mx-auto flex items-center justify-between">
           <img
-            src="/images/maximost-logo-original.png"
+            src="/images/maximost-logo-0.png"
             alt="MaxiMost Logo Left"
-            className="h-20 w-20 md:h-24 md:w-24 filter brightness-0 invert"
+            className="h-20 w-20 md:h-24 md:w-24" /* Removed filter, assuming new logo is light/white */
           />
           <img
-            src="/images/maximost-logo-original.png"
+            src="/images/maximost-logo-0.png"
             alt="MaxiMost Logo Right"
-            className="h-20 w-20 md:h-24 md:w-24 filter brightness-0 invert"
+            className="h-20 w-20 md:h-24 md:w-24" /* Removed filter */
           />
           {/* Navigation links can be added here later if needed */}
         </div>

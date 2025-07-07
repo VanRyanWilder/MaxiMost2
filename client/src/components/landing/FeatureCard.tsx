@@ -23,10 +23,18 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
   animationDelayIndex = 0,
   isVisible = false, // Added isVisible prop
 }) => {
-  // Create a set of predefined delay classes to cycle through or use arbitrary values
-  // Using a base delay and incrementing: e.g., 0ms, 100ms, 200ms for first 3 items, then repeat or cap
-  const delayValue = Math.min(animationDelayIndex * 100, 500); // Cap delay at 500ms for example
-  const delayClass = `delay-[${delayValue}ms]`; // Uses Tailwind's arbitrary value support
+  const delayValue = Math.min(animationDelayIndex * 100, 500);
+  const delayClass = `delay-[${delayValue}ms]`;
+
+  const iconColorClasses = [
+    "text-sky-400",    // Light Blue
+    "text-emerald-400", // Green
+    "text-amber-400",   // Yellow/Orange
+    "text-rose-400",    // Pink/Red
+    "text-violet-400",  // Indigo/Violet
+    "text-teal-400"     // Teal
+  ];
+  const iconColorClass = iconColorClasses[animationDelayIndex % iconColorClasses.length];
 
   return (
     <Card
@@ -34,25 +42,15 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
                   bg-black/30 border border-white/10 shadow-lg rounded-xl
                   transition-all ease-out duration-700 ${delayClass}
                   ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}
-                  ${className}`} // Animation classes now depend on isVisible
-                  // The actual trigger will be when the PARENT section becomes visible.
-                  // This card itself doesn't use IntersectionObserver directly, its parent section does.
-                  // So, these classes define its start state and how it transitions.
-                  // The parent section's visibility will switch a class that makes this visible.
-                  // This approach is problematic if the card itself is meant to animate individually based on its own visibility.
-                  // For now, assuming the whole section fades in, and cards stagger *within* that.
-                  // The parent section in home.tsx controls the "group" animation.
-                  // This card needs to be part of that group animation.
-                  // Let's assume the parent section already handles the main fade-in.
-                  // The delay here is for staggered effect *after* parent is visible.
+                  ${className}`}
     >
       {icon && (
-        <div className="mb-4 text-white"> {/* Icon color changed to white for better contrast */}
+        <div className={`mb-4 ${iconColorClass}`}> {/* Use dynamic color class */}
           {React.cloneElement(icon as React.ReactElement<LucideProps>, { size: 40, className: "opacity-90" })}
         </div>
       )}
-      <CardTitle className="mb-2 text-xl font-semibold text-white">{title}</CardTitle> {/* Title color to white */}
-      <CardContent className="text-neutral-300 p-0"> {/* Description color to a lighter gray */}
+      <CardTitle className="mb-2 text-xl font-semibold text-white">{title}</CardTitle>
+      <CardContent className="text-neutral-300 p-0">
         <p>{description}</p>
       </CardContent>
     </Card>

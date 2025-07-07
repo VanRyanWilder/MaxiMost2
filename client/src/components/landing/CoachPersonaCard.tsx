@@ -80,55 +80,60 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
 
   return (
     <Card
-      className={`${combinedClassName} relative overflow-hidden group`} // Added relative and group for overlay styling
-      style={cardStyle}
+      className={`${combinedClassName} relative group text-white`} // Main card: relative for children, group for hover states
+      style={cardStyle} // This applies the main card's glow and transform
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onSelect}
     >
-      {/* Background Image */}
-      {coach.imageUrl ? (
-        <div className="absolute inset-0 z-0">
-          <img
-            src={coach.imageUrl}
-            alt={`${coach.title} background`}
-            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110" // Image zoom on card hover
-          />
-          {/* Gradient overlay from bottom for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-        </div>
-      ) : (
-        // Fallback for icon if no image, though cards should ideally always have images now
-        <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-card"}`}>
-            <DynamicLucideIcon name={coach.iconName} size={64} color={coach.iconColor || "hsl(var(--primary))"} />
-        </div>
-      )}
+      {/* Title Box - Above Image */}
+      <div
+        className="p-4 text-center border-b border-white/20 transition-all duration-300"
+        style={{
+          // Apply a subtle background to the title box, or make it transparent
+          backgroundColor: isSelected || isHovered ? (coach.glowColor ? `${coach.glowColor}30` : 'rgba(255,255,255,0.05)') : 'rgba(255,255,255,0.02)',
+          // Optional: add a specific glow to title box on hover/select
+          // boxShadow: isSelected || isHovered ? `0 0 15px 2px ${coach.glowColor || coach.iconColor || '#FFFFFF30'}` : 'none',
+        }}
+      >
+        <CardTitle className="text-2xl font-bold tracking-tight"> {/* Adjusted title size for balance */}
+          {coach.title}
+        </CardTitle>
+      </div>
 
-      {/* Content Overlay */}
-      <div className="relative z-10 flex flex-col h-full p-6 text-white"> {/* Ensure text is white or very light for dark overlay */}
-        {/* Top section for icon if no image, or can be used for small badge/logo later */}
-        {!coach.imageUrl && (
-            <div className="flex-shrink-0 mb-auto text-center opacity-50"> {/* Pushes content to bottom if icon is shown as main element*/}
-                 {/* Icon was here, but design implies image is primary. Fallback above handles no-image. */}
-            </div>
+      {/* Image Container (takes remaining space) and Text Overlay */}
+      <div className="relative flex-grow overflow-hidden"> {/* flex-grow to take remaining space, overflow-hidden for image */}
+        {/* Background Image */}
+        {coach.imageUrl ? (
+          <div className="absolute inset-0 z-0">
+            <img
+              src={coach.imageUrl}
+              alt={`${coach.title} background`}
+              className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105" // Slightly less aggressive scale on image
+            />
+            {/* Gradient overlay from bottom for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent"></div>
+          </div>
+        ) : (
+          // Fallback for icon if no image
+          <div className={`absolute inset-0 flex items-center justify-center ${coach.cardBgColor || "bg-neutral-700/50"}`}> {/* Darker fallback */}
+              <DynamicLucideIcon name={coach.iconName} size={56} color={coach.iconColor || "rgba(255,255,255,0.7)"} />
+          </div>
         )}
 
-        {/* Spacer to push content to the bottom if there's an image */}
-        {coach.imageUrl && <div className="flex-grow"></div>} {/* Removed min-height, let flex-grow manage space */}
-
-
-        <div className="mt-auto"> {/* This div will be pushed to the bottom */}
-          <CardTitle className="text-3xl font-extrabold mb-2 tracking-tight leading-tight"> {/* Bolder, larger title */}
-            {coach.title}
-          </CardTitle>
-          <CardContent className="p-0 mb-3">
-            <p className="text-sm opacity-90">{coach.description}</p> {/* Removed line-clamp-3 */}
-          </CardContent>
-          <CardFooter className="p-0 text-left border-t border-white/20 pt-3 pb-1"> {/* Added small pb-1 for quote breathing room */}
-            <blockquote className="italic text-xs opacity-80">
-              "{coach.sampleQuote}"
-            </blockquote>
-          </CardFooter>
+        {/* Content Overlay for description and quote, pushed to bottom */}
+        <div className="relative z-10 flex flex-col h-full p-4 justify-end"> {/* Padding adjusted, justify-end */}
+          {/* Spacer is no longer needed here as justify-end handles it */}
+          <div className="mt-auto"> {/* This div is less critical now but groups text */}
+            <CardContent className="p-0 mb-2">
+              <p className="text-xs opacity-90">{coach.description}</p> {/* Smaller description */}
+            </CardContent>
+            <CardFooter className="p-0 text-left border-t border-white/20 pt-2 pb-1">
+              <blockquote className="italic text-[10px] opacity-80 leading-tight"> {/* Smaller quote */}
+                "{coach.sampleQuote}"
+              </blockquote>
+            </CardFooter>
+          </div>
         </div>
       </div>
     </Card>
