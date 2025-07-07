@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, CheckCircle, XCircle } from 'lucide-react'; // For navigation and completion
 import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
-import { toDate } from '@/pages/sortable-dashboard-new'; // Import the utility
+import { toDate } from '@/lib/utils'; // Updated import path for toDate
 import { cn } from '@/lib/utils';
 
 interface MonthViewProps {

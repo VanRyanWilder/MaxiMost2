@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { parseISO } from 'date-fns'; // Added parseISO
+import { FirestoreTimestamp } from '../../shared/types/firestore'; // Added FirestoreTimestamp
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -179,3 +181,14 @@ export function getIconComponent(iconName: string, iconColor?: string, className
   // since JSX cannot be used directly in utility functions
   return null;
 }
+
+export const toDate = (timestamp: FirestoreTimestamp | Date | string): Date => {
+  if (timestamp instanceof Date) return timestamp;
+  if (typeof timestamp === "string") return parseISO(timestamp);
+  if (timestamp && typeof (timestamp as any).toDate === "function") return (timestamp as any).toDate();
+  if (timestamp && typeof (timestamp as any).seconds === "number" && typeof (timestamp as any).nanoseconds === "number") {
+    return new Date((timestamp as any).seconds * 1000 + (timestamp as any).nanoseconds / 1000000);
+  }
+  // Fallback for any other case, though it might be less safe
+  return new Date(timestamp as any);
+};

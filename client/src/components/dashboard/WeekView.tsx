@@ -3,7 +3,7 @@ import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay } from 'da
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Square } from 'lucide-react'; // For completion status
 import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
-import { toDate } from '@/pages/sortable-dashboard-new'; // Import the utility
+import { toDate } from '@/lib/utils'; // Updated import path for toDate
 
 interface WeekViewProps {
   habits: FirestoreHabit[];

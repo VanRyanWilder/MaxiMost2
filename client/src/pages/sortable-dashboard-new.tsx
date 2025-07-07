@@ -32,22 +32,14 @@ import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog-fixed-
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { format, addDays, startOfWeek, endOfWeek, subDays, isSameDay, parseISO } from "date-fns";
+import { toDate } from "@/lib/utils"; // Added import for toDate
 
 import { Habit as ClientHabitType, HabitCompletion, HabitFrequency, HabitCategory } from "@/types/habit";
 import { FirestoreHabit, HabitCompletionEntry, FirestoreTimestamp } from "../../../shared/types/firestore";
 import { apiClient } from "@/lib/apiClient";
 import { useUser } from "@/context/user-context";
 import { toast } from "@/hooks/use-toast";
-
-const toDate = (timestamp: FirestoreTimestamp | Date | string): Date => {
-  if (timestamp instanceof Date) return timestamp;
-  if (typeof timestamp === "string") return parseISO(timestamp);
-  if (timestamp && typeof timestamp.toDate === "function") return timestamp.toDate();
-  if (timestamp && typeof timestamp.seconds === "number" && typeof timestamp.nanoseconds === "number") {
-    return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-  }
-  return new Date(timestamp as any);
-};
+// toDate function removed from here, will be imported from @/lib/utils
 
 export default function SortableDashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
