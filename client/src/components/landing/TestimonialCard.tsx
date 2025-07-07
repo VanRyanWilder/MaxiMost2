@@ -30,14 +30,20 @@ export const TestimonialCard: React.FC<TestimonialCardProps> = ({
     .join("")
     .toUpperCase();
 
-  const delayValue = Math.min(animationDelayIndex * 100, 500); // e.g., 0, 100, 200, 300, 400, 500
+  const delayValue = Math.min(animationDelayIndex * 150, 750); // Consistent with FeatureCard: 0, 150, 300...
   const delayClass = `delay-[${delayValue}ms]`;
+
+  // Determine slide direction based on index (assuming a 2-column grid for testimonials)
+  const slideDirection = animationDelayIndex % 2 === 0 ? '-translate-x-16' : 'translate-x-16';
+  const initialTransform = `opacity-0 ${slideDirection}`;
+  const finalTransform = 'opacity-100 translate-x-0 translate-y-0';
+
 
   return (
     <Card
       className={`flex flex-col p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-white
                   transition-all ease-out duration-700 ${delayClass}
-                  ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}
+                  ${isVisible ? finalTransform : initialTransform}
                   ${className}`}
     >
       <div className="flex items-center mb-4">

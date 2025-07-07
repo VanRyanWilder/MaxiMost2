@@ -122,13 +122,13 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         )}
 
         {/* Content Overlay for description and quote, pushed to bottom */}
-        <div className="relative z-10 flex flex-col h-full p-2 justify-end"> {/* Reduced padding to p-2 */}
+        <div className="relative z-10 flex flex-col h-full p-3 justify-end"> {/* Increased padding slightly to p-3 for better spacing with larger text */}
           <div className="mt-auto">
-            <CardContent className="p-0 mb-1">
-              <p className="text-[10px] opacity-80 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-snug">{coach.description}</p> {/* text-[10px], tighter leading */}
+            <CardContent className="p-0 mb-1.5"> {/* Adjusted margin for new text size */}
+              <p className="text-xs opacity-80 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-normal">{coach.description}</p> {/* Increased to text-xs, normal leading */}
             </CardContent>
-            <CardFooter className="p-0 text-left border-t border-white/20 pt-1">
-              <blockquote className="text-[9px] opacity-70 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-snug"> {/* text-[9px], tighter leading */}
+            <CardFooter className="p-0 text-left border-t border-white/20 pt-1.5"> {/* Adjusted padding top for new text size */}
+              <blockquote className="text-[11px] opacity-70 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-normal"> {/* Increased to text-[11px], normal leading */}
                 "{coach.sampleQuote}"
               </blockquote>
             </CardFooter>

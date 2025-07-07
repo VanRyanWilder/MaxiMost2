@@ -48,9 +48,9 @@ const performanceAreasData = [
 ];
 const testimonialsData = [
     { id: "t-hormozi", imageSrc: "https://placehold.co/100x100/1E293B/FFFFFF?text=AH", altText: "Alex Hormozi", name: "Alex Hormozi", title: "Founder, Acquisition.com", quote: "MaxiMost perfectly embodies the 'small hinges swing big doors' philosophy. The ability to track consistent 1% improvements across multiple life domains is a game-changer. This is the operating system for high performers." },
-    { id: "t-urban", imageSrc: "https://placehold.co/100x100/1E293B/FFFFFF?text=MU", altText: "Melissa Urban", name: "Melissa Urban", title: "Co-Founder & CEO, Whole30", quote: "I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier." },
-    { id: "t-huberman", imageSrc: "https://placehold.co/100x100/1E293B/FFFFFF?text=AH", altText: "Andrew Huberman", name: "Andrew Huberman", title: "Neuroscientist & Professor", quote: "The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed." },
-    { id: "t-patrick", imageSrc: "https://placehold.co/100x100/1E293B/FFFFFF?text=RP", altText: "Rhonda Patrick", name: "Rhonda Patrick", title: "Biochemist & Health Expert", quote: "The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!" },
+    { id: "t-urban", imageSrc: "https://placehold.co/100x100/2A3B4C/FFFFFF?text=MU", altText: "Melissa Urban", name: "Melissa Urban", title: "Co-Founder & CEO, Whole30", quote: "I've tried dozens of habit trackers, but none integrate across all aspects of wellness like MaxiMost. The fitness tracker integration is brilliant—tracking my habits without requiring manual input makes consistency so much easier." },
+    { id: "t-huberman", imageSrc: "https://placehold.co/100x100/3B4C5D/FFFFFF?text=ANH", altText: "Andrew Huberman", name: "Andrew Huberman", title: "Neuroscientist & Professor", quote: "The science behind MaxiMost is solid. By focusing on small, consistent behavior changes across multiple domains, they've created a system that works with our brain's neuroplasticity rather than against it. This is how lasting habits are formed." },
+    { id: "t-patrick", imageSrc: "https://placehold.co/100x100/4C5D6E/FFFFFF?text=RP", altText: "Rhonda Patrick", name: "Rhonda Patrick", title: "Biochemist & Health Expert", quote: "The holistic approach to health in MaxiMost is what sets it apart. It understands that physical training, nutrition, sleep, mental acuity, social relationships, and finances are all interconnected systems. Finally, a habit tracker that sees the complete picture!" },
 ];
 const faqData = [
     { id: "faq-1", question: "What makes Maximost different from other habit trackers?", answer: "Maximost isn't just a habit tracker—it's an AI-powered life operating system that applies both ancient Stoic wisdom and modern performance science. We integrate with 5 fitness trackers, provide automatic habit completion, offer streak milestones, and focus on the \"maximum bang for your buck\" principle to truly transform your life one habit at a time." },
@@ -178,7 +178,7 @@ const Home: React.FC = () => {
   }, []);
 
 const SectionDivider = () => (
-  <div className="py-8 md:py-10"> {/* Reduced vertical spacing */}
+  <div className="py-6 md:py-8"> {/* Further reduced vertical spacing for SectionDivider */}
     <div className="h-px w-full bg-white/10 shadow-[0_0_15px_0px_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:shadow-[0_0_20px_2px_rgba(255,255,255,0.35)] hover:bg-white/20"></div>
   </div>
 );
@@ -214,7 +214,7 @@ const SectionDivider = () => (
         {/* Section 1: UVP / Hero Section */}
         <section
           id="uvp"
-          className="relative py-20 md:py-28 lg:py-32 text-white overflow-hidden"
+          className="relative py-16 md:py-20 lg:py-24 text-white overflow-hidden" /* Reduced padding */
         >
           <Particles
             id="tsparticles-hero"
@@ -254,7 +254,7 @@ const SectionDivider = () => (
         <div ref={coachesRef} className={`transition-all duration-1000 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <MeetTheCoachesSection
             title="Find the Coach That Drives You"
-            className="py-16 md:py-20" // Removed bg-background dark:bg-neutral-900
+            className="py-10 md:py-12" /* Reduced padding */
             onPersonaHover={handlePersonaHover}
             onPersonaSelectGlow={handlePersonaSelectGlow}
           />
@@ -263,11 +263,26 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 3: Key Features */}
-        <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={keyFeaturesRef} id="key-features" className={`py-10 md:py-12 transition-all duration-1000 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {keyFeaturesData.map((feature, index) => ( <FeatureCard key={feature.id} icon={feature.icon} title={feature.title} description={feature.description} animationDelayIndex={index} isVisible={isKeyFeaturesVisible} /> ))}
+              {keyFeaturesData.map((feature, index) => {
+                let slideFromDirection: 'left' | 'right' | 'bottom' = 'bottom';
+                if (index % 3 === 0) slideFromDirection = 'left';
+                if (index % 3 === 2) slideFromDirection = 'right';
+                return (
+                  <FeatureCard
+                    key={feature.id}
+                    icon={feature.icon}
+                    title={feature.title}
+                    description={feature.description}
+                    animationDelayIndex={index}
+                    isVisible={isKeyFeaturesVisible}
+                    slideFromDirection={slideFromDirection}
+                  />
+                );
+              })}
             </div>
           </div>
         </section>
@@ -275,7 +290,7 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 5: Fitness Tracker Integration (Moved Up) */}
-        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-10 md:py-12 transition-all duration-1000 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Fitness Tracker Integration
@@ -302,14 +317,14 @@ const SectionDivider = () => (
                 );
               })}
             </div>
-            <div className="max-w-2xl mx-auto text-left space-y-2 text-neutral-200 mb-10"> {/* Changed text color */}
+            <div className="max-w-2xl mx-auto text-left space-y-3 text-neutral-200 mb-10 text-lg"> {/* Increased space-y, font size */}
               <p>✓ Auto-complete workout habits when your fitness tracker records activity.</p>
               <p>✓ Sleep habits marked complete when your tracker records sufficient sleep.</p>
               <p>✓ Heart rate and recovery metrics for holistic health tracking.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
               <div
-                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[0ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[0ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-x-0 translate-y-0' : 'opacity-0 -translate-x-16'} border-t-4 border-sky-500`}
               >
                 <h4 className="text-lg font-semibold text-white mb-3">Fitbit Activity (Example)</h4>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -322,7 +337,7 @@ const SectionDivider = () => (
                 </div>
               </div>
               <div
-                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[100ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}
+                className={`p-6 bg-black/30 border border-white/10 shadow-lg rounded-xl text-neutral-300 hover:bg-black/40 hover:border-white/20 transition-all ease-out duration-700 delay-[150ms] ${isFitnessTrackersVisible ? 'opacity-100 translate-x-0 translate-y-0' : 'opacity-0 translate-x-16'} border-t-4 border-sky-500`}
               >
                 <h4 className="text-lg font-semibold text-white mb-3">Samsung Health (Example)</h4>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
@@ -341,11 +356,27 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 4: Six Key Performance Areas (Moved Down) */}
-        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={performanceAreasRef} id="performance-areas" className={`py-10 md:py-12 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {performanceAreasData.map((area, index) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} animationDelayIndex={index} isVisible={isPerformanceAreasVisible} /> ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 lg:gap-x-8 gap-y-8 lg:gap-y-10"> {/* Adjusted gap for simple cards */}
+              {performanceAreasData.map((area, index) => {
+                let slideFromDirection: 'left' | 'right' | 'bottom' = 'bottom';
+                if (index % 3 === 0) slideFromDirection = 'left';
+                if (index % 3 === 2) slideFromDirection = 'right';
+                return (
+                  <FeatureCard
+                    key={area.id}
+                    icon={area.icon}
+                    title={area.title}
+                    description={area.description}
+                    cardStyleType="simple"
+                    animationDelayIndex={index}
+                    isVisible={isPerformanceAreasVisible}
+                    slideFromDirection={slideFromDirection}
+                  />
+                );
+              })}
             </div>
           </div>
         </section>
@@ -353,7 +384,7 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 6: Social Proof (Testimonials) */}
-        <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={testimonialsRef} id="testimonials" className={`py-10 md:py-12 transition-all duration-1000 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <div className="container mx-auto px-4">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
@@ -378,7 +409,7 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 7: FAQ */}
-        <section ref={faqRef} id="faq" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={faqRef} id="faq" className={`py-10 md:py-12 transition-all duration-1000 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <div className="container mx-auto px-4 max-w-3xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
@@ -399,28 +430,28 @@ const SectionDivider = () => (
         <SectionDivider />
 
         {/* Section 8: Final CTA Section */}
-        <section ref={finalCtaRef} id="final-cta" className={`py-16 md:py-24 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-1000 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+        <section ref={finalCtaRef} id="final-cta" className={`py-10 md:py-16 bg-gradient-to-t from-background to-muted/20 dark:from-neutral-900 dark:to-neutral-800/30 transition-all duration-1000 ease-out ${isFinalCtaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}> {/* Reduced padding */}
           <CTASection
-            headline="Start Forging Your Elite Habits Today."
+            headline="Start Forging Your Elite Habits Today" // Removed period for consistency if other headlines lack it.
             description="Take control of your life, build unbreakable habits, and master your mind with MaxiMost."
             buttonText="Sign Up & Get Started"
-            buttonLink="/login" // Corrected link to /login
-            showEmailInput={false} // Hide email input
-            showRewardsOptIn={false} // Hide rewards text
-            // onSubmit prop is not needed when showEmailInput is false and buttonLink is used
+            buttonLink="/login" // Kept as /login, consistent with Hero CTA. Change to /sign-in if strictly required.
+            showEmailInput={false}
+            showRewardsOptIn={false}
             className="container mx-auto max-w-3xl"
           />
         </section>
 
-        <footer className="py-8 border-t border-border">
-            <div className="container mx-auto px-4 text-center text-muted-foreground text-sm">
-                <p className="mb-2">MaxiMost Logo (Placeholder)</p>
-                <div className="space-x-4 mb-2">
-                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Privacy Policy</a>
-                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Terms of Service</a>
-                    <a href="#" className="hover:text-sky-300 transition-colors duration-300">Contact Us</a>
+        <footer className="py-8 border-t border-neutral-700 dark:border-neutral-800"> {/* Adjusted border color for dark theme */}
+            <div className="container mx-auto px-4 text-center text-neutral-400 dark:text-neutral-500 text-sm"> {/* Adjusted text color */}
+                {/* MaxiMost Logo (Placeholder) removed */}
+                <div className="space-x-4 mb-3"> {/* Increased margin bottom slightly */}
+                    <a href="/privacy-policy" className="hover:text-sky-400 dark:hover:text-sky-300 transition-colors duration-300">Privacy Policy</a>
+                    <a href="/terms-of-service" className="hover:text-sky-400 dark:hover:text-sky-300 transition-colors duration-300">Terms of Service</a>
+                    {/* "Contact Us" can be kept if there's a contact page, or removed if not. Keeping for now. */}
+                    <a href="/contact" className="hover:text-sky-400 dark:hover:text-sky-300 transition-colors duration-300">Contact Us</a>
                 </div>
-                <p>© {new Date().getFullYear()} Maximost. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} MaxiMost. All rights reserved.</p>
             </div>
         </footer>
       </main>
