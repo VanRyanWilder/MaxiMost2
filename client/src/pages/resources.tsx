@@ -1,25 +1,20 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { useState } from "react";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
+// import { useState } from "react"; // Removed as sidebarOpen was the only use
 import { ResourceLibrary } from "@/components/resources/resource-library";
 import { useQuery } from "@tanstack/react-query";
 import { type Resource } from "@shared/schema";
 
 export default function Resources() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false); // Removed
   
   const { data: resource } = useQuery<Resource>({
     queryKey: ["/api/resources/1"], // Fetch the first resource for detailed view
   });
 
   return (
-    <div className="bg-gray-50 font-sans">
-      <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-      
-      <div className="flex min-h-screen">
-        <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-        
-        <main className="flex-1 lg:ml-64">
+    // Outer divs and Sidebar/MobileHeader removed, AppLayout handles them.
+    // Main content starts here.
           <div className="container mx-auto px-4 py-6">
             <h1 className="text-3xl font-bold mb-6">Resources</h1>
             
@@ -51,8 +46,5 @@ export default function Resources() {
             
             <ResourceLibrary />
           </div>
-        </main>
-      </div>
-    </div>
   );
 }
