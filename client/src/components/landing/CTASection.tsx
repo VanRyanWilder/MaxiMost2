@@ -16,6 +16,7 @@ interface CTASectionProps {
   showEmailInput?: boolean; // To control visibility of email form
   className?: string;
   isLoading?: boolean; // To show loading state on button
+  buttonVariant?: 'primary' | 'secondary'; // New prop for button styling
 }
 
 import { Link, useLocation } from "wouter";
@@ -78,7 +79,11 @@ export const CTASection: React.FC<CTASectionProps> = ({
             <Button
               type="submit"
               size="lg"
-              className="text-lg bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/40 transition-all"
+              className={`text-lg transition-all duration-200 ease-in-out
+                ${buttonVariant === 'secondary'
+                  ? 'bg-slate-200 text-blue-700 hover:bg-slate-300 hover:shadow-lg hover:text-blue-800'
+                  : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50'
+                }`}
               disabled={isLoading}
             >
               {isLoading ? "Submitting..." : buttonText}
@@ -87,7 +92,11 @@ export const CTASection: React.FC<CTASectionProps> = ({
         ) : (
           <Button
             size="lg"
-            className="text-lg bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/40 transition-all"
+            className={`text-lg transition-all duration-200 ease-in-out
+              ${buttonVariant === 'secondary'
+                ? 'bg-slate-200 text-blue-700 hover:bg-slate-300 hover:shadow-lg hover:text-blue-800 hover:scale-105'  // Added scale for secondary too
+                : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 hover:shadow-xl hover:shadow-primary/50'
+              }`}
             disabled={isLoading}
             onClick={handleButtonClick}
           >

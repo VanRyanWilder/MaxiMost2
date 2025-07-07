@@ -243,18 +243,21 @@ const SectionDivider = () => (
               showEmailInput={false} // Remove email input
               buttonLink="/login"   // Corrected link to /login
               // onSubmit, emailPlaceholder, rewardsText, showRewardsOptIn are no longer needed here
-              className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20" // Glassmorphism for Hero CTA
+              className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20 hover:shadow-2xl hover:border-white/30 transition-all duration-300 ease-in-out" // Added hover effect for Hero CTA Card
             />
             {/* <h1>CTASection in Hero is commented out</h1> */}
           </div>
         </section>
 
-        <SectionDivider />
+        {/* Custom smaller divider between Hero and Coaches */}
+        <div className="py-3 md:py-4"> {/* Approx 50% less than standard SectionDivider's py-6 md:py-8 */}
+          <div className="h-px w-full bg-white/10 shadow-[0_0_15px_0px_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:shadow-[0_0_20px_2px_rgba(255,255,255,0.35)] hover:bg-white/20"></div>
+        </div>
 
         <div ref={coachesRef} className={`transition-all duration-1000 ease-out ${isCoachesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <MeetTheCoachesSection
-            title="Find the Coach That Drives You"
-            className="py-10 md:py-12" /* Reduced padding */
+            title="Pick your Coaching style"
+            className="py-10 md:py-12" /* Padding for content within this section */
             onPersonaHover={handlePersonaHover}
             onPersonaSelectGlow={handlePersonaSelectGlow}
           />
@@ -438,6 +441,7 @@ const SectionDivider = () => (
             buttonLink="/login" // Kept as /login, consistent with Hero CTA. Change to /sign-in if strictly required.
             showEmailInput={false}
             showRewardsOptIn={false}
+            buttonVariant="secondary" // Use secondary button style for Final CTA
             className="container mx-auto max-w-3xl"
           />
         </section>

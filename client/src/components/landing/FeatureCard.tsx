@@ -54,8 +54,9 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
       {icon && (
         <div className={cardStyleType === 'simple' ? "mb-2" : "mb-4"}>
           {React.cloneElement(icon as React.ReactElement<LucideProps>, {
-            size: cardStyleType === 'simple' ? 32 : 40, // Smaller icon for simple style
-            className: `${(icon as React.ReactElement<LucideProps>).props.className || ''} ${cardStyleType === 'simple' ? 'text-white' : 'opacity-90'}`
+            size: cardStyleType === 'simple' ? 32 : 40,
+            // For simple style, use the icon's own class for color. For premium, add opacity.
+            className: `${(icon as React.ReactElement<LucideProps>).props.className || ''} ${cardStyleType === 'premium' ? 'opacity-90' : ''}`.trim()
           })}
         </div>
       )}

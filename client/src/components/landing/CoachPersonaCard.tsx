@@ -56,14 +56,14 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
   const selectedGlowEffect = `0 0 35px 10px ${coach.glowColor || coach.iconColor || "#FFFFFF70"}`; // More prominent glow for selected
 
   const cardStyle: React.CSSProperties = {
-    transition: "all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)", // Smoother transition
+    transition: "all 0.3s ease-out", // Slightly faster transition for responsiveness
     boxShadow: isSelected ? selectedGlowEffect : (isHovered ? hoverGlossEffect : baseBoxShadow),
     transform: isSelected
-      ? "translateY(-10px) scale(1.05)" // Slightly more pronounced for selected
+      ? "translateY(-12px) scale(1.06)" // More pronounced for selected
       : (isHovered
-          ? "translateY(-6px) scale(1.02) perspective(1000px) rotateX(2deg) rotateY(1deg)" // 3D effect for hover
-          : "translateY(0px) scale(1) perspective(1000px) rotateX(0deg) rotateY(0deg)"), // Reset perspective/rotation
-    // border: isSelected ? `2px solid ${coach.glowColor || 'hsl(var(--primary))'}` : `1px solid hsl(var(--border))` // Using ring for selected border
+          ? "translateY(-8px) scale(1.03) perspective(1200px) rotateX(6deg) rotateY(4deg)" // Enhanced 3D tilt effect
+          : "translateY(0px) scale(1) perspective(1200px) rotateX(0deg) rotateY(0deg)"),
+    // border: isSelected ? `2px solid ${coach.glowColor || 'hsl(var(--primary))'}` : `1px solid hsl(var(--border))`
   };
 
   // Determine ring color based on coach.glowColor or fallback to primary
@@ -122,13 +122,13 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         )}
 
         {/* Content Overlay for description and quote, pushed to bottom */}
-        <div className="relative z-10 flex flex-col h-full p-3 justify-end"> {/* Increased padding slightly to p-3 for better spacing with larger text */}
+        <div className="relative z-10 flex flex-col h-full p-3 justify-end">
           <div className="mt-auto">
-            <CardContent className="p-0 mb-1.5"> {/* Adjusted margin for new text size */}
-              <p className="text-xs opacity-80 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-normal">{coach.description}</p> {/* Increased to text-xs, normal leading */}
+            <CardContent className="p-0 mb-2"> {/* Increased margin for larger text */}
+              <p className="text-sm opacity-85 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)] leading-relaxed">{coach.description}</p> {/* Further increased to text-sm, relaxed leading, slightly more opacity */}
             </CardContent>
-            <CardFooter className="p-0 text-left border-t border-white/20 pt-1.5"> {/* Adjusted padding top for new text size */}
-              <blockquote className="text-[11px] opacity-70 [text-shadow:0_1px_1px_rgba(0,0,0,0.8)] leading-normal"> {/* Increased to text-[11px], normal leading */}
+            <CardFooter className="p-0 text-left border-t border-white/20 pt-2"> {/* Increased padding top */}
+              <blockquote className="text-xs opacity-75 [text-shadow:0_1px_1px_rgba(0,0,0,0.7)] leading-relaxed"> {/* Further increased to text-xs, relaxed leading, slightly more opacity */}
                 "{coach.sampleQuote}"
               </blockquote>
             </CardFooter>
