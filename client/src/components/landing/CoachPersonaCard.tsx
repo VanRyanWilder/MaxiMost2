@@ -102,8 +102,8 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         </CardTitle>
       </div>
 
-      {/* Image Container (Maintained Portrait Aspect Ratio) and Text Overlay */}
-      <div className="relative flex-grow overflow-hidden aspect-[4/5]"> {/* Kept aspect ratio, overall card height will be driven by content in grid */}
+      {/* Image Container (Square Aspect Ratio) and Text Overlay */}
+      <div className="relative flex-grow overflow-hidden aspect-square"> {/* Changed to square aspect ratio */}
         {/* Background Image */}
         {coach.imageUrl ? (
           <div className="absolute inset-0 z-0">
