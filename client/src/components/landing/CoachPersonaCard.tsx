@@ -96,7 +96,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         }}
       >
         <CardTitle
-            className="text-lg font-bold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.7)]" // Further reduced title size, font-bold instead of extrabold
+            className="text-2xl font-extrabold tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.6)]" // Title: text-2xl
         >
           {coach.title}
         </CardTitle>
