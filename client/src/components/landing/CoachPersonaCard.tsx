@@ -51,7 +51,8 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
   };
 
   const baseBoxShadow = "var(--tw-shadow, 0 0 #0000)"; // Default, no shadow
-  const hoverGlossEffect = `inset 0 2px 4px rgba(255,255,255,0.1), 0 0 15px 3px ${coach.iconColor || "#FFFFFF20"}`; // Subtle gloss and softer glow
+  // Updated hoverGlossEffect to use coach.glowColor for a themed "light up" effect on hover
+  const hoverGlossEffect = `0 0 25px 5px ${coach.glowColor || coach.iconColor || "#FFFFFF40"}`; // Use glowColor, slightly less intense than selected
   const selectedGlowEffect = `0 0 35px 10px ${coach.glowColor || coach.iconColor || "#FFFFFF70"}`; // More prominent glow for selected
 
   const cardStyle: React.CSSProperties = {
@@ -113,7 +114,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
         )}
 
         {/* Spacer to push content to the bottom if there's an image */}
-        {coach.imageUrl && <div className="flex-grow min-h-[40%]"></div>}
+        {coach.imageUrl && <div className="flex-grow"></div>} {/* Removed min-height, let flex-grow manage space */}
 
 
         <div className="mt-auto"> {/* This div will be pushed to the bottom */}
@@ -123,7 +124,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
           <CardContent className="p-0 mb-3">
             <p className="text-sm opacity-90">{coach.description}</p> {/* Removed line-clamp-3 */}
           </CardContent>
-          <CardFooter className="p-0 text-left border-t border-white/20 pt-3">
+          <CardFooter className="p-0 text-left border-t border-white/20 pt-3 pb-1"> {/* Added small pb-1 for quote breathing room */}
             <blockquote className="italic text-xs opacity-80">
               "{coach.sampleQuote}"
             </blockquote>

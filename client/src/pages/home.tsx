@@ -191,8 +191,16 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6">
         <div className="container mx-auto flex items-center justify-between">
-          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Left" className="h-16 w-16 md:h-20 md:w-20" />
-          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Right" className="h-16 w-16 md:h-20 md:w-20" />
+          <img
+            src="/images/maximost-logo-original.png"
+            alt="MaxiMost Logo Left"
+            className="h-20 w-20 md:h-24 md:w-24 filter brightness-0 invert"
+          />
+          <img
+            src="/images/maximost-logo-original.png"
+            alt="MaxiMost Logo Right"
+            className="h-20 w-20 md:h-24 md:w-24 filter brightness-0 invert"
+          />
           {/* Navigation links can be added here later if needed */}
         </div>
       </header>
@@ -254,17 +262,7 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* Section 4: Six Key Performance Areas */}
-        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {performanceAreasData.map((area, index) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} animationDelayIndex={index} isVisible={isPerformanceAreasVisible} /> ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Section 5: Fitness Tracker Integration */}
+        {/* Section 5: Fitness Tracker Integration (Moved Up) */}
         <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -313,6 +311,16 @@ const Home: React.FC = () => {
                   <p><strong className="text-white">Resting BPM:</strong> 71</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Six Key Performance Areas (Moved Down) */}
+        <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-1000 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-16'}`}>
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              {performanceAreasData.map((area, index) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} animationDelayIndex={index} isVisible={isPerformanceAreasVisible} /> ))}
             </div>
           </div>
         </section>
