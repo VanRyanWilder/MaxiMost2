@@ -15,10 +15,10 @@ VITE_FIREBASE_APP_ID = "1:161512806223:web:5bde0190d46718f8a5973a"
 
 # --- Backend Variables (for Hono API code) ---
 # These have NO prefix and are only available to the backend worker.
-# This is what solves the "Server configuration error".
 FIREBASE_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
 FIREBASE_PROJECT_ID = "maximost-a0401"
-FIREBASE_WEB_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
+# RENAMED to avoid deployment conflict. This key is for the AUTH middleware.
+FIREBASE_AUTH_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
 
 # It's good practice to mirror the variables for your preview deployments.
 [env.preview.vars]
@@ -33,4 +33,5 @@ VITE_FIREBASE_APP_ID = "1:161512806223:web:5bde0190d46718f8a5973a"
 # --- Backend Preview Variables ---
 FIREBASE_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
 FIREBASE_PROJECT_ID = "maximost-a0401"
-FIREBASE_WEB_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
+# RENAMED to avoid deployment conflict. This key is for the AUTH middleware.
+FIREBASE_AUTH_API_KEY = "AIzaSyAml6FYQQOuhG2_EpPRs2AahkdDWdeic5w"
