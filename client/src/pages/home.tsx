@@ -15,8 +15,8 @@ import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 // Import Lucide icons
 import {
   Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
-  Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Users2, Landmark,
-  Smartphone
+  Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Landmark, // Users2 was here
+  Smartphone, Activity // Make sure Activity is here
 } from "lucide-react";
 
 // Helper function to convert hex color to RGB string "r,g,b"
@@ -42,7 +42,7 @@ const performanceAreasData = [
   { id: "area-nutrition", icon: <NutritionIcon size={32} />, title: "Nutrition & Fueling", description: "Diet, hydration, and supplements" },
   { id: "area-sleep", icon: <Bed size={32} />, title: "Sleep & Hygiene", description: "Quality rest and recovery cycles" },
   { id: "area-mental", icon: <Lightbulb size={32} />, title: "Mental Acuity & Growth", description: "Focus, learning, and mindfulness" },
-  { id: "area-relationships", icon: <Users2 size={32} />, title: "Relationships", description: "Social connections and communication" },
+  { id: "area-relationships", icon: <Users size={32} />, title: "Relationships", description: "Social connections and communication" }, // Changed Users2 to Users
   { id: "area-financial", icon: <Landmark size={32} />, title: "Financial Habits", description: "Saving, investing, and wealth building" },
 ];
 const testimonialsData = [
