@@ -15,11 +15,11 @@ habitRoutes.get('/', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
   if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.get.");
+    console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.get.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
@@ -41,11 +41,11 @@ habitRoutes.post('/', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
   if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.post.");
+    console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.post.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
@@ -89,11 +89,11 @@ habitRoutes.get('/:habitId', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
   if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.get single.");
+    console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.get single.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
@@ -123,11 +123,11 @@ habitRoutes.put('/:habitId', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
   if (!PROJECT_ID || !API_KEY) {
-     console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.put.");
+     console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.put.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
@@ -163,11 +163,11 @@ habitRoutes.delete('/:habitId', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
    if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.delete.");
+    console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.delete.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
@@ -195,11 +195,11 @@ habitRoutes.post('/:habitId/complete', async (c) => {
     return c.json({ message: "User ID not found in token." }, 400);
   }
 
-  const PROJECT_ID = c.env.VITE_FIREBASE_PROJECT_ID;
-  const API_KEY = c.env.VITE_FIREBASE_API_KEY;
+  const PROJECT_ID = c.env.FIREBASE_PROJECT_ID; // Use unprefixed variable
+  const API_KEY = c.env.FIREBASE_API_KEY;     // Use unprefixed variable
 
   if (!PROJECT_ID || !API_KEY) {
-    console.error("CRITICAL: Firebase Project ID or API Key is UNDEFINED in habitRoutes.complete.");
+    console.error("CRITICAL: Backend FIREBASE_PROJECT_ID or FIREBASE_API_KEY is UNDEFINED in habitRoutes.complete.");
     return c.json({ message: "Server configuration error." }, 500);
   }
 
