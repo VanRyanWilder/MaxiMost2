@@ -121,7 +121,7 @@ export const CoachPersonaCard: React.FC<CoachPersonaCardProps> = ({
             {coach.title}
           </CardTitle>
           <CardContent className="p-0 mb-3">
-            <p className="text-sm opacity-90 line-clamp-3">{coach.description}</p> {/* Line clamp for description */}
+            <p className="text-sm opacity-90">{coach.description}</p> {/* Removed line-clamp-3 */}
           </CardContent>
           <CardFooter className="p-0 text-left border-t border-white/20 pt-3">
             <blockquote className="italic text-xs opacity-80">

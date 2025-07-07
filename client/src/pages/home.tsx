@@ -128,8 +128,8 @@ const Home: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background dark:bg-neutral-900">
       <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6">
         <div className="container mx-auto flex items-center justify-between">
-          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Left" className="h-12 md:h-16" />
-          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Right" className="h-12 md:h-16" />
+          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Left" className="h-16 w-16 md:h-20 md:w-20" />
+          <img src="/images/maximost-logo-original.png" alt="MaxiMost Logo Right" className="h-16 w-16 md:h-20 md:w-20" />
           {/* Navigation links can be added here later if needed */}
         </div>
       </header>
@@ -167,6 +167,7 @@ const Home: React.FC = () => {
               rewardsText="Join now for early access and exclusive benefits."
               showRewardsOptIn={false}
               onSubmit={handleWaitlistSubmit}
+              className="bg-white/10 backdrop-blur-md rounded-xl p-8 shadow-lg border border-white/20" // Glassmorphism for Hero CTA
             />
             {/* <h1>CTASection in Hero is commented out</h1> */}
           </div>
@@ -183,7 +184,7 @@ const Home: React.FC = () => {
         {/* Section 3: Key Features */}
         <section ref={keyFeaturesRef} id="key-features" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isKeyFeaturesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Key Features of MaxiMost</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {keyFeaturesData.map((feature) => ( <FeatureCard key={feature.id} icon={feature.icon} title={feature.title} description={feature.description} /> ))}
             </div>
@@ -193,7 +194,7 @@ const Home: React.FC = () => {
         {/* Section 4: Six Key Performance Areas */}
         <section ref={performanceAreasRef} id="performance-areas" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isPerformanceAreasVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">Holistic Growth Across Six Key Performance Areas</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {performanceAreasData.map((area) => ( <FeatureCard key={area.id} icon={area.icon} title={area.title} description={area.description} /> ))}
             </div>
@@ -203,13 +204,13 @@ const Home: React.FC = () => {
         {/* Section 5: Fitness Tracker Integration */}
         <section ref={fitnessTrackersRef} id="fitness-trackers" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isFitnessTrackersVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Fitness Tracker Integration
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto"> {/* Adjusted color for better contrast */}
               Connect All Your Health Data
             </p>
-            <p className="text-md text-muted-foreground mb-8 max-w-3xl mx-auto">
+            <p className="text-md text-neutral-300 mb-8 max-w-3xl mx-auto"> {/* Adjusted color for better contrast */}
               Integration with your favorite fitness platforms automatically
               completes your habits based on your activity.
             </p>
@@ -256,7 +257,7 @@ const Home: React.FC = () => {
         {/* Section 6: Social Proof (Testimonials) */}
         <section ref={testimonialsRef} id="testimonials" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isTestimonialsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               What People Are Saying
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 max-w-4xl mx-auto">
@@ -277,7 +278,7 @@ const Home: React.FC = () => {
         {/* Section 7: FAQ */}
         <section ref={faqRef} id="faq" className={`py-16 md:py-20 transition-all duration-700 ease-out ${isFaqVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="container mx-auto px-4 max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-10 md:mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12 lg:mb-16">
               Frequently Asked Questions
             </h2>
             <Accordion type="single" collapsible className="w-full">
