@@ -40,7 +40,7 @@ export const MeetTheCoachesSection: React.FC<MeetTheCoachesSectionProps> = ({
                 key={coach.id}
                 coach={coach}
                 isSelected={selectedCoachId === coach.id}
-                onSelect={() => handleCoachSelect(coach.id)}
+                onSelect={() => handleCoachSelect(coach)} // Pass the full coach object
                 onHoverStart={() => onPersonaHover && onPersonaHover(coach.glowColorRgb)}
                 onHoverEnd={() => onPersonaLeave && onPersonaLeave()}
               />

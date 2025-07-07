@@ -333,6 +333,7 @@ const Home: React.FC = () => {
                   title={testimonial.title}
                   quote={testimonial.quote}
                   animationDelayIndex={index}
+                  isVisible={isTestimonialsVisible}
                 />
               ))}
             </div>
