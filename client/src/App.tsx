@@ -43,6 +43,14 @@ import Contact from "@/pages/contact";
 import AIFeatures from "@/pages/ai-features";
 import FirebaseConfig from "@/pages/firebase-config";
 
+// New Page Imports
+import StacksPage from "@/pages/StacksPage";
+import JournalPage from "@/pages/JournalPage";
+import IntegrationsPage from "@/pages/IntegrationsPage";
+
+// Import AppLayout
+import { AppLayout } from "@/components/layout/AppLayout";
+
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
@@ -60,8 +68,8 @@ function PrivateRoute({ component: Component, ...rest }: any) {
     return <Redirect to={`/login?redirect=${encodeURIComponent(location)}`} />;
   }
   
-  // If there is a user, the component will be rendered.
-  return <Component {...rest} />;
+  // If there is a user, the component will be rendered within AppLayout.
+  return <AppLayout><Component {...rest} /></AppLayout>;
 }
 
 function App() {
@@ -182,6 +190,17 @@ function App() {
       <Route path="/firebase-config" component={FirebaseConfig} />
       <Route path="/fitness-tracker-connect">
         <PrivateRoute component={FitnessTrackerConnect} />
+      </Route>
+
+      {/* New IA Routes */}
+      <Route path="/stacks">
+        <PrivateRoute component={StacksPage} />
+      </Route>
+      <Route path="/journal">
+        <PrivateRoute component={JournalPage} />
+      </Route>
+      <Route path="/integrations">
+        <PrivateRoute component={IntegrationsPage} />
       </Route>
 
       {/* 404 Not Found route */}

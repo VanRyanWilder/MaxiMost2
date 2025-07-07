@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button"; // Added Button
 import { useUser } from "@/context/user-context"; // Added useUser
 import { apiClient } from "@/lib/apiClient"; // Added apiClient
 import { Habit, HabitCategory, HabitFrequency } from "@/types/habit"; // Added Habit types
+import { ContentCard } from '@/components/explore/ContentCard'; // Import the new ContentCard
 import {
-  Activity, Zap, PlusCircle, Sun, Dumbbell, Droplets, Brain, BookOpen, Users, Clock, CheckSquare, Pill, Bed, Utensils
-} from 'lucide-react'; // Added Lucide icons
+  Activity, Zap, PlusCircle, Sun, Dumbbell, Droplets, Brain, BookOpen, Users, Clock, CheckSquare, Pill, Bed, Utensils,
+  AlertTriangle, // For Sugar Impact
+} from 'lucide-react';
 
 export default function ExplorePage() {
   const { firebaseUser } = useUser();
@@ -219,6 +221,29 @@ export default function ExplorePage() {
           </CardHeader>
           <CardContent className="pt-6">
             <TopRatedSupplements />
+          </CardContent>
+        </Card>
+
+        {/* New Section for Guides */}
+        <Card className="shadow-lg">
+          <CardHeader className="border-b">
+            <CardTitle className="text-2xl">Guides & In-Depth Content</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <ContentCard
+                title="Supplement Guides"
+                description="Evidence-based information on various supplements to support your health and performance goals."
+                link="/supplements" // Links to the existing supplements page
+                icon={<Pill className="w-8 h-8" />}
+              />
+              <ContentCard
+                title="Understanding Sugar's Impact"
+                description="Learn about the effects of sugar on your body and mind, and strategies for healthier choices."
+                link="/sugar" // Links to the existing sugar page
+                icon={<AlertTriangle className="w-8 h-8" />}
+              />
+            </div>
           </CardContent>
         </Card>
 

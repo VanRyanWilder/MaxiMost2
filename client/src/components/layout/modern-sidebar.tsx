@@ -9,7 +9,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { sidebarLinks, type SidebarLink } from "@/lib/sidebar-links";
+// Updated import to include the new helper function
+import { getGroupedSidebarLinks, type SidebarLink } from "@/lib/sidebar-links";
 import { X, Menu, ChevronDown, ChevronRight } from "lucide-react";
 
 interface SidebarProps {
@@ -34,14 +35,8 @@ export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps)
     }));
   };
   
-  // Dynamically create link groups based on section property
-  const sections: { key: string; title: string; links: SidebarLink[] }[] = [
-    { key: 'main', title: 'Main', links: sidebarLinks.filter(link => link.section === 'main') },
-    { key: 'learn', title: 'Learn & Grow', links: sidebarLinks.filter(link => link.section === 'learn') },
-    { key: 'pillars', title: 'Health Pillars', links: sidebarLinks.filter(link => link.section === 'pillars') },
-    { key: 'tools', title: 'Tools & Extras', links: sidebarLinks.filter(link => link.section === 'tools') },
-    { key: 'community', title: 'Community & Resources', links: sidebarLinks.filter(link => link.section === 'community') },
-  ];
+  // Use the new helper function to get grouped links
+  const sections = getGroupedSidebarLinks();
   
   const renderNavItem = (link: SidebarLink) => {
     const isActive = location === link.href || 
