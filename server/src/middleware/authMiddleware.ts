@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory';
 
 // Define the shape of your environment variables
 type Bindings = {
-  FIREBASE_WEB_API_KEY: string;
+  VITE_FIREBASE_API_KEY: string; // Changed to match wrangler.toml
 };
 
 // Define the shape of the variables you'll set in the context
@@ -20,7 +20,7 @@ export const authMiddleware = createMiddleware<{
   }
 
   const idToken = authHeader.split('Bearer ')[1];
-  const apiKey = c.env.FIREBASE_WEB_API_KEY;
+  const apiKey = c.env.VITE_FIREBASE_API_KEY; // Changed to match wrangler.toml
   const verifyUrl = `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`;
 
   try {
