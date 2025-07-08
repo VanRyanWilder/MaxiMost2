@@ -880,6 +880,8 @@ const HabitBuildingBasicsPage: React.FC = () => { // Ensure React is imported if
                 </div>
               </CardContent>
             </Card>
-          </div>
+    </ContentPageLayout>
   );
-}
+};
+
+export default HabitBuildingBasicsPage;
