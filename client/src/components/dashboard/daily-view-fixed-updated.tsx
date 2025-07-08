@@ -27,8 +27,8 @@ import { TableSortableItem } from './table-sortable-item';
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 
 interface DailyViewProps {
-  habits: Habit[];
-  completions: any[]; // Replace with proper type
+  habits: Habit[]; // Each Habit object should contain its own 'completions: HabitCompletionEntry[]'
+  // completions prop removed
   currentDay: Date;
   onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
@@ -40,7 +40,7 @@ interface DailyViewProps {
 
 export function DailyViewFixedUpdated({
   habits,
-  completions,
+  // completions prop removed
   currentDay,
   onToggleHabit,
   onAddHabit,
@@ -62,18 +62,16 @@ export function DailyViewFixedUpdated({
     })
   );
   
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(
-      completion => 
-        completion.habitId === habitId && 
-        isSameDay(new Date(completion.date), date) && 
-        completion.completed
+  // Refactored to use habit.completions
+  const isHabitCompletedOnDate = (habit: Habit, date: Date): boolean => {
+    const habitCompletions = habit.completions || [];
+    return habitCompletions.some(
+      c => isSameDay(new Date(c.date), date) && c.value > 0
     );
   };
   
   // Handle confetti celebration after completing all absolute habits
   useEffect(() => {
-    // Get absolute habits based on the filter
     const absoluteHabitsToCheck = habits
       .filter(h => h.isAbsolute)
       .filter(h => 
@@ -82,25 +80,18 @@ export function DailyViewFixedUpdated({
         h.category === filterCategory
       );
     
-    // If there are no absolute habits to track, don't show confetti
     if (absoluteHabitsToCheck.length === 0) return;
     
-    // Check if all absolute habits are completed for today
     const allCompleted = absoluteHabitsToCheck.every(habit => 
-      isHabitCompletedOnDate(habit.id, today)
+      isHabitCompletedOnDate(habit, today) // Pass the whole habit object
     );
     
     if (allCompleted) {
       setShowConfetti(true);
-      
-      // Reset confetti after 3 seconds
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-      }, 3000);
-      
+      const timer = setTimeout(() => setShowConfetti(false), 3000);
       return () => clearTimeout(timer);
     }
-  }, [habits, completions, filterCategory, today]);
+  }, [habits, filterCategory, today]); // Removed completions from dependency array
   
   // Get target days from frequency
   const getTargetDays = (habit: Habit): number => {
@@ -117,27 +108,31 @@ export function DailyViewFixedUpdated({
   };
   
   // Count completed days in the current week for a habit
-  const countCompletedDaysInWeek = (habitId: string): number => {
-    return completions.filter(
-      completion => 
-        completion.habitId === habitId && 
-        completion.completed
-    ).length;
-  };
-  
-  // This is the same function but renamed to match what's used in the component
-  const completedDaysInCurrentWeek = (habitId: string): number => {
-    return countCompletedDaysInWeek(habitId);
+  // This function might need context of which week if not just using all completions.
+  // For daily view, this might be less relevant or needs clearer definition of "current week".
+  // Assuming it refers to all-time completions for the habit for now, or needs to be adapted
+  // if a specific week's count is needed here.
+  // For simplicity, let's assume it means counting all completed entries for the habit.
+  const countAllCompletedEntries = (habit: Habit): number => {
+    const habitCompletions = habit.completions || [];
+    return habitCompletions.filter(c => c.value > 0).length;
   };
   
   // Check if a habit has met its weekly frequency target
+  // This is more relevant for a weekly view, but if needed here,
+  // it would require knowing the week's start/end dates.
+  // For now, this function might not be directly used or accurate in a "daily" view context
+  // without further week context.
   const hasMetWeeklyFrequency = (habit: Habit): boolean => {
-    if (!habit.frequency || habit.frequency === 'daily') return false;
+    if (!habit.frequency || habit.frequency === 'daily') return false; // Daily habits always "meet" daily frequency
     
+    // This is a placeholder, proper weekly frequency checking needs week context
+    // For now, we'll just use the total count of completions against target.
+    // This isn't accurate for "X times this specific week".
     const targetDays = getTargetDays(habit);
-    const completedDays = countCompletedDaysInWeek(habit.id);
+    const completedCount = countAllCompletedEntries(habit);
     
-    return completedDays >= targetDays;
+    return completedCount >= targetDays;
   };
 
   // Get appropriate frequency text
@@ -530,7 +525,8 @@ export function DailyViewFixedUpdated({
           habit={loggingHabitInfo.habit}
           date={loggingHabitInfo.date}
           onLog={onToggleHabit} // onToggleHabit now accepts the value
-          currentCompletions={completions}
+          // Pass the specific habit's completions to the modal
+          currentCompletions={loggingHabitInfo.habit.completions || []}
         />
       )}
     </div>

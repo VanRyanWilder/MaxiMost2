@@ -115,8 +115,8 @@ const getColorBgStyle = (color: string) => {
 };
 
 interface WeeklyTableViewProps {
-  habits: Habit[];
-  completions: any[]; // Replace with proper type
+  habits: Habit[]; // Each Habit object should contain its own 'completions: HabitCompletionEntry[]'
+  // completions prop removed
   weekDates: Date[];
   onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
@@ -129,7 +129,7 @@ interface WeeklyTableViewProps {
 
 export function WeeklyTableViewFixedUpdated({ 
   habits, 
-  completions, 
+  // completions prop removed
   weekDates,
   onToggleHabit,
   onAddHabit,
@@ -182,11 +182,11 @@ export function WeeklyTableViewFixedUpdated({
     }
   };
   
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(c => 
-      c.habitId === habitId && 
-      new Date(c.date).toDateString() === date.toDateString() && 
-      c.completed
+  // Refactored to use habit.completions
+  const isHabitCompletedOnDate = (habit: Habit, date: Date): boolean => {
+    const habitCompletions = habit.completions || [];
+    return habitCompletions.some(
+      c => isSameDay(new Date(c.date), date) && c.value > 0 // Use isSameDay for robust date comparison
     );
   };
   
@@ -205,9 +205,9 @@ export function WeeklyTableViewFixedUpdated({
   };
   
   // Count completed days in the week for a habit
-  const countCompletedDaysInWeek = (habitId: string): number => {
+  const countCompletedDaysInWeek = (habit: Habit): number => {
     return weekDates.filter(date => 
-      isHabitCompletedOnDate(habitId, date)
+      isHabitCompletedOnDate(habit, date) // Pass the whole habit object
     ).length;
   };
   
@@ -227,7 +227,7 @@ export function WeeklyTableViewFixedUpdated({
   
   // Check if habit has met its weekly frequency
   const hasMetWeeklyFrequency = (habit: Habit): boolean => {
-    const completedDays = countCompletedDaysInWeek(habit.id);
+    const completedDays = countCompletedDaysInWeek(habit); // Pass the whole habit object
     return completedDays >= getTargetDays(habit);
   };
   
@@ -647,7 +647,7 @@ export function WeeklyTableViewFixedUpdated({
                           
                           {/* Habit buttons for each day */}
                           {weekDates.map((date, i) => {
-                            const completed = isHabitCompletedOnDate(habit.id, date);
+                            const completed = isHabitCompletedOnDate(habit, date); // Pass the whole habit object
                             const isCurrentDay = isSameDay(date, currentDay);
                             
                             return (
@@ -709,7 +709,7 @@ export function WeeklyTableViewFixedUpdated({
           habit={loggingHabitInfo.habit}
           date={loggingHabitInfo.date}
           onLog={onToggleHabit} // onToggleHabit now accepts the value
-          currentCompletions={completions}
+          currentCompletions={loggingHabitInfo.habit.completions || []} // Pass habit's own completions
         />
       )}
     </div>

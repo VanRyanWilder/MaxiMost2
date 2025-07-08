@@ -14,21 +14,20 @@ import { iconMap, colorSchemes } from './edit-habit-dialog';
 import { EnhancedHabitIcon } from "@/components/ui/enhanced-habit-icon";
 
 interface SortableHabitProps {
-  habit: Habit;
-  completions: HabitCompletion[];
-  onToggleCompletion: (habitId: string, date: Date) => void;
+  habit: Habit; // This Habit type should align with FirestoreHabit + id + isCompletedToday
+                 // It will have habit.completions as HabitCompletionEntry[]
+  onToggleCompletion: (habitId: string, date: Date, value?: number) => void; // Ensure this matches parent
   onEdit: (habit: Habit) => void;
   onDelete?: (habitId: string) => void;
-  currentDate: Date;
+  currentDate: Date; // This is the start of the week being displayed
 }
 
 export function SortableHabit({ 
   habit, 
-  completions, 
   onToggleCompletion, 
   onEdit,
   onDelete,
-  currentDate
+  currentDate // This prop represents the first day of the week being rendered by the parent
 }: SortableHabitProps) {
   // Set up sortable functionality
   const {
@@ -76,9 +75,22 @@ export function SortableHabit({
     { primary: "text-slate-600", bg: "bg-slate-100", lightBg: "bg-slate-50/50", border: "border-slate-200", hover: "hover:bg-slate-100/70" };
 
   // Calculate statistics for the habit
-  const today = new Date();
-  const completedDays = completions.filter(
-    c => c.habitId === habit.id && c.completed
+  const today = new Date(); // Represents the actual current day
+
+  // Generate dates for the week being displayed (7 days starting from the passed `currentDate`)
+  // `currentDate` prop here is effectively the start of the week.
+  const weekDays = Array.from({ length: 7 }).map((_, i) => {
+    const date = new Date(currentDate); // Start from the week's start date passed as prop
+    date.setDate(date.getDate() + i);
+    return date;
+  });
+
+  const habitCompletions = habit.completions || []; // Ensure it's an array
+
+  const completedDaysInDisplayedWeek = weekDays.filter(weekDay =>
+    habitCompletions.some(c =>
+      isSameDay(new Date(c.date), weekDay) && c.value > 0
+    )
   ).length;
   
   const targetDays = habit.frequency === 'daily' ? 7 : 
@@ -86,23 +98,14 @@ export function SortableHabit({
                    habit.frequency === '3x-week' ? 3 :
                    habit.frequency === '4x-week' ? 4 : 
                    habit.frequency === '5x-week' ? 5 :
-                   habit.frequency === '6x-week' ? 6 : 1;
+                   habit.frequency === '6x-week' ? 6 : 1; // Default to 1 if frequency is undefined/unmatched
                    
-  const weeklyGoalMet = completedDays >= targetDays;
+  const weeklyGoalMet = completedDaysInDisplayedWeek >= targetDays;
   
-  // Check if today's completion is done
-  const isTodayCompleted = completions.some(c => 
-    c.habitId === habit.id && 
-    isSameDay(new Date(c.date), today) && 
-    c.completed
+  // Check if today's completion is done (based on the actual 'today')
+  const isTodayCompleted = habitCompletions.some(c =>
+    isSameDay(new Date(c.date), today) && c.value > 0
   );
-
-  // Generate dates for the week (7 days starting from the currentDate)
-  const weekDays = Array.from({ length: 7 }).map((_, i) => {
-    const date = new Date(currentDate);
-    date.setDate(date.getDate() + i);
-    return date;
-  });
 
   return (
     <div 
@@ -133,7 +136,7 @@ export function SortableHabit({
           
           <div className="min-w-0 flex flex-col">
             <span className={`font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis block ${colorScheme?.primary || ""}`}>
-              {habit.title ? habit.title.replace(/\u004F$/, "") : ""}
+              {habit.title || ""}
             </span>
             <div className="flex items-center justify-between gap-1 mt-0.5">
               <Badge 
@@ -185,11 +188,10 @@ export function SortableHabit({
       {weekDays.map((date, i) => {
         const dayOfWeek = format(date, 'EEE');
         const dayNumber = format(date, 'd');
-        const completed = completions.some(c => 
-          c.habitId === habit.id && 
-          isSameDay(new Date(c.date), date) && 
-          c.completed
-        );
+        // Use habit.completions (HabitCompletionEntry[]) and check entry.value
+        const completedEntry = habitCompletions.find(c => isSameDay(new Date(c.date), date));
+        const completed = !!(completedEntry && completedEntry.value > 0);
+
         const isPast = isBefore(date, startOfToday());
         const isFuture = isAfter(date, endOfToday());
         
