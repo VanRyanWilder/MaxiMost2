@@ -31,7 +31,8 @@ import {
   Wallet,
   Landmark,
   LineChart,
-  Heart
+  Heart,
+  Whale // Added Whale import
 } from 'lucide-react';
 
 interface HabitIconProps {
