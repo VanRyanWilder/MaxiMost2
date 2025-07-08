@@ -91,91 +91,6 @@ import { Habit, HabitCompletion, HabitFrequency, HabitCategory, CompletionEntry 
 // const initialCompletions: HabitCompletion[] = [ ... ];
 
 // Function to get icon component based on icon string
-    title: 'Drink 64oz Water',
-    description: 'Stay hydrated for optimal performance and health',
-    icon: 'droplets',
-    impact: 8,
-    effort: 2,
-    timeCommitment: '5 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'health',
-    streak: 12,
-    createdAt: new Date(Date.now() - 86400000 * 30) // 30 days ago
-  },
-  {
-    id: 'h2',
-    title: 'Read 10 Pages',
-    description: 'Daily reading for continuous learning and growth',
-    icon: 'book-open',
-    impact: 7,
-    effort: 4,
-    timeCommitment: '15 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'mind',
-    streak: 8,
-    createdAt: new Date(Date.now() - 86400000 * 15) // 15 days ago
-  },
-  {
-    id: 'h3',
-    title: 'Meditate',
-    description: 'Mindfulness practice for mental clarity and stress reduction',
-    icon: 'brain',
-    impact: 9,
-    effort: 3,
-    timeCommitment: '10 min',
-    frequency: 'daily',
-    isAbsolute: true,
-    category: 'mind',
-    streak: 3,
-    createdAt: new Date(Date.now() - 86400000 * 10) // 10 days ago
-  },
-  {
-    id: 'h4',
-    title: 'Strength Training',
-    description: 'Build muscle, increase metabolism, and improve overall fitness',
-    icon: 'dumbbell',
-    impact: 8,
-    effort: 7,
-    timeCommitment: '45 min',
-    frequency: '3x-week',
-    isAbsolute: false,
-    category: 'fitness',
-    streak: 1,
-    createdAt: new Date(Date.now() - 86400000 * 5) // 5 days ago
-  },
-  {
-    id: 'h5',
-    title: 'Journal',
-    description: 'Document thoughts and growth for reflection and self-awareness',
-    icon: 'pencil',
-    impact: 6,
-    effort: 4,
-    timeCommitment: '10 min',
-    frequency: 'daily',
-    isAbsolute: false,
-    category: 'mind',
-    streak: 0,
-    createdAt: new Date(Date.now() - 86400000 * 7) // 7 days ago
-  }
-];
-
-// Dummy completion data
-const initialCompletions: HabitCompletion[] = [
-  { id: 'c1', habitId: 'h1', date: new Date(), completed: true },
-  { id: 'c2', habitId: 'h2', date: new Date(), completed: true },
-  { id: 'c3', habitId: 'h1', date: subDays(new Date(), 1), completed: true },
-  { id: 'c4', habitId: 'h2', date: subDays(new Date(), 1), completed: true },
-  { id: 'c5', habitId: 'h3', date: subDays(new Date(), 1), completed: true },
-  { id: 'c6', habitId: 'h1', date: subDays(new Date(), 2), completed: true },
-  { id: 'c7', habitId: 'h2', date: subDays(new Date(), 2), completed: true },
-  { id: 'c8', habitId: 'h4', date: subDays(new Date(), 2), completed: true },
-  { id: 'c9', habitId: 'h1', date: subDays(new Date(), 3), completed: true },
-];
-
-// Function to get icon component based on icon string
-
 function getIconComponent(iconName: string, iconColor?: string, className: string = "h-4 w-4") {
   // Get color scheme classes
   const colorScheme = iconColor ? 
@@ -244,14 +159,50 @@ export default function Dashboard() {
         const fetchedHabits: any[] = await response.json(); // Initially parse as any to handle raw dates
 
         // Transform data (e.g., convert Firestore Timestamps)
-        const transformedHabits: Habit[] = fetchedHabits.map(habit => ({
-          ...habit,
-          createdAt: habit.createdAt ? (typeof habit.createdAt === 'string' ? new Date(habit.createdAt) : new Date((habit.createdAt._seconds || habit.createdAt.seconds) * 1000)) : undefined,
-          completions: (habit.completions || []).map((comp: any) => ({
-            ...comp,
-            timestamp: comp.timestamp ? (typeof comp.timestamp === 'string' ? new Date(comp.timestamp) : new Date((comp.timestamp._seconds || comp.timestamp.seconds) * 1000)) : undefined,
-          })),
-        }));
+        const transformedHabits: Habit[] = fetchedHabits.map((item: any) => {
+          const habitData = { ...item };
+
+          // Normalize 'name' to 'title' if 'name' exists and 'title' does not
+          if (habitData.name && typeof habitData.name === 'string' && !habitData.title) {
+            habitData.title = habitData.name;
+            delete habitData.name; // Clean up old property
+          }
+
+          // Ensure 'title' is a string, default to "Untitled Habit" if missing or not a string
+          if (typeof habitData.title !== 'string') {
+            console.warn(`Habit with ID ${habitData.id || 'Unknown'} is missing a title or title is not a string. Defaulting.`);
+            habitData.title = 'Untitled Habit';
+          }
+
+          // Ensure 'id' is a string. If not, this habit is problematic and should be logged/filtered.
+          if (typeof habitData.id !== 'string') {
+            console.error('Habit data is missing a valid string ID:', habitData);
+            return null; // Mark for filtering
+          }
+
+          // Ensure 'category' is a string, default if not present
+          if (typeof habitData.category !== 'string') {
+            console.warn(`Habit with ID ${habitData.id} is missing a category. Defaulting to 'general'.`);
+            habitData.category = 'general';
+          }
+
+          // Ensure 'icon' is a string, default if not present
+          if (typeof habitData.icon !== 'string') {
+            console.warn(`Habit with ID ${habitData.id} is missing an icon. Defaulting to 'activity'.`);
+            habitData.icon = 'activity';
+          }
+
+          return {
+            ...habitData,
+            createdAt: habitData.createdAt ? (typeof habitData.createdAt === 'string' ? new Date(habitData.createdAt) : new Date((habitData.createdAt._seconds || habitData.createdAt.seconds) * 1000)) : new Date(), // Default createdAt if missing
+            completions: (habitData.completions || []).map((comp: any) => ({
+              ...comp,
+              date: comp.date ? format(new Date(comp.date), 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'), // Ensure date is string
+              value: typeof comp.value === 'number' ? comp.value : 0, // Ensure value is number
+              timestamp: comp.timestamp ? (typeof comp.timestamp === 'string' ? new Date(comp.timestamp) : new Date((comp.timestamp._seconds || comp.timestamp.seconds) * 1000)) : undefined,
+            })),
+          };
+        }).filter(habit => habit !== null) as Habit[]; // Filter out any nulls from invalid items
 
         setHabits(transformedHabits);
       } catch (err: any) {

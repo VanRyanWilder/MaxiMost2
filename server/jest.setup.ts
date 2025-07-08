@@ -1,4 +1,6 @@
 // jest.setup.ts
+// dotenv loading moved to jest.config.js
+
 import { jest } from '@jest/globals'; // Use this for explicit Jest globals if needed, or rely on global environment
 
 // Define the mock implementations

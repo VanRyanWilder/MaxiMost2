@@ -8,7 +8,7 @@ import TestPage from "@/pages/TestPage"; // Added for J-18
 import Canary2 from "@/pages/Canary2"; // Added for Canary 2 Test
 
 // Other page imports
-import Dashboard from "@/pages/sortable-dashboard-new";
+import Dashboard from "@/pages/dashboard-new";
 import ExplorePage from "@/pages/explore"; // Import the new Explore page
 import AtomicHabitsGuidePage from "@/pages/atomic-habits-guide"; // Import Atomic Habits Guide page
 import Profile from "@/pages/profile";

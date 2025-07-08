@@ -11,7 +11,7 @@
     "dev:client": "vite",
     "dev:server": "wrangler dev server/src/worker.ts --local",
     "start": "NODE_ENV=production ts-node-esm server/index.ts",
-    "test": "jest"
+    "test": "jest --config server/jest.config.js"
   },
   "keywords": [],
   "author": "",
