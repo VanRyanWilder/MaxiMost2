@@ -55,22 +55,31 @@ import AICoachPage from "@/pages/AICoachPage"; // Import the new AICoachPage
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
+import { Button } from "@/components/ui/button"; // Added Button import
 
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
-  // --- FIX: Changed 'userLoading' to 'loading' to match the context provider ---
-  const { user, loading } = useUser();
-  const [location] = useLocation();
+  const { user, loading, error } = useUser(); // Destructure error
+  const [locationValue, setLocation] = useLocation(); // wouter's useLocation
   
-  // This will now correctly show the loading state while Firebase initializes.
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Authentication...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
+        <h1 className="text-xl font-bold mb-2">Authentication Error</h1>
+        <p className="mb-1">We encountered an error trying to sign you in.</p>
+        <p className="text-sm bg-red-200 p-2 rounded mb-4">Details: {error.message}</p>
+        <Button onClick={() => setLocation('/login')} variant="destructive">Go to Login</Button>
+      </div>
+    );
   }
   
-  // After loading is false, this check will correctly redirect if there's no user.
   if (!user) {
-    return <Redirect to={`/login?redirect=${encodeURIComponent(location)}`} />;
+    return <Redirect to={`/login?redirect=${encodeURIComponent(locationValue)}`} />;
   }
   
   // If there is a user, the component will be rendered within AppLayout.
@@ -83,18 +92,27 @@ function App() {
       {/* Public routes */}
       <Route path="/">
         {() => {
-          const { user, loading } = useUser();
+          const { user, loading, error } = useUser(); // Destructure error
           
-          // Wait for auth check to complete before deciding on redirect
           if (loading) {
-            return <div className="min-h-screen flex items-center justify-center bg-gray-900"></div>; // Or a splash screen
+            return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Application...</div>;
+          }
+
+          if (error) {
+            return (
+              <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
+                <h1 className="text-xl font-bold mb-2">Application Error</h1>
+                <p className="mb-1">An error occurred while loading user data.</p>
+                <p className="text-sm bg-red-200 p-2 rounded">Details: {error.message}</p>
+                {/* User might not be able to navigate if AppLayout isn't there, but login is public */}
+                 <a href="/login" className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Try Logging In Again</a>
+              </div>
+            );
           }
           
           if (user) {
-            // If user is logged in, redirect to dashboard
             return <Redirect to="/dashboard" />;
           }
-          // If user is not logged in, show the intended homepage
           return <Home />;
         }}
       </Route>

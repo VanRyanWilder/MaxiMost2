@@ -391,12 +391,12 @@ export function EditHabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-neutral-800/50 text-neutral-100 backdrop-blur-sm border-neutral-700">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-neutral-100">
             {isCreatingNewHabit.current ? "Create New Habit" : "Edit Habit"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-neutral-400">
             {isCreatingNewHabit.current 
               ? "Define a new habit to add to your dashboard."
               : "Refine this habit to maximize your success and consistency."}
@@ -405,7 +405,7 @@ export function EditHabitDialog({
         
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+            <Label htmlFor="title" className="text-right text-neutral-300">
               Name
             </Label>
             <Input
@@ -418,7 +418,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
+            <Label htmlFor="description" className="text-right text-neutral-300">
               Description
             </Label>
             <Textarea
@@ -431,7 +431,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="category" className="text-right">
+            <Label htmlFor="category" className="text-right text-neutral-300">
               Category
             </Label>
             <Select 
@@ -487,7 +487,7 @@ export function EditHabitDialog({
           
           {/* Icon selection */}
           <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">
+            <Label className="text-right pt-2 text-neutral-300">
               Icon
             </Label>
             <div className="col-span-3">
@@ -530,7 +530,7 @@ export function EditHabitDialog({
           
           {/* Color selection */}
           <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">
+            <Label className="text-right pt-2 text-neutral-300">
               Color
             </Label>
             <div className="col-span-3">
