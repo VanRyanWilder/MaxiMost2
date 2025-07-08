@@ -50,6 +50,7 @@ import IntegrationsPage from "@/pages/IntegrationsPage";
 import OutliveSummaryPage from "@/pages/learn/outlive-summary";
 import DangersOfSugarPage from "@/pages/learn/dangers-of-sugar";
 import StoicPrinciplesPage from "@/pages/learn/stoic-principles";
+import ProgressPage from "@/pages/ProgressPage"; // Import the new ProgressPage
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -165,7 +166,7 @@ function App() {
         <PrivateRoute component={Community} />
       </Route>
       <Route path="/progress">
-        <PrivateRoute component={Progress} />
+        <PrivateRoute component={ProgressPage} /> {/* Updated to new ProgressPage */}
       </Route>
       <Route path="/progress-dashboard">
         <PrivateRoute component={ProgressDashboard} />
