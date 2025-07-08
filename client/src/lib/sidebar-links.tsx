@@ -57,6 +57,27 @@ export const sidebarLinks: SidebarLink[] = [
     sectionKey: "learn",
     sectionTitle: "LEARN"
   },
+  {
+    title: "Outlive Summary",
+    href: "/learn/outlive-summary",
+    icon: <BookOpen className="h-5 w-5" />, // Using BookOpen as a generic learn icon
+    sectionKey: "learn",
+    sectionTitle: "LEARN"
+  },
+  {
+    title: "Dangers of Sugar",
+    href: "/learn/dangers-of-sugar",
+    icon: <BookOpen className="h-5 w-5" />,
+    sectionKey: "learn",
+    sectionTitle: "LEARN"
+  },
+  {
+    title: "Stoic Principles",
+    href: "/learn/stoic-principles",
+    icon: <BookOpen className="h-5 w-5" />,
+    sectionKey: "learn",
+    sectionTitle: "LEARN"
+  },
   // Section: CONNECT
   {
     title: "Integrations",

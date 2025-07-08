@@ -47,6 +47,9 @@ import FirebaseConfig from "@/pages/firebase-config";
 import StacksPage from "@/pages/StacksPage";
 import JournalPage from "@/pages/JournalPage";
 import IntegrationsPage from "@/pages/IntegrationsPage";
+import OutliveSummaryPage from "@/pages/learn/outlive-summary";
+import DangersOfSugarPage from "@/pages/learn/dangers-of-sugar";
+import StoicPrinciplesPage from "@/pages/learn/stoic-principles";
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -179,6 +182,15 @@ function App() {
       </Route>
       <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
         <PrivateRoute component={AtomicHabitsGuidePage} />
+      </Route>
+      <Route path="/learn/outlive-summary">
+        <PrivateRoute component={OutliveSummaryPage} />
+      </Route>
+      <Route path="/learn/dangers-of-sugar">
+        <PrivateRoute component={DangersOfSugarPage} />
+      </Route>
+      <Route path="/learn/stoic-principles">
+        <PrivateRoute component={StoicPrinciplesPage} />
       </Route>
       <Route path="/branding">
         <PrivateRoute component={Branding} />
