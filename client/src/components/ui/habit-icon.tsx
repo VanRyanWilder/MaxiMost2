@@ -31,8 +31,8 @@ import {
   Wallet,
   Landmark,
   LineChart,
-  Heart,
-  Whale // Added Whale import
+  Heart
+  // Whale // Removed Whale import as it does not exist in lucide-react
 } from 'lucide-react';
 
 interface HabitIconProps {
@@ -151,8 +151,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   laptop: Laptop,
   smartphone: Smartphone,
   pentool: PenTool,
-  arrowupright: ArrowUpRight,
-  whale: Whale
+  arrowupright: ArrowUpRight
+  // whale: Whale // Removed entry for non-existent Whale icon
 };
 
 export function HabitIcon({ icon, category, size = 'md', className = '' }: HabitIconProps) {
