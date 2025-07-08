@@ -1,5 +1,8 @@
 import React from 'react';
 import { PageContainer } from '@/components/layout/page-container';
+import StreakCalendar from '@/components/analytics/StreakCalendar';
+import CompletionChart from '@/components/analytics/CompletionChart';
+import HabitBreakdown from '@/components/analytics/HabitBreakdown';
 
 const ProgressPage: React.FC = () => {
   return (
@@ -12,36 +15,31 @@ const ProgressPage: React.FC = () => {
           More widgets and detailed analytics are coming soon!
         </p>
 
-        {/* Placeholder for grid-based layout for analytics widgets */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Example Widget Placeholder 1 */}
-          <div className="bg-card p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-3">Streak Calendar (Coming Soon)</h2>
-            <p className="text-sm text-muted-foreground">A GitHub-style contribution graph showing your daily completion streaks.</p>
-            <div className="mt-4 h-48 bg-muted rounded flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">Chart Placeholder</p>
-            </div>
+        {/* Grid-based layout for analytics widgets */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Streak Calendar - Takes full width on smaller screens, half on lg+ */}
+          <div className="lg:col-span-2">
+            <StreakCalendar />
           </div>
 
-          {/* Example Widget Placeholder 2 */}
-          <div className="bg-card p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-3">Completion Chart (Coming Soon)</h2>
-            <p className="text-sm text-muted-foreground">A line chart showing overall habit completion percentage over the last 30 days.</p>
-            <div className="mt-4 h-48 bg-muted rounded flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">Chart Placeholder</p>
-            </div>
+          {/* Completion Chart */}
+          <div>
+            <CompletionChart />
           </div>
 
-          {/* Example Widget Placeholder 3 */}
-          <div className="bg-card p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-3">Habit Breakdown (Coming Soon)</h2>
-            <p className="text-sm text-muted-foreground">A donut or bar chart showing completed habits by category.</p>
-            <div className="mt-4 h-48 bg-muted rounded flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">Chart Placeholder</p>
-            </div>
+          {/* Habit Breakdown */}
+          <div>
+            <HabitBreakdown />
           </div>
 
-          {/* Add more placeholders as needed */}
+          {/* Add more placeholders or widgets as needed */}
+          {/* Example of a full-width widget at the bottom */}
+          {/* <div className="lg:col-span-2 mt-6">
+            <Card>
+              <CardHeader><CardTitle>Future Full-Width Widget</CardTitle></CardHeader>
+              <CardContent><p>Content for another widget...</p></CardContent>
+            </Card>
+          </div> */}
         </div>
       </div>
     </PageContainer>
