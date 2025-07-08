@@ -35,7 +35,7 @@ import Pricing from "@/pages/pricing";
 import Progress from "@/pages/progress";
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
-import Motivation from "@/pages/motivation";
+// import Motivation from "@/pages/motivation"; // Removed import for deleted motivation.tsx
 import Experts from "@/pages/experts-unified";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
@@ -167,9 +167,7 @@ function App() {
       <Route path="/progress-dashboard">
         <PrivateRoute component={ProgressDashboard} />
       </Route>
-      <Route path="/motivation">
-        <PrivateRoute component={Motivation} />
-      </Route>
+      {/* <Route path="/motivation"> <PrivateRoute component={Motivation} /> </Route> // Removed route for deleted motivation.tsx */}
       <Route path="/experts">
         <PrivateRoute component={Experts} />
       </Route>
