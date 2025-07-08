@@ -272,9 +272,37 @@ export default function SortableDashboard() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-8">
 
+            {/* Main Habit Tracker card - MOVED TO TOP */}
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  {/* Title size increased */}
+                  <CardTitle className="text-2xl font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* View Toggle Buttons */}
+                <div className="mb-4 flex justify-center sm:justify-start space-x-2">
+                  {(['day', 'week', 'month'] as const).map((view) => (
+                    <Button
+                      key={view}
+                      variant={currentDashboardView === view ? 'default' : 'outline'}
+                      onClick={() => setCurrentDashboardView(view)}
+                      size="sm"
+                      className="capitalize"
+                    >
+                      {view}
+                    </Button>
+                  ))}
+                </div>
+                {habitContent}
+              </CardContent>
+            </Card>
+
+            {/* Habit Stacks Section - NOW BELOW HABIT DASHBOARD */}
             {mockStacks.length > 0 && (
               <section>
-                <h2 className="text-2xl font-semibold mb-4 flex items-center">
+                <h2 className="text-xl font-semibold mb-4 flex items-center"> {/* Adjusted title size for hierarchy */}
                   <Layers className="mr-2 h-6 w-6 text-primary" />
                   Your Habit Stacks
                 </h2>
@@ -290,13 +318,8 @@ export default function SortableDashboard() {
               </section>
             )}
 
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  <CardTitle className="text-lg font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
+            {/* Original CardContent was here, now part of the moved Card above */}
+            {/* <CardContent>
                 <div className="mb-4 flex justify-center sm:justify-start space-x-2">
                   {(['day', 'week', 'month'] as const).map((view) => (
                     <Button
