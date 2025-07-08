@@ -26,44 +26,24 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // setLoading(true) explicitly at the start of effect, though initial state is true.
-    // This handles potential re-runs if deps were ever added, though not the case here.
-    setLoading(true);
-    let authStateEstablishedByObserver = false;
-    let redirectProcessed = false;
-
-    const checkLoadingComplete = () => {
-      if (authStateEstablishedByObserver && redirectProcessed) {
-        setLoading(false);
-      }
-    };
+    setLoading(true); // Explicitly true at start
 
     // Process any pending redirect.
-    // getRedirectResult should only be called once per page load.
+    // This updates Firebase's internal state. onAuthStateChanged will then fire.
     processRedirectResult()
-      .then(userCredential => {
-        if (userCredential && userCredential.user) {
-          // If getRedirectResult successfully authenticates a user,
-          // onAuthStateChanged will also fire with this user.
-          // We don't need to setUser here; let onAuthStateChanged be the single source of truth for user state.
-          console.log("Redirect sign-in successful for user:", userCredential.user.uid);
-        }
-        // If userCredential is null, it means no redirect operation was pending or it didn't result in a user.
-      })
       .catch(err => {
         console.error("Error processing redirect result:", err);
-        setError(err); // Set error state to display to the user if needed.
-      })
-      .finally(() => {
-        redirectProcessed = true;
-        checkLoadingComplete();
+        setError(err);
+        // Even on error, onAuthStateChanged should still give us the current (likely null) user state,
+        // and it's responsible for setting loading to false.
       });
 
     // Listen for auth state changes.
+    // This will be our single source of truth for setting user and stopping loading.
     const unsubscribe = onAuthStateChange(firebaseUser => {
       setUser(firebaseUser);
-      authStateEstablishedByObserver = true;
-      checkLoadingComplete();
+      setError(null); // Clear any previous redirect error if auth state changes successfully.
+      setLoading(false); // Auth state is now definitively known (user or null)
     });
 
     // Cleanup subscription on unmount.
