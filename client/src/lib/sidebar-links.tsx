@@ -1,12 +1,30 @@
 import {
   LayoutDashboard,
-  Layers, // For Habit Stacks
-  BookText, // For Journal
-  Search, // For Explore Content
+  Calendar,
+  Dumbbell,
+  Brain,
+  Apple,
+  Heart,
+  Users,
+  FileText,
+  Pill,
+  FlaskConical,
+  Scroll,
+  CandyCane,
+  ThumbsUp,
+  Layers,
+  LineChart,
+  Sparkles,
+  Zap, // Keep Zap for Explore
+  BedDouble,
+  Utensils,
+  Coins,
+  Lightbulb,
+  UserCircle2,
   BookOpen, // For Atomic Habits Guide
-  Share2, // For Integrations
-  // Keeping Zap as an alternative for Explore if Search is too generic
-  Zap,
+  Activity, // For Body Stats
+  Plug, // For Integrations
+  BookText // For Journal
 } from "lucide-react";
 
 export interface SidebarLink {
@@ -14,70 +32,148 @@ export interface SidebarLink {
   href: string;
   icon: React.ReactNode;
   submenu?: SidebarLink[];
-  sectionKey: string; // Renamed from 'section' for clarity with section titles
-  sectionTitle: string; // To group links under titles like "MAIN", "TOOLS"
+  section?: string; // 'main', 'learn', 'pillars', 'tools', 'community'
 }
 
 export const sidebarLinks: SidebarLink[] = [
-  // Section: MAIN
+  // Section: Main
   {
     title: "Dashboard",
     href: "/dashboard",
     icon: <LayoutDashboard className="h-5 w-5" />,
-    sectionKey: "main",
-    sectionTitle: "MAIN"
+    section: "main"
   },
-  // Section: TOOLS
+  {
+    title: "Habit Library", // Renamed from Habits
+    href: "/habit-library", // Updated href
+    icon: <Calendar className="h-5 w-5" />,
+    section: "main"
+  },
   {
     title: "Habit Stacks",
-    href: "/stacks", // New page
+    href: "/habit-stacks",
     icon: <Layers className="h-5 w-5" />,
-    sectionKey: "tools",
-    sectionTitle: "TOOLS"
+    section: "main"
   },
   {
-    title: "Journal",
-    href: "/journal", // New page
+    title: "Track Progress", // Renamed from Progress
+    href: "/progress-dashboard",
+    icon: <LineChart className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Integrations", // New link
+    href: "/integrations",
+    icon: <Plug className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Journal", // New link
+    href: "/journal",
     icon: <BookText className="h-5 w-5" />,
-    sectionKey: "tools",
-    sectionTitle: "TOOLS"
+    section: "main"
   },
-  // Section: LEARN
   {
-    title: "Explore Content",
+    title: "Explore", // New Explore link - keeping as per original
     href: "/explore",
-    icon: <Search className="h-5 w-5" />, // Or Zap
-    sectionKey: "learn",
-    sectionTitle: "LEARN"
+    icon: <Zap className="h-5 w-5" />,
+    section: "main"
+  },
+
+  // Section: Learn & Grow
+  {
+    title: "Principles",
+    href: "/principles",
+    icon: <Scroll className="h-5 w-5" />,
+    section: "learn"
+  },
+  {
+    title: "Research",
+    href: "/research",
+    icon: <FlaskConical className="h-5 w-5" />,
+    section: "learn"
   },
   {
     title: "Atomic Habits Guide",
-    href: "/learn/atomic-habits", // New path
+    href: "/learn/atomic-habits", // Corrected href
     icon: <BookOpen className="h-5 w-5" />,
-    sectionKey: "learn",
-    sectionTitle: "LEARN"
+    section: "learn"
   },
-  // Section: CONNECT
   {
-    title: "Integrations",
-    href: "/integrations", // New page
-    icon: <Share2 className="h-5 w-5" />,
-    sectionKey: "connect",
-    sectionTitle: "CONNECT"
+    title: "Sugar Dangers", // Moved
+    href: "/sugar",
+    icon: <CandyCane className="h-5 w-5" />,
+    section: "learn"
   },
-];
 
-// Helper function to group links by section for the sidebar component
-export const getGroupedSidebarLinks = () => {
-  const groups: { key: string; title: string; links: SidebarLink[] }[] = [];
-  const sectionMap = new Map<string, SidebarLink[]>();
+  // Section: Health Pillars (was Habit Categories)
+  {
+    title: "Workouts", // Renamed from Physical Training
+    href: "/workouts", // Corrected href
+    icon: <Dumbbell className="h-5 w-5" />,
+    section: "pillars"
+  },
+  {
+    title: "Nutrition & Fueling",
+    href: "/nutrition",
+    icon: <Utensils className="h-5 w-5" />,
+    section: "pillars"
+  },
+  {
+    title: "Sleep & Hygiene",
+    href: "/sleep", // Assuming this route exists or will be created
+    icon: <BedDouble className="h-5 w-5" />,
+    section: "pillars"
+  },
+  {
+    title: "Mental Acuity & Growth",
+    href: "/mental", // Assuming this route exists or will be created
+    icon: <Lightbulb className="h-5 w-5" />,
+    section: "pillars"
+  },
+  // Note: Relationships & Financial Habits could also be pillars or moved to a "Life Admin" section if desired.
+  // For now, I'll keep them out of this re-org to limit scope, they can be re-added.
 
-  for (const link of sidebarLinks) {
-    if (!sectionMap.has(link.sectionKey)) {
-      sectionMap.set(link.sectionKey, []);
-      groups.push({ key: link.sectionKey, title: link.sectionTitle, links: sectionMap.get(link.sectionKey)! });
-    }
-    sectionMap.get(link.sectionKey)!.push(link);
+  // Section: Tools & Extras
+  {
+    title: "Supplements",
+    href: "/supplements",
+    icon: <Pill className="h-5 w-5" />,
+    section: "tools"
+  },
+  {
+    title: "Gamification",
+    href: "/gamification",
+    icon: <Sparkles className="h-5 w-5" />,
+    section: "tools"
+  },
+  {
+    title: "Body Stats",
+    href: "/body-stats", // This page/route exists
+    icon: <Activity className="h-5 w-5" />,
+    section: "tools"
+  },
+
+  // Section: Community & Resources
+  {
+    title: "Experts",
+    href: "/experts",
+    icon: <ThumbsUp className="h-5 w-5" />,
+    section: "community"
+  },
+  {
+    title: "Community",
+    href: "/community",
+    icon: <Users className="h-5 w-5" />,
+    section: "community"
+  },
+  {
+    title: "Resources",
+    href: "/resources",
+    icon: <FileText className="h-5 w-5" />,
+    section: "community"
   }
-  return groups;
-};
+  // Removed for brevity in this reorg, can be added back if needed:
+  // { title: "Relationships & Community", href: "/relationships", icon: <UserCircle2 className="h-5 w-5" />, section: "pillars" },
+  // { title: "Financial Habits", href: "/financial", icon: <Coins className="h-5 w-5" />, section: "pillars" },
+];
