@@ -5,6 +5,7 @@ import {
   Search, // For Explore Content
   BookOpen, // For Atomic Habits Guide
   Share2, // For Integrations
+  TrendingUp, // For Progress Analytics
   // Keeping Zap as an alternative for Explore if Search is too generic
   Zap,
 } from "lucide-react";
@@ -29,15 +30,22 @@ export const sidebarLinks: SidebarLink[] = [
   },
   // Section: TOOLS
   {
+    title: "Progress Analytics",
+    href: "/progress",
+    icon: <TrendingUp className="h-5 w-5" />,
+    sectionKey: "tools",
+    sectionTitle: "TOOLS"
+  },
+  {
     title: "Habit Stacks",
-    href: "/stacks", // New page
+    href: "/stacks",
     icon: <Layers className="h-5 w-5" />,
     sectionKey: "tools",
     sectionTitle: "TOOLS"
   },
   {
     title: "Journal",
-    href: "/journal", // New page
+    href: "/journal",
     icon: <BookText className="h-5 w-5" />,
     sectionKey: "tools",
     sectionTitle: "TOOLS"
