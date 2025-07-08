@@ -1,6 +1,8 @@
+import React from 'react'; // Added missing React import
 // import { useState } from "react"; // Removed
 // import { Sidebar } from "@/components/layout/sidebar"; // Removed
 // import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
+import ContentPageLayout from '@/components/layout/ContentPageLayout'; // MOVED TO TOP
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -253,21 +255,226 @@ export default function HabitBuilding() {
   // Filter methods by category
   const buildingMethods = habitMethods.filter(method => method.category === "building");
   const trackingMethods = habitMethods.filter(method => method.category === "tracking");
+// Removed misplaced import from here
+
+// ... (interface definitions and data arrays remain the same, ensure they are within the component or scoped correctly) ...
+
+// Renamed component
+const HabitBuildingBasicsPage: React.FC = () => { // Ensure React is imported if not already
+
+  // Top books on habit building (assuming data is defined within this component scope or imported)
+  const habitBooks: HabitBook[] = [
+    {
+      id: "atomic-habits",
+      title: "Atomic Habits",
+      author: "James Clear",
+      description: "A bestseller that focuses on the idea that small, incremental changes (atomic habits) lead to remarkable results through compound growth.",
+      keyPrinciples: [
+        "Make it obvious (cue)",
+        "Make it attractive (craving)",
+        "Make it easy (response)",
+        "Make it satisfying (reward)"
+      ],
+      color: "bg-blue-100 border-blue-300"
+    },
+    {
+      id: "compound-effect",
+      title: "The Compound Effect",
+      author: "Darren Hardy",
+      description: "Reveals how small, daily choices compound over time to create significant life changes, emphasizing consistency and tracking.",
+      keyPrinciples: [
+        "Small, smart choices + consistency + time = radical difference",
+        "Track all actions and habits",
+        "Activate the momentum multiplier by building routines",
+        "Identify and change your core influences"
+      ],
+      color: "bg-indigo-100 border-indigo-300"
+    },
+    {
+      id: "power-of-habit",
+      title: "The Power of Habit",
+      author: "Charles Duhigg",
+      description: "Explores the science behind why habits exist and how they can be changed using the habit loop concept.",
+      keyPrinciples: [
+        "Identify the cue",
+        "Experiment with rewards",
+        "Isolate the craving",
+        "Have a plan (implementation intention)"
+      ],
+      color: "bg-purple-100 border-purple-300"
+    },
+    {
+      id: "tiny-habits",
+      title: "Tiny Habits",
+      author: "BJ Fogg",
+      description: "A behavior scientist's method for starting with incredibly small actions that are easy to do.",
+      keyPrinciples: [
+        "Behavior = Motivation + Ability + Prompt (B=MAP)",
+        "Make habits tiny to increase ability",
+        "Use existing routines as anchors",
+        "Celebrate small successes immediately"
+      ],
+      color: "bg-green-100 border-green-300"
+    },
+    {
+      id: "better-than-before",
+      title: "Better Than Before",
+      author: "Gretchen Rubin",
+      description: "Explores how we can change our habits by understanding ourselves better through the Four Tendencies framework.",
+      keyPrinciples: [
+        "Know yourself (Upholder, Questioner, Obliger, Rebel)",
+        "Different strategies work for different people",
+        "Convenience is a major driver of habits",
+        "Monitoring creates accountability"
+      ],
+      color: "bg-yellow-100 border-yellow-300"
+    },
+    {
+      id: "7-habits",
+      title: "The 7 Habits of Highly Effective People",
+      author: "Stephen Covey",
+      description: "Offers timeless principles for personal and interpersonal effectiveness that form the foundation of good habits.",
+      keyPrinciples: [
+        "Be proactive",
+        "Begin with the end in mind",
+        "Put first things first",
+        "Think win-win"
+      ],
+      color: "bg-red-100 border-red-300"
+    }
+  ];
+
+  // Effective methods for habit building (assuming data is defined within this component scope or imported)
+  const habitMethods: HabitMethod[] = [
+    {
+      id: "two-minute-rule",
+      name: "Two-Minute Rule / Micro-Habits",
+      description: "Make the starting ritual so easy that you can't say no. Begin with incredibly small actions that take less than two minutes.",
+      steps: [
+        "Scale down your habit to something that takes 2 minutes or less",
+        "Focus only on starting, not on finishing",
+        "Gradually increase duration once the habit is established",
+        "Example: Instead of 'read for an hour,' start with 'read one page'"
+      ],
+      category: "building",
+      icon: <Clock className="h-5 w-5 text-blue-500" />
+    },
+    {
+      id: "habit-stacking",
+      name: "Habit Stacking",
+      description: "Link a new habit to an existing one, using the existing habit as a trigger for the new one.",
+      steps: [
+        "Identify a current habit you do consistently",
+        "Choose a new habit you want to establish",
+        "Use the formula: After [current habit], I will [new habit]",
+        "Example: 'After I brush my teeth, I will do 5 push-ups'"
+      ],
+      category: "building",
+      icon: <Layers className="h-5 w-5 text-indigo-500" />
+    },
+    {
+      id: "implementation-intentions",
+      name: "Implementation Intentions",
+      description: "Be specific about when and where you'll perform a habit using if-then planning.",
+      steps: [
+        "Set a specific time and location",
+        "Use the formula: I will [behavior] at [time] in [location]",
+        "Create if-then plans for potential obstacles",
+        "Example: 'I will meditate at 7am in my bedroom'"
+      ],
+      category: "building",
+      icon: <Calendar className="h-5 w-5 text-purple-500" />
+    },
+    {
+      id: "dont-break-chain",
+      name: "Don't Break the Chain",
+      description: "Track consecutive days of completing a habit to build momentum and consistency.",
+      steps: [
+        "Mark each day you complete your habit on a calendar",
+        "Try to maintain an unbroken streak",
+        "Focus on not breaking the visual chain",
+        "If you miss a day, get back on track immediately"
+      ],
+      category: "tracking",
+      icon: <Link className="h-5 w-5 text-green-500" />
+    },
+    {
+      id: "habit-tracking",
+      name: "Habit Tracking Systems",
+      description: "Record your habits consistently using manual or digital methods to increase awareness and accountability.",
+      steps: [
+        "Choose a tracking method (app, journal, calendar)",
+        "Record each successful completion",
+        "Review progress regularly",
+        "Adjust your system as needed for sustainability"
+      ],
+      category: "tracking",
+      icon: <ListTodo className="h-5 w-5 text-red-500" />
+    },
+    {
+      id: "identity-based",
+      name: "Identity-Based Habits",
+      description: "Focus on becoming the type of person who performs the habit rather than just the outcome.",
+      steps: [
+        "Decide on the type of person you want to be",
+        "Reframe your goal as an identity ('I am a runner' vs 'I want to run')",
+        "Start with small behaviors that confirm this identity",
+        "Look for evidence that supports your new identity"
+      ],
+      category: "psychology",
+      icon: <Target className="h-5 w-5 text-amber-500" />
+    },
+    {
+      id: "environment-design",
+      name: "Environment Design",
+      description: "Modify your environment to make good habits obvious and bad habits invisible.",
+      steps: [
+        "Make cues for good habits visible in your environment",
+        "Remove triggers for bad habits from your space",
+        "Prepare your environment in advance (e.g., lay out gym clothes)",
+        "Use visual cues and reminders strategically"
+      ],
+      category: "psychology",
+      icon: <Eye className="h-5 w-5 text-teal-500" />
+    },
+    {
+      id: "reward-system",
+      name: "Reward System",
+      description: "Create immediate rewards for completing habits to make them more satisfying and reinforce behavior.",
+      steps: [
+        "Identify meaningful rewards that aren't counterproductive",
+        "Make rewards immediate after completing the habit",
+        "Start with external rewards if needed",
+        "Gradually shift to intrinsic rewards (pride, satisfaction)"
+      ],
+      category: "psychology",
+      icon: <Smile className="h-5 w-5 text-yellow-500" />
+    },
+    {
+      id: "accountability",
+      name: "Accountability Partners",
+      description: "Share your goals and progress with others to increase your commitment and consistency.",
+      steps: [
+        "Find a reliable accountability partner or group",
+        "Set up regular check-ins",
+        "Be specific about your commitments",
+        "Consider using stakes or consequences"
+      ],
+      category: "psychology",
+      icon: <Users className="h-5 w-5 text-pink-500" />
+    }
+  ];
+
+  const buildingMethods = habitMethods.filter(method => method.category === "building");
+  const trackingMethods = habitMethods.filter(method => method.category === "tracking");
   const psychologyMethods = habitMethods.filter(method => method.category === "psychology");
 
   return (
-    // Outer divs, Sidebar, MobileHeader removed
-          <div className="container mx-auto px-4 py-6 max-w-6xl">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-              <div>
-                <h1 className="text-3xl font-bold flex items-center gap-2">
-                  <BookOpen className="h-8 w-8 text-primary" />
-                  Habit Building: The Science & Practice
-                </h1>
-                <p className="text-gray-600 mt-1">Learn the proven methods for building lasting habits from world-class experts</p>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
+    <ContentPageLayout title="Habit Building Basics">
+      {/* Page Sub-header / Intro section */}
+      <div className="mb-6">
+        <p className="text-lg text-muted-foreground mt-1 dark:text-gray-400">Learn the proven methods for building lasting habits from world-class experts.</p>
+        <div className="flex flex-wrap gap-2 mt-4">
                 <Badge variant="outline" className="px-3 py-1 flex items-center gap-1">
                   <Sparkles className="h-3.5 w-3.5" />
                   <span>Evidence-Based</span>
@@ -673,6 +880,8 @@ export default function HabitBuilding() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+    </ContentPageLayout>
   );
-}
+};
+
+export default HabitBuildingBasicsPage;

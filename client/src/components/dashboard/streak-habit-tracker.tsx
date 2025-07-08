@@ -221,7 +221,10 @@ export function StreakHabitTracker() {
     setNewHabit({
       title: habit.title,
       description: habit.description,
-      icon: (habit.icon as any)?.type?.name?.toLowerCase() || 'activity',
+      // Safer access: If habit.icon is a string (key), use it.
+      // If it's a ReactNode, this is complex to reverse; default to 'activity' for the form.
+      // This component's internal Habit type defines icon as ReactNode, but its form state newHabit.icon is a string.
+      icon: typeof habit.icon === 'string' ? habit.icon : ((habit.icon as any)?.type?.name?.toLowerCase() || 'activity'),
       impact: habit.impact,
       effort: habit.effort,
       timeCommitment: habit.timeCommitment,
@@ -338,7 +341,8 @@ export function StreakHabitTracker() {
       setNewHabit({
         title: habitData.title,
         description: habitData.description,
-        icon: habitData.icon.type?.name?.toLowerCase() || 'activity',
+        // Safer access, assuming habitData.icon might be a string key or a ReactNode like object
+        icon: typeof habitData.icon === 'string' ? habitData.icon : (habitData.icon?.type?.name?.toLowerCase() || 'activity'),
         impact: habitData.impact || 7,
         effort: habitData.effort || 3,
         timeCommitment: habitData.timeCommitment || '10 min',

@@ -8,7 +8,7 @@ import TestPage from "@/pages/TestPage"; // Added for J-18
 import Canary2 from "@/pages/Canary2"; // Added for Canary 2 Test
 
 // Other page imports
-import DashboardPage from "@/pages/DashboardPage"; // Updated import for renamed dashboard
+import Dashboard from "@/pages/sortable-dashboard-new";
 import ExplorePage from "@/pages/explore"; // Import the new Explore page
 import AtomicHabitsGuidePage from "@/pages/atomic-habits-guide"; // Import Atomic Habits Guide page
 import Profile from "@/pages/profile";
@@ -25,29 +25,40 @@ import Supplements from "@/pages/supplements-unified";
 import FitnessTrackerConnect from "@/pages/fitness-tracker-connect";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
-import Principles from "@/pages/principles";
-import Sugar from "@/pages/sugar";
+// import Principles from "@/pages/principles"; // To be removed
+// import Sugar from "@/pages/sugar"; // To be removed
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
-import Progress from "@/pages/progress"; // Restored import
+import Progress from "@/pages/progress";
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
-import Motivation from "@/pages/motivation";
-import HabitLibraryPage from "@/pages/library/HabitLibraryPage"; // Import new HabitLibraryPage
+// import Motivation from "@/pages/motivation"; // Removed import for deleted motivation.tsx
 import Experts from "@/pages/experts-unified";
-import HabitBuilding from "@/pages/habit-building";
+import HabitBuildingBasicsPage from "@/pages/learn/habit-building-basics"; // Updated import
 import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
 import AIFeatures from "@/pages/ai-features";
 import FirebaseConfig from "@/pages/firebase-config";
-import { AppLayout } from "@/components/layout/AppLayout"; // Import AppLayout
+
+// New Page Imports
+import StacksPage from "@/pages/StacksPage";
+import JournalPage from "@/pages/JournalPage";
+import IntegrationsPage from "@/pages/IntegrationsPage";
+import OutliveSummaryPage from "@/pages/learn/outlive-summary";
+import DangersOfSugarPage from "@/pages/learn/dangers-of-sugar";
+import StoicPrinciplesPage from "@/pages/learn/stoic-principles";
+import ProgressPage from "@/pages/ProgressPage";
+import AICoachPage from "@/pages/AICoachPage"; // Import the new AICoachPage
+
+// Import AppLayout
+import { AppLayout } from "@/components/layout/AppLayout";
 
 
 // Route guard to protect pages that require authentication
-function PrivateRoute({ component: Component, pageTitle, ...rest }: any) { // Added pageTitle prop
+function PrivateRoute({ component: Component, ...rest }: any) {
   // --- FIX: Changed 'userLoading' to 'loading' to match the context provider ---
   const { user, loading } = useUser();
   const [location] = useLocation();
@@ -63,12 +74,7 @@ function PrivateRoute({ component: Component, pageTitle, ...rest }: any) { // Ad
   }
   
   // If there is a user, the component will be rendered within AppLayout.
-  // Note: pageTitle is passed here. Specific titles per route will be set below.
-  return (
-    <AppLayout pageTitle={pageTitle || "MaxiMost"}>
-      <Component {...rest} />
-    </AppLayout>
-  );
+  return <AppLayout><Component {...rest} /></AppLayout>;
 }
 
 function App() {
@@ -101,114 +107,118 @@ function App() {
       
       {/* Protected routes */}
       <Route path="/dashboard">
-        <PrivateRoute component={DashboardPage} pageTitle="Dashboard" />
+        <PrivateRoute component={Dashboard} />
       </Route>
-      <Route path="/explore">
-        <PrivateRoute component={ExplorePage} pageTitle="Explore" />
+      <Route path="/explore"> {/* Add route for ExplorePage */}
+        <PrivateRoute component={ExplorePage} />
       </Route>
       <Route path="/profile">
-        <PrivateRoute component={Profile} pageTitle="Profile" />
+        <PrivateRoute component={Profile} />
       </Route>
       <Route path="/workouts">
-        <PrivateRoute component={Workouts} pageTitle="Workouts" />
+        <PrivateRoute component={Workouts} />
       </Route>
       <Route path="/mind-spirit">
-        <PrivateRoute component={MindSpirit} pageTitle="Mind & Spirit" />
+        <PrivateRoute component={MindSpirit} />
       </Route>
       <Route path="/nutrition">
-        <PrivateRoute component={Nutrition} pageTitle="Nutrition" />
+        <PrivateRoute component={Nutrition} />
       </Route>
       <Route path="/resources">
-        <PrivateRoute component={Resources} pageTitle="Resources" />
+        <PrivateRoute component={Resources} />
       </Route>
       <Route path="/programs">
-        <PrivateRoute component={Programs} pageTitle="Programs" />
+        <PrivateRoute component={Programs} />
       </Route>
       <Route path="/tasks">
-        <PrivateRoute component={Tasks} pageTitle="Tasks" />
+        <PrivateRoute component={Tasks} />
       </Route>
-      {/* Updated /habits to /habit-library as per sidebar links */}
-      <Route path="/habit-library">
-         <PrivateRoute component={HabitLibraryPage} pageTitle="Habit Library" />
+      <Route path="/habits">
+        <PrivateRoute component={IntegratedHabits} />
       </Route>
       <Route path="/habit-tracker">
-        {/* This might be part of dashboard or a separate page for detailed tracking */}
-        <PrivateRoute component={HabitTracker} pageTitle="Habit Tracker" />
+        <PrivateRoute component={HabitTracker} />
       </Route>
       <Route path="/habit-stacks">
-        <PrivateRoute component={HabitStacks} pageTitle="Habit Stacks" />
+        <PrivateRoute component={HabitStacks} />
       </Route>
       <Route path="/ai-features">
-        <PrivateRoute component={AIFeatures} pageTitle="AI Features" />
+        <PrivateRoute component={AIFeatures} />
       </Route>
       <Route path="/supplements">
-        <PrivateRoute component={Supplements} pageTitle="Supplements" />
+        <PrivateRoute component={Supplements} />
       </Route>
       <Route path="/supplement-detail/:id">
-        <PrivateRoute component={SupplementDetail} pageTitle="Supplement Detail" />
+        <PrivateRoute component={SupplementDetail} />
       </Route>
       <Route path="/research">
-        <PrivateRoute component={Research} pageTitle="Research" />
+        <PrivateRoute component={Research} />
       </Route>
-      <Route path="/principles">
-        <PrivateRoute component={Principles} pageTitle="Principles" />
-      </Route>
-      <Route path="/sugar">
-        <PrivateRoute component={Sugar} pageTitle="Sugar Info" />
-      </Route>
+      {/* <Route path="/principles">
+        <PrivateRoute component={Principles} />
+      </Route> */} {/* Route removed */}
+      {/* <Route path="/sugar">
+        <PrivateRoute component={Sugar} />
+      </Route> */} {/* Route removed */}
       <Route path="/body-stats">
-        <PrivateRoute component={BodyStats} pageTitle="Body Stats" />
+        <PrivateRoute component={BodyStats} />
       </Route>
       <Route path="/community">
-        <PrivateRoute component={Community} pageTitle="Community" />
+        <PrivateRoute component={Community} />
       </Route>
       <Route path="/progress">
-        <PrivateRoute component={Progress} pageTitle="Progress Overview" />
+        <PrivateRoute component={ProgressPage} /> {/* Updated to new ProgressPage */}
       </Route>
-      {/* This is the "Track Progress" link from sidebar */}
       <Route path="/progress-dashboard">
-        <PrivateRoute component={ProgressDashboard} pageTitle="Track Progress" />
+        <PrivateRoute component={ProgressDashboard} />
       </Route>
-      <Route path="/motivation">
-        <PrivateRoute component={Motivation} pageTitle="Motivation" />
-      </Route>
+      {/* <Route path="/motivation"> <PrivateRoute component={Motivation} /> </Route> // Removed route for deleted motivation.tsx */}
       <Route path="/experts">
-        <PrivateRoute component={Experts} pageTitle="Experts" />
+        <PrivateRoute component={Experts} />
       </Route>
       <Route path="/experts-unified">
-        <PrivateRoute component={Experts} pageTitle="Experts" />
+        <PrivateRoute component={Experts} />
       </Route>
-      <Route path="/habit-building">
-        <PrivateRoute component={HabitBuilding} pageTitle="Habit Building" />
+      <Route path="/learn/habit-building-basics"> {/* Updated route and component */}
+        <PrivateRoute component={HabitBuildingBasicsPage} />
       </Route>
-      <Route path="/learn/atomic-habits">
-        <PrivateRoute component={AtomicHabitsGuidePage} pageTitle="Atomic Habits Guide" />
+      <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
+        <PrivateRoute component={AtomicHabitsGuidePage} />
+      </Route>
+      <Route path="/learn/outlive-summary">
+        <PrivateRoute component={OutliveSummaryPage} />
+      </Route>
+      <Route path="/learn/dangers-of-sugar">
+        <PrivateRoute component={DangersOfSugarPage} />
+      </Route>
+      <Route path="/learn/stoic-principles">
+        <PrivateRoute component={StoicPrinciplesPage} />
       </Route>
       <Route path="/branding">
-        <PrivateRoute component={Branding} pageTitle="Branding" />
+        <PrivateRoute component={Branding} />
       </Route>
-      {/* New routes from sidebar that need pages to be created later */}
-      <Route path="/integrations">
-        {/* TODO: Create IntegrationsPage component */}
-        <PrivateRoute component={() => <div>Integrations Page (TODO)</div>} pageTitle="Integrations" />
-      </Route>
-      <Route path="/journal">
-        {/* TODO: Create JournalPage component */}
-        <PrivateRoute component={() => <div>Journal Page (TODO)</div>} pageTitle="Journal" />
-      </Route>
-
-      {/* Public routes that should not have AppLayout */}
       <Route path="/contact" component={Contact} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/firebase-config" component={FirebaseConfig} />
       <Route path="/fitness-tracker-connect">
-         {/* Assuming this might be a modal or a specific flow, might not need full AppLayout if it's a focused connection step.
-             For now, applying AppLayout. Revisit if UX dictates otherwise. */}
-        <PrivateRoute component={FitnessTrackerConnect} pageTitle="Connect Fitness Tracker" />
+        <PrivateRoute component={FitnessTrackerConnect} />
       </Route>
 
-      {/* 404 Not Found route - this should ideally also use AppLayout if user is logged in and hits a bad private URL */}
-      {/* For now, keeping it simple. A more robust solution would check auth status here too. */}
+      {/* New IA Routes */}
+      <Route path="/stacks">
+        <PrivateRoute component={StacksPage} />
+      </Route>
+      <Route path="/journal">
+        <PrivateRoute component={JournalPage} />
+      </Route>
+      <Route path="/integrations">
+        <PrivateRoute component={IntegrationsPage} />
+      </Route>
+      <Route path="/coach">
+        <PrivateRoute component={AICoachPage} />
+      </Route>
+
+      {/* 404 Not Found route */}
       <Route component={NotFound} />
     </Switch>
   );

@@ -1384,7 +1384,7 @@ export default function Dashboard() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="ml-auto h-6 px-2 text-xs"
+                              className="ml-auto h-6 px-2.5 text-xs"
                               onClick={() => addQuickHabit("Negative Visualization", "brain", "mind", "Practice considering potential challenges", 9, 4)}
                             >
                               Add
@@ -1461,9 +1461,9 @@ export default function Dashboard() {
                 <DailyMotivation />
               </div>
             </div>
-          </PageContainer>
-        </main>
-      </div>
+          {/* Commenting out the stray </main> and </div> as AppLayout should handle this structure */}
+          {/* </main> */}
+      {/* </div> */}
       
       {/* Edit Habit Dialog */}
       <EditHabitDialog

@@ -53,8 +53,8 @@ import { getHabitIcon } from '@/components/ui/icons';
 import { PlusCircle } from 'lucide-react';
 
 interface SortableHabitViewProps {
-  habits: Habit[];
-  completions: any[]; // Replace with proper type
+  habits: Habit[]; // Each Habit object should contain its own 'completions: HabitCompletionEntry[]'
+  // completions prop is removed
   onToggleHabit: (habitId: string, date: Date, value?: number) => void; // Updated signature
   onAddHabit: () => void;
   onUpdateHabit?: (habit: Habit) => void;
@@ -65,7 +65,7 @@ interface SortableHabitViewProps {
 
 export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   habits,
-  completions,
+  // completions prop removed
   onToggleHabit,
   onAddHabit,
   onUpdateHabit,
@@ -108,14 +108,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
         ? habits.filter(h => !h.isAbsolute)
         : habits.filter(h => h.category === filterCategory);
   
-  // For completed status
-  const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    return completions.some(completion => 
-      completion.habitId === habitId && 
-      isSameDay(new Date(completion.date), date) &&
-      completion.completed
-    );
-  };
+  // Removed isHabitCompletedOnDate function, as completion data is now nested in each habit object.
+  // Child components like SortableHabit will use habit.completions directly.
   
   // Get appropriate frequency text
   const getFrequencyLabel = (frequency: string): string => {
@@ -307,8 +301,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               </div>  
             ) : (
               <DailyViewFixedUpdated
-                habits={filteredHabits}
-                completions={completions}
+                habits={filteredHabits} // Each habit in filteredHabits has its own .completions
+                // completions prop removed
                 currentDay={currentDay}
                 onToggleHabit={onToggleHabit}
                 onAddHabit={onAddHabit}
@@ -353,8 +347,8 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
             </div>
             
             <WeeklyTableViewFixedUpdated
-              habits={filteredHabits}
-              completions={completions}
+              habits={filteredHabits} // Each habit in filteredHabits has its own .completions
+              // completions prop removed
               weekDates={weekDates}
               onToggleHabit={onToggleHabit}
               onAddHabit={onAddHabit}
@@ -405,30 +399,42 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               ))}
               
               {calendarDays.map((day, index) => {
-                const isCurrentDisplayMonth = day.getMonth() === monthToDisplay.getMonth(); // Use monthToDisplay
+                const isCurrentDisplayMonth = day.getMonth() === monthToDisplay.getMonth();
                 const isTodayDate = isSameDay(day, today);
                 
-                const dailyCompletions = completions.filter(c =>
-                  isSameDay(new Date(c.date), day) && c.completed
-                );
+                let completedOnDayCount = 0;
+                let absoluteHabitsOnDayCount = 0;
+                let completedAbsoluteOnDayCount = 0;
+                let frequencyHabitsOnDayCount = 0;
+                let completedFrequencyOnDayCount = 0;
+
+                if (isCurrentDisplayMonth) {
+                  filteredHabits.forEach(habit => {
+                    const habitCompletions = habit.completions || [];
+                    const isCompleted = habitCompletions.some(c =>
+                      isSameDay(new Date(c.date), day) && c.value > 0
+                    );
+
+                    if (isCompleted) {
+                      completedOnDayCount++;
+                    }
+                    if (habit.isAbsolute) {
+                      absoluteHabitsOnDayCount++;
+                      if (isCompleted) {
+                        completedAbsoluteOnDayCount++;
+                      }
+                    } else {
+                      frequencyHabitsOnDayCount++;
+                      if (isCompleted) {
+                        completedFrequencyOnDayCount++;
+                      }
+                    }
+                  });
+                }
                 
-                const relevantHabitsForDay = filteredHabits; // Assuming all filtered habits apply to any day for now
-
-                const absoluteHabitsOnDay = relevantHabitsForDay.filter(h => h.isAbsolute);
-                const completedAbsoluteOnDay = absoluteHabitsOnDay.filter(h =>
-                  dailyCompletions.some(c => c.habitId === h.id)
-                ).length;
-
-                const frequencyHabitsOnDay = relevantHabitsForDay.filter(h => !h.isAbsolute);
-                const completedFrequencyOnDay = frequencyHabitsOnDay.filter(h =>
-                  dailyCompletions.some(c => c.habitId === h.id)
-                ).length;
-                
-                const totalHabitsForProgress = relevantHabitsForDay.length;
-                const totalCompletedForProgress = dailyCompletions.length; // This might be too simple if quantitative values matter for "done"
-
-                const completionPercentage = totalHabitsForProgress > 0
-                  ? (totalCompletedForProgress / totalHabitsForProgress) * 100
+                const totalHabitsForDay = filteredHabits.length; // Or only count habits relevant for *that* day if filtering by frequency
+                const completionPercentage = totalHabitsForDay > 0
+                  ? (completedOnDayCount / totalHabitsForDay) * 100
                   : 0;
                 
                 const handleDayCellClick = (clickedDate: Date) => {
@@ -471,26 +477,26 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                       {format(day, 'd')}
                     </div>
                     
-                    {isCurrentDisplayMonth && relevantHabitsForDay.length > 0 && (
+                    {isCurrentDisplayMonth && totalHabitsForDay > 0 && ( // Use totalHabitsForDay
                       <div className="mt-1 space-y-1">
-                        {absoluteHabitsOnDay.length > 0 && (
+                        {absoluteHabitsOnDayCount > 0 && (
                           <div className="flex items-center justify-between text-xs">
-                            <span className={`${completedAbsoluteOnDay === absoluteHabitsOnDay.length ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-neutral-400'}`}>
+                            <span className={`${completedAbsoluteOnDayCount === absoluteHabitsOnDayCount ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-neutral-400'}`}>
                               Daily
                             </span>
-                            <span className={`font-semibold ${completedAbsoluteOnDay === absoluteHabitsOnDay.length ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-neutral-300'}`}>
-                              {completedAbsoluteOnDay}/{absoluteHabitsOnDay.length}
+                            <span className={`font-semibold ${completedAbsoluteOnDayCount === absoluteHabitsOnDayCount ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-neutral-300'}`}>
+                              {completedAbsoluteOnDayCount}/{absoluteHabitsOnDayCount}
                             </span>
                           </div>
                         )}
                         
-                        {frequencyHabitsOnDay.length > 0 && (
+                        {frequencyHabitsOnDayCount > 0 && (
                            <div className="flex items-center justify-between text-xs">
-                            <span className={`${completedFrequencyOnDay > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-neutral-400'}`}>
+                            <span className={`${completedFrequencyOnDayCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-neutral-400'}`}>
                               Freq.
                             </span>
-                            <span className={`font-semibold ${completedFrequencyOnDay > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-neutral-300'}`}>
-                              {completedFrequencyOnDay}/{frequencyHabitsOnDay.length}
+                            <span className={`font-semibold ${completedFrequencyOnDayCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-neutral-300'}`}>
+                              {completedFrequencyOnDayCount}/{frequencyHabitsOnDayCount}
                             </span>
                           </div>
                         )}

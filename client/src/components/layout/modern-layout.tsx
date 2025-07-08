@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sidebar } from "./sidebar"; // Corrected import path
+import { Sidebar } from "./Sidebar"; // Corrected import
 import { Link } from "wouter";
 import { Bell, LogOut, Settings, User } from "lucide-react";
 import { FirebaseUserComponent } from "@/components/auth/firebase-user";

@@ -320,7 +320,7 @@ export function EditHabitDialog({
             <Input
               id="title"
               value={editedHabit.title}
-              onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value.replace(/\u004F$/, '')})}
+              onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value})}
               className="col-span-3"
               placeholder="Habit name"
             />

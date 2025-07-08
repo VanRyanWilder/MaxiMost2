@@ -33,8 +33,8 @@ export default function Login() {
       const user = await signInWithEmail(email, password);
       if (user) {
         // Firebase auth state is handled by onAuthStateChanged in UserProvider.
-        // No need to call context's mock login anymore.
-        setLocation("/dashboard");
+        // UserProvider and App.tsx routing will handle navigation to /dashboard.
+        // setLocation("/dashboard"); // REMOVED
       }
     } catch (error: any) {
       console.error("Email login error:", error);
@@ -72,8 +72,8 @@ export default function Login() {
 
       if (user) {
         // Firebase auth state is handled by onAuthStateChanged in UserProvider.
-        // No need to call context's mock login anymore.
-        setLocation("/dashboard");
+        // UserProvider and App.tsx routing will handle navigation to /dashboard.
+        // setLocation("/dashboard"); // REMOVED
       }
     } catch (error) {
       console.error("Social login error:", error);
@@ -159,7 +159,9 @@ export default function Login() {
                 setError(null); // Clear previous errors
                 const user = await signInAnonymously();
                 if (user) {
-                  setLocation("/dashboard");
+                  // Firebase auth state is handled by onAuthStateChanged in UserProvider.
+                  // UserProvider and App.tsx routing will handle navigation to /dashboard.
+                  // setLocation("/dashboard"); // REMOVED
                 } else {
                   setError("Failed to login as guest. Please try again.");
                 }
