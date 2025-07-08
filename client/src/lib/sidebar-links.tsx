@@ -6,6 +6,7 @@ import {
   BookOpen, // For Atomic Habits Guide
   Share2, // For Integrations
   TrendingUp, // For Progress Analytics
+  MessageCircle, // For AI Coach
   // Keeping Zap as an alternative for Explore if Search is too generic
   Zap,
 } from "lucide-react";
@@ -47,6 +48,13 @@ export const sidebarLinks: SidebarLink[] = [
     title: "Journal",
     href: "/journal",
     icon: <BookText className="h-5 w-5" />,
+    sectionKey: "tools",
+    sectionTitle: "TOOLS"
+  },
+  {
+    title: "AI Coach",
+    href: "/coach",
+    icon: <MessageCircle className="h-5 w-5" />,
     sectionKey: "tools",
     sectionTitle: "TOOLS"
   },

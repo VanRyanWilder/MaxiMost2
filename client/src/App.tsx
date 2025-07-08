@@ -50,7 +50,8 @@ import IntegrationsPage from "@/pages/IntegrationsPage";
 import OutliveSummaryPage from "@/pages/learn/outlive-summary";
 import DangersOfSugarPage from "@/pages/learn/dangers-of-sugar";
 import StoicPrinciplesPage from "@/pages/learn/stoic-principles";
-import ProgressPage from "@/pages/ProgressPage"; // Import the new ProgressPage
+import ProgressPage from "@/pages/ProgressPage";
+import AICoachPage from "@/pages/AICoachPage"; // Import the new AICoachPage
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -212,6 +213,9 @@ function App() {
       </Route>
       <Route path="/integrations">
         <PrivateRoute component={IntegrationsPage} />
+      </Route>
+      <Route path="/coach">
+        <PrivateRoute component={AICoachPage} />
       </Route>
 
       {/* 404 Not Found route */}
