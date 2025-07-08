@@ -1,6 +1,8 @@
+import React from 'react'; // Added missing React import
 // import { useState } from "react"; // Removed
 // import { Sidebar } from "@/components/layout/sidebar"; // Removed
 // import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
+import ContentPageLayout from '@/components/layout/ContentPageLayout'; // MOVED TO TOP
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -253,12 +255,12 @@ export default function HabitBuilding() {
   // Filter methods by category
   const buildingMethods = habitMethods.filter(method => method.category === "building");
   const trackingMethods = habitMethods.filter(method => method.category === "tracking");
-import ContentPageLayout from '@/components/layout/ContentPageLayout'; // Added import
+// Removed misplaced import from here
 
 // ... (interface definitions and data arrays remain the same, ensure they are within the component or scoped correctly) ...
 
 // Renamed component
-const HabitBuildingBasicsPage: React.FC = () => {
+const HabitBuildingBasicsPage: React.FC = () => { // Ensure React is imported if not already
 
   // Top books on habit building (assuming data is defined within this component scope or imported)
   const habitBooks: HabitBook[] = [
