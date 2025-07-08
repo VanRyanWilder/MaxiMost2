@@ -86,6 +86,13 @@ export const sidebarLinks: SidebarLink[] = [
     sectionKey: "learn",
     sectionTitle: "LEARN"
   },
+  {
+    title: "Habit Building Basics",
+    href: "/learn/habit-building-basics",
+    icon: <BookOpen className="h-5 w-5" />,
+    sectionKey: "learn",
+    sectionTitle: "LEARN"
+  },
   // Section: CONNECT
   {
     title: "Integrations",

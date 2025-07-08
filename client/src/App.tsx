@@ -25,8 +25,8 @@ import Supplements from "@/pages/supplements-unified";
 import FitnessTrackerConnect from "@/pages/fitness-tracker-connect";
 import SupplementDetail from "@/pages/supplement-detail";
 import Research from "@/pages/research";
-import Principles from "@/pages/principles";
-import Sugar from "@/pages/sugar";
+// import Principles from "@/pages/principles"; // To be removed
+// import Sugar from "@/pages/sugar"; // To be removed
 import BodyStats from "@/pages/body-stats";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -37,7 +37,7 @@ import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
 // import Motivation from "@/pages/motivation"; // Removed import for deleted motivation.tsx
 import Experts from "@/pages/experts-unified";
-import HabitBuilding from "@/pages/habit-building";
+import HabitBuildingBasicsPage from "@/pages/learn/habit-building-basics"; // Updated import
 import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
 import AIFeatures from "@/pages/ai-features";
@@ -153,12 +153,12 @@ function App() {
       <Route path="/research">
         <PrivateRoute component={Research} />
       </Route>
-      <Route path="/principles">
+      {/* <Route path="/principles">
         <PrivateRoute component={Principles} />
-      </Route>
-      <Route path="/sugar">
+      </Route> */} {/* Route removed */}
+      {/* <Route path="/sugar">
         <PrivateRoute component={Sugar} />
-      </Route>
+      </Route> */} {/* Route removed */}
       <Route path="/body-stats">
         <PrivateRoute component={BodyStats} />
       </Route>
@@ -178,8 +178,8 @@ function App() {
       <Route path="/experts-unified">
         <PrivateRoute component={Experts} />
       </Route>
-      <Route path="/habit-building">
-        <PrivateRoute component={HabitBuilding} />
+      <Route path="/learn/habit-building-basics"> {/* Updated route and component */}
+        <PrivateRoute component={HabitBuildingBasicsPage} />
       </Route>
       <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
         <PrivateRoute component={AtomicHabitsGuidePage} />

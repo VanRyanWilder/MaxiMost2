@@ -1,21 +1,25 @@
 import React from 'react';
-import { PageContainer } from '@/components/layout/page-container';
+import ContentPageLayout from '@/components/layout/ContentPageLayout'; // Corrected import path
 
 const DangersOfSugarPage: React.FC = () => {
   return (
-    <PageContainer>
-      <div className="py-6">
-        <h1 className="text-3xl font-bold mb-4">The Dangers of Sugar</h1>
-        <p className="text-muted-foreground">
-          This page will detail the health risks associated with high sugar consumption.
-        </p>
-        {/* Placeholder content */}
-        <div className="mt-6 space-y-4">
-          <p>Topics covered will include metabolic health, inflammation, hidden sugars, and strategies for reduction.</p>
-          <p>Content coming soon.</p>
-        </div>
+    <ContentPageLayout title="The Dangers of Sugar">
+      <p className="text-lg text-muted-foreground mb-6">
+        This page will detail the health risks associated with high sugar consumption and provide actionable insights.
+      </p>
+      {/* Placeholder content */}
+      <div className="space-y-4">
+        <p>Key areas to be discussed:</p>
+        <ul className="list-disc list-inside space-y-1">
+          <li>Impact on Metabolic Health (Insulin Resistance, Type 2 Diabetes).</li>
+          <li>Link to Chronic Inflammation and Disease.</li>
+          <li>Hidden Sugars in Common Foods and Beverages.</li>
+          <li>Effects on Brain Function and Mood.</li>
+          <li>Strategies for Reducing Sugar Intake and Healthier Alternatives.</li>
+        </ul>
+        <p>Detailed information, scientific backing, and practical tips will be provided soon.</p>
       </div>
-    </PageContainer>
+    </ContentPageLayout>
   );
 };
 
