@@ -8,7 +8,7 @@ import TestPage from "@/pages/TestPage"; // Added for J-18
 import Canary2 from "@/pages/Canary2"; // Added for Canary 2 Test
 
 // Other page imports
-import Dashboard from "@/pages/sortable-dashboard-new";
+import DashboardPage from "@/pages/DashboardPage"; // Updated import for renamed dashboard
 import ExplorePage from "@/pages/explore"; // Import the new Explore page
 import AtomicHabitsGuidePage from "@/pages/atomic-habits-guide"; // Import Atomic Habits Guide page
 import Profile from "@/pages/profile";
@@ -32,20 +32,22 @@ import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import Community from "@/pages/community";
 import Pricing from "@/pages/pricing";
-import Progress from "@/pages/progress";
+import Progress from "@/pages/progress"; // Restored import
 import ProgressDashboard from "@/pages/progress-dashboard";
 import Gamification from "@/pages/gamification";
 import Motivation from "@/pages/motivation";
+import HabitLibraryPage from "@/pages/library/HabitLibraryPage"; // Import new HabitLibraryPage
 import Experts from "@/pages/experts-unified";
 import HabitBuilding from "@/pages/habit-building";
 import Branding from "@/pages/branding";
 import Contact from "@/pages/contact";
 import AIFeatures from "@/pages/ai-features";
 import FirebaseConfig from "@/pages/firebase-config";
+import { AppLayout } from "@/components/layout/AppLayout"; // Import AppLayout
 
 
 // Route guard to protect pages that require authentication
-function PrivateRoute({ component: Component, ...rest }: any) {
+function PrivateRoute({ component: Component, pageTitle, ...rest }: any) { // Added pageTitle prop
   // --- FIX: Changed 'userLoading' to 'loading' to match the context provider ---
   const { user, loading } = useUser();
   const [location] = useLocation();
@@ -60,8 +62,13 @@ function PrivateRoute({ component: Component, ...rest }: any) {
     return <Redirect to={`/login?redirect=${encodeURIComponent(location)}`} />;
   }
   
-  // If there is a user, the component will be rendered.
-  return <Component {...rest} />;
+  // If there is a user, the component will be rendered within AppLayout.
+  // Note: pageTitle is passed here. Specific titles per route will be set below.
+  return (
+    <AppLayout pageTitle={pageTitle || "MaxiMost"}>
+      <Component {...rest} />
+    </AppLayout>
+  );
 }
 
 function App() {
@@ -94,97 +101,114 @@ function App() {
       
       {/* Protected routes */}
       <Route path="/dashboard">
-        <PrivateRoute component={Dashboard} />
+        <PrivateRoute component={DashboardPage} pageTitle="Dashboard" />
       </Route>
-      <Route path="/explore"> {/* Add route for ExplorePage */}
-        <PrivateRoute component={ExplorePage} />
+      <Route path="/explore">
+        <PrivateRoute component={ExplorePage} pageTitle="Explore" />
       </Route>
       <Route path="/profile">
-        <PrivateRoute component={Profile} />
+        <PrivateRoute component={Profile} pageTitle="Profile" />
       </Route>
       <Route path="/workouts">
-        <PrivateRoute component={Workouts} />
+        <PrivateRoute component={Workouts} pageTitle="Workouts" />
       </Route>
       <Route path="/mind-spirit">
-        <PrivateRoute component={MindSpirit} />
+        <PrivateRoute component={MindSpirit} pageTitle="Mind & Spirit" />
       </Route>
       <Route path="/nutrition">
-        <PrivateRoute component={Nutrition} />
+        <PrivateRoute component={Nutrition} pageTitle="Nutrition" />
       </Route>
       <Route path="/resources">
-        <PrivateRoute component={Resources} />
+        <PrivateRoute component={Resources} pageTitle="Resources" />
       </Route>
       <Route path="/programs">
-        <PrivateRoute component={Programs} />
+        <PrivateRoute component={Programs} pageTitle="Programs" />
       </Route>
       <Route path="/tasks">
-        <PrivateRoute component={Tasks} />
+        <PrivateRoute component={Tasks} pageTitle="Tasks" />
       </Route>
-      <Route path="/habits">
-        <PrivateRoute component={IntegratedHabits} />
+      {/* Updated /habits to /habit-library as per sidebar links */}
+      <Route path="/habit-library">
+         <PrivateRoute component={HabitLibraryPage} pageTitle="Habit Library" />
       </Route>
       <Route path="/habit-tracker">
-        <PrivateRoute component={HabitTracker} />
+        {/* This might be part of dashboard or a separate page for detailed tracking */}
+        <PrivateRoute component={HabitTracker} pageTitle="Habit Tracker" />
       </Route>
       <Route path="/habit-stacks">
-        <PrivateRoute component={HabitStacks} />
+        <PrivateRoute component={HabitStacks} pageTitle="Habit Stacks" />
       </Route>
       <Route path="/ai-features">
-        <PrivateRoute component={AIFeatures} />
+        <PrivateRoute component={AIFeatures} pageTitle="AI Features" />
       </Route>
       <Route path="/supplements">
-        <PrivateRoute component={Supplements} />
+        <PrivateRoute component={Supplements} pageTitle="Supplements" />
       </Route>
       <Route path="/supplement-detail/:id">
-        <PrivateRoute component={SupplementDetail} />
+        <PrivateRoute component={SupplementDetail} pageTitle="Supplement Detail" />
       </Route>
       <Route path="/research">
-        <PrivateRoute component={Research} />
+        <PrivateRoute component={Research} pageTitle="Research" />
       </Route>
       <Route path="/principles">
-        <PrivateRoute component={Principles} />
+        <PrivateRoute component={Principles} pageTitle="Principles" />
       </Route>
       <Route path="/sugar">
-        <PrivateRoute component={Sugar} />
+        <PrivateRoute component={Sugar} pageTitle="Sugar Info" />
       </Route>
       <Route path="/body-stats">
-        <PrivateRoute component={BodyStats} />
+        <PrivateRoute component={BodyStats} pageTitle="Body Stats" />
       </Route>
       <Route path="/community">
-        <PrivateRoute component={Community} />
+        <PrivateRoute component={Community} pageTitle="Community" />
       </Route>
       <Route path="/progress">
-        <PrivateRoute component={Progress} />
+        <PrivateRoute component={Progress} pageTitle="Progress Overview" />
       </Route>
+      {/* This is the "Track Progress" link from sidebar */}
       <Route path="/progress-dashboard">
-        <PrivateRoute component={ProgressDashboard} />
+        <PrivateRoute component={ProgressDashboard} pageTitle="Track Progress" />
       </Route>
       <Route path="/motivation">
-        <PrivateRoute component={Motivation} />
+        <PrivateRoute component={Motivation} pageTitle="Motivation" />
       </Route>
       <Route path="/experts">
-        <PrivateRoute component={Experts} />
+        <PrivateRoute component={Experts} pageTitle="Experts" />
       </Route>
       <Route path="/experts-unified">
-        <PrivateRoute component={Experts} />
+        <PrivateRoute component={Experts} pageTitle="Experts" />
       </Route>
       <Route path="/habit-building">
-        <PrivateRoute component={HabitBuilding} />
+        <PrivateRoute component={HabitBuilding} pageTitle="Habit Building" />
       </Route>
-      <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
-        <PrivateRoute component={AtomicHabitsGuidePage} />
+      <Route path="/learn/atomic-habits">
+        <PrivateRoute component={AtomicHabitsGuidePage} pageTitle="Atomic Habits Guide" />
       </Route>
       <Route path="/branding">
-        <PrivateRoute component={Branding} />
+        <PrivateRoute component={Branding} pageTitle="Branding" />
       </Route>
+      {/* New routes from sidebar that need pages to be created later */}
+      <Route path="/integrations">
+        {/* TODO: Create IntegrationsPage component */}
+        <PrivateRoute component={() => <div>Integrations Page (TODO)</div>} pageTitle="Integrations" />
+      </Route>
+      <Route path="/journal">
+        {/* TODO: Create JournalPage component */}
+        <PrivateRoute component={() => <div>Journal Page (TODO)</div>} pageTitle="Journal" />
+      </Route>
+
+      {/* Public routes that should not have AppLayout */}
       <Route path="/contact" component={Contact} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/firebase-config" component={FirebaseConfig} />
       <Route path="/fitness-tracker-connect">
-        <PrivateRoute component={FitnessTrackerConnect} />
+         {/* Assuming this might be a modal or a specific flow, might not need full AppLayout if it's a focused connection step.
+             For now, applying AppLayout. Revisit if UX dictates otherwise. */}
+        <PrivateRoute component={FitnessTrackerConnect} pageTitle="Connect Fitness Tracker" />
       </Route>
 
-      {/* 404 Not Found route */}
+      {/* 404 Not Found route - this should ideally also use AppLayout if user is logged in and hits a bad private URL */}
+      {/* For now, keeping it simple. A more robust solution would check auth status here too. */}
       <Route component={NotFound} />
     </Switch>
   );

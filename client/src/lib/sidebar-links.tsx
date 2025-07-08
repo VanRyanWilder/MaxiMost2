@@ -22,7 +22,9 @@ import {
   Lightbulb,
   UserCircle2,
   BookOpen, // For Atomic Habits Guide
-  Activity // For Body Stats
+  Activity, // For Body Stats
+  Plug, // For Integrations
+  BookText // For Journal
 } from "lucide-react";
 
 export interface SidebarLink {
@@ -42,8 +44,8 @@ export const sidebarLinks: SidebarLink[] = [
     section: "main"
   },
   {
-    title: "Habits",
-    href: "/habits",
+    title: "Habit Library", // Renamed from Habits
+    href: "/habit-library", // Updated href
     icon: <Calendar className="h-5 w-5" />,
     section: "main"
   },
@@ -54,13 +56,25 @@ export const sidebarLinks: SidebarLink[] = [
     section: "main"
   },
   {
-    title: "Progress",
+    title: "Track Progress", // Renamed from Progress
     href: "/progress-dashboard",
     icon: <LineChart className="h-5 w-5" />,
     section: "main"
   },
   {
-    title: "Explore", // New Explore link
+    title: "Integrations", // New link
+    href: "/integrations",
+    icon: <Plug className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Journal", // New link
+    href: "/journal",
+    icon: <BookText className="h-5 w-5" />,
+    section: "main"
+  },
+  {
+    title: "Explore", // New Explore link - keeping as per original
     href: "/explore",
     icon: <Zap className="h-5 w-5" />,
     section: "main"
@@ -81,7 +95,7 @@ export const sidebarLinks: SidebarLink[] = [
   },
   {
     title: "Atomic Habits Guide",
-    href: "/atomic-habits-guide",
+    href: "/learn/atomic-habits", // Corrected href
     icon: <BookOpen className="h-5 w-5" />,
     section: "learn"
   },
@@ -94,8 +108,8 @@ export const sidebarLinks: SidebarLink[] = [
 
   // Section: Health Pillars (was Habit Categories)
   {
-    title: "Physical Training",
-    href: "/physical", // Assuming this route exists or will be created
+    title: "Workouts", // Renamed from Physical Training
+    href: "/workouts", // Corrected href
     icon: <Dumbbell className="h-5 w-5" />,
     section: "pillars"
   },

@@ -17,7 +17,7 @@ interface SidebarProps {
   setIsSidebarOpen: (open: boolean) => void;
 }
 
-export function ModernSidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
+export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) { // Renamed component
   const [location] = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     main: true,

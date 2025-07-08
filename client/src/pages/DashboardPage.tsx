@@ -2,12 +2,12 @@
 import { useState, useEffect, useCallback } from "react";
 // ... other imports ...
 import { cleanHabitTitle } from "@/utils/clean-habit-title";
-import { Sidebar } from "@/components/layout/sidebar";
-import { useTheme } from "@/components/theme-provider";
-import { MobileHeader } from "@/components/layout/mobile-header";
-import { PageContainer } from "@/components/layout/page-container";
-import { HeaderWithSettings } from "@/components/layout/header-with-settings";
-import { SettingsProvider } from "@/components/settings/settings-panel";
+// import { Sidebar } from "@/components/layout/sidebar"; // Removed, AppLayout handles sidebar
+import { useTheme } from "@/components/theme-provider"; // Theme provider might still be needed if not global
+// import { MobileHeader } from "@/components/layout/mobile-header"; // Removed
+// import { PageContainer } from "@/components/layout/page-container"; // Removed
+// import { HeaderWithSettings } from "@/components/layout/header-with-settings"; // Removed
+// import { SettingsProvider } from "@/components/settings/settings-panel"; // Removed
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,10 +20,10 @@ import { Check, Moon, CircleDollarSign, Users, AlertCircle, Loader2, Activity, C
 import { SortableHabit } from "@/components/dashboard/sortable-habit-new";
 import { IconPicker } from "@/components/ui/icon-picker";
 import { DailyMotivation } from "@/components/dashboard/daily-motivation"; // Added back for dashboard
-import { HabitLibrary } from "@/components/dashboard/habit-library-new";
+// import { HabitLibrary } from "@/components/dashboard/habit-library-new"; // Moved to HabitLibraryPage
 // import { TopRatedSupplements } from "@/components/dashboard/top-rated-supplements"; // Moved to Explore page
 import { SortableHabitViewModes } from "@/components/dashboard/sortable-habit-view-modes";
-import { HabitProgressVisualization } from "@/components/dashboard/habit-progress-visualization";
+// import { HabitProgressVisualization } from "@/components/dashboard/habit-progress-visualization"; // To be moved
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
 import { EditHabitDialog } from "@/components/dashboard/edit-habit-dialog-fixed-new";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
@@ -46,8 +46,8 @@ const toDate = (timestamp: FirestoreTimestamp | Date | string): Date => {
   return new Date(timestamp as any);
 };
 
-export default function SortableDashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+export default function DashboardPage() { // Renamed component
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Removed as AppLayout handles sidebar state
   const [currentDate, setCurrentDate] = useState(new Date());
   const [habits, setHabits] = useState<FirestoreHabit[]>([]);
   const [isLoadingHabits, setIsLoadingHabits] = useState<boolean>(true);
@@ -384,40 +384,43 @@ export default function SortableDashboard() {
     </Card>
   );
 
-  const handleAddFromLibrary = async (habitTemplate: any) => {
-    if (!user) {
-      toast({ title: "Authentication Error", description: "You must be logged in to add habits.", variant: "destructive" });
-      return;
-    }
-
-    // Construct the payload for the addHabit function
-    // The habitTemplate comes from habitSuggestions in habit-library-new.tsx
-    const newHabitData = {
-      title: habitTemplate.title,
-      description: habitTemplate.description || "",
-      category: habitTemplate.category as HabitCategory, // Ensure type assertion if necessary
-      type: habitTemplate.type || "binary", // Default to binary if not specified
-      targetValue: habitTemplate.type === "quantitative" ? habitTemplate.targetValue : undefined,
-      targetUnit: habitTemplate.type === "quantitative" ? habitTemplate.targetUnit : undefined,
-      isBadHabit: habitTemplate.isBadHabit || false,
-      trigger: habitTemplate.isBadHabit ? habitTemplate.trigger : undefined,
-      replacementHabit: habitTemplate.isBadHabit ? habitTemplate.replacementHabit : undefined,
-      icon: habitTemplate.icon || "activity",
-      iconColor: habitTemplate.iconColor || "gray",
-      impact: habitTemplate.impact || 5,
-      effort: habitTemplate.effort || 2,
-      timeCommitment: habitTemplate.timeCommitment || "5 min",
-      frequency: habitTemplate.frequency as HabitFrequency || "daily", // Ensure type assertion
-      isAbsolute: typeof habitTemplate.isAbsolute === 'boolean' ? habitTemplate.isAbsolute : (habitTemplate.frequency === 'daily'),
-    };
-
-    // Call the existing addHabit function which handles API call and state update
-    await addHabit(newHabitData);
-  };
+  // handleAddFromLibrary was moved to HabitLibraryPage.tsx
 
   return (
-    <SettingsProvider>
-      <div className="flex min-h-screen bg-background"><Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} /><main className="flex-1"><PageContainer><div className="flex justify-end items-center mb-4"><HeaderWithSettings /></div><div className="flex flex-col lg:flex-row gap-6"><div className="flex-1"><Card className="mb-8"><CardHeader className="pb-2"><div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"><CardTitle className="text-lg font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle></div></CardHeader><CardContent><Tabs defaultValue="tracker" className="w-full"><TabsList className="mb-4 w-full sm:w-auto grid grid-cols-2"><TabsTrigger value="tracker" className="flex items-center gap-1"><CheckSquare className="h-4 w-4" /><span>Habit Tracker</span></TabsTrigger><TabsTrigger value="progress" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /><span>Progress Visualization</span></TabsTrigger></TabsList><TabsContent value="tracker" className="mt-0">{habitContent}</TabsContent><TabsContent value="progress" className="mt-0"><HabitProgressVisualization habits={habits} /></TabsContent></Tabs></CardContent></Card></div><div className="w-full lg:w-80 space-y-6">{dailyMotivationCard}<HabitLibrary onAddHabit={handleAddFromLibrary} /></div></div></PageContainer></main></div>
+    // SettingsProvider might be needed if settings UI is still part of this page,
+    // or if components used here rely on its context.
+    // For now, assuming AppLayout or specific settings pages will handle this.
+    // If specific settings components are used directly here, SettingsProvider might need to stay or be moved.
+    // Sidebar, PageContainer, HeaderWithSettings are removed as AppLayout handles this.
+    <>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1">
+          {/* This Card contains Habit Tracker and Progress Visualization (to be moved) */}
+          <Card className="mb-8">
+            <CardHeader className="pb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <CardTitle className="text-lg font-semibold">
+                  Habit Dashboard
+                  {!isLoadingHabits && !loadHabitsError && user && (
+                    <Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>
+                  )}
+                </CardTitle>
+                {/* Add Habit Button can go here if not in SortableHabitViewModes */}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Tabs are removed as Progress Visualization is moved. Only Habit Tracker remains here. */}
+              {/* If other views for habits are needed on dashboard, Tabs can be re-introduced */}
+              {habitContent}
+            </CardContent>
+          </Card>
+        </div>
+        <div className="w-full lg:w-80 space-y-6">
+          {/* Daily Spark / Motivation */}
+          {dailyMotivationCard}
+          {/* HabitLibrary component was moved to HabitLibraryPage.tsx */}
+        </div>
+      </div>
       <ConfettiCelebration trigger={showPerfectDayConfetti} type="perfectDay" onComplete={() => setShowPerfectDayConfetti(false)} />
       <ConfettiCelebration trigger={showPerfectWeekConfetti} type="perfectWeek" onComplete={() => setShowPerfectWeekConfetti(false)} />
       <EditHabitDialog
