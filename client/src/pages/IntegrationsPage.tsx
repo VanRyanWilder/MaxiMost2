@@ -1,14 +1,13 @@
-import React from 'react';
-
 import React, { useState } from 'react';
 import { TrackerCard } from '@/components/integrations/TrackerCard';
-import { ConnectionModal } from '@/components/integrations/ConnectionModal'; // Import the modal
-import { Smartphone, Watch, Activity } from 'lucide-react'; // Example icons
+import { ConnectionModal } from '@/components/integrations/ConnectionModal';
+import { PageContainer } from '@/components/layout/page-container';
+import { Smartphone, Watch, Activity } from 'lucide-react';
 
 interface TrackerConfig {
   id: string;
   serviceName: string;
-  logoPlaceholder: React.ReactNode; // Using ReactNode for more flexibility (e.g. icons or styled text)
+  logoPlaceholder: React.ReactNode;
   description: string;
 }
 
@@ -22,12 +21,9 @@ const initialTrackers: TrackerConfig[] = [
 ];
 
 const IntegrationsPage: React.FC = () => {
-  // State to manage connection status for each tracker
   const [connectionStatus, setConnectionStatus] = useState<Record<string, boolean>>(
     initialTrackers.reduce((acc, tracker) => ({ ...acc, [tracker.id]: false }), {})
   );
-
-  // State for Samsung Health Modal
   const [isSamsungModalOpen, setIsSamsungModalOpen] = useState(false);
 
   const handleConnect = (trackerId: string) => {
@@ -42,21 +38,20 @@ const IntegrationsPage: React.FC = () => {
   const handleDisconnect = (trackerId: string) => {
     console.log(`Disconnect action for ${trackerId}`);
     setConnectionStatus(prev => ({ ...prev, [trackerId]: false }));
-    // Potentially add an alert or confirmation here too
   };
 
   const authorizeSamsungHealth = () => {
     console.log("Authorizing Samsung Health... (Placeholder)");
     setConnectionStatus(prev => ({ ...prev, samsung: true }));
     setIsSamsungModalOpen(false);
-    // Here you would typically initiate the OAuth flow
   };
 
   const samsungTrackerConfig = initialTrackers.find(t => t.id === 'samsung');
 
   return (
-    <div className="container mx-auto py-8 px-4 md:px-0">
-      <div className="text-center mb-10">
+    <PageContainer> {/* PageContainer provides container mx-auto for centering and max-width */}
+      {/* AppLayout handles overall padding. Added pt-8 for specific vertical spacing desired for this page's title section. */}
+      <div className="text-center mb-10 pt-8">
         <h1 className="text-4xl font-extrabold tracking-tight mb-3">Fitness Tracker Integrations</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Connect your favorite fitness apps and services to automate your habits and gain deeper insights.
@@ -96,7 +91,7 @@ const IntegrationsPage: React.FC = () => {
           onAuthorize={authorizeSamsungHealth}
         />
       )}
-    </div>
+    </PageContainer>
   );
 };
 
