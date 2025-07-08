@@ -49,8 +49,20 @@ export default function SortableDashboard() {
     setLoadHabitsError(null);
     try {
       const fetchedHabits = await apiClient<FirestoreHabit[]>("/habits", { method: "GET" });
-      const habitsWithEnsuredCompletions = fetchedHabits.map(h => ({
+
+      if (!Array.isArray(fetchedHabits)) {
+        console.error("Fetched habits response is not an array:", fetchedHabits);
+        throw new Error("Invalid data format received for habits.");
+      }
+
+      // Filter for valid habit objects before further processing
+      const validHabits = fetchedHabits.filter(h =>
+        h && typeof h === 'object' && typeof h.title === 'string' && h.habitId
+      );
+
+      const habitsWithEnsuredCompletions = validHabits.map(h => ({
         ...h,
+        // habitId is already asserted as present by the filter
         completions: (h.completions || []).map(c => ({ ...c }))
       }));
       setHabits(habitsWithEnsuredCompletions);
@@ -242,9 +254,13 @@ export default function SortableDashboard() {
   else if (!user && !userLoading) { habitContent = (<div className="text-center py-8 text-muted-foreground"><p>Please log in to manage and view your habits.</p></div>); }
   else {
     if (currentDashboardView === 'day') {
+      const validHabitsForView = habits
+        .filter(h => h && typeof h === 'object' && h.habitId) // Ensure h and h.habitId are valid
+        .map(h => ({ ...h, id: h.habitId!, isCompletedToday: isHabitCompletedOnDate(h.habitId!, currentDate) }));
+
       habitContent = (
         <SortableHabitViewModes
-          habits={habits.map(h => ({ ...h, id: h.habitId!, isCompletedToday: isHabitCompletedOnDate(h.habitId!, currentDate) }))}
+          habits={validHabitsForView}
           onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
           onEditHabit={handleEditHabitClick}
           onDeleteHabit={deleteHabit}
