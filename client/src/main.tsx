@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 // UserProvider import removed as App.tsx now handles UserContext.Provider
+import { CoachProvider } from "./context/CoachContext"; // Import CoachProvider
 
 // Register service worker for PWA - Temporarily Disabled
 // if ('serviceWorker' in navigator) {
@@ -25,8 +26,10 @@ createRoot(document.getElementById("root")!).render(
   <ThemeProvider defaultTheme="light" storageKey="maximost-theme">
     <TooltipProvider>
       <QueryClientProvider client={queryClient}>
-        {/* UserProvider wrapper removed, App now provides UserContext */}
-        <App />
+        <CoachProvider> {/* Added CoachProvider wrapper */}
+          {/* UserProvider wrapper removed, App now provides UserContext */}
+          <App />
+        </CoachProvider>
       </QueryClientProvider>
       <Toaster />
     </TooltipProvider>
