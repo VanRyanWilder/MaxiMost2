@@ -10,6 +10,7 @@ import { useLocation } from "wouter";
 // import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa"; // Commenting out react-icons import for test
 import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithEmail, signInAnonymously } from "@/lib/firebase";
 
+// Starting work on UIX-17: Restore Application Icons
 export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
