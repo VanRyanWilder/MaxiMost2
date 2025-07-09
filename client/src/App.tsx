@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"; // Added useState, useEffect
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context"; // Will need to coordinate with UserProvider changes
-import { auth, listenToAuthChanges } from "@/lib/firebase"; // Updated import name
+import { auth, listenToAuthChanges } from "@/lib/firebase";
+import { getRedirectResult } from "firebase/auth"; // Import getRedirectResult directly
 import NotFound from "@/pages/not-found";
 // import { Spinner } from "@/components/ui/spinner"; // Assuming a spinner component exists
 
@@ -101,7 +102,7 @@ function App() {
 
   useEffect(() => {
     // Process redirect first, as it might set the user for onAuthStateChanged
-    auth.getRedirectResult() // Changed from processRedirectResult to auth.getRedirectResult if that's the intended Firebase v9+ way
+    getRedirectResult(auth) // Corrected: call imported getRedirectResult with auth instance
       .then((result) => {
         if (result && result.user) {
           // User signed in via redirect.
