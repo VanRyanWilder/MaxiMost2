@@ -139,7 +139,7 @@ function App() {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background text-white">
         {/* <Spinner size="lg" /> */}
-        <p>Loading Application...</p>
+        <p>Initializing...</p>
       </div>
     );
   }
