@@ -111,38 +111,38 @@ export default function ExplorePage() {
     <PageContainer>
       <div className="space-y-8 py-8"> {/* Increased spacing */}
         <div className="text-center"> {/* Centered header */}
-          <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-2">Explore & Discover</h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-neutral-100 mb-2">Explore & Discover</h1>
+          <p className="text-lg text-neutral-400 max-w-xl mx-auto">
             Find new habits, inspiration, and tools to accelerate your growth.
           </p>
         </div>
 
         {/* Habit Library Card - Moved from Dashboard */}
-        <Card className="shadow-lg">
-          <CardHeader className="border-b">
-            <CardTitle className="flex items-center text-2xl">
+        <Card className="shadow-lg bg-neutral-800/50 border-neutral-700 text-neutral-100">
+          <CardHeader className="border-b border-neutral-700">
+            <CardTitle className="flex items-center text-2xl text-neutral-100">
               <Zap className="w-6 h-6 mr-2 text-purple-500" /> Habit Library & Starters
             </CardTitle>
-            <p className="text-sm text-muted-foreground pt-1">
+            <p className="text-sm text-neutral-400 pt-1">
               Quickly add proven habits or explore expert-curated stacks.
             </p>
           </CardHeader>
           <CardContent className="pt-6">
             {/* Quick Add Habits Section */}
             <div className="mb-8">
-              <h4 className="text-xl font-semibold mb-4 text-foreground">Quick Add Individual Habits</h4>
+              <h4 className="text-xl font-semibold mb-4 text-neutral-200">Quick Add Individual Habits</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {quickAddTemplates.map((quickHabit) => (
-                  <div key={quickHabit.title} className="border rounded-lg p-4 bg-background hover:shadow-md transition-shadow flex flex-col">
+                  <div key={quickHabit.title} className="border border-neutral-700 rounded-lg p-4 bg-neutral-700/30 hover:bg-neutral-700/50 hover:shadow-md transition-shadow flex flex-col">
                     <div className="flex items-center gap-2 mb-2">
                       <quickHabit.IconComponent className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="font-medium text-foreground truncate" title={quickHabit.title}>{quickHabit.title}</span>
+                      <span className="font-medium text-neutral-200 truncate" title={quickHabit.title}>{quickHabit.title}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-3 flex-grow">{quickHabit.description}</p>
+                    <p className="text-xs text-neutral-400 mb-3 flex-grow">{quickHabit.description}</p>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full mt-auto"
+                      className="w-full mt-auto border-neutral-600 text-neutral-300 hover:bg-neutral-600 hover:text-neutral-100 focus:ring-neutral-500"
                       onClick={async () => {
                         const habitDataForApi: Omit<Habit, 'id' | 'createdAt' | 'streak'> = {
                           title: quickHabit.title,
@@ -163,21 +163,21 @@ export default function ExplorePage() {
 
             {/* Expert Habit Stacks Section */}
             <div>
-              <h4 className="text-xl font-semibold mb-4 text-foreground">Expert Habit Stacks</h4>
+              <h4 className="text-xl font-semibold mb-4 text-neutral-200">Expert Habit Stacks</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {expertStackTemplates.map((stack) => (
-                  <div key={stack.name} className="border rounded-lg p-4 bg-background hover:shadow-md transition-shadow flex flex-col">
+                  <div key={stack.name} className="border border-neutral-700 rounded-lg p-4 bg-neutral-700/30 hover:bg-neutral-700/50 hover:shadow-md transition-shadow flex flex-col">
                     <div className="flex items-center gap-2 mb-2">
                        <stack.IconComponent className="h-5 w-5 text-primary flex-shrink-0" />
-                       <h5 className="font-medium text-lg text-foreground truncate" title={stack.name}>{stack.name}</h5>
+                       <h5 className="font-medium text-lg text-neutral-200 truncate" title={stack.name}>{stack.name}</h5>
                     </div>
-                    <ul className="text-xs text-muted-foreground mb-3 space-y-1 flex-grow">
+                    <ul className="text-xs text-neutral-400 mb-3 space-y-1 flex-grow">
                       {stack.habits.map(h => <li key={h.title} className="truncate" title={h.description}>- {h.title}</li>)}
                     </ul>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="w-full mt-auto"
+                      className="w-full mt-auto border-neutral-600 text-neutral-300 hover:bg-neutral-600 hover:text-neutral-100 focus:ring-neutral-500"
                       onClick={async () => {
                         const habitPromises = stack.habits.map(template => {
                            const { title, description, icon, category } = template;
@@ -205,29 +205,29 @@ export default function ExplorePage() {
         </Card>
 
         {/* Daily Motivation Card (already here, will be restyled later) */}
-        <Card className="shadow-lg">
-          <CardHeader className="border-b">
-            <CardTitle className="text-2xl">Daily Dose of Wisdom</CardTitle>
+        <Card className="shadow-lg bg-neutral-800/50 border-neutral-700 text-neutral-100">
+          <CardHeader className="border-b border-neutral-700">
+            <CardTitle className="text-2xl text-neutral-100">Daily Dose of Wisdom</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <DailyMotivation />
+            <DailyMotivation /> {/* Assuming DailyMotivation handles its own internal dark theme text */}
           </CardContent>
         </Card>
 
         {/* Top Rated Supplements Card (already here) */}
-        <Card className="shadow-lg">
-          <CardHeader className="border-b">
-            <CardTitle className="text-2xl">Top Rated Supplements</CardTitle>
+        <Card className="shadow-lg bg-neutral-800/50 border-neutral-700 text-neutral-100">
+          <CardHeader className="border-b border-neutral-700">
+            <CardTitle className="text-2xl text-neutral-100">Top Rated Supplements</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <TopRatedSupplements />
+            <TopRatedSupplements /> {/* Assuming TopRatedSupplements handles its own internal dark theme text */}
           </CardContent>
         </Card>
 
         {/* New Section for Guides */}
-        <Card className="shadow-lg">
-          <CardHeader className="border-b">
-            <CardTitle className="text-2xl">Guides & In-Depth Content</CardTitle>
+        <Card className="shadow-lg bg-neutral-800/50 border-neutral-700 text-neutral-100">
+          <CardHeader className="border-b border-neutral-700">
+            <CardTitle className="text-2xl text-neutral-100">Guides & In-Depth Content</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

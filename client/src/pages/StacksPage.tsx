@@ -91,67 +91,68 @@ const StacksPage: React.FC = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">Manage Your Habit Stacks</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-neutral-100">Manage Your Habit Stacks</h1>
 
-      <Card className="mb-8 shadow-lg">
+      <Card className="mb-8 shadow-lg bg-neutral-800/80 backdrop-blur-sm border-neutral-700 text-neutral-100">
         <CardHeader>
-          <CardTitle className="text-2xl">Create New Stack</CardTitle>
+          <CardTitle className="text-2xl text-neutral-100">Create New Stack</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="new-stack-name" className="text-sm font-medium">Stack Name</Label>
+            <Label htmlFor="new-stack-name" className="text-sm font-medium text-neutral-300">Stack Name</Label>
             <Input
               id="new-stack-name"
               type="text"
               value={newStackName}
               onChange={(e) => setNewStackName(e.target.value)}
               placeholder="e.g., Morning Routine, Evening Wind-down"
-              className="mt-1"
+              className="mt-1 bg-neutral-700 border-neutral-600 text-neutral-100 placeholder:text-neutral-400 focus:ring-blue-500"
             />
           </div>
           <div>
-            <Label className="text-sm font-medium">Select Habits for Stack</Label>
+            <Label className="text-sm font-medium text-neutral-300">Select Habits for Stack</Label>
             {availableHabits.length > 0 ? (
-              <div className="mt-2 space-y-2 max-h-60 overflow-y-auto border p-3 rounded-md">
+              <div className="mt-2 space-y-2 max-h-60 overflow-y-auto border border-neutral-700 bg-neutral-900/50 p-3 rounded-md">
                 {availableHabits.map(habit => (
                   <div key={habit.id} className="flex items-center space-x-2">
                     <Checkbox
                       id={`habit-${habit.id}`}
                       checked={selectedHabitsForNewStack.has(habit.id)}
                       onCheckedChange={() => toggleHabitForNewStack(habit.id)}
+                      className="border-neutral-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 focus:ring-blue-500"
                     />
-                    <Label htmlFor={`habit-${habit.id}`} className="font-normal text-sm">
+                    <Label htmlFor={`habit-${habit.id}`} className="font-normal text-sm text-neutral-300">
                       {habit.title}
                     </Label>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground mt-1">No habits available to add. Create some habits first!</p>
+              <p className="text-sm text-neutral-400 mt-1">No habits available to add. Create some habits first!</p>
             )}
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={handleCreateStack} className="w-full sm:w-auto">
+          <Button onClick={handleCreateStack} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white">
             <PlusCircle className="mr-2 h-4 w-4" /> Create Stack
           </Button>
         </CardFooter>
       </Card>
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Your Stacks</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-neutral-100">Your Stacks</h2>
         {stacks.length > 0 ? (
           <div className="space-y-4">
             {stacks.map(stack => (
-              <Card key={stack.id} className="shadow-md">
+              <Card key={stack.id} className="shadow-md bg-neutral-800/70 border-neutral-700 text-neutral-100">
                 <CardHeader className="flex flex-row items-center justify-between cursor-pointer" onClick={() => toggleStackExpansion(stack.id)}>
-                  <CardTitle className="text-xl">{stack.name}</CardTitle>
-                  {expandedStacks[stack.id] ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
+                  <CardTitle className="text-xl text-neutral-100">{stack.name}</CardTitle>
+                  {expandedStacks[stack.id] ? <ChevronDown className="h-5 w-5 text-neutral-300" /> : <ChevronRight className="h-5 w-5 text-neutral-300" />}
                 </CardHeader>
                 {expandedStacks[stack.id] && (
                   <CardContent>
-                    <p className="text-sm text-muted-foreground mb-2">Habits in this stack:</p>
-                    <ul className="list-disc list-inside pl-4 space-y-1 text-sm">
+                    <p className="text-sm text-neutral-400 mb-2">Habits in this stack:</p>
+                    <ul className="list-disc list-inside pl-4 space-y-1 text-sm text-neutral-300">
                       {stack.habitIds.map(habitId => (
                         <li key={habitId}>{getHabitTitleById(habitId)}</li>
                       ))}
@@ -163,23 +164,26 @@ const StacksPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">You haven't created any habit stacks yet.</p>
+          <p className="text-neutral-400">You haven't created any habit stacks yet.</p>
         )}
       </div>
 
       {/* Expert Habit Stacks Section */}
       <div className="mt-12">
-        <h2 className="text-2xl font-semibold mb-6 text-center md:text-left">Expert Habit Stacks</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center md:text-left text-neutral-100">Expert Habit Stacks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {expertStacksData.map(expertStack => (
-            <Card key={expertStack.id} className="shadow-lg flex flex-col">
+            <Card
+              key={expertStack.id}
+              className="shadow-lg flex flex-col bg-neutral-800/50 border-neutral-700 text-neutral-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
+            >
               <CardHeader>
-                <CardTitle className="text-xl">{expertStack.expertName}</CardTitle>
-                <p className="text-sm text-muted-foreground">{expertStack.description}</p>
+                <CardTitle className="text-xl text-blue-400">{expertStack.expertName}</CardTitle>
+                <p className="text-sm text-neutral-400">{expertStack.description}</p>
               </CardHeader>
               <CardContent className="flex-grow">
-                <h4 className="font-medium mb-2 text-sm">Example Habits:</h4>
-                <ul className="list-disc list-inside pl-4 space-y-1 text-sm text-muted-foreground">
+                <h4 className="font-medium mb-2 text-sm text-neutral-300">Example Habits:</h4>
+                <ul className="list-disc list-inside pl-4 space-y-1 text-sm text-neutral-400">
                   {expertStack.habits.map((habit, index) => (
                     <li key={index}>{habit}</li>
                   ))}
@@ -187,7 +191,7 @@ const StacksPage: React.FC = () => {
               </CardContent>
               <CardFooter>
                 <Button
-                  className="w-full"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                   onClick={() => alert(`Placeholder: Adding ${expertStack.expertName}'s stack to your dashboard.`)}
                 >
                   <PlusCircle className="mr-2 h-4 w-4" /> Add to My Dashboard

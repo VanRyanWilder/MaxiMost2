@@ -192,6 +192,7 @@ export function EditHabitDialog({
   const [customCategory, setCustomCategory] = useState("");
   const [showCustomCategoryInput, setShowCustomCategoryInput] = useState(false);
   const [iconPickerTab, setIconPickerTab] = useState("health");
+  const [detailsVisible, setDetailsVisible] = useState(false);
   
   // Ref to track if we're creating a new habit or editing an existing one
   const isCreatingNewHabit = useRef(false);
@@ -211,6 +212,7 @@ export function EditHabitDialog({
           habit.category !== "social") {
         setCustomCategory(habit.category);
       }
+      setDetailsVisible(true); // Show details when editing an existing habit
     } else {
       // Create a new habit with a unique ID
       const newHabit = {
@@ -221,6 +223,7 @@ export function EditHabitDialog({
       isCreatingNewHabit.current = true;
       setShowCustomCategoryInput(false);
       setCustomCategory("");
+      setDetailsVisible(false); // Keep details hidden for new habits initially
     }
   }, [habit, open]);
   
@@ -412,20 +415,35 @@ export function EditHabitDialog({
               id="title"
               value={editedHabit.title}
               onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value})}
-              className="col-span-3"
+              className="col-span-3 bg-neutral-700 border-neutral-600 text-neutral-100 placeholder:text-neutral-400 focus:ring-blue-500"
               placeholder="Habit name"
             />
           </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right text-neutral-300">
-              Description
-            </Label>
+
+          {!detailsVisible && (
+            <div className="flex justify-center mt-2">
+              <Button
+                variant="link"
+                onClick={() => setDetailsVisible(true)}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                Add More Details
+              </Button>
+            </div>
+          )}
+
+          {/* Wrapper for progressively disclosed details */}
+          {detailsVisible && (
+            <div className="space-y-4 animate-slide-down"> {/* Added space-y-4 for consistent gap and animation class */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right text-neutral-300">
+                  Description
+                </Label>
             <Textarea
               id="description"
               value={editedHabit.description}
               onChange={(e) => setEditedHabit({...editedHabit, description: e.target.value})}
-              className="col-span-3"
+              className="col-span-3 bg-neutral-700 border-neutral-600 text-neutral-100 placeholder:text-neutral-400 focus:ring-blue-500"
               placeholder="Brief description"
             />
           </div>
@@ -438,42 +456,42 @@ export function EditHabitDialog({
               value={editedHabit.category} 
               onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="col-span-3 bg-neutral-700 border-neutral-600 text-neutral-100 data-[placeholder]:text-neutral-400 focus:ring-blue-500">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-neutral-800 border-neutral-700 text-neutral-100">
                 {/* MaxiMost primary categories */}
-                <SelectItem value="physical">
+                <SelectItem value="physical" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <Dumbbell className="h-4 w-4 text-red-500" />
                     <span>Physical Training</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="nutrition">
+                <SelectItem value="nutrition" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <Utensils className="h-4 w-4 text-orange-500" />
                     <span>Nutrition & Fueling</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="sleep">
+                <SelectItem value="sleep" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <Moon className="h-4 w-4 text-indigo-500" />
                     <span>Sleep & Hygiene</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="mental">
+                <SelectItem value="mental" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <Brain className="h-4 w-4 text-yellow-500" />
                     <span>Mental Acuity & Growth</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="relationships">
+                <SelectItem value="relationships" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-green-500" />
                     <span>Relationships & Community</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="financial">
+                <SelectItem value="financial" className="hover:bg-neutral-700 focus:bg-neutral-700">
                   <div className="flex items-center gap-2">
                     <CircleDollarSign className="h-4 w-4 text-emerald-500" />
                     <span>Financial Habits</span>
@@ -499,11 +517,11 @@ export function EditHabitDialog({
               </div>
               
               <Tabs value={iconPickerTab} onValueChange={setIconPickerTab} className="w-full">
-                <TabsList className="grid grid-cols-4 mb-2">
-                  <TabsTrigger value="health">Health</TabsTrigger>
-                  <TabsTrigger value="fitness">Fitness</TabsTrigger>
-                  <TabsTrigger value="mind">Mind</TabsTrigger>
-                  <TabsTrigger value="more">More</TabsTrigger>
+                <TabsList className="grid grid-cols-4 mb-2 bg-neutral-750 p-1 rounded-md">
+                  <TabsTrigger value="health" className="data-[state=active]:bg-neutral-800 data-[state=active]:text-blue-400 text-neutral-400 hover:text-neutral-100">Health</TabsTrigger>
+                  <TabsTrigger value="fitness" className="data-[state=active]:bg-neutral-800 data-[state=active]:text-blue-400 text-neutral-400 hover:text-neutral-100">Fitness</TabsTrigger>
+                  <TabsTrigger value="mind" className="data-[state=active]:bg-neutral-800 data-[state=active]:text-blue-400 text-neutral-400 hover:text-neutral-100">Mind</TabsTrigger>
+                  <TabsTrigger value="more" className="data-[state=active]:bg-neutral-800 data-[state=active]:text-blue-400 text-neutral-400 hover:text-neutral-100">More</TabsTrigger>
                 </TabsList>
                 
                 {Object.keys(iconCategories).map(category => (
@@ -515,10 +533,10 @@ export function EditHabitDialog({
                           type="button"
                           variant="outline"
                           size="icon"
-                          className={`p-2 ${editedHabit.icon === iconKey ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
+                          className={`p-2 ${editedHabit.icon === iconKey ? "ring-2 ring-blue-500 ring-opacity-80" : ""} bg-neutral-700 border-neutral-600 hover:bg-neutral-600`}
                           onClick={() => setEditedHabit({...editedHabit, icon: iconKey})}
                         >
-                          {renderIcon(iconKey, `h-5 w-5 ${editedHabit.iconColor ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary : "text-blue-500"}`)}
+                          {renderIcon(iconKey, `h-5 w-5 ${editedHabit.iconColor ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary : "text-blue-400"}`)}
                         </Button>
                       ))}
                     </div>
@@ -541,7 +559,7 @@ export function EditHabitDialog({
                     type="button"
                     variant="outline"
                     size="icon"
-                    className={`p-2 ${editedHabit.iconColor === scheme.id ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
+                    className={`p-2 ${editedHabit.iconColor === scheme.id ? "ring-2 ring-blue-500 ring-opacity-80" : ""} bg-neutral-700 border-neutral-600 hover:bg-neutral-600`}
                     onClick={() => {
                       console.log(`Color button clicked: ${scheme.id}`);
                       const updatedHabit = {...editedHabit, iconColor: scheme.id};
@@ -576,16 +594,16 @@ export function EditHabitDialog({
                 console.log(`Changed frequency to ${value}, isAbsolute set to ${isDaily}`);
               }}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="col-span-3 bg-neutral-700 border-neutral-600 text-neutral-100 data-[placeholder]:text-neutral-400 focus:ring-blue-500">
                 <SelectValue placeholder="Select frequency" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="2x-week">2x per week</SelectItem>
-                <SelectItem value="3x-week">3x per week</SelectItem>
-                <SelectItem value="4x-week">4x per week</SelectItem>
-                <SelectItem value="5x-week">5x per week</SelectItem>
-                <SelectItem value="6x-week">6x per week</SelectItem>
+              <SelectContent className="bg-neutral-800 border-neutral-700 text-neutral-100">
+                <SelectItem value="daily" className="hover:bg-neutral-700 focus:bg-neutral-700">Daily</SelectItem>
+                <SelectItem value="2x-week" className="hover:bg-neutral-700 focus:bg-neutral-700">2x per week</SelectItem>
+                <SelectItem value="3x-week" className="hover:bg-neutral-700 focus:bg-neutral-700">3x per week</SelectItem>
+                <SelectItem value="4x-week" className="hover:bg-neutral-700 focus:bg-neutral-700">4x per week</SelectItem>
+                <SelectItem value="5x-week" className="hover:bg-neutral-700 focus:bg-neutral-700">5x per week</SelectItem>
+                <SelectItem value="6x-week" className="hover:bg-neutral-700 focus:bg-neutral-700">6x per week</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -598,18 +616,18 @@ export function EditHabitDialog({
               value={editedHabit.timeCommitment} 
               onValueChange={(value) => setEditedHabit({...editedHabit, timeCommitment: value})}
             >
-              <SelectTrigger className="col-span-3">
+              <SelectTrigger className="col-span-3 bg-neutral-700 border-neutral-600 text-neutral-100 data-[placeholder]:text-neutral-400 focus:ring-blue-500">
                 <SelectValue placeholder="Time commitment" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1 min">1 minute</SelectItem>
-                <SelectItem value="5 min">5 minutes</SelectItem>
-                <SelectItem value="10 min">10 minutes</SelectItem>
-                <SelectItem value="15 min">15 minutes</SelectItem>
-                <SelectItem value="30 min">30 minutes</SelectItem>
-                <SelectItem value="45 min">45 minutes</SelectItem>
-                <SelectItem value="60 min">1 hour</SelectItem>
-                <SelectItem value="All day">Throughout the day</SelectItem>
+              <SelectContent className="bg-neutral-800 border-neutral-700 text-neutral-100">
+                <SelectItem value="1 min" className="hover:bg-neutral-700 focus:bg-neutral-700">1 minute</SelectItem>
+                <SelectItem value="5 min" className="hover:bg-neutral-700 focus:bg-neutral-700">5 minutes</SelectItem>
+                <SelectItem value="10 min" className="hover:bg-neutral-700 focus:bg-neutral-700">10 minutes</SelectItem>
+                <SelectItem value="15 min" className="hover:bg-neutral-700 focus:bg-neutral-700">15 minutes</SelectItem>
+                <SelectItem value="30 min" className="hover:bg-neutral-700 focus:bg-neutral-700">30 minutes</SelectItem>
+                <SelectItem value="45 min" className="hover:bg-neutral-700 focus:bg-neutral-700">45 minutes</SelectItem>
+                <SelectItem value="60 min" className="hover:bg-neutral-700 focus:bg-neutral-700">1 hour</SelectItem>
+                <SelectItem value="All day" className="hover:bg-neutral-700 focus:bg-neutral-700">Throughout the day</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -624,7 +642,7 @@ export function EditHabitDialog({
                 step={1}
                 onValueChange={(value) => setEditedHabit({...editedHabit, impact: value[0]})}
               />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+              <div className="flex justify-between mt-1 text-xs text-neutral-400">
                 <span>Lower</span>
                 <span>Current: {editedHabit.impact}</span>
                 <span>Higher</span>
@@ -642,7 +660,7 @@ export function EditHabitDialog({
                 step={1}
                 onValueChange={(value) => setEditedHabit({...editedHabit, effort: value[0]})}
               />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+              <div className="flex justify-between mt-1 text-xs text-neutral-400">
                 <span>Easier</span>
                 <span>Current: {editedHabit.effort}</span>
                 <span>Harder</span>
@@ -659,25 +677,27 @@ export function EditHabitDialog({
                 id="isAbsolute"
                 checked={editedHabit.isAbsolute}
                 onCheckedChange={(checked) => setEditedHabit({...editedHabit, isAbsolute: checked})}
+                className="data-[state=checked]:bg-blue-600 data-[state=unchecked]:bg-neutral-700"
               />
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-neutral-300">
                 {editedHabit.isAbsolute 
                   ? "This is a daily absolute habit (must-do)" 
                   : "This is a flexible habit (optional)"}
               </span>
             </div>
           </div>
-        </div>
+        </div> // This closes the div that starts with <div className="space-y-4 animate-slide-down">
+        )} {/* This closes the {detailsVisible && ( */}
         
         <DialogFooter className="flex justify-between items-center">
           {onDelete && (
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button variant="destructive" className="text-white bg-red-600 hover:bg-red-700 focus:ring-red-500" onClick={handleDelete}>
               Delete Habit
             </Button>
           )}
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handleDialogChange(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save Changes</Button>
+            <Button variant="outline" className="border-neutral-600 text-neutral-300 hover:bg-neutral-700 hover:text-neutral-100 focus:ring-neutral-500" onClick={() => handleDialogChange(false)}>Cancel</Button>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500" onClick={handleSave}>Save Changes</Button>
           </div>
         </DialogFooter>
       </DialogContent>
