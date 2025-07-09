@@ -293,6 +293,7 @@ function App() {
       {/* 404 Not Found route */}
       <Route component={NotFound} />
     </Switch>
+    </UserContext.Provider>
   );
 }
 
