@@ -1,22 +1,21 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator"; // Separator import was already here from previous step, ensuring it's active
+import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
-// // useUser no longer provides 'login'. Auth state is managed by firebaseUser.
-// // import { useUser } from "@/context/user-context";
-// import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa"; // Commenting out react-icons import for test
+// useUser no longer provides 'login'. Auth state is managed by firebaseUser.
+// import { useUser } from "@/context/user-context";
+import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
 import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithEmail, signInAnonymously } from "@/lib/firebase";
 
-// Starting work on UIX-17: Restore Application Icons
 export default function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  // // const { login } = useUser(); // 'login' is no longer in useUser context
+  // const { login } = useUser(); // 'login' is no longer in useUser context
   const [, setLocation] = useLocation();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -64,10 +63,10 @@ export default function Login() {
           user = await signInWithGoogle();
           break;
         case 'facebook':
-          // user = await signInWithFacebook(); // Facebook login commented out
+          user = await signInWithFacebook();
           break;
         case 'apple':
-          // user = await signInWithApple(); // Apple login commented out
+          user = await signInWithApple();
           break;
       }
 
@@ -99,14 +98,11 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 overflow-auto max-h-[60vh]">
-          {/* <h1>LOGIN PAGE TEST - Step 2 Restore (Card Structure)</h1>
-          <p>Basic Card structure restored. Form elements still commented.</p> */}
           {error && (
             <div className="p-3 text-sm bg-red-100 border border-red-200 text-red-600 rounded">
-              Error: {error}
+              {error}
             </div>
           )}
-          {isLoading && <p>Loading...</p>}
           
           {/* Email/Password Login Form */}
           <form onSubmit={handleEmailLogin} className="space-y-4">
@@ -154,18 +150,32 @@ export default function Login() {
             </Button>
           </form>
           
-          {/* Guest Login button still commented */}
-          {/*
+          {/* Guest Login */}
           <Button 
             className="w-full bg-gradient-to-r from-indigo-500 to-purple-600"
             onClick={async () => {
-              // ... guest login logic ...
+              try {
+                setIsLoading(true);
+                setError(null); // Clear previous errors
+                const user = await signInAnonymously();
+                if (user) {
+                  // Firebase auth state is handled by onAuthStateChanged in UserProvider.
+                  // UserProvider and App.tsx routing will handle navigation to /dashboard.
+                  // setLocation("/dashboard"); // REMOVED
+                } else {
+                  setError("Failed to login as guest. Please try again.");
+                }
+              } catch (error) {
+                console.error("Guest login error:", error);
+                setError("Failed to login as guest. Please try again.");
+              } finally {
+                setIsLoading(false);
+              }
             }}
             disabled={isLoading}
           >
             <span>Continue as Guest</span>
           </Button>
-          */}
           
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
@@ -184,11 +194,10 @@ export default function Login() {
             onClick={() => handleSocialLogin('google')}
             disabled={isLoading}
           >
-            {/* <FaGoogle className="h-4 w-4" /> */} {/* Icon commented out for test */}
-            <span>Continue with Google (No Icon Test)</span>
+            <FaGoogle className="h-4 w-4" />
+            <span>Continue with Google</span>
           </Button>
 
-          {/* The other social login buttons remain commented as they were in original */}
           {/*
           <Button
             variant="outline"
@@ -210,6 +219,7 @@ export default function Login() {
             <span>Continue with Apple</span>
           </Button>
           */}
+
 
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
