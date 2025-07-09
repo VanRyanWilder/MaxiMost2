@@ -5,6 +5,7 @@ import { auth, listenToAuthChanges } from "@/lib/firebase";
 import { getRedirectResult } from "firebase/auth"; // Import getRedirectResult directly
 import NotFound from "@/pages/not-found";
 // import { Spinner } from "@/components/ui/spinner"; // Assuming a spinner component exists
+import { useLocation as useWouterLocation } from "wouter"; // Aliasing to avoid conflict if any other useLocation is imported
 
 // Import the intended homepage
 import Home from "@/pages/home"; // Changed from NewHomePage
@@ -150,10 +151,7 @@ function App() {
         {/* Public routes */}
         <Route path="/">
           {() => {
-            // useUser() will get its values from the Provider immediately above.
-            // isAuthLoading is false here, so context.loading from useUser() will be false.
-            const { user, error: contextError } = useUser();
-
+            const { user: contextUser, error: contextError } = useUser();
             if (contextError) {
               return (
                 <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
@@ -164,19 +162,35 @@ function App() {
                 </div>
               );
             }
-
-            if (user) {
-              return <Redirect to="/dashboard" />;
-            }
+            if (contextUser) return <Redirect to="/dashboard" />;
             return <Home />;
           }}
         </Route>
         <Route path="/home" component={Home} />
-      <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
-      <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
+        <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
+        <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
 
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
+        <Route path="/login">
+          {() => {
+            const { user: contextUser } = useUser();
+            const [location] = useWouterLocation(); // Using aliased import
+            if (contextUser) {
+              const queryParams = new URLSearchParams(location.split('?')[1]);
+              const redirectTarget = queryParams.get('redirect');
+              return <Redirect to={redirectTarget || "/dashboard"} />;
+            }
+            return <Login />;
+          }}
+        </Route>
+        <Route path="/signup">
+          {() => {
+            const { user: contextUser } = useUser();
+            if (contextUser) {
+              return <Redirect to="/dashboard" />;
+            }
+            return <Signup />;
+          }}
+        </Route>
       
       {/* Protected routes */}
       <Route path="/dashboard">
