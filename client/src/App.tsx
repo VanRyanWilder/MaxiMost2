@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"; // Added useState, useEffect
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context"; // Will need to coordinate with UserProvider changes
-import { auth, onAuthStateChanged } from "@/lib/firebase"; // Added Firebase imports
+import { auth, listenToAuthChanges } from "@/lib/firebase"; // Updated import name
 import NotFound from "@/pages/not-found";
 // import { Spinner } from "@/components/ui/spinner"; // Assuming a spinner component exists
 
@@ -117,7 +117,7 @@ function App() {
       })
       .finally(() => {
         // Setup the main listener after redirect attempt (success or fail)
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = listenToAuthChanges((user) => { // Use renamed function
           console.log("App.tsx: onAuthStateChanged triggered. User:", user ? user.uid : null);
           setAppUser(user);
           // If a user is found (or definitively not found), clear any previous redirect processing error

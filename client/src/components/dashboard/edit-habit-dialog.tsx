@@ -577,7 +577,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="frequency" className="text-right">
+            <Label htmlFor="frequency" className="text-right text-neutral-300">
               Frequency
             </Label>
             <Select 
@@ -609,7 +609,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="time" className="text-right">
+            <Label htmlFor="time" className="text-right text-neutral-300">
               Time Needed
             </Label>
             <Select 
@@ -633,7 +633,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Impact (1-10)</Label>
+            <Label className="text-right text-neutral-300">Impact (1-10)</Label>
             <div className="col-span-3 px-2">
               <Slider 
                 value={[editedHabit.impact]}
@@ -651,7 +651,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Effort (1-10)</Label>
+            <Label className="text-right text-neutral-300">Effort (1-10)</Label>
             <div className="col-span-3 px-2">
               <Slider 
                 value={[editedHabit.effort]}
@@ -669,7 +669,7 @@ export function EditHabitDialog({
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="isAbsolute" className="text-right">
+            <Label htmlFor="isAbsolute" className="text-right text-neutral-300">
               Daily Must-Do
             </Label>
             <div className="flex items-center gap-2 col-span-3">
@@ -688,6 +688,7 @@ export function EditHabitDialog({
           </div>
         </div> // This closes the div that starts with <div className="space-y-4 animate-slide-down">
         )} {/* This closes the {detailsVisible && ( */}
+      </div> {/* This closes the main form container <div className="grid gap-4 py-4"> */}
         
         <DialogFooter className="flex justify-between items-center">
           {onDelete && (

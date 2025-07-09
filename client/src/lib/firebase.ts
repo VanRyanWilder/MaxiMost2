@@ -32,7 +32,8 @@ export const auth = getAuth(app);
 
 // --- All helper functions remain the same ---
 
-export const onAuthStateChange = (callback: (user: User | null) => void) => {
+// Renamed to avoid potential conflicts or build tool confusion
+export const listenToAuthChanges = (callback: (user: User | null) => void) => {
   return firebaseOnAuthStateChanged(auth, callback);
 };
 

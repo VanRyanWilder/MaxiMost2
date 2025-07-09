@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogIn, LogOut } from "lucide-react";
 import { 
-  onAuthStateChange, 
+  listenToAuthChanges, // Updated import
   signInWithGoogle,
   signInWithFacebook,
   signInWithApple,
@@ -27,7 +27,7 @@ export function FirebaseUserComponent() {
   
   // Listen for Firebase auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChange((firebaseUser) => {
+    const unsubscribe = listenToAuthChanges((firebaseUser) => { // Updated usage
       setUser(firebaseUser);
       setLoading(false);
     });

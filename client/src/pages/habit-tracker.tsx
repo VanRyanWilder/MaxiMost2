@@ -19,7 +19,7 @@ import {
 import { Slider } from "../components/ui/slider";
 import { Label } from "../components/ui/label";
 import { Logo } from "../components/ui/logo";
-import { auth, onAuthStateChange } from "../lib/firebase"; // Import auth and onAuthStateChange
+import { auth, listenToAuthChanges } from "../lib/firebase"; // Updated to listenToAuthChanges
 import type { User } from "firebase/auth";
 
 // Helper functions (getDayName, formatDateByPreference, getViewDates) remain the same
@@ -70,7 +70,7 @@ export default function HabitTrackerPage() {
   // -- THE CORE FIX: Fetch real data from the backend ---
   useEffect(() => {
     // Listen for authentication changes to get the user
-    const unsubscribe = onAuthStateChange(auth, (user) => {
+    const unsubscribe = listenToAuthChanges((user) => { // Use listenToAuthChanges and pass only callback
       setUser(user);
       if (user) {
         // User is signed in, fetch their data
