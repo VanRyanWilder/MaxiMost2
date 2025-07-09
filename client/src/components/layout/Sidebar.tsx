@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+// import {
+//   Collapsible,
+//   CollapsibleContent,
+//   CollapsibleTrigger,
+// } from "@/components/ui/collapsible"; // Commented out for FIX-15 as they cause error #310
 // Updated import to include the new helper function
 import { getGroupedSidebarLinks, type SidebarLink } from "@/lib/sidebar-links";
 // import { X, Menu, ChevronDown, ChevronRight } from "lucide-react"; // Commented for FIX-15
@@ -45,102 +45,48 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
   // Use the new helper function to get grouped links
   const sections = getGroupedSidebarLinks();
   
+  // Simplified renderNavItem for FIX-15 debugging
   const renderNavItem = (link: SidebarLink) => {
-    const isActive = location === link.href || 
-      (link.submenu && link.submenu.some(sub => location === sub.href));
-    
-    // If this is a link with a submenu
-    if (link.submenu && link.submenu.length > 0) {
-      return (
-        <Collapsible key={link.href} open={isActive} onOpenChange={() => {}}
-          className={cn(
-            "w-full rounded-lg overflow-hidden",
-            isActive && "bg-muted/50"
-          )}
-        >
-          <CollapsibleTrigger asChild className="w-full">
-            <Link href={link.href}>
-              <Button
-                variant={isActive ? "secondary" : "ghost"}
-                size="sm"
-                className={cn(
-                  "w-full justify-start gap-2 rounded-none px-3 py-2 transition-all",
-                  isActive ? "font-medium" : "font-normal"
-                )}
-              >
-                {link.icon}
-                <span>{link.title}</span>
-                {isActive ? (
-                  <ChevronDown className="ml-auto h-4 w-4" />
-                ) : (
-                  <ChevronRight className="ml-auto h-4 w-4" />
-                )}
-              </Button>
-            </Link>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="pl-6 pr-2 py-1">
-            {link.submenu.map((subLink) => (
-              <Link key={subLink.href} href={subLink.href}>
-                <Button
-                  variant={location === subLink.href ? "secondary" : "ghost"}
-                  size="sm"
-                  className={cn(
-                    "w-full justify-start gap-2 px-2 py-1 text-sm",
-                    location === subLink.href ? "font-medium" : "font-normal"
-                  )}
-                >
-                  {subLink.icon}
-                  <span>{subLink.title}</span>
-                </Button>
-              </Link>
-            ))}
-          </CollapsibleContent>
-        </Collapsible>
-      );
-    }
-    
-    // Regular link without submenu
+    const isActive = location === link.href; // Simplified active check for now
     return (
-      <Link key={link.href} href={link.href}>
-        <Button
-          variant={isActive ? "secondary" : "ghost"}
-          size="sm"
-          className={cn(
-            "w-full justify-start gap-2 px-3",
-            isActive ? "font-medium" : "font-normal"
-          )}
-        >
-          {link.icon}
-          <span>{link.title}</span>
-        </Button>
-      </Link>
+      <div key={link.href} style={{ paddingLeft: link.submenu ? '10px' : '0px', border: '1px dashed #ccc', margin: '2px' }}>
+        <Link href={link.href}>
+          <Button variant={isActive ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
+            {link.icon} {/* This is already a placeholder like "[LD]" */}
+            <span>{link.title} (Test)</span>
+          </Button>
+        </Link>
+        {link.submenu && link.submenu.length > 0 && (
+          <div style={{ paddingLeft: '15px', borderLeft: '1px solid #eee' }}>
+            {link.submenu.map(subLink => (
+              <div key={subLink.href} style={{ border: '1px dashed #eee', margin: '1px' }}>
+                <Link href={subLink.href}>
+                  <Button variant={location === subLink.href ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
+                    {subLink.icon}
+                    <span>{subLink.title} (Sub-Test)</span>
+                  </Button>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     );
   };
-  
+
+  // Simplified renderSection for FIX-15 debugging
   const renderSection = (title: string, links: SidebarLink[], sectionKey: string) => {
-    const isExpanded = expandedSections[sectionKey];
-    
+    // const isExpanded = expandedSections[sectionKey]; // Not using expansion for now
     return (
-      <div key={sectionKey} className="mb-4">
-        <Collapsible open={isExpanded} onOpenChange={() => toggleSection(sectionKey)}>
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="w-full justify-between px-3 text-muted-foreground hover:text-foreground"
-            >
-              <span className="text-xs font-medium uppercase tracking-wider">{title}</span>
-              {isExpanded ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-1 pt-1">
-            {links.map(renderNavItem)}
-          </CollapsibleContent>
-        </Collapsible>
+      <div key={sectionKey} className="mb-4" style={{ border: '1px solid #aaa', padding: '5px' }}>
+        <Button variant="ghost" size="sm" className="w-full justify-between">
+          <span className="text-xs font-medium uppercase tracking-wider">{title} (Test Section)</span>
+          {/* Chevron placeholders are fine as they are simple divs */}
+          {/* {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />} */}
+        </Button>
+        <div className="space-y-1 pt-1">
+          {links.map(renderNavItem)}
+        </div>
       </div>
     );
   };
@@ -191,6 +137,7 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
             {sections.map(section =>
               section.links.length > 0 && renderSection(section.title, section.links, section.key)
             )}
+            {/* <div>SIDEBAR NAVIGATION CONTENT COMMENTED OUT</div> */}
           </div>
         </ScrollArea>
         
