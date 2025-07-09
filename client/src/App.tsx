@@ -1,6 +1,9 @@
+import { useState, useEffect } from "react"; // Added useState, useEffect
 import { Switch, Route, Redirect, useLocation } from "wouter";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/context/user-context"; // Will need to coordinate with UserProvider changes
+import { auth, onAuthStateChanged } from "@/lib/firebase"; // Added Firebase imports
 import NotFound from "@/pages/not-found";
+// import { Spinner } from "@/components/ui/spinner"; // Assuming a spinner component exists
 
 // Import the intended homepage
 import Home from "@/pages/home"; // Changed from NewHomePage
@@ -55,16 +58,22 @@ import AICoachPage from "@/pages/AICoachPage"; // Import the new AICoachPage
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Button } from "@/components/ui/button"; // Added Button import
+import { Button } from "@/components/ui/button";
+import { User as FirebaseUser } from "firebase/auth";
+import { UserContext, useUser } from "@/context/user-context"; // Import UserContext and useUser
+// Assuming Spinner component exists or a placeholder will be used.
+// import { Spinner } from "@/components/ui/spinner";
 
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
-  const { user, loading, error } = useUser(); // Destructure error
-  const [locationValue, setLocation] = useLocation(); // wouter's useLocation
+  const { user, loading, error } = useUser();
+  const [locationValue, setLocation] = useLocation();
   
+  // The 'loading' here is now effectively App's 'isAuthLoading' via context.
+  // If App's main gate is active, this loading check might be redundant or act as a secondary check.
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Authentication...</div>;
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Protected Route...</div>;
   }
 
   if (error) {
@@ -82,41 +91,86 @@ function PrivateRoute({ component: Component, ...rest }: any) {
     return <Redirect to={`/login?redirect=${encodeURIComponent(locationValue)}`} />;
   }
   
-  // If there is a user, the component will be rendered within AppLayout.
   return <AppLayout><Component {...rest} /></AppLayout>;
 }
 
 function App() {
-  return (
-    <Switch>
-      {/* Public routes */}
-      <Route path="/">
-        {() => {
-          const { user, loading, error } = useUser(); // Destructure error
-          
-          if (loading) {
-            return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Application...</div>;
-          }
+  const [appUser, setAppUser] = useState<FirebaseUser | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authError, setAuthError] = useState<Error | null>(null);
 
-          if (error) {
-            return (
-              <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
-                <h1 className="text-xl font-bold mb-2">Application Error</h1>
-                <p className="mb-1">An error occurred while loading user data.</p>
-                <p className="text-sm bg-red-200 p-2 rounded">Details: {error.message}</p>
-                {/* User might not be able to navigate if AppLayout isn't there, but login is public */}
-                 <a href="/login" className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Try Logging In Again</a>
-              </div>
-            );
+  useEffect(() => {
+    // Process redirect first, as it might set the user for onAuthStateChanged
+    auth.getRedirectResult() // Changed from processRedirectResult to auth.getRedirectResult if that's the intended Firebase v9+ way
+      .then((result) => {
+        if (result && result.user) {
+          // User signed in via redirect.
+          // onAuthStateChanged will handle setting appUser and isAuthLoading.
+          console.log("App.tsx: Redirect sign-in successful for user:", result.user.uid);
+        }
+      })
+      .catch(err => {
+        console.error("App.tsx: Error processing redirect result:", err);
+        setAuthError(err);
+        // If redirect fails, onAuthStateChanged will likely report no user or existing user.
+        // isAuthLoading will be set to false by onAuthStateChanged regardless.
+      })
+      .finally(() => {
+        // Setup the main listener after redirect attempt (success or fail)
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          console.log("App.tsx: onAuthStateChanged triggered. User:", user ? user.uid : null);
+          setAppUser(user);
+          // If a user is found (or definitively not found), clear any previous redirect processing error
+          // unless the error is critical and should persist. For now, clear it.
+          if (user || !authError?.message.includes("redirect")) { // Basic check to not clear critical redirect errors too soon.
+             setAuthError(null);
           }
-          
-          if (user) {
-            return <Redirect to="/dashboard" />;
-          }
-          return <Home />;
-        }}
-      </Route>
-      <Route path="/home" component={Home} />
+          setIsAuthLoading(false);
+        });
+        return () => {
+          console.log("App.tsx: Unsubscribing from onAuthStateChanged");
+          unsubscribe();
+        };
+      });
+  }, [authError?.message]); // Re-run if authError message changes, to re-evaluate clearing it.
+
+  if (isAuthLoading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background text-white">
+        {/* <Spinner size="lg" /> */}
+        <p>Loading Application...</p>
+      </div>
+    );
+  }
+
+  return (
+    <UserContext.Provider value={{ user: appUser, loading: isAuthLoading, error: authError }}>
+      <Switch>
+        {/* Public routes */}
+        <Route path="/">
+          {() => {
+            // useUser() will get its values from the Provider immediately above.
+            // isAuthLoading is false here, so context.loading from useUser() will be false.
+            const { user, error: contextError } = useUser();
+
+            if (contextError) {
+              return (
+                <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
+                  <h1 className="text-xl font-bold mb-2">Application Error</h1>
+                  <p className="mb-1">An error occurred while loading user data.</p>
+                  <p className="text-sm bg-red-200 p-2 rounded">Details: {contextError.message}</p>
+                  <a href="/login" className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Try Logging In Again</a>
+                </div>
+              );
+            }
+
+            if (user) {
+              return <Redirect to="/dashboard" />;
+            }
+            return <Home />;
+          }}
+        </Route>
+        <Route path="/home" component={Home} />
       <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
       <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
 

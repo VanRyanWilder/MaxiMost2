@@ -198,6 +198,7 @@ export default function Login() {
             <span>Continue with Google</span>
           </Button>
 
+          {/*
           <Button
             variant="outline"
             className="w-full flex items-center justify-center gap-2"
@@ -217,6 +218,7 @@ export default function Login() {
             <FaApple className="h-4 w-4" />
             <span>Continue with Apple</span>
           </Button>
+          */}
 
 
         </CardContent>

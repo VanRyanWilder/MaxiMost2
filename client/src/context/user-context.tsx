@@ -8,64 +8,33 @@ import {
 import { User as FirebaseUser } from "firebase/auth";
 import {
   // REMOVED: "auth" is no longer imported directly.
-  onAuthStateChange,
-  processRedirectResult,
-} from "@/lib/firebase";
+  // REMOVED: "onAuthStateChange" and "processRedirectResult" as App.tsx now handles this.
+  // onAuthStateChange,
+  // processRedirectResult,
+} from "@/lib/firebase"; // Firebase import might not be needed here anymore
 
 interface UserContextType {
   user: FirebaseUser | null;
-  loading: boolean;
-  error: Error | null;
+  loading: boolean; // This will be driven by App.tsx's isAuthLoading
+  error: Error | null;   // This will be driven by App.tsx's authError
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+// Export UserContext directly for App.tsx to use with <UserContext.Provider>
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    setLoading(true); // Explicitly true at start
-
-    // Process any pending redirect.
-    // This updates Firebase's internal state. onAuthStateChanged will then fire.
-    processRedirectResult()
-      .catch(err => {
-        console.error("Error processing redirect result:", err);
-        setError(err);
-        // Even on error, onAuthStateChanged should still give us the current (likely null) user state,
-        // and it's responsible for setting loading to false.
-      });
-
-    // Listen for auth state changes.
-    // This will be our single source of truth for setting user and stopping loading.
-    const unsubscribe = onAuthStateChange(firebaseUser => {
-      setUser(firebaseUser);
-      setError(null); // Clear any previous redirect error if auth state changes successfully.
-      setLoading(false); // Auth state is now definitively known (user or null)
-    });
-
-    // Cleanup subscription on unmount.
-    return () => unsubscribe();
-  }, []); // Empty dependency array ensures this runs once on mount.
-
-  // While the initial authentication check is running (loading is true), show a loading screen.
-  // This prevents rendering children, including PrivateRoute, prematurely.
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-gray-900 text-white">
-        Initializing Authentication...
-      </div>
-    );
-  }
-
+// The UserProvider component is no longer responsible for fetching auth state.
+// App.tsx will use UserContext.Provider directly.
+// This UserProvider export can be removed if not used anywhere, or kept as a simple pass-through if preferred structure.
+// For now, let's comment it out to signify it's deprecated by App.tsx's direct Provider usage.
+/*
+export const UserProvider = ({ children, value }: { children: ReactNode, value: UserContextType }) => {
   return (
-    <UserContext.Provider value={{ user, loading, error }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );
 };
+*/
 
 export const useUser = () => {
   const context = useContext(UserContext);
