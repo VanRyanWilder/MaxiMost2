@@ -11,7 +11,14 @@ import {
 } from "@/components/ui/collapsible";
 // Updated import to include the new helper function
 import { getGroupedSidebarLinks, type SidebarLink } from "@/lib/sidebar-links";
-import { X, Menu, ChevronDown, ChevronRight } from "lucide-react";
+// import { X, Menu, ChevronDown, ChevronRight } from "lucide-react"; // Commented for FIX-15
+
+// Placeholders for icons
+const X = (props: any) => <div {...props}>XIcon</div>;
+const Menu = (props: any) => <div {...props}>MenuIcon</div>;
+const ChevronDown = (props: any) => <div {...props}>ChevronDownIcon</div>;
+const ChevronRight = (props: any) => <div {...props}>ChevronRightIcon</div>;
+
 
 interface SidebarProps {
   isSidebarOpen: boolean;

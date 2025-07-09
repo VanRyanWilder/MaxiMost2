@@ -33,8 +33,9 @@ export function AppLayout({ children, pageTitle = "MaxiMost" }: AppLayoutProps) 
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
-      <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+      {/* Sidebar - Commented out for FIX-15 Attempt 2 */}
+      {/* <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} /> */}
+      <div>TEMPORARY TEXT INSTEAD OF SIDEBAR</div>
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col">

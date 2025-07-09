@@ -93,6 +93,10 @@ function PrivateRoute({ component: Component, ...rest }: any) {
     return <Redirect to={`/login?redirect=${encodeURIComponent(locationValue)}`} />;
   }
   
+  // if (Component.name === "Dashboard") {
+  //   console.log("FIX-15 DEBUG: Rendering Dashboard directly without AppLayout - REVERTED");
+  //   return <Component {...rest} />;
+  // }
   return <AppLayout><Component {...rest} /></AppLayout>;
 }
 
@@ -206,12 +210,14 @@ function App() {
             return <Signup />;
           }}
         </Route>
+
+      {/* Protected routes - Temporarily commented out for debugging FIX-15 */}
       
-      {/* Protected routes */}
       <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
       </Route>
-      <Route path="/explore"> {/* Add route for ExplorePage */}
+      {/*
+      <Route path="/explore">
         <PrivateRoute component={ExplorePage} />
       </Route>
       <Route path="/profile">
@@ -256,12 +262,6 @@ function App() {
       <Route path="/research">
         <PrivateRoute component={Research} />
       </Route>
-      {/* <Route path="/principles">
-        <PrivateRoute component={Principles} />
-      </Route> */} {/* Route removed */}
-      {/* <Route path="/sugar">
-        <PrivateRoute component={Sugar} />
-      </Route> */} {/* Route removed */}
       <Route path="/body-stats">
         <PrivateRoute component={BodyStats} />
       </Route>
@@ -269,22 +269,21 @@ function App() {
         <PrivateRoute component={Community} />
       </Route>
       <Route path="/progress">
-        <PrivateRoute component={ProgressPage} /> {/* Updated to new ProgressPage */}
+        <PrivateRoute component={ProgressPage} />
       </Route>
       <Route path="/progress-dashboard">
         <PrivateRoute component={ProgressDashboard} />
       </Route>
-      {/* <Route path="/motivation"> <PrivateRoute component={Motivation} /> </Route> // Removed route for deleted motivation.tsx */}
       <Route path="/experts">
         <PrivateRoute component={Experts} />
       </Route>
       <Route path="/experts-unified">
         <PrivateRoute component={Experts} />
       </Route>
-      <Route path="/learn/habit-building-basics"> {/* Updated route and component */}
+      <Route path="/learn/habit-building-basics">
         <PrivateRoute component={HabitBuildingBasicsPage} />
       </Route>
-      <Route path="/learn/atomic-habits"> {/* Updated route for Atomic Habits Guide */}
+      <Route path="/learn/atomic-habits">
         <PrivateRoute component={AtomicHabitsGuidePage} />
       </Route>
       <Route path="/learn/outlive-summary">
@@ -299,14 +298,9 @@ function App() {
       <Route path="/branding">
         <PrivateRoute component={Branding} />
       </Route>
-      <Route path="/contact" component={Contact} />
-      <Route path="/pricing" component={Pricing} />
-      <Route path="/firebase-config" component={FirebaseConfig} />
       <Route path="/fitness-tracker-connect">
         <PrivateRoute component={FitnessTrackerConnect} />
       </Route>
-
-      {/* New IA Routes */}
       <Route path="/stacks">
         <PrivateRoute component={StacksPage} />
       </Route>
@@ -319,6 +313,13 @@ function App() {
       <Route path="/coach">
         <PrivateRoute component={AICoachPage} />
       </Route>
+      */}
+
+      {/* Public routes that are not PrivateRoute but might be complex */}
+      <Route path="/contact" component={Contact} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/firebase-config" component={FirebaseConfig} />
+
 
       {/* 404 Not Found route */}
       <Route component={NotFound} />

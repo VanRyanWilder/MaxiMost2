@@ -1,15 +1,27 @@
-import {
-  LayoutDashboard,
-  Layers, // For Habit Stacks
-  BookText, // For Journal
-  Search, // For Explore Content
-  BookOpen, // For Atomic Habits Guide
-  Share2, // For Integrations
-  TrendingUp, // For Progress Analytics
-  MessageCircle, // For AI Coach
-  // Keeping Zap as an alternative for Explore if Search is too generic
-  Zap,
-} from "lucide-react";
+// import {
+//   LayoutDashboard,
+//   Layers, // For Habit Stacks
+//   BookText, // For Journal
+//   Search, // For Explore Content
+//   BookOpen, // For Atomic Habits Guide
+//   Share2, // For Integrations
+//   TrendingUp, // For Progress Analytics
+//   MessageCircle, // For AI Coach
+//   // Keeping Zap as an alternative for Explore if Search is too generic
+//   Zap,
+// } from "lucide-react"; // Commented for FIX-15
+
+// Placeholder components for icons
+const LayoutDashboard = (props: any) => <div {...props}>[LD]</div>;
+const Layers = (props: any) => <div {...props}>[L]</div>;
+const BookText = (props: any) => <div {...props}>[BT]</div>;
+const Search = (props: any) => <div {...props}>[S]</div>;
+const BookOpen = (props: any) => <div {...props}>[BO]</div>;
+const Share2 = (props: any) => <div {...props}>[S2]</div>;
+const TrendingUp = (props: any) => <div {...props}>[TU]</div>;
+const MessageCircle = (props: any) => <div {...props}>[MC]</div>;
+const Zap = (props: any) => <div {...props}>[Z]</div>;
+
 
 export interface SidebarLink {
   title: string;
