@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"; // Added useState, useEffect
 import { Switch, Route, Redirect, useLocation } from "wouter";
 import { useUser } from "@/context/user-context"; // Will need to coordinate with UserProvider changes
 import { auth, listenToAuthChanges } from "@/lib/firebase";
-import { getRedirectResult } from "firebase/auth"; // Import getRedirectResult directly
+import { getRedirectResult, signOut } from "firebase/auth"; // Import getRedirectResult and signOut
 import NotFound from "@/pages/not-found";
 // import { Spinner } from "@/components/ui/spinner"; // Assuming a spinner component exists
 import { useLocation as useWouterLocation } from "wouter"; // Aliasing to avoid conflict if any other useLocation is imported
@@ -100,6 +100,21 @@ function App() {
   const [appUser, setAppUser] = useState<FirebaseUser | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<Error | null>(null);
+  const [, navigate] = useLocation(); // For redirecting after logout
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setAppUser(null); // Clear user state immediately
+      // Optionally, clear other app-specific states related to the user
+      console.log("User logged out successfully.");
+      navigate("/login"); // Redirect to login page after logout
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Handle logout error (e.g., show a toast message)
+      setAuthError(error as Error);
+    }
+  };
 
   useEffect(() => {
     // Process redirect first, as it might set the user for onAuthStateChanged
@@ -146,7 +161,7 @@ function App() {
   }
 
   return (
-    <UserContext.Provider value={{ user: appUser, loading: isAuthLoading, error: authError }}>
+    <UserContext.Provider value={{ user: appUser, loading: isAuthLoading, error: authError, logout: handleLogout }}>
       <Switch>
         {/* Public routes */}
         <Route path="/">

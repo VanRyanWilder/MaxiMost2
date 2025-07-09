@@ -17,6 +17,7 @@ interface UserContextType {
   user: FirebaseUser | null;
   loading: boolean; // This will be driven by App.tsx's isAuthLoading
   error: Error | null;   // This will be driven by App.tsx's authError
+  logout: () => Promise<void>; // Added logout function type
 }
 
 // Export UserContext directly for App.tsx to use with <UserContext.Provider>
