@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 // useUser no longer provides 'login'. Auth state is managed by firebaseUser.
 // import { useUser } from "@/context/user-context";
-import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa";
+// import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa"; // Commenting out for login functionality debug
 import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithEmail, signInAnonymously } from "@/lib/firebase";
 
 export default function Login() {
@@ -194,7 +194,7 @@ export default function Login() {
             onClick={() => handleSocialLogin('google')}
             disabled={isLoading}
           >
-            <FaGoogle className="h-4 w-4" />
+            {/* <FaGoogle className="h-4 w-4" /> */} {/* Icon commented out */}
             <span>Continue with Google</span>
           </Button>
 
