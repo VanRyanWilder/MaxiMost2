@@ -40,21 +40,21 @@ export function AppLayout({ children, pageTitle = "MaxiMost" }: AppLayoutProps) 
   }, []);
 
   const particlesOptions = useCallback(() => {
-    // Updated options for a "space" theme, adapting the "stars" preset
+    // Matching home.tsx default "stars" preset options
     return {
-      preset: "stars", // Keep stars preset for base, override specifics
+      preset: "stars",
       background: {
         color: {
-          value: "#000000", // Pitch black background for space
+          value: "#0A192F", // Base background color from home.tsx
         },
       },
       particles: {
-        number: { value: 50 }, // Fewer particles for a sparser space feel
+        number: { value: 80 },
         color: { value: "#FFFFFF" },
         shape: { type: "circle" },
-        opacity: { value: { min: 0.1, max: 0.6 }, animation: { enable: true, speed: 0.4, minimumValue: 0.1, sync: false } }, // Slightly less opaque, slower animation
-        size: { value: { min: 0.3, max: 1.2 } }, // Smaller particles
-        move: { enable: true, speed: 0.15, direction: "none", random: true, straight: false, out_mode: "out", bounce: false }, // Slower speed, random movement
+        opacity: { value: {min: 0.1, max: 0.8}, animation: { enable: true, speed: 0.5, minimumValue: 0.1, sync: false } },
+        size: { value: {min: 0.5, max: 1.5} },
+        move: { enable: true, speed: 0.3, direction: "none", random: false, straight: false, out_mode: "out", bounce: false },
         links: { enable: false }
       },
       interactivity: {
