@@ -1,13 +1,4 @@
-// import {
-//   LayoutDashboard,
-//   Layers, // For Habit Stacks
-//   BookText, // For Journal
-//   Search, // For Explore Content
-//   BookOpen, // For Atomic Habits Guide
-//   Share2, // For Integrations
-//   TrendingUp, // For Progress Analytics
-//   MessageCircle, // For AI Coach
-//   // Keeping Zap as an alternative for Explore if Search is too generic
+import { // Removed the initial commented out block and the duplicated "LayoutDashboard, Layers, BookText"
   LayoutDashboard,
   Layers, // For Habit Stacks
   BookText, // For Journal
