@@ -107,6 +107,7 @@ function App() {
   const [appUser, setAppUser] = useState<FirebaseUser | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<Error | null>(null);
+  const [, navigate] = useLocation(); // For redirecting after logout - UNCOMMENTING
 
   useEffect(() => {
     // Process redirect first, as it might set the user for onAuthStateChanged
@@ -198,7 +199,7 @@ function App() {
           {() => {
             console.log("DEBUG: App.tsx: Processing /login route.");
             const { user: contextUser, loading: contextLoading, error: contextError } = useUser();
-            const [currentWouterLocation] = useWouterLocation(); // Using aliased import
+            const [currentWouterLocation] = useLocation(); // Changed from useWouterLocation
             console.log(`DEBUG: App.tsx /login route: Current wouter location: ${currentWouterLocation}. useUser() state - user: ${contextUser ? contextUser.uid : null}, loading: ${contextLoading}, error: ${contextError}`);
 
             if (contextError) { // Check for error first
