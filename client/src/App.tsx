@@ -68,30 +68,38 @@ import { UserContext, useUser } from "@/context/user-context"; // Import UserCon
 
 // Route guard to protect pages that require authentication
 function PrivateRoute({ component: Component, ...rest }: any) {
+  const [locationValue, setWouterLocation] = useLocation(); // Renamed setLocation to avoid conflict
+  const componentName = Component.displayName || Component.name || "UnknownComponent";
+  console.log(`DEBUG: PrivateRoute activated for component: ${componentName}, current location: ${locationValue}`);
+
   const { user, loading, error } = useUser();
-  const [locationValue, setLocation] = useLocation();
+  console.log(`DEBUG: PrivateRoute (for ${componentName}): useUser() state: user: ${user ? user.uid : null}, loading: ${loading}, error: ${error}`);
 
   // The 'loading' here is now effectively App's 'isAuthLoading' via context.
-  // If App's main gate is active, this loading check might be redundant or act as a secondary check.
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Protected Route...</div>;
+    console.log(`DEBUG: PrivateRoute (for ${componentName}): Context loading is true. Rendering loading screen.`);
+    return <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">Loading Protected Route... (PrivateRoute)</div>;
   }
 
   if (error) {
+    console.log(`DEBUG: PrivateRoute (for ${componentName}): Context error detected. Rendering error UI. Error:`, error);
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
-        <h1 className="text-xl font-bold mb-2">Authentication Error</h1>
+        <h1 className="text-xl font-bold mb-2">Authentication Error (PrivateRoute)</h1>
         <p className="mb-1">We encountered an error trying to sign you in.</p>
         <p className="text-sm bg-red-200 p-2 rounded mb-4">Details: {error.message}</p>
-        <Button onClick={() => setLocation('/login')} variant="destructive">Go to Login</Button>
+        <Button onClick={() => setWouterLocation('/login')} variant="destructive">Go to Login</Button>
       </div>
     );
   }
 
   if (!user) {
-    return <Redirect to={`/login?redirect=${encodeURIComponent(locationValue)}`} />;
+    const redirectTo = `/login?redirect=${encodeURIComponent(locationValue)}`;
+    console.log(`DEBUG: PrivateRoute (for ${componentName}): No user. Redirecting to ${redirectTo}`);
+    return <Redirect to={redirectTo} />;
   }
 
+  console.log(`DEBUG: PrivateRoute (for ${componentName}): User authenticated. Rendering component inside AppLayout.`);
   return <AppLayout><Component {...rest} /></AppLayout>;
 }
 
@@ -107,35 +115,42 @@ function App() {
         if (result && result.user) {
           // User signed in via redirect.
           // onAuthStateChanged will handle setting appUser and isAuthLoading.
-          console.log("App.tsx: Redirect sign-in successful for user:", result.user.uid);
+          console.log("DEBUG: App.tsx: Redirect sign-in successful for user:", result.user.uid, result.user);
+        } else {
+          console.log("DEBUG: App.tsx: No redirect result or no user in redirect result.");
         }
       })
       .catch(err => {
-        console.error("App.tsx: Error processing redirect result:", err);
+        console.error("DEBUG: App.tsx: Error processing redirect result:", err);
         setAuthError(err);
         // If redirect fails, onAuthStateChanged will likely report no user or existing user.
         // isAuthLoading will be set to false by onAuthStateChanged regardless.
       })
       .finally(() => {
         // Setup the main listener after redirect attempt (success or fail)
-        const unsubscribe = listenToAuthChanges((user) => { // Use renamed function
-          console.log("App.tsx: onAuthStateChanged triggered. User:", user ? user.uid : null);
-          setAppUser(user);
-          // If a user is found (or definitively not found), clear any previous redirect processing error
-          // unless the error is critical and should persist. For now, clear it.
-          if (user || !authError?.message.includes("redirect")) { // Basic check to not clear critical redirect errors too soon.
+        console.log("DEBUG: App.tsx: Setting up onAuthStateChanged listener.");
+        const unsubscribe = listenToAuthChanges((firebaseUser) => { // Use renamed function
+          console.log("DEBUG: App.tsx: onAuthStateChanged event. Firebase user:", firebaseUser ? firebaseUser.uid : null, firebaseUser);
+          setAppUser(firebaseUser);
+          console.log("DEBUG: App.tsx: appUser state set to:", firebaseUser ? firebaseUser.uid : null);
+
+          if (firebaseUser || !authError?.message.includes("redirect")) {
+             console.log("DEBUG: App.tsx: Clearing authError (if any not related to critical redirect error). Current authError:", authError);
              setAuthError(null);
           }
           setIsAuthLoading(false);
+          console.log("DEBUG: App.tsx: isAuthLoading state set to false.");
         });
         return () => {
-          console.log("App.tsx: Unsubscribing from onAuthStateChanged");
+          console.log("DEBUG: App.tsx: Unsubscribing from onAuthStateChanged.");
           unsubscribe();
         };
       });
   }, [authError?.message]); // Re-run if authError message changes, to re-evaluate clearing it.
 
+  console.log("DEBUG: App.tsx: Rendering. isAuthLoading:", isAuthLoading, "appUser:", appUser ? appUser.uid : null);
   if (isAuthLoading) {
+    console.log("DEBUG: App.tsx: Rendering loading screen.");
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background text-white">
         {/* <Spinner size="lg" /> */}
@@ -144,17 +159,19 @@ function App() {
     );
   }
 
+  console.log("DEBUG: App.tsx: Proceeding to render UserContext.Provider and Switch.");
   return (
     <UserContext.Provider value={{ user: appUser, loading: isAuthLoading, error: authError }}>
       <Switch>
         {/* Public routes */}
         <Route path="/">
           {() => {
-            // useUser() will get its values from the Provider immediately above.
-            // isAuthLoading is false here, so context.loading from useUser() will be false.
-            const { user, error: contextError } = useUser();
+            console.log("DEBUG: App.tsx: Processing / route.");
+            const { user: contextUser, error: contextError, loading: contextLoading } = useUser();
+            console.log(`DEBUG: App.tsx / route: useUser() state - user: ${contextUser ? contextUser.uid : null}, loading: ${contextLoading}, error: ${contextError}`);
 
             if (contextError) {
+              console.log("DEBUG: App.tsx / route: Context error detected, rendering error UI.");
               return (
                 <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
                   <h1 className="text-xl font-bold mb-2">Application Error</h1>
@@ -165,18 +182,72 @@ function App() {
               );
             }
 
-            if (user) {
+            if (contextUser) {
+              console.log("DEBUG: App.tsx / route: User authenticated, redirecting to /dashboard.");
               return <Redirect to="/dashboard" />;
             }
+            console.log("DEBUG: App.tsx / route: No user, rendering Home component.");
             return <Home />;
           }}
         </Route>
         <Route path="/home" component={Home} />
-      <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
-      <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
+        <Route path="/test-page" component={TestPage} /> {/* J-18: Canary Route */}
+        <Route path="/canary2-test" component={Canary2} /> {/* Canary 2 Test */}
 
-      <Route path="/login" component={Login} />
-      <Route path="/signup" component={Signup} />
+        <Route path="/login">
+          {() => {
+            console.log("DEBUG: App.tsx: Processing /login route.");
+            const { user: contextUser, loading: contextLoading, error: contextError } = useUser();
+            const [currentWouterLocation] = useWouterLocation(); // Using aliased import
+            console.log(`DEBUG: App.tsx /login route: Current wouter location: ${currentWouterLocation}. useUser() state - user: ${contextUser ? contextUser.uid : null}, loading: ${contextLoading}, error: ${contextError}`);
+
+            if (contextError) { // Check for error first
+              console.log("DEBUG: App.tsx /login route: Context error detected, rendering error UI for login path.");
+              // Potentially render a simplified error or redirect, or let Login page handle if it also checks context error
+              return (
+                <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
+                  <h1 className="text-xl font-bold mb-2">Login Page Context Error</h1>
+                  <p className="mb-1">An error occurred with user authentication context.</p>
+                  <p className="text-sm bg-red-200 p-2 rounded">Details: {contextError.message}</p>
+                  <a href="/login" className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Try Again</a>
+                </div>
+              );
+            }
+
+            if (contextUser) {
+              const queryParams = new URLSearchParams(currentWouterLocation.split('?')[1]);
+              const redirectTarget = queryParams.get('redirect');
+              console.log(`DEBUG: App.tsx /login route: User authenticated. Redirect query: '${redirectTarget}'. Redirecting to ${redirectTarget || "/dashboard"}.`);
+              return <Redirect to={redirectTarget || "/dashboard"} />;
+            }
+            console.log("DEBUG: App.tsx /login route: No user, rendering Login component.");
+            return <Login />;
+          }}
+        </Route>
+        <Route path="/signup">
+          {() => {
+            console.log("DEBUG: App.tsx: Processing /signup route.");
+            const { user: contextUser, loading: contextLoading, error: contextError } = useUser();
+            console.log(`DEBUG: App.tsx /signup route: useUser() state - user: ${contextUser ? contextUser.uid : null}, loading: ${contextLoading}, error: ${contextError}`);
+            if (contextError) {
+                 console.log("DEBUG: App.tsx /signup route: Context error detected, rendering error UI for signup path.");
+                 return (
+                    <div className="min-h-screen flex flex-col items-center justify-center bg-red-100 text-red-700 p-4">
+                      <h1 className="text-xl font-bold mb-2">Signup Page Context Error</h1>
+                      <p className="mb-1">An error occurred with user authentication context.</p>
+                      <p className="text-sm bg-red-200 p-2 rounded">Details: {contextError.message}</p>
+                      <a href="/signup" className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Try Again</a>
+                    </div>
+                 );
+            }
+            if (contextUser) {
+              console.log("DEBUG: App.tsx /signup route: User authenticated, redirecting to /dashboard.");
+              return <Redirect to="/dashboard" />;
+            }
+            console.log("DEBUG: App.tsx /signup route: No user, rendering Signup component.");
+            return <Signup />;
+          }}
+        </Route>
 
       {/* Protected routes */}
       <Route path="/dashboard">
