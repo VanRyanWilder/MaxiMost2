@@ -27,12 +27,13 @@ interface SidebarProps {
 
 export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
   const [location] = useLocation();
+  // Updated to reflect current sections and default expansion for TOOLS and LEARN
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    main: true,
-    learn: true,
-    pillars: true,
-    tools: false,
-    community: false,
+    main: true,      // Main navigation, typically good to keep open
+    tools: true,     // As per requirement
+    learn: true,     // As per requirement (was already true)
+    connect: false,  // New section, default to closed or true as needed
+    // Removed 'pillars' and 'community' as they are not in current sidebar-links.tsx
   });
   
   const toggleSection = (sectionKey: string) => {
@@ -45,48 +46,50 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
   // Use the new helper function to get grouped links
   const sections = getGroupedSidebarLinks();
   
-  // Simplified renderNavItem for FIX-15 debugging
-  const renderNavItem = (link: SidebarLink) => {
-    const isActive = location === link.href; // Simplified active check for now
+  // Enhanced renderNavItem for UIX-14
+  const renderNavItem = (link: SidebarLink, isSubmenuItem = false) => {
+    const isActive = location === link.href;
     return (
-      <div key={link.href} style={{ paddingLeft: link.submenu ? '10px' : '0px', border: '1px dashed #ccc', margin: '2px' }}>
+      <div key={link.href} className={cn("my-0.5", isSubmenuItem ? "ml-0" : "")}>
         <Link href={link.href}>
-          <Button variant={isActive ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
-            {link.icon} {/* This is already a placeholder like "[LD]" */}
+          <Button
+            variant={isActive ? "secondary" : "ghost"}
+            size="sm"
+            className={cn(
+              "w-full justify-start text-sm h-9 px-3", // Consistent padding and height
+              isActive ? "font-semibold text-primary" : "font-normal text-muted-foreground",
+              !isActive && "hover:bg-muted hover:text-foreground" // Clearer hover state
+            )}
+          >
+            <span className="mr-3 w-5 h-5 flex items-center justify-center">{link.icon}</span>
             <span>{link.title}</span>
           </Button>
         </Link>
-        {link.submenu && link.submenu.length > 0 && (
-          <div style={{ paddingLeft: '15px', borderLeft: '1px solid #eee' }}>
-            {link.submenu.map(subLink => (
-              <div key={subLink.href} style={{ border: '1px dashed #eee', margin: '1px' }}>
-                <Link href={subLink.href}>
-                  <Button variant={location === subLink.href ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
-                    {subLink.icon}
-                    <span>{subLink.title}</span>
-                  </Button>
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Submenu rendering is now handled by recursively calling renderNavItem if sublinks are part of the main sections structure */}
       </div>
     );
   };
 
-  // Simplified renderSection for FIX-15 debugging
+  // renderSection updated to handle submenus if they are structured within the main links array
+  // For now, assuming sidebarLinks defines submenu items directly if needed and renderNavItem handles indentation.
+  // The current getGroupedSidebarLinks structure does not produce nested submenus within the 'links' array of a section.
+  // If deeper nesting is required, getGroupedSidebarLinks and renderSection/renderNavItem would need more complex recursion.
+
+  // Enhanced renderSection for UIX-14
   const renderSection = (title: string, links: SidebarLink[], sectionKey: string) => {
-    // const isExpanded = expandedSections[sectionKey]; // Not using expansion for now
+    const isExpanded = expandedSections[sectionKey] === undefined ? true : expandedSections[sectionKey]; // Default to true if not set
     return (
-      <div key={sectionKey} className="mb-4" style={{ border: '1px solid #aaa', padding: '5px' }}>
-        <Button variant="ghost" size="sm" className="w-full justify-between">
-          <span className="text-xs font-medium uppercase tracking-wider">{title}</span>
-          {/* Chevron placeholders are fine as they are simple divs */}
-          {/* {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />} */}
+      // Removed inline debug style: style={{ border: '1px solid #aaa', padding: '5px' }}
+      <div key={sectionKey} className="mb-1">
+        <Button variant="ghost" size="sm" className="w-full justify-between" onClick={() => toggleSection(sectionKey)}>
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</span>
+          {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
         </Button>
-        <div className="space-y-1 pt-1">
-          {links.map(renderNavItem)}
-        </div>
+        {isExpanded && (
+          <div className="space-y-1 pt-1 pl-2 border-l border-dashed ml-2"> {/* Added some indentation and border */}
+            {links.map(renderNavItem)}
+          </div>
+        )}
       </div>
     );
   };

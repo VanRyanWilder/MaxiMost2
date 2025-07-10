@@ -8,20 +8,29 @@
 //   TrendingUp, // For Progress Analytics
 //   MessageCircle, // For AI Coach
 //   // Keeping Zap as an alternative for Explore if Search is too generic
-//   Zap,
-// } from "lucide-react"; // Commented for FIX-15
+  LayoutDashboard,
+  Layers, // For Habit Stacks
+  BookText, // For Journal
+  Search, // For Explore Content
+  BookOpen, // For Atomic Habits Guide
+  Share2, // For Integrations
+  TrendingUp, // For Progress Analytics
+  MessageCircle, // For AI Coach
+  Zap, // Alternative for Explore
+  Settings, // For Settings if needed directly, though brief says via profile
+  Users, // For Community if that section returns
+  ShieldCheck, // For Principles or other Learn items
+  Heart, // For Mind & Spirit or similar
+  Brain as BrainIcon, // For Mind & Spirit or AI
+  Dumbbell as DumbbellIcon, // For Workouts
+  Apple as AppleIcon, // For Nutrition
+  Moon as MoonIcon, // For Sleep
+  DollarSign, // For Financial
+  Briefcase, // For Career/Productivity
+  GraduationCap // For Learn section
+} from "lucide-react"; // Restored and added more icons
 
-// Placeholder components for icons
-const LayoutDashboard = (props: any) => <div {...props}>[LD]</div>;
-const Layers = (props: any) => <div {...props}>[L]</div>;
-const BookText = (props: any) => <div {...props}>[BT]</div>;
-const Search = (props: any) => <div {...props}>[S]</div>;
-const BookOpen = (props: any) => <div {...props}>[BO]</div>;
-const Share2 = (props: any) => <div {...props}>[S2]</div>;
-const TrendingUp = (props: any) => <div {...props}>[TU]</div>;
-const MessageCircle = (props: any) => <div {...props}>[MC]</div>;
-const Zap = (props: any) => <div {...props}>[Z]</div>;
-
+// Placeholder components for icons are removed as actual icons are imported above.
 
 export interface SidebarLink {
   title: string;
