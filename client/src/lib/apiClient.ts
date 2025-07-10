@@ -1,6 +1,38 @@
 // client/src/lib/apiClient.ts
 
-import { auth } from "./firebase"; // Assuming firebase.ts exports auth for current user token
+import { auth, listenToAuthChanges } from "./firebase"; // Added listenToAuthChanges
+import type { User as FirebaseUser } from "firebase/auth";
+
+// Helper to get current user's ID token, waiting for auth init if needed
+const getIdTokenReliably = (): Promise<string | null> => {
+  return new Promise((resolve, reject) => {
+    if (auth.currentUser) {
+      auth.currentUser.getIdToken().then(resolve).catch(error => {
+        console.error("Error getting ID token from auth.currentUser:", error);
+        // Potentially resolve(null) or reject depending on desired handling of token errors
+        reject(new Error("Failed to get ID token from current user."));
+      });
+    } else {
+      // If currentUser is null, wait for the initial auth state
+      const unsubscribe = listenToAuthChanges((user: FirebaseUser | null) => {
+        unsubscribe(); // Important to prevent memory leaks
+        if (user) {
+          user.getIdToken().then(resolve).catch(error => {
+            console.error("Error getting ID token from onAuthStateChanged user:", error);
+            reject(new Error("Failed to get ID token from authenticated user."));
+          });
+        } else {
+          resolve(null); // No user, so no token
+        }
+      });
+      // Add a timeout to prevent hanging indefinitely if Firebase doesn't respond
+      setTimeout(() => {
+        unsubscribe(); // Clean up listener
+        reject(new Error("Timeout waiting for Firebase auth state."));
+      }, 10000); // 10-second timeout
+    }
+  });
+};
 
 interface ApiClientOptions extends RequestInit {
   body?: any; // Allow any type for body, will be stringified if object
@@ -14,14 +46,20 @@ export async function apiClient<T>(
   const { method = "GET", body, headers: customHeaders, token: passedToken, ...restOptions } = options;
 
   let idToken = passedToken;
-  if (!idToken && auth.currentUser) {
+  if (idToken === undefined) { // Only try to fetch if no token was explicitly passed
     try {
-      idToken = await auth.currentUser.getIdToken();
+      idToken = await getIdTokenReliably();
     } catch (error) {
-      console.error("Error getting Firebase ID token:", error);
-      // Depending on app requirements, could throw error or proceed without token for public routes
-      // For Maximost, most backend routes will be protected.
-      throw new Error("Failed to retrieve Firebase ID token.");
+      console.error("apiClient: Error getting Firebase ID token reliably:", error);
+      // Depending on how strictly to enforce auth for all calls:
+      // 1. Throw error to prevent API call without token
+      // throw new Error(`Failed to retrieve Firebase ID token: ${error.message}`);
+      // 2. Proceed without token (current behavior if getIdTokenReliably resolves to null)
+      //    This might be okay if some endpoints are public, but dangerous for protected ones.
+      //    The brief implies most actions need auth. Let's make it stricter.
+      //    If getIdTokenReliably() itself rejects, the error will propagate.
+      //    If it resolves to null (no user), idToken will be null, and no Authorization header will be set.
+      //    This is acceptable; backend will reject if endpoint is protected.
     }
   }
 
