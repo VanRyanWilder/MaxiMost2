@@ -51,8 +51,12 @@ export const CTASection: React.FC<CTASectionProps> = ({
   };
 
   const handleButtonClick = () => {
-    if (buttonLink) {
-      setLocation(buttonLink);
+    if (buttonLink === "/login") { // Test for FIX-18
+      console.log("FIX-18 Test: Navigating to /login via window.location.href");
+      window.location.href = "/login"; // Standard HTML navigation
+    } else if (buttonLink) {
+      console.log(`FIX-18 Test: Navigating to ${buttonLink} via wouter setLocation`);
+      setLocation(buttonLink); // wouter programmatic navigation for other links
     }
     // If it's a form button, the form's onSubmit will handle it.
   };
