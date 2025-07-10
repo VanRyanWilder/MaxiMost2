@@ -1,8 +1,9 @@
-// Temporary App.tsx for diagnostic purposes (FIX-21 Step 1)
+// Temporary App.tsx for diagnostic purposes (FIX-21 Step 2)
 import React from 'react';
+import Login from '@/pages/login'; // Changed from LoginPage to Login to match actual component export
 
 function App() {
-  console.log("FIX-21: Minimal App.tsx rendering");
-  return <div style={{ padding: '2rem', color: 'white', backgroundColor: 'purple' }}>App is rendering! (FIX-21 Step 1)</div>;
+  console.log("FIX-21 Step 2: Testing Login component in isolation");
+  return <Login />;
 }
 export default App;
