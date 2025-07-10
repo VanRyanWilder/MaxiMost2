@@ -140,9 +140,12 @@ export default function SortableDashboard() {
     setSubmitHabitError(null);
     try {
       const newHabitPayload: Partial<FirestoreHabit> = { ...habitData };
-      const createdHabit = await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload });
-      setHabits(prevHabits => [...prevHabits, createdHabit]);
-      toast({ title: "Success!", description: `Habit "${createdHabit.title}" added.` });
+      // const createdHabit = await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload }); // API call is still made
+      await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload }); // Make the API call
+      // Instead of manually adding, re-fetch the habits list
+      await fetchHabitsAsync(false); // Re-fetch habits without full loading indicator
+      // Toast message can be more generic or use data from the re-fetched list if needed, for now, use habitData
+      toast({ title: "Success!", description: `Habit "${habitData.title}" submitted.` });
       setEditHabitDialogOpen(false);
     } catch (error: any) {
         setSubmitHabitError(error.message || "An unknown error occurred.");

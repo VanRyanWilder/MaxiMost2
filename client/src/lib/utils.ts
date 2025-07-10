@@ -182,13 +182,51 @@ export function getIconComponent(iconName: string, iconColor?: string, className
   return null;
 }
 
-export const toDate = (timestamp: FirestoreTimestamp | Date | string): Date => {
-  if (timestamp instanceof Date) return timestamp;
-  if (typeof timestamp === "string") return parseISO(timestamp);
-  if (timestamp && typeof (timestamp as any).toDate === "function") return (timestamp as any).toDate();
-  if (timestamp && typeof (timestamp as any).seconds === "number" && typeof (timestamp as any).nanoseconds === "number") {
-    return new Date((timestamp as any).seconds * 1000 + (timestamp as any).nanoseconds / 1000000);
+export const toDate = (timestamp: FirestoreTimestamp | Date | string | null | undefined): Date | null => {
+  if (timestamp === null || timestamp === undefined) return null; // Explicitly handle null/undefined
+  if (timestamp instanceof Date) {
+    if (isNaN(timestamp.getTime())) return null; // Check if Date object itself is invalid
+    return timestamp;
   }
-  // Fallback for any other case, though it might be less safe
-  return new Date(timestamp as any);
+  if (typeof timestamp === "string") {
+    if (timestamp.trim() === "") return null; // Handle empty or whitespace-only string
+    try {
+      const d = parseISO(timestamp);
+      if (isNaN(d.getTime())) return null; // Check if parseISO resulted in Invalid Date
+      return d;
+    } catch (e) {
+      // Log error for debugging if needed: console.error("Error parsing date string:", timestamp, e);
+      return null; // Error during parsing
+    }
+  }
+  // Firestore SDK Timestamp object (has toDate method)
+  if (timestamp && typeof (timestamp as any).toDate === "function") {
+    try {
+      const d = (timestamp as any).toDate();
+      if (isNaN(d.getTime())) return null;
+      return d;
+    } catch (e) {
+      return null;
+    }
+  }
+  // Firestore REST API-like timestamp object ({ seconds: ..., nanoseconds: ... })
+  if (timestamp && typeof (timestamp as any).seconds === "number" && typeof (timestamp as any).nanoseconds === "number") {
+    try {
+      const d = new Date((timestamp as any).seconds * 1000 + (timestamp as any).nanoseconds / 1000000);
+      if (isNaN(d.getTime())) return null;
+      return d;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Final fallback, attempt to parse but check for validity (e.g. if it's a number timestamp)
+  try {
+    const d = new Date(timestamp as any);
+    if (isNaN(d.getTime())) return null; // Check if new Date() resulted in Invalid Date
+    return d;
+  } catch (e) {
+    // Log error for debugging: console.error("Error in final fallback for new Date():", timestamp, e);
+    return null;
+  }
 };

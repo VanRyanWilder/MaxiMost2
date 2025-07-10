@@ -28,9 +28,17 @@ const MonthView: React.FC<MonthViewProps> = ({ habits, currentDisplayMonth, setC
   const getCompletedHabitsCountForDate = (date: Date): number => {
     let count = 0;
     habits.forEach(habit => {
-      if (!habit.completions) return;
-      const completion = habit.completions.find(c => isSameDay(toDate(c.timestamp), date));
-      if (completion && completion.value >= 1) { // Assuming binary or target met for quantitative
+      if (!habit.completions || habit.completions.length === 0) {
+        return;
+      }
+      // Check if any completion entry for this habit matches the date
+      const hasCompletedOnDate = habit.completions.some(completionEntry => {
+        const timestampAsDate = toDate(completionEntry.timestamp);
+        // Only proceed if timestampAsDate is a valid Date and matches the target date
+        return timestampAsDate && isSameDay(timestampAsDate, date) && completionEntry.value >= 1;
+      });
+
+      if (hasCompletedOnDate) {
         count++;
       }
     });

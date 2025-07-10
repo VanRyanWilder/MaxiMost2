@@ -17,10 +17,12 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
   const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
 
   const getHabitCompletionForDate = (habit: FirestoreHabit, date: Date): boolean => {
-    if (!habit.completions) return false;
-    const completion = habit.completions.find(c => isSameDay(toDate(c.timestamp), date));
-    // Assuming binary completion for simplicity in week view for now
-    return completion ? completion.value >= 1 : false;
+    if (!habit.completions || habit.completions.length === 0) return false;
+
+    return habit.completions.some(completionEntry => {
+      const timestampAsDate = toDate(completionEntry.timestamp);
+      return timestampAsDate && isSameDay(timestampAsDate, date) && completionEntry.value >= 1;
+    });
   };
 
   if (!habits || habits.length === 0) {
