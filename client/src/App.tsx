@@ -251,13 +251,11 @@ function App() {
         </Route>
 
       {/* Protected routes */}
-      {/* Temporarily bypassing PrivateRoute for /dashboard for FIX-18 */}
-      <Route path="/dashboard" component={Dashboard} />
-      {/* End of temporary change for FIX-18 */}
-
-      {/* <Route path="/dashboard">
+      <Route path="/dashboard">
         <PrivateRoute component={Dashboard} />
-      </Route> */}
+      </Route>
+      {/* Restoring PrivateRoute for /dashboard for FIX-18 logging */}
+
       <Route path="/explore"> {/* Add route for ExplorePage */}
         <PrivateRoute component={ExplorePage} />
       </Route>
