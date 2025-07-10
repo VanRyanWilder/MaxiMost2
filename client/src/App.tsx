@@ -12,7 +12,8 @@ import TestPage from "@/pages/TestPage"; // Added for J-18
 import Canary2 from "@/pages/Canary2"; // Added for Canary 2 Test
 
 // Other page imports
-import Dashboard from "@/pages/dashboard-new";
+// import Dashboard from "@/pages/dashboard-new"; // Commenting out, will use DashboardPage
+import DashboardPage from "@/pages/DashboardPage"; // Added import for the real dashboard page
 import ExplorePage from "@/pages/explore"; // Import the new Explore page
 import AtomicHabitsGuidePage from "@/pages/atomic-habits-guide"; // Import Atomic Habits Guide page
 import Profile from "@/pages/profile";
@@ -100,8 +101,8 @@ function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<Error | null>(null);
 
-  // FIX-22: Moved PlaceholderDashboard definition here
-  const PlaceholderDashboard = () => <div style={{ padding: '2rem', color: 'white', backgroundColor: 'darkcyan' }}><h1>Dashboard Renders Successfully (Placeholder Test)</h1></div>;
+  // PlaceholderDashboard definition removed as it's replaced by DashboardPage
+  // const PlaceholderDashboard = () => <div style={{ padding: '2rem', color: 'white', backgroundColor: 'darkcyan' }}><h1>Dashboard Renders Successfully (Placeholder Test)</h1></div>;
 
   useEffect(() => {
     // Process redirect first, as it might set the user for onAuthStateChanged
@@ -183,12 +184,11 @@ function App() {
 
       {/* Protected routes */}
       {/* FIX-21: Test the DashboardPage Component (New Final Step) */}
-      {/* PlaceholderDashboard is now defined above, before App's return statement */}
-      {/* Temporarily change the dashboard route to use the placeholder */}
+      {/* PlaceholderDashboard has been removed and replaced with DashboardPage */}
       <Route path="/dashboard">
-        <PrivateRoute component={PlaceholderDashboard} />
+        <PrivateRoute component={DashboardPage} />
       </Route>
-      {/* End of FIX-21 Test */}
+      {/* End of FIX-21 Test / DB-03 Implementation */}
       <Route path="/explore"> {/* Add route for ExplorePage */}
         <PrivateRoute component={ExplorePage} />
       </Route>
