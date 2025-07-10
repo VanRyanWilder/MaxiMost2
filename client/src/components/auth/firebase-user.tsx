@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// import { LogIn, LogOut } from "lucide-react"; // Commented for testing FIX-15
+import { LogIn, LogOut } from "lucide-react"; // Uncommented: Restore lucide-react icons
 import { 
   listenToAuthChanges, // Updated import
   signInWithGoogle,
@@ -19,9 +19,9 @@ import { User as FirebaseUser } from "firebase/auth";
 // Temporary type fix to handle TypeScript errors
 import { useLocation } from "wouter";
 
-// Placeholders for icons
-const LogIn = (props: any) => <div {...props}>LogInIcon</div>;
-const LogOut = (props: any) => <div {...props}>LogOutIcon</div>;
+// Placeholders for icons removed
+// const LogIn = (props: any) => <div {...props}>LogInIcon</div>;
+// const LogOut = (props: any) => <div {...props}>LogOutIcon</div>;
 
 export function FirebaseUserComponent() {
   const [user, setUser] = useState<FirebaseUser | null>(null);

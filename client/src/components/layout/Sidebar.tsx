@@ -11,13 +11,13 @@ import { Separator } from "@/components/ui/separator";
 // } from "@/components/ui/collapsible"; // Commented out for FIX-15 as they cause error #310
 // Updated import to include the new helper function
 import { getGroupedSidebarLinks, type SidebarLink } from "@/lib/sidebar-links";
-// import { X, Menu, ChevronDown, ChevronRight } from "lucide-react"; // Commented for FIX-15
+import { X, Menu, ChevronDown, ChevronRight } from "lucide-react"; // Restoring lucide-react icons
 
-// Placeholders for icons
-const X = (props: any) => <div {...props}>XIcon</div>;
-const Menu = (props: any) => <div {...props}>MenuIcon</div>;
-const ChevronDown = (props: any) => <div {...props}>ChevronDownIcon</div>;
-const ChevronRight = (props: any) => <div {...props}>ChevronRightIcon</div>;
+// Placeholders for icons removed
+// const X = (props: any) => <div {...props}>XIcon</div>;
+// const Menu = (props: any) => <div {...props}>MenuIcon</div>;
+// const ChevronDown = (props: any) => <div {...props}>ChevronDownIcon</div>;
+// const ChevronRight = (props: any) => <div {...props}>ChevronRightIcon</div>;
 
 
 interface SidebarProps {
@@ -53,7 +53,7 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
         <Link href={link.href}>
           <Button variant={isActive ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
             {link.icon} {/* This is already a placeholder like "[LD]" */}
-            <span>{link.title} (Test)</span>
+            <span>{link.title}</span>
           </Button>
         </Link>
         {link.submenu && link.submenu.length > 0 && (
@@ -63,7 +63,7 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
                 <Link href={subLink.href}>
                   <Button variant={location === subLink.href ? "secondary" : "ghost"} size="sm" className="w-full justify-start">
                     {subLink.icon}
-                    <span>{subLink.title} (Sub-Test)</span>
+                    <span>{subLink.title}</span>
                   </Button>
                 </Link>
               </div>
@@ -80,7 +80,7 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
     return (
       <div key={sectionKey} className="mb-4" style={{ border: '1px solid #aaa', padding: '5px' }}>
         <Button variant="ghost" size="sm" className="w-full justify-between">
-          <span className="text-xs font-medium uppercase tracking-wider">{title} (Test Section)</span>
+          <span className="text-xs font-medium uppercase tracking-wider">{title}</span>
           {/* Chevron placeholders are fine as they are simple divs */}
           {/* {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />} */}
         </Button>

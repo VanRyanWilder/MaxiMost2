@@ -93,7 +93,8 @@ const StacksPage: React.FC = () => {
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8 text-center text-neutral-100">Manage Your Habit Stacks</h1>
 
-      <Card className="mb-8 shadow-lg bg-neutral-800/80 backdrop-blur-sm border-neutral-700 text-neutral-100">
+      {/* Removed custom bg-neutral-800/80, backdrop-blur-sm (already in Card), border-neutral-700. Retained shadow-lg and text-neutral-100 */}
+      <Card className="mb-8 shadow-lg text-neutral-100">
         <CardHeader>
           <CardTitle className="text-2xl text-neutral-100">Create New Stack</CardTitle>
         </CardHeader>
@@ -144,7 +145,8 @@ const StacksPage: React.FC = () => {
         {stacks.length > 0 ? (
           <div className="space-y-4">
             {stacks.map(stack => (
-              <Card key={stack.id} className="shadow-md bg-neutral-800/70 border-neutral-700 text-neutral-100">
+              // Removed custom bg-neutral-800/70, border-neutral-700. Retained shadow-md and text-neutral-100
+              <Card key={stack.id} className="shadow-md text-neutral-100">
                 <CardHeader className="flex flex-row items-center justify-between cursor-pointer" onClick={() => toggleStackExpansion(stack.id)}>
                   <CardTitle className="text-xl text-neutral-100">{stack.name}</CardTitle>
                   {expandedStacks[stack.id] ? <ChevronDown className="h-5 w-5 text-neutral-300" /> : <ChevronRight className="h-5 w-5 text-neutral-300" />}
@@ -173,9 +175,10 @@ const StacksPage: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-6 text-center md:text-left text-neutral-100">Expert Habit Stacks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {expertStacksData.map(expertStack => (
+            // Removed custom bg-neutral-800/50, border-neutral-700. Retained shadow-lg, text-neutral-100 and hover effects.
             <Card
               key={expertStack.id}
-              className="shadow-lg flex flex-col bg-neutral-800/50 border-neutral-700 text-neutral-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
+              className="shadow-lg flex flex-col text-neutral-100 hover:shadow-xl hover:scale-[1.02] transition-all duration-200"
             >
               <CardHeader>
                 <CardTitle className="text-xl text-blue-400">{expertStack.expertName}</CardTitle>

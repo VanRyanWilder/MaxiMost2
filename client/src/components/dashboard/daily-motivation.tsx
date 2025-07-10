@@ -12,7 +12,10 @@ export function DailyMotivation({
   author = "Mark Twain"
 }: DailyMotivationProps) {
   return (
-    <Card className="bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-700 text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
+    // Removed custom gradient background to allow Card's default glassmorphism to apply.
+    // Added text-white as it was part of the original styling and is needed for dark glassmorphism.
+    // Retained shadow-xl and hover:shadow-2xl as they enhance the look.
+    <Card className="text-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
       <CardHeader className="pb-3 border-b border-white/20">
         <CardTitle className="text-xl font-bold flex items-center tracking-tight">
           <Zap className="h-5 w-5 mr-2 text-yellow-300" /> {/* Changed icon */}
