@@ -13,27 +13,11 @@ import { Accordion } from "../components/ui/accordion";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 
 // Import Lucide icons
-// import {
-//   Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
-//   Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Landmark, // Users2 was here
-//   Smartphone, Activity // Make sure Activity is here
-// } from "lucide-react";
-
-// Placeholder for icons to avoid crashing
-const Users = (props: any) => <div {...props}>UsersIcon</div>;
-const Brain = (props: any) => <div {...props}>BrainIcon</div>;
-const Zap = (props: any) => <div {...props}>ZapIcon</div>;
-const TrendingUp = (props: any) => <div {...props}>TrendingUpIcon</div>;
-const FlaskConical = (props: any) => <div {...props}>FlaskConicalIcon</div>;
-const ShieldCheck = (props: any) => <div {...props}>ShieldCheckIcon</div>;
-const Dumbbell = (props: any) => <div {...props}>DumbbellIcon</div>;
-const NutritionIcon = (props: any) => <div {...props}>NutritionIcon</div>; // Alias for Apple
-const Bed = (props: any) => <div {...props}>BedIcon</div>;
-const Lightbulb = (props: any) => <div {...props}>LightbulbIcon</div>;
-const Landmark = (props: any) => <div {...props}>LandmarkIcon</div>;
-const Smartphone = (props: any) => <div {...props}>SmartphoneIcon</div>;
-const Activity = (props: any) => <div {...props}>ActivityIcon</div>;
-
+import {
+  Users, Brain, Zap, TrendingUp, FlaskConical, ShieldCheck,
+  Dumbbell, Apple as NutritionIcon, Bed, Lightbulb, Landmark, // Users2 was here
+  Smartphone, Activity // Make sure Activity is here
+} from "lucide-react";
 
 // Helper function to convert hex color to RGB string "r,g,b"
 const hexToRgbString = (hex: string): string | null => {

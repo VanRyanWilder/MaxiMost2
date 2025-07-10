@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLocation } from "wouter";
-// useUser no longer provides 'login'. Auth state is managed by firebaseUser.
-// import { useUser } from "@/context/user-context";
+import { useLocation, useSearch } from "wouter"; // Added useSearch
+import { useUser } from "@/context/user-context"; // Import useUser
 // import { FaGoogle, FaApple, FaFacebookF } from "react-icons/fa"; // Commenting out for login functionality debug
 import { signInWithGoogle, signInWithFacebook, signInWithApple, signInWithEmail, signInAnonymously } from "@/lib/firebase";
 
@@ -15,8 +14,19 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  // const { login } = useUser(); // 'login' is no longer in useUser context
+
+  const { user, loading: authLoading } = useUser(); // Get user and auth loading state
   const [, setLocation] = useLocation();
+  const search = useSearch();
+
+  // Redirect if user is logged in
+  useEffect(() => {
+    if (!authLoading && user) {
+      const params = new URLSearchParams(search);
+      const redirectPath = params.get("redirect");
+      setLocation(redirectPath || "/dashboard");
+    }
+  }, [user, authLoading, setLocation, search]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
