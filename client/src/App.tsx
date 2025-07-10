@@ -100,6 +100,9 @@ function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<Error | null>(null);
 
+  // FIX-22: Moved PlaceholderDashboard definition here
+  const PlaceholderDashboard = () => <div style={{ padding: '2rem', color: 'white', backgroundColor: 'darkcyan' }}><h1>Dashboard Renders Successfully (Placeholder Test)</h1></div>;
+
   useEffect(() => {
     // Process redirect first, as it might set the user for onAuthStateChanged
     getRedirectResult(auth) // Corrected: call imported getRedirectResult with auth instance
@@ -180,9 +183,7 @@ function App() {
 
       {/* Protected routes */}
       {/* FIX-21: Test the DashboardPage Component (New Final Step) */}
-      {/* Create a simple placeholder component for the test */}
-      const PlaceholderDashboard = () => <div style={{ padding: '2rem', color: 'white', backgroundColor: 'darkcyan' }}><h1>Dashboard Renders Successfully (Placeholder Test)</h1></div>;
-
+      {/* PlaceholderDashboard is now defined above, before App's return statement */}
       {/* Temporarily change the dashboard route to use the placeholder */}
       <Route path="/dashboard">
         <PrivateRoute component={PlaceholderDashboard} />
