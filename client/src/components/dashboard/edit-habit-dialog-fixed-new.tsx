@@ -190,6 +190,7 @@ export function EditHabitDialog({
 }: EditHabitDialogProps) {
   const [editedHabit, setEditedHabit] = useState<Habit | null>(null);
   const [iconPickerTab, setIconPickerTab] = useState("physical");
+  const [isDetailsExpanded, setIsDetailsExpanded] = useState(false); // State for progressive disclosure
   
   // Ref to track if we're creating a new habit or editing an existing one
   const isCreatingNewHabit = useRef(false);
@@ -201,6 +202,7 @@ export function EditHabitDialog({
         console.log("DIALOG - Editing existing habit:", habit.title);
         console.log("DIALOG - Habit color:", habit.iconColor);
         setEditedHabit({...habit});
+        setIsDetailsExpanded(true); // Expand details if editing an existing habit
         isCreatingNewHabit.current = false;
       } else {
         // Create a new habit with a unique ID
@@ -325,295 +327,309 @@ export function EditHabitDialog({
               placeholder="Habit name"
             />
           </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="description" className="text-right">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              value={editedHabit.description}
-              onChange={(e) => setEditedHabit({...editedHabit, description: e.target.value})}
-              className="col-span-3"
-              placeholder="Brief description"
-            />
-          </div>
-          
-          {/* Frequency */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="frequency" className="text-right">
-              Frequency
-            </Label>
-            <Select 
-              value={editedHabit.frequency} 
-              onValueChange={(value: HabitFrequency) => setEditedHabit({
-                ...editedHabit, 
-                frequency: value,
-                // Make daily habits always absolute
-                ...(value === 'daily' ? { isAbsolute: true } : {})
-              })}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select frequency" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily (every day)</SelectItem>
-                <SelectItem value="2x-week">2x per week</SelectItem>
-                <SelectItem value="3x-week">3x per week</SelectItem>
-                <SelectItem value="4x-week">4x per week</SelectItem>
-                <SelectItem value="5x-week">5x per week</SelectItem>
-                <SelectItem value="6x-week">6x per week</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {/* Time Commitment */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="timeCommitment" className="text-right">
-              Time Needed
-            </Label>
-            <Input
-              id="timeCommitment"
-              value={editedHabit.timeCommitment}
-              onChange={(e) => setEditedHabit({...editedHabit, timeCommitment: e.target.value})}
-              className="col-span-3"
-              placeholder="e.g. 5 min, 1 hour"
-            />
-          </div>
-          
-          {/* Category */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="category" className="text-right">
-              Category
-            </Label>
-            <Select 
-              value={editedHabit.category} 
-              onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
-            >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="physical">
-                  <div className="flex items-center gap-2">
-                    <Dumbbell className="h-4 w-4 text-red-500" />
-                    <span>Physical Training</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="nutrition">
-                  <div className="flex items-center gap-2">
-                    <Utensils className="h-4 w-4 text-orange-500" />
-                    <span>Nutrition & Fueling</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="sleep">
-                  <div className="flex items-center gap-2">
-                    <Moon className="h-4 w-4 text-indigo-500" />
-                    <span>Sleep & Hygiene</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="mental">
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-yellow-500" />
-                    <span>Mental Acuity & Growth</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="relationships">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-blue-500" />
-                    <span>Relationships & Community</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="financial">
-                  <div className="flex items-center gap-2">
-                    <CircleDollarSign className="h-4 w-4 text-green-500" />
-                    <span>Financial Habits</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
-          {/* Habit Type (Binary/Quantitative) */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="habitType" className="text-right">
-              Habit Type
-            </Label>
-            <Select
-              value={editedHabit.type || "binary"}
-              onValueChange={(value: "binary" | "quantitative") => {
-                setEditedHabit({
-                  ...editedHabit,
-                  type: value,
-                  // Reset targetValue and targetUnit if switching to binary
-                  targetValue: value === "binary" ? undefined : editedHabit.targetValue,
-                  targetUnit: value === "binary" ? undefined : editedHabit.targetUnit,
-                });
-              }}
+          {/* Progressive Disclosure Toggle Button */}
+          <div className="flex justify-center mt-2 mb-3">
+            <Button
+              variant="link"
+              onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
+              className="text-sm text-primary hover:text-primary/80"
             >
-              <SelectTrigger className="col-span-3">
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="binary">Binary (Done / Not Done)</SelectItem>
-                <SelectItem value="quantitative">Quantitative (Track a Value)</SelectItem>
-              </SelectContent>
-            </Select>
+              {isDetailsExpanded ? "Show Less Details..." : "Add More Details..."}
+            </Button>
           </div>
-
-          {/* Target Value (Conditional) */}
-          {editedHabit.type === "quantitative" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="targetValue" className="text-right">
-                Target Value
-              </Label>
-              <Input
-                id="targetValue"
-                type="number"
-                value={editedHabit.targetValue || ""}
-                onChange={(e) => setEditedHabit({ ...editedHabit, targetValue: e.target.value ? parseFloat(e.target.value) : undefined })}
-                className="col-span-3"
-                placeholder="e.g., 64, 30, 10000"
-              />
-            </div>
-          )}
-
-          {/* Unit (Conditional) */}
-          {editedHabit.type === "quantitative" && (
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="targetUnit" className="text-right">
-                Unit
-              </Label>
-              <Input
-                id="targetUnit"
-                value={editedHabit.targetUnit || ""}
-                onChange={(e) => setEditedHabit({ ...editedHabit, targetUnit: e.target.value })}
-                className="col-span-3"
-                placeholder="e.g., oz, minutes, steps, pages"
-              />
-            </div>
-          )}
           
-          {/* Icon Color */}
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">
-              Color
-            </Label>
-            <div className="col-span-3 grid grid-cols-5 gap-3">
-              {colorSchemes.map((scheme) => (
-                <button
-                  key={scheme.id}
-                  type="button"
-                  className={`w-10 h-10 rounded-md ${scheme.bg} flex items-center justify-center ${
-                    editedHabit.iconColor === scheme.id 
-                      ? "ring-2 ring-offset-2 ring-blue-500" 
-                      : "hover:ring-1 hover:ring-offset-1 hover:ring-blue-300"
-                  }`}
-                  onClick={() => handleColorChange(scheme.id)}
+          {isDetailsExpanded && (
+            <>
+              {/* Description */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  value={editedHabit.description}
+                  onChange={(e) => setEditedHabit({...editedHabit, description: e.target.value})}
+                  className="col-span-3"
+                  placeholder="Brief description"
+                />
+              </div>
+
+              {/* Frequency */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="frequency" className="text-right">
+                  Frequency
+                </Label>
+                <Select
+                  value={editedHabit.frequency}
+                  onValueChange={(value: HabitFrequency) => setEditedHabit({
+                    ...editedHabit,
+                    frequency: value,
+                    ...(value === 'daily' ? { isAbsolute: true } : {})
+                  })}
                 >
-                  <div className={`w-6 h-6 rounded-full ${scheme.primary}`} />
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Icon selection */}
-          <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">
-              Icon
-            </Label>
-            <div className="col-span-3">
-              <div className="flex items-center gap-2 mb-3">
-                <div className={`p-2 rounded-md ${
-                  editedHabit.iconColor 
-                    ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.bg 
-                    : "bg-blue-100"
-                }`}>
-                  {renderIcon(editedHabit.icon, `h-5 w-5 ${
-                    editedHabit.iconColor 
-                      ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary 
-                      : "text-blue-500"
-                  }`)}
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select frequency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily (every day)</SelectItem>
+                    <SelectItem value="2x-week">2x per week</SelectItem>
+                    <SelectItem value="3x-week">3x per week</SelectItem>
+                    <SelectItem value="4x-week">4x per week</SelectItem>
+                    <SelectItem value="5x-week">5x per week</SelectItem>
+                    <SelectItem value="6x-week">6x per week</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Time Commitment */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="timeCommitment" className="text-right">
+                  Time Needed
+                </Label>
+                <Input
+                  id="timeCommitment"
+                  value={editedHabit.timeCommitment}
+                  onChange={(e) => setEditedHabit({...editedHabit, timeCommitment: e.target.value})}
+                  className="col-span-3"
+                  placeholder="e.g. 5 min, 1 hour"
+                />
+              </div>
+
+              {/* Category */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">
+                  Category
+                </Label>
+                <Select
+                  value={editedHabit.category}
+                  onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="physical">
+                      <div className="flex items-center gap-2">
+                        <Dumbbell className="h-4 w-4 text-red-500" />
+                        <span>Physical Training</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="nutrition">
+                      <div className="flex items-center gap-2">
+                        <Utensils className="h-4 w-4 text-orange-500" />
+                        <span>Nutrition & Fueling</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="sleep">
+                      <div className="flex items-center gap-2">
+                        <Moon className="h-4 w-4 text-indigo-500" />
+                        <span>Sleep & Hygiene</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="mental">
+                      <div className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-yellow-500" />
+                        <span>Mental Acuity & Growth</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="relationships">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-blue-500" />
+                        <span>Relationships & Community</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="financial">
+                      <div className="flex items-center gap-2">
+                        <CircleDollarSign className="h-4 w-4 text-green-500" />
+                        <span>Financial Habits</span>
+                      </div>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Habit Type (Binary/Quantitative) */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="habitType" className="text-right">
+                  Habit Type
+                </Label>
+                <Select
+                  value={editedHabit.type || "binary"}
+                  onValueChange={(value: "binary" | "quantitative") => {
+                    setEditedHabit({
+                      ...editedHabit,
+                      type: value,
+                      targetValue: value === "binary" ? undefined : editedHabit.targetValue,
+                      targetUnit: value === "binary" ? undefined : editedHabit.targetUnit,
+                    });
+                  }}
+                >
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="binary">Binary (Done / Not Done)</SelectItem>
+                    <SelectItem value="quantitative">Quantitative (Track a Value)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Target Value (Conditional) */}
+              {editedHabit.type === "quantitative" && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="targetValue" className="text-right">
+                    Target Value
+                  </Label>
+                  <Input
+                    id="targetValue"
+                    type="number"
+                    value={editedHabit.targetValue || ""}
+                    onChange={(e) => setEditedHabit({ ...editedHabit, targetValue: e.target.value ? parseFloat(e.target.value) : undefined })}
+                    className="col-span-3"
+                    placeholder="e.g., 64, 30, 10000"
+                  />
                 </div>
-                <span className="text-sm font-medium">Current Icon</span>
+              )}
+
+              {/* Unit (Conditional) */}
+              {editedHabit.type === "quantitative" && (
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="targetUnit" className="text-right">
+                    Unit
+                  </Label>
+                  <Input
+                    id="targetUnit"
+                    value={editedHabit.targetUnit || ""}
+                    onChange={(e) => setEditedHabit({ ...editedHabit, targetUnit: e.target.value })}
+                    className="col-span-3"
+                    placeholder="e.g., oz, minutes, steps, pages"
+                  />
+                </div>
+              )}
+
+              {/* Icon Color */}
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">
+                  Color
+                </Label>
+                <div className="col-span-3 grid grid-cols-5 gap-3">
+                  {colorSchemes.map((scheme) => (
+                    <button
+                      key={scheme.id}
+                      type="button"
+                      className={`w-10 h-10 rounded-md ${scheme.bg} flex items-center justify-center ${
+                        editedHabit.iconColor === scheme.id
+                          ? "ring-2 ring-offset-2 ring-blue-500"
+                          : "hover:ring-1 hover:ring-offset-1 hover:ring-blue-300"
+                      }`}
+                      onClick={() => handleColorChange(scheme.id)}
+                    >
+                      <div className={`w-6 h-6 rounded-full ${scheme.primary}`} />
+                    </button>
+                  ))}
+                </div>
               </div>
               
-              <Tabs value={iconPickerTab} onValueChange={setIconPickerTab} className="w-full">
-                <TabsList className="grid grid-cols-6 mb-2">
-                  <TabsTrigger value="physical" className="text-xs text-red-500">Physical</TabsTrigger>
-                  <TabsTrigger value="nutrition" className="text-xs text-orange-500">Nutrition</TabsTrigger>
-                  <TabsTrigger value="sleep" className="text-xs text-indigo-500">Sleep</TabsTrigger>
-                  <TabsTrigger value="mental" className="text-xs text-yellow-500">Mental</TabsTrigger>
-                  <TabsTrigger value="relationships" className="text-xs text-blue-500">Social</TabsTrigger>
-                  <TabsTrigger value="financial" className="text-xs text-green-500">Financial</TabsTrigger>
-                </TabsList>
-                
-                {Object.keys(iconCategories).map(category => (
-                  <TabsContent key={category} value={category}>
-                    <div className="grid grid-cols-6 gap-2">
-                      {iconCategories[category].map(iconKey => (
-                        <Button
-                          key={iconKey}
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className={`p-2 ${editedHabit.icon === iconKey ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
-                          onClick={() => handleIconChange(iconKey)}
-                        >
-                          {renderIcon(iconKey, `h-5 w-5 ${
-                            editedHabit.iconColor 
-                              ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary 
-                              : "text-blue-500"
-                          }`)}
-                        </Button>
-                      ))}
+              {/* Icon selection */}
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">
+                  Icon
+                </Label>
+                <div className="col-span-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className={`p-2 rounded-md ${
+                      editedHabit.iconColor
+                        ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.bg
+                        : "bg-blue-100"
+                    }`}>
+                      {renderIcon(editedHabit.icon, `h-5 w-5 ${
+                        editedHabit.iconColor
+                          ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary
+                          : "text-blue-500"
+                      }`)}
                     </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </div>
-          </div>
-          
-          {/* Impact & Effort */}
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
-              Impact (1-10)
-            </Label>
-            <div className="col-span-3">
-              <Slider 
-                value={[editedHabit.impact]} 
-                min={1} 
-                max={10} 
-                step={1}
-                onValueChange={(value) => setEditedHabit({...editedHabit, impact: value[0]})}
-              />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                <span>Low</span>
-                <span className="font-semibold text-foreground">{editedHabit.impact}</span>
-                <span>High</span>
+                    <span className="text-sm font-medium">Current Icon</span>
+                  </div>
+
+                  <Tabs value={iconPickerTab} onValueChange={setIconPickerTab} className="w-full">
+                    <TabsList className="grid grid-cols-6 mb-2">
+                      <TabsTrigger value="physical" className="text-xs text-red-500">Physical</TabsTrigger>
+                      <TabsTrigger value="nutrition" className="text-xs text-orange-500">Nutrition</TabsTrigger>
+                      <TabsTrigger value="sleep" className="text-xs text-indigo-500">Sleep</TabsTrigger>
+                      <TabsTrigger value="mental" className="text-xs text-yellow-500">Mental</TabsTrigger>
+                      <TabsTrigger value="relationships" className="text-xs text-blue-500">Social</TabsTrigger>
+                      <TabsTrigger value="financial" className="text-xs text-green-500">Financial</TabsTrigger>
+                    </TabsList>
+
+                    {Object.keys(iconCategories).map(category => (
+                      <TabsContent key={category} value={category}>
+                        <div className="grid grid-cols-6 gap-2">
+                          {iconCategories[category].map(iconKey => (
+                            <Button
+                              key={iconKey}
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className={`p-2 ${editedHabit.icon === iconKey ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
+                              onClick={() => handleIconChange(iconKey)}
+                            >
+                              {renderIcon(iconKey, `h-5 w-5 ${
+                                editedHabit.iconColor
+                                  ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary
+                                  : "text-blue-500"
+                              }`)}
+                            </Button>
+                          ))}
+                        </div>
+                      </TabsContent>
+                    ))}
+                  </Tabs>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">
-              Effort (1-10)
-            </Label>
-            <div className="col-span-3">
-              <Slider 
-                value={[editedHabit.effort]} 
-                min={1} 
-                max={10} 
-                step={1}
-                onValueChange={(value) => setEditedHabit({...editedHabit, effort: value[0]})}
-              />
-              <div className="flex justify-between mt-1 text-xs text-muted-foreground">
-                <span>Easy</span>
-                <span className="font-semibold text-foreground">{editedHabit.effort}</span>
-                <span>Hard</span>
+
+              {/* Impact & Effort */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">
+                  Impact (1-10)
+                </Label>
+                <div className="col-span-3">
+                  <Slider
+                    value={[editedHabit.impact]}
+                    min={1}
+                    max={10}
+                    step={1}
+                    onValueChange={(value) => setEditedHabit({...editedHabit, impact: value[0]})}
+                  />
+                  <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                    <span>Low</span>
+                    <span className="font-semibold text-foreground">{editedHabit.impact}</span>
+                    <span>High</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label className="text-right">
+                  Effort (1-10)
+                </Label>
+                <div className="col-span-3">
+                  <Slider
+                    value={[editedHabit.effort]}
+                    min={1}
+                    max={10}
+                    step={1}
+                    onValueChange={(value) => setEditedHabit({...editedHabit, effort: value[0]})}
+                  />
+                  <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                    <span>Easy</span>
+                    <span className="font-semibold text-foreground">{editedHabit.effort}</span>
+                    <span>Hard</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
         
         <DialogFooter className="flex justify-between">

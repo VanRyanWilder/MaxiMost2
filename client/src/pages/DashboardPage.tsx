@@ -318,10 +318,11 @@ export default function SortableDashboard() {
               </CardContent>
             </Card>
 
-            {/* Habit Stacks Section - NOW BELOW HABIT DASHBOARD */}
+            {/* Habit Stacks Section - REMOVED as per UIX-10 */}
+            {/*
             {mockStacks.length > 0 && (
               <section>
-                <h2 className="text-xl font-semibold mb-4 flex items-center"> {/* Adjusted title size for hierarchy */}
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
                   <Layers className="mr-2 h-6 w-6 text-primary" />
                   Your Habit Stacks
                 </h2>
@@ -336,6 +337,7 @@ export default function SortableDashboard() {
                 </div>
               </section>
             )}
+            */}
 
             {/* Original CardContent was here, now part of the moved Card above */}
             {/* <CardContent>
@@ -358,9 +360,9 @@ export default function SortableDashboard() {
           </div>
 
           <div className="w-full lg:w-80 space-y-6">
-            {/* Render DailyMotivation directly, then TodaysLog below it */}
+            {/* Render DailyMotivation directly. TodaysLog removed as per UIX-10 */}
             <DailyMotivation />
-            <TodaysLog />
+            {/* <TodaysLog /> */}
           </div>
         </div>
       </PageContainer>
