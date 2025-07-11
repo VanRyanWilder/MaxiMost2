@@ -198,22 +198,23 @@ export function EditHabitDialog({
   // Reset form when habit changes or when dialog opens
   useEffect(() => {
     if (open) {
-      if (habit) {
+      if (habit) { // Editing an existing habit
         console.log("DIALOG - Editing existing habit:", habit.title);
-        console.log("DIALOG - Habit color:", habit.iconColor);
         setEditedHabit({...habit});
-        setIsDetailsExpanded(true); // Expand details if editing an existing habit
         isCreatingNewHabit.current = false;
-      } else {
-        // Create a new habit with a unique ID
-        const newHabit = {
+      } else { // Creating a new habit
+        const newHabitWithId = {
           ...DEFAULT_NEW_HABIT,
-          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
+          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}` // Ensure new ID for new habit
         };
-        setEditedHabit(newHabit);
-        setIsDetailsExpanded(false); // Explicitly set to false for new habits
+        setEditedHabit(newHabitWithId);
         isCreatingNewHabit.current = true;
       }
+      // Set expansion based on whether a habit is being edited or created
+      setIsDetailsExpanded(!!habit);
+    } else {
+      // Optionally reset when dialog closes, though initial state of isDetailsExpanded is false
+      // setIsDetailsExpanded(false);
     }
   }, [habit, open]);
   
