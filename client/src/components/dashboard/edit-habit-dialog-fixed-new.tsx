@@ -198,23 +198,27 @@ export function EditHabitDialog({
   // Reset form when habit changes or when dialog opens
   useEffect(() => {
     if (open) {
-      if (habit) { // Editing an existing habit
-        console.log("DIALOG - Editing existing habit:", habit.title);
+      // habit.id existing (and not a temp one) implies editing an existing habit from DB
+      // habit prop from DashboardPage for new habits is a template object but habit.id (from FirestoreHabit's habitId) would be undefined.
+      if (habit && habit.id && !habit.id.startsWith('h-')) {
         setEditedHabit({...habit});
+        setIsDetailsExpanded(true);
         isCreatingNewHabit.current = false;
-      } else { // Creating a new habit
-        const newHabitWithId = {
-          ...DEFAULT_NEW_HABIT,
-          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}` // Ensure new ID for new habit
+      } else {
+        // Creating a new habit or using a template passed for a new habit
+        const baseTemplate = habit || DEFAULT_NEW_HABIT; // Use passed template if available, else default
+        const newHabitWithFreshId = {
+          ...DEFAULT_NEW_HABIT, // Ensure all default fields are present
+          ...baseTemplate, // Overlay with template/passed values
+          id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}` // Always generate a new temp client ID
         };
-        setEditedHabit(newHabitWithId);
+        setEditedHabit(newHabitWithFreshId);
+        setIsDetailsExpanded(false); // Default to collapsed view for new habits
         isCreatingNewHabit.current = true;
       }
-      // Set expansion based on whether a habit is being edited or created
-      setIsDetailsExpanded(!!habit);
     } else {
-      // Optionally reset when dialog closes, though initial state of isDetailsExpanded is false
-      // setIsDetailsExpanded(false);
+       // When dialog closes, reset expansion (optional, but good for consistency)
+       setIsDetailsExpanded(false);
     }
   }, [habit, open]);
   

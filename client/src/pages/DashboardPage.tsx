@@ -50,6 +50,7 @@ export default function SortableDashboard() {
     setLoadHabitsError(null);
     try {
       const fetchedHabits = await apiClient<FirestoreHabit[]>("/habits", { method: "GET" });
+      console.log('Fetched raw habits:', JSON.stringify(fetchedHabits)); // DIAGNOSTIC LOG
 
       if (!Array.isArray(fetchedHabits)) {
         console.error("Fetched habits response is not an array:", fetchedHabits);
@@ -60,12 +61,14 @@ export default function SortableDashboard() {
       const validHabits = fetchedHabits.filter(h =>
         h && typeof h === 'object' && typeof h.title === 'string' && h.habitId
       );
+      console.log('Filtered valid habits:', JSON.stringify(validHabits)); // DIAGNOSTIC LOG
 
       const habitsWithEnsuredCompletions = validHabits.map(h => ({
         ...h,
         // habitId is already asserted as present by the filter
         completions: (h.completions || []).map(c => ({ ...c }))
       }));
+      console.log('Processed habits for state:', JSON.stringify(habitsWithEnsuredCompletions)); // DIAGNOSTIC LOG
       setHabits(habitsWithEnsuredCompletions);
       setListRenderKey(prevKey => prevKey + 1); // Increment key to force re-render of list component
     } catch (error: any) {
@@ -142,12 +145,12 @@ export default function SortableDashboard() {
     setSubmitHabitError(null);
     try {
       const newHabitPayload: Partial<FirestoreHabit> = { ...habitData };
-      // const createdHabit = await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload }); // API call is still made
       await apiClient<FirestoreHabit>("/habits", { method: "POST", body: newHabitPayload }); // Make the API call
-      // Instead of manually adding, re-fetch the habits list
+      console.log('Habit submitted to API with title:', habitData.title); // DIAGNOSTIC LOG
+
       await fetchHabitsAsync(false); // Re-fetch habits without full loading indicator
-      // Toast message can be more generic or use data from the re-fetched list if needed, for now, use habitData
-      toast({ title: "Success!", description: `Habit "${habitData.title}" submitted.` });
+
+      toast({ title: "Success!", description: `Habit "${habitData.title}" creation submitted.` }); // Updated toast
       setEditHabitDialogOpen(false);
     } catch (error: any) {
         setSubmitHabitError(error.message || "An unknown error occurred.");
