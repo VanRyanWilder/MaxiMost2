@@ -1,11 +1,11 @@
 import React from 'react';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from 'date-fns'; // Added parseISO
-import { toast } from "@/hooks/use-toast"; // Import toast
-import { cn } from "@/lib/utils"; // Import cn utility
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckSquare, Square } from 'lucide-react'; // For completion status
-import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
-import { toDate } from '@/lib/utils'; // Updated import path for toDate
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from 'date-fns';
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox"; // Import Checkbox
+import { CheckSquare, Square } from 'lucide-react'; // Keep for quantitative display if needed
+import { FirestoreHabit } from '../../../../shared/types/firestore';
+import { toDate } from '@/lib/utils';
 
 interface WeekViewProps {
   habits: FirestoreHabit[];
@@ -60,30 +60,38 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate, onToggleHabit 
                   <td
                     key={day.toISOString()}
                     className={cn(
-                      "px-4 py-3 text-center cursor-pointer transition-colors",
-                      isCompleted ? "bg-green-500/10 hover:bg-green-500/20" : "hover:bg-white/5"
+                      "px-4 py-3 text-center transition-colors",
+                      isCompleted && habit.type === "binary" ? "bg-green-500/10 hover:bg-green-500/20" : "",
+                      isCompleted && habit.type === "quantitative" ? "bg-blue-500/10" : "", // Different bg for logged quantitative
+                      habit.type === "binary" ? "cursor-pointer hover:bg-white/5" : "cursor-default"
                     )}
                     onClick={() => {
-                      if (onToggleHabit && habit.id && habit.type === "binary") { // Only toggle binary habits directly
+                      if (onToggleHabit && habit.id && habit.type === "binary") {
                         onToggleHabit(habit.id, day);
-                      } else if (onToggleHabit && habit.id && habit.type === "quantitative") {
-                        // For quantitative, direct toggle might not make sense.
-                        // Could open a modal or simply not be interactive from week view.
-                        // For now, let's make it toggle completion if already logged (to clear it), or do nothing if not logged.
-                        // This is a simplification. A full quant log from week view is a larger feature.
-                        if (isCompleted) {
-                           onToggleHabit(habit.id, day, 0); // Send 0 to clear/un-complete
-                        } else {
-                          // Optionally, prompt or open modal for quantitative input here
-                           toast({ title: "Log Value", description: `Please log value for "${habit.title}" from the Day view or habit details.`, variant: "info" });
-                        }
+                      }
+                      // For quantitative, no direct toggle from week view cell click, direct to day view
+                      if (habit.type === "quantitative") {
+                        toast({ title: "Log Value", description: `Please log value for "${habit.title}" from the Day view or habit details.`, variant: "info" });
                       }
                     }}
                   >
-                    {isCompleted ? (
-                      <CheckSquare className="h-5 w-5 text-green-400 fill-green-500/30 mx-auto" /> // Added fill
+                    {habit.type === "binary" ? (
+                      <Checkbox
+                        checked={isCompleted}
+                        onCheckedChange={() => { // onCheckedChange is better for Checkbox
+                          if (onToggleHabit && habit.id) {
+                            onToggleHabit(habit.id, day);
+                          }
+                        }}
+                        className="data-[state=checked]:bg-green-500/80 data-[state=checked]:border-green-500/50 border-gray-500"
+                      />
                     ) : (
-                      <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" />
+                      // Display for quantitative habits (non-interactive icon)
+                      isCompleted ? (
+                        <CheckSquare className="h-5 w-5 text-blue-400 fill-blue-500/30 mx-auto" />
+                      ) : (
+                        <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" />
+                      )
                     )}
                   </td>
                 );

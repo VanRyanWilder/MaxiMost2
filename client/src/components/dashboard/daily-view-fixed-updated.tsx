@@ -303,16 +303,17 @@ export function DailyViewFixedUpdated({
                         </div>
                         <div className="flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
                           {/* Text colors updated for light theme on dark background */}
-                          <div className="font-medium flex items-center text-gray-100 truncate">
-                            <span className="truncate">{habit.title}</span> {/* Title truncation */}
+                          <div className={`font-medium flex items-center text-gray-100 truncate ${isHabitCompletedOnDate(habit.id, today) ? 'text-gray-400' : 'text-gray-100'}`}>
+                            <span className={`truncate ${isHabitCompletedOnDate(habit.id, today) ? 'line-through' : ''}`}>{habit.title}</span> {/* Title truncation & strike-through */}
                             {typeof habit.streak === "number" && habit.streak > 0 && (
-                              <Badge variant="outline" className="text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0">
-                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-400 text-amber-400" /> {habit.streak}
+                              <Badge variant="outline" className={`text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
+                                <Star className={`h-2.5 w-2.5 mr-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-amber-600 fill-amber-600' : 'text-amber-400 fill-amber-400'}`} />
+                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>{habit.streak}</span>
                               </Badge>
                             )}
                           </div>
                           {habit.description && ( // Only show description if it exists
-                            <div className="text-xs text-gray-400 truncate mt-0.5"> {/* Description truncation and color */}
+                            <div className={`text-xs truncate mt-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-gray-500 line-through' : 'text-gray-400'}`}> {/* Description truncation and color */}
                               {habit.description}
                             </div>
                           )}
@@ -403,22 +404,18 @@ export function DailyViewFixedUpdated({
                         <div className={`mr-3 p-1 rounded bg-${habit.iconColor}-500/10`}>
                           {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor || 'gray')} {/* Ensure iconColor has a fallback */}
                         </div>
-                        <div className="flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
-                          {/* Text colors updated for light theme on dark background */}
-                          <div className="font-medium flex items-center text-gray-100 truncate">
-                            <span className="truncate">{habit.title}</span> {/* Title truncation */}
-                            <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-white/5 border-white/20 text-sky-300 flex-shrink-0"> {/* Glass styled badge */}
+                        <div className="flex-1 min-w-0">
+                          {/* Text colors and strike-through for completed items */}
+                          <div className={`font-medium flex items-center truncate ${isHabitCompletedOnDate(habit.id, today) ? 'text-gray-400' : 'text-gray-100'}`}>
+                            <span className={`truncate ${isHabitCompletedOnDate(habit.id, today) ? 'line-through' : ''}`}>{habit.title}</span>
+                            <Badge variant="outline" className={`text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-white/5 border-white/20 text-sky-300 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
                               {getFrequencyText(habit.frequency)}
                             </Badge>
-                            {/* TODO: Review styling for hasMetWeeklyFrequency badge for glass theme */}
                             {(() => {
                               const hasMet = habit.frequency && habit.frequency !== 'daily' && hasMetWeeklyFrequency(habit);
-                              // const targetDays = getTargetDays(habit);
-                              // const completedDays = countCompletedDaysInWeek(habit.id); // This function is not defined here
-                              // const isExceeding = completedDays > targetDays;
-                              if (hasMet) {
+                              if (hasMet) { // Simplified "Done" badge for frequency met
                                 return (
-                                  <Badge className="px-1.5 py-0.5 h-5 bg-green-500/20 text-green-300 border-green-500/30 ml-1 flex-shrink-0">
+                                  <Badge className={`px-1.5 py-0.5 h-5 bg-green-500/20 text-green-300 border-green-500/30 ml-1 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
                                     <Check className="h-3.5 w-3.5" /> Done
                                   </Badge>
                                 );
@@ -426,13 +423,14 @@ export function DailyViewFixedUpdated({
                               return null;
                             })()}
                             {typeof habit.streak === "number" && habit.streak > 0 && (
-                              <Badge variant="outline" className="text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0">
-                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-400 text-amber-400" /> {habit.streak}
+                              <Badge variant="outline" className={`text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
+                                <Star className={`h-2.5 w-2.5 mr-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-amber-600 fill-amber-600' : 'text-amber-400 fill-amber-400'}`} />
+                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>{habit.streak}</span>
                               </Badge>
                             )}
                           </div>
                           {habit.description && (
-                            <div className="text-xs text-gray-400 truncate mt-0.5"> {/* Description truncation and color */}
+                            <div className={`text-xs truncate mt-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-gray-500 line-through' : 'text-gray-400'}`}>
                               {habit.description}
                             </div>
                           )}
