@@ -1,5 +1,5 @@
 import React from 'react';
-import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay } from 'date-fns';
+import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from 'date-fns'; // Added parseISO
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Square } from 'lucide-react'; // For completion status
 import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
@@ -20,8 +20,9 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
     if (!habit.completions || habit.completions.length === 0) return false;
 
     return habit.completions.some(completionEntry => {
-      const timestampAsDate = toDate(completionEntry.timestamp);
-      return timestampAsDate && isSameDay(timestampAsDate, date) && completionEntry.value >= 1;
+      if (!completionEntry.date) return false; // Guard for safety
+      // completionEntry.date is "YYYY-MM-DD" string, 'date' is a Date object
+      return isSameDay(parseISO(completionEntry.date), date) && completionEntry.value >= 1;
     });
   };
 

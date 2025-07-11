@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, parseISO } from "date-fns"; // Added parseISO
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star, Pencil, Trash2, MoreHorizontal, PlusCircle, CheckSquare, Target } from "lucide-react";
@@ -65,8 +65,11 @@ export function DailyViewFixedUpdated({
   // Refactored to use habit.completions
   const isHabitCompletedOnDate = (habit: Habit, date: Date): boolean => {
     const habitCompletions = habit.completions || [];
-    return habitCompletions.some(
-      c => isSameDay(new Date(c.date), date) && c.value > 0
+    return habitCompletions.some(completionEntry => {
+        if (!completionEntry.date) return false;
+        // completionEntry.date is "YYYY-MM-DD" string, 'date' is a Date object
+        return isSameDay(parseISO(completionEntry.date), date) && completionEntry.value > 0;
+      }
     );
   };
   

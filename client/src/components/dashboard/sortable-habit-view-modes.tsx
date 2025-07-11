@@ -84,23 +84,20 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   
   // Calculate current date based on offsets for the daily view
   const today = startOfToday();
-  const currentDay = addDays(today, dayOffset); // For daily view & basis for weekly
+  const currentDay = addDays(today, dayOffset); // For daily view
   
-  // For weekly view:
-  const startOfCurrentWeekForWeeklyView = startOfWeek(currentDay, { weekStartsOn: 1 });
-  const startOfVisibleWeek = addDays(startOfCurrentWeekForWeeklyView, weekOffset * 7);
-  const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfVisibleWeek, i));
-  
-  // For monthly view:
-  const monthToDisplay = addMonths(startOfMonth(today), monthOffset); // This is the month the calendar shows
-  const firstDayOfMonthForCalendar = startOfMonth(monthToDisplay);
-  const lastDayOfMonthForCalendar = endOfMonth(monthToDisplay);
-  
-  const firstDayOfGrid = startOfWeek(firstDayOfMonthForCalendar, { weekStartsOn: 1 });
-  const daysInLastWeekOfGrid = getDay(lastDayOfMonthForCalendar) === 0 ? 0 : 7 - getDay(lastDayOfMonthForCalendar);
-  const lastDayOfGrid = addDays(lastDayOfMonthForCalendar, daysInLastWeekOfGrid);
-
-  const calendarDays = eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid });
+  // Removed calculations for weekDates and calendarDays as they are no longer needed
+  // in this component, which is now dedicated to the daily view.
+  // const startOfCurrentWeekForWeeklyView = startOfWeek(currentDay, { weekStartsOn: 1 });
+  // const startOfVisibleWeek = addDays(startOfCurrentWeekForWeeklyView, weekOffset * 7);
+  // const weekDates = Array.from({ length: 7 }, (_, i) => addDays(startOfVisibleWeek, i));
+  // const monthToDisplay = addMonths(startOfMonth(today), monthOffset);
+  // const firstDayOfMonthForCalendar = startOfMonth(monthToDisplay);
+  // const lastDayOfMonthForCalendar = endOfMonth(monthToDisplay);
+  // const firstDayOfGrid = startOfWeek(firstDayOfMonthForCalendar, { weekStartsOn: 1 });
+  // const daysInLastWeekOfGrid = getDay(lastDayOfMonthForCalendar) === 0 ? 0 : 7 - getDay(lastDayOfMonthForCalendar);
+  // const lastDayOfGrid = addDays(lastDayOfMonthForCalendar, daysInLastWeekOfGrid);
+  // const calendarDays = eachDayOfInterval({ start: firstDayOfGrid, end: lastDayOfGrid });
   
   // Filter habits based on category
   const filteredHabits = filterCategory === 'all' 
