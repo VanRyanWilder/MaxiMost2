@@ -136,7 +136,7 @@ const MonthView: React.FC<MonthViewProps> = ({ habits, currentDisplayMonth, setC
                   )}
                 </div>
               )}
-            </div>
+            </button> // Explicitly closing button, removing the extra div
           );
         })}
       </div>
