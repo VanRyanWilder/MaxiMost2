@@ -40,6 +40,7 @@ export default function SortableDashboard() {
   const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
   const [currentDashboardView, setCurrentDashboardView] = useState<'day' | 'week' | 'month'>('day');
   const [currentDisplayMonth, setCurrentDisplayMonth] = useState(new Date());
+  const [listRenderKey, setListRenderKey] = useState(0); // For forcing re-mount of habit list
 
   const { user, userLoading } = useUser();
 
@@ -66,6 +67,7 @@ export default function SortableDashboard() {
         completions: (h.completions || []).map(c => ({ ...c }))
       }));
       setHabits(habitsWithEnsuredCompletions);
+      setListRenderKey(prevKey => prevKey + 1); // Increment key to force re-render of list component
     } catch (error: any) {
       console.error("Failed to fetch habits:", error);
       setLoadHabitsError(error.message || "An unknown error occurred while fetching habits.");
@@ -263,6 +265,7 @@ export default function SortableDashboard() {
 
       habitContent = (
         <SortableHabitViewModes
+          key={`day-view-${listRenderKey}`} // Apply key
           habits={validHabitsForView}
           onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
           onEditHabit={handleEditHabitClick}
@@ -270,9 +273,9 @@ export default function SortableDashboard() {
           onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits.map(h => ({...h, habitId: h.id})))}
         />);
     } else if (currentDashboardView === 'week') {
-      habitContent = <WeekView habits={habits} currentDate={currentDate} />;
+      habitContent = <WeekView key={`week-view-${listRenderKey}`} habits={habits} currentDate={currentDate} />;
     } else if (currentDashboardView === 'month') {
-      habitContent = <MonthView habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
+      habitContent = <MonthView key={`month-view-${listRenderKey}`} habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
     }
   }
 
