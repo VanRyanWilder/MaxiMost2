@@ -37,39 +37,54 @@ export function HeaderWithSettings({
   onWeeklyViewClick,
 }: HeaderWithSettingsProps) {
   return (
-    <div className="border-b sticky top-0 z-10 bg-background">
+    // Use a semi-transparent background if this header is meant to be "glassy" itself,
+    // or keep bg-background if it's a solid themed bar.
+    // For now, assume it's a solid bar consistent with AppLayout's header.
+    // Border color updated for glass theme.
+    <div className="border-b border-white/10 sticky top-0 z-10 bg-background/80 backdrop-blur-sm">
       <div className="px-4 sm:px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             {onMenuClick && (
-              <Button variant="ghost" size="icon" onClick={onMenuClick} className="mr-2">
+              <Button variant="ghost" size="icon" onClick={onMenuClick} className="mr-2 text-gray-300 hover:text-white hover:bg-white/10">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle menu</span>
               </Button>
             )}
             <div>
-              <h1 className="text-lg font-semibold">{title}</h1>
-              {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+              <h1 className="text-lg font-semibold text-gray-100">{title}</h1> {/* Text color */}
+              {subtitle && <p className="text-sm text-gray-400">{subtitle}</p>} {/* Text color */}
             </div>
           </div>
           
           <div className="flex items-center gap-2">
             {/* View mode toggle */}
             {onDailyViewClick && onWeeklyViewClick && (
-              <div className="bg-muted rounded-md p-0.5 flex mr-1 hidden sm:flex">
+              // Container for buttons styled for glass
+              <div className="bg-white/10 rounded-md p-0.5 flex mr-1 hidden sm:flex">
                 <Button 
-                  variant={viewMode === "daily" ? "default" : "ghost"} 
+                  variant={viewMode === "daily" ? "secondary" : "ghost"} // Use secondary for active
                   size="sm" 
-                  className="h-8"
+                  className={cn(
+                    "h-8 text-xs px-3",
+                    viewMode === "daily"
+                      ? "bg-white/20 text-white" // Active glass style
+                      : "text-gray-300 hover:bg-white/20 hover:text-white" // Inactive glass style
+                  )}
                   onClick={onDailyViewClick}
                 >
                   <Calendar className="h-4 w-4 mr-1" />
                   Day
                 </Button>
                 <Button 
-                  variant={viewMode === "weekly" ? "default" : "ghost"} 
+                  variant={viewMode === "weekly" ? "secondary" : "ghost"} // Use secondary for active
                   size="sm" 
-                  className="h-8"
+                  className={cn(
+                    "h-8 text-xs px-3",
+                    viewMode === "weekly"
+                      ? "bg-white/20 text-white" // Active glass style
+                      : "text-gray-300 hover:bg-white/20 hover:text-white" // Inactive glass style
+                  )}
                   onClick={onWeeklyViewClick}
                 >
                   <LayoutGrid className="h-4 w-4 mr-1" />
@@ -80,9 +95,10 @@ export function HeaderWithSettings({
             
             {/* Date navigation */}
             {(onPreviousClick || onNextClick) && (
-              <div className="flex items-center bg-muted rounded-md mr-1">
+              // Container for buttons styled for glass
+              <div className="flex items-center bg-white/10 rounded-md mr-1">
                 {onPreviousClick && (
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onPreviousClick}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-300 hover:text-white hover:bg-white/20" onClick={onPreviousClick}>
                     <ChevronLeft className="h-4 w-4" />
                     <span className="sr-only">Previous</span>
                   </Button>
@@ -92,7 +108,7 @@ export function HeaderWithSettings({
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-8 text-xs px-2"
+                    className="h-8 text-xs px-2 text-gray-300 hover:text-white hover:bg-white/20" // Style for glass
                     onClick={onTodayClick}
                   >
                     Today
@@ -100,7 +116,7 @@ export function HeaderWithSettings({
                 )}
                 
                 {onNextClick && (
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onNextClick}>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-300 hover:text-white hover:bg-white/20" onClick={onNextClick}>
                     <ChevronRight className="h-4 w-4" />
                     <span className="sr-only">Next</span>
                   </Button>
@@ -114,7 +130,7 @@ export function HeaderWithSettings({
         
         {/* Current date display */}
         {currentDay && (
-          <div className="text-sm text-muted-foreground mt-1">
+          <div className="text-sm text-gray-400 mt-1"> {/* Text color */}
             {format(currentDay, 'EEEE, MMMM d, yyyy')}
           </div>
         )}
