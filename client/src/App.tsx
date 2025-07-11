@@ -57,6 +57,7 @@ import DangersOfSugarPage from "@/pages/learn/dangers-of-sugar";
 import StoicPrinciplesPage from "@/pages/learn/stoic-principles";
 import ProgressPage from "@/pages/ProgressPage";
 import AICoachPage from "@/pages/AICoachPage"; // Import the new AICoachPage
+import SettingsPage from "@/pages/settings"; // Import Settings page
 
 // Import AppLayout
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -300,6 +301,9 @@ function App() {
       </Route>
       <Route path="/coach">
         <PrivateRoute component={AICoachPage} />
+      </Route>
+      <Route path="/settings"> {/* Added route for Settings page */}
+        <PrivateRoute component={SettingsPage} />
       </Route>
 
       {/* 404 Not Found route */}

@@ -107,14 +107,17 @@ export function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProps) {
       {/* Sidebar panel */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-background transition-transform duration-300 ease-in-out md:sticky md:top-0 md:z-0 md:h-screen",
+          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col transition-transform duration-300 ease-in-out md:sticky md:top-0 md:z-0 md:h-screen",
+          "bg-background/80 backdrop-blur-sm border-r border-white/10", // Glass style for sidebar
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
         {/* Sidebar header */}
+        {/* Ensure text/logo in header has good contrast on the new glass background */}
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/dashboard">
             <div className="flex items-center gap-2">
+              {/* Primary bg for logo might be fine, or could be made more subtle if needed */}
               <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg font-bold">
                 M
               </div>

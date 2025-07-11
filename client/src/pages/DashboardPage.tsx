@@ -316,7 +316,8 @@ export default function SortableDashboard() {
   return (
     <SettingsProvider>
       <PageContainer>
-        <h1 className="text-3xl font-bold mb-6 tracking-tight">Dashboard Overview</h1>
+        {/* Ensure page title has high contrast against dark/glass background */}
+        <h1 className="text-3xl font-bold mb-6 tracking-tight text-gray-100">Dashboard Overview</h1>
         <div className="flex justify-end items-center mb-4">
           <HeaderWithSettings />
         </div>
