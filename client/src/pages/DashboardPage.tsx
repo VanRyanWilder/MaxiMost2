@@ -302,9 +302,19 @@ export default function SortableDashboard() {
           }}
         />);
     } else if (currentDashboardView === 'week') {
-      habitContent = <WeekView habits={habits} currentDate={currentDate} />; // WeekView needs to be checked to use 'id'
+      habitContent = <WeekView habits={habits} currentDate={currentDate} onToggleHabit={toggleCompletion} />;
     } else if (currentDashboardView === 'month') {
-      habitContent = <MonthView habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
+      const handleNavigateToDayFromMonth = (date: Date) => {
+        setCurrentDate(date); // Set the main current date for the dashboard
+        setCurrentDashboardView('day'); // Switch view to 'day'
+      };
+      habitContent = <MonthView
+                        habits={habits}
+                        currentDisplayMonth={currentDisplayMonth}
+                        setCurrentDisplayMonth={setCurrentDisplayMonth}
+                        onToggleHabit={toggleCompletion} // Still passing this in case it's used later or for consistency
+                        onNavigateToDay={handleNavigateToDayFromMonth}
+                     />;
     }
   }
 

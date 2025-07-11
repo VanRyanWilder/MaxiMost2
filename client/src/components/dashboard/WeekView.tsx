@@ -1,5 +1,6 @@
 import React from 'react';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from 'date-fns'; // Added parseISO
+import { toast } from "@/hooks/use-toast"; // Import toast
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Square } from 'lucide-react'; // For completion status
 import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
@@ -8,10 +9,10 @@ import { toDate } from '@/lib/utils'; // Updated import path for toDate
 interface WeekViewProps {
   habits: FirestoreHabit[];
   currentDate: Date; // To determine the week to display
-  // onToggleHabit: (habitId: string, date: Date, value?: number) => void; // For future interaction
+  onToggleHabit?: (habitId: string, date: Date, value?: number) => void; // Added for interactivity
 }
 
-const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
+const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate, onToggleHabit }) => {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 }); // Sunday
   const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
   const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
@@ -52,15 +53,37 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
               <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-100 sticky left-0 bg-black/20 z-10"> {/* Cell text & sticky bg */}
                 {habit.title}
               </td>
-              {daysOfWeek.map(day => (
-                <td key={day.toISOString()} className="px-4 py-3 text-center">
-                  {getHabitCompletionForDate(habit, day) ? (
-                    <CheckSquare className="h-5 w-5 text-green-400 mx-auto" /> /* Adjusted icon color */
-                  ) : (
-                    <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" /> /* Adjusted icon color */
-                  )}
-                </td>
-              ))}
+              {daysOfWeek.map(day => {
+                const isCompleted = getHabitCompletionForDate(habit, day);
+                return (
+                  <td
+                    key={day.toISOString()}
+                    className="px-4 py-3 text-center cursor-pointer"
+                    onClick={() => {
+                      if (onToggleHabit && habit.id && habit.type === "binary") { // Only toggle binary habits directly
+                        onToggleHabit(habit.id, day);
+                      } else if (onToggleHabit && habit.id && habit.type === "quantitative") {
+                        // For quantitative, direct toggle might not make sense.
+                        // Could open a modal or simply not be interactive from week view.
+                        // For now, let's make it toggle completion if already logged (to clear it), or do nothing if not logged.
+                        // This is a simplification. A full quant log from week view is a larger feature.
+                        if (isCompleted) {
+                           onToggleHabit(habit.id, day, 0); // Send 0 to clear/un-complete
+                        } else {
+                          // Optionally, prompt or open modal for quantitative input here
+                           toast({ title: "Log Value", description: `Please log value for "${habit.title}" from the Day view or habit details.`, variant: "info" });
+                        }
+                      }
+                    }}
+                  >
+                    {isCompleted ? (
+                      <CheckSquare className="h-5 w-5 text-green-400 mx-auto" />
+                    ) : (
+                      <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" />
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

@@ -9,12 +9,14 @@ import { cn } from '@/lib/utils';
 
 interface MonthViewProps {
   habits: FirestoreHabit[];
-  currentDisplayMonth: Date; // The month currently being displayed
-  setCurrentDisplayMonth: (date: Date) => void; // To navigate months
-  // onToggleHabit: (habitId: string, date: Date, value?: number) => void; // For future interaction
+  currentDisplayMonth: Date;
+  setCurrentDisplayMonth: (date: Date) => void;
+  onNavigateToDay?: (date: Date) => void; // New prop to handle navigation
+  // onToggleHabit prop is available from DashboardPage but might not be used directly for toggling in month cells
+  onToggleHabit?: (habitId: string, date: Date, value?: number) => void;
 }
 
-const MonthView: React.FC<MonthViewProps> = ({ habits, currentDisplayMonth, setCurrentDisplayMonth }) => {
+const MonthView: React.FC<MonthViewProps> = ({ habits, currentDisplayMonth, setCurrentDisplayMonth, onNavigateToDay }) => {
   const monthStart = startOfMonth(currentDisplayMonth);
   const monthEnd = endOfMonth(currentDisplayMonth);
   // Get the first day of the week for the first week of the month & last day for last week
@@ -105,13 +107,21 @@ const MonthView: React.FC<MonthViewProps> = ({ habits, currentDisplayMonth, setC
           }
 
           return (
-            <div
+            <button // Changed div to button for better accessibility and click handling
+              type="button"
               key={day.toISOString()}
+              onClick={() => {
+                if (isCurrentMonth && onNavigateToDay) {
+                  onNavigateToDay(day);
+                }
+              }}
+              disabled={!isCurrentMonth} // Disable clicks on days not in the current month
               className={cn(
-                "h-20 md:h-24 p-1.5 border-r border-b border-white/20 flex flex-col items-center justify-start transition-colors",
+                "h-20 md:h-24 p-1.5 border-r border-b border-white/20 flex flex-col items-center justify-start transition-colors text-left w-full", // Added text-left and w-full for button
                 dayCellTextColor,
                 dayCellBgColor,
-                isSameDay(day, new Date()) && "ring-2 ring-blue-400 ring-inset" // Highlight today
+                isSameDay(day, new Date()) && "ring-2 ring-blue-400 ring-inset", // Highlight today
+                isCurrentMonth ? "cursor-pointer" : "cursor-default" // Pointer only for current month days
               )}
             >
               <span className="text-xs font-medium mb-1 self-start">{format(day, 'd')}</span>
