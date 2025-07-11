@@ -44,12 +44,12 @@ export const HabitProvider = ({ children }: { children: ReactNode }) => {
             console.warn(`HabitContext: Fetched item at index ${index} is not an object or is null/undefined.`);
             return; // Skip further checks for this item
           }
-          // It's an object, check for habitId and title
-          if (!h.habitId) {
-            console.warn(`HabitContext: Fetched habit (index ${index}, title: "${h.title || 'N/A'}") is missing habitId. Object:`, JSON.stringify(h));
+          // It's an object, check for id and title
+          if (!h.id) { // Changed habitId to id
+            console.warn(`HabitContext: Fetched habit (index ${index}, title: "${h.title || 'N/A'}") is missing id. Object:`, JSON.stringify(h));
           }
           if (typeof h.title !== 'string') {
-            console.warn(`HabitContext: Fetched habit (index ${index}, habitId: "${h.habitId || 'N/A'}") has a non-string title (or title is missing). Object:`, JSON.stringify(h));
+            console.warn(`HabitContext: Fetched habit (index ${index}, id: "${h.id || 'N/A'}") has a non-string title (or title is missing). Object:`, JSON.stringify(h)); // Changed habitId to id
           }
         });
       } else {
@@ -63,7 +63,7 @@ export const HabitProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const validHabits = fetchedHabits.filter(h =>
-        h && typeof h === 'object' && typeof h.title === 'string' && h.habitId
+        h && typeof h === 'object' && typeof h.title === 'string' && h.id // Changed habitId to id
       );
       console.log('HabitContext - Filtered valid habits (count):', validHabits.length); // DETAILED LOG 2a
       console.log('HabitContext - Filtered valid habits (titles):', JSON.stringify(validHabits.map(h => h.title))); // DETAILED LOG 2b

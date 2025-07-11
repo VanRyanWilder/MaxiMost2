@@ -47,7 +47,10 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
         </thead>
         <tbody className="bg-background divide-y divide-border">
           {habits.map((habit) => (
-            <tr key={habit.habitId}>
+            // Use habit.id if FirestoreHabit objects are guaranteed to have 'id' after context processing
+            // If FirestoreHabit type still defines habitId and it's present, that could be used too,
+            // but for consistency with the fix, 'id' is preferred.
+            <tr key={habit.id || habit.habitId}> {/* Changed to habit.id, with fallback to habit.habitId if type is not updated */}
               <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-foreground sticky left-0 bg-background z-10">
                 {habit.title}
               </td>

@@ -79,26 +79,22 @@ export default function SortableDashboard() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id && over?.id) {
-      // setHabits(currentHabits => { // This would modify local state, which is removed
-      //   const oldIndex = currentHabits.findIndex(h => h.habitId === active.id);
-      //   const newIndex = currentHabits.findIndex(h => h.habitId === over.id);
-      //   if (oldIndex === -1 || newIndex === -1) return currentHabits;
-      //   return arrayMove(currentHabits, oldIndex, newIndex);
-      // });
-      console.warn("Drag and drop reordering needs to be connected to HabitContext or backend for persistence.");
+      // Assuming DND active.id and over.id correspond to habit.id from the backend
+      console.warn("Drag and drop reordering needs to be connected to HabitContext or backend for persistence using habit.id.");
       // Example: if context had a setHabitsOrder function:
-      // const oldIndex = habits.findIndex(h => h.habitId === active.id);
-      // const newIndex = habits.findIndex(h => h.habitId === over.id);
+      // const oldIndex = habits.findIndex(h => h.id === active.id); // Changed habitId to id
+      // const newIndex = habits.findIndex(h => h.id === over.id); // Changed habitId to id
       // if (oldIndex !== -1 && newIndex !== -1) {
       //   const reordered = arrayMove([...habits], oldIndex, newIndex);
-      //   // context.setHabitsOrder(reordered.map(h => h.habitId)); // or similar
+      //   // context.setHabitsOrder(reordered.map(h => h.id)); // Changed habitId to id
       // }
     }
   };
 
   const toggleCompletion = async (habitId: string, date: Date | string, quantValue?: number) => {
      if (!user) { toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" }); return; }
-    const habit = habits.find(h => h.habitId === habitId); // habits from context
+    // Assuming habitId parameter is the correct 'id' from the backend
+    const habit = habits.find(h => h.id === habitId); // Changed h.habitId to h.id
     if (!habit) { toast({ title: "Error", description: "Habit not found.", variant: "destructive" }); return; }
     const dateObj = typeof date === "string" ? parseISO(date) : date;
     let completionApiValue: number;
@@ -115,7 +111,8 @@ export default function SortableDashboard() {
       }
     } else { toast({ title: "Error", description: "Unknown habit type.", variant: "destructive" }); return; }
     try {
-      await apiClient(`/habits/${habit.habitId}/complete`, { method: "POST", body: { value: completionApiValue, date: format(dateObj, "yyyy-MM-dd") }});
+      // API call uses habit.id (which should be the correct ID from Firestore)
+      await apiClient(`/habits/${habit.id}/complete`, { method: "POST", body: { value: completionApiValue, date: format(dateObj, "yyyy-MM-dd") }}); // Changed habit.habitId to habit.id
       toast({ title: "Success", description: `"${habit.title}" completion logged.` });
       await refreshHabitsList(false); // Use context's fetch function
     } catch (error: any) {
@@ -126,7 +123,8 @@ export default function SortableDashboard() {
 
   // isHabitCompletedOnDate now uses habits from context
   const isHabitCompletedOnDate = (habitId: string, date: Date): boolean => {
-    const habit = habits.find(h => h.habitId === habitId);
+    // Assuming habitId parameter is the correct 'id'
+    const habit = habits.find(h => h.id === habitId); // Changed h.habitId to h.id
     if (!habit || !habit.completions || habit.completions.length === 0) return false;
     const targetDateString = format(date, "yyyy-MM-dd");
     const completionEntry = habit.completions.find(c => c.date === targetDateString);
@@ -162,17 +160,22 @@ export default function SortableDashboard() {
 
   const editHabit = async (updatedHabitFull: FirestoreHabit) => {
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in to edit habits.", variant: "destructive" }); return; }
-    if (!updatedHabitFull.habitId) { toast({ title: "Error", description: "Cannot edit habit without an ID.", variant: "destructive" }); return; }
+    // The updatedHabitFull.id should be the definitive ID from Firestore.
+    // The FirestoreHabit type has habitId?: string, but we are now assuming 'id' is the actual field from DB.
+    // For consistency, we should ensure updatedHabitFull uses 'id'.
+    // If updatedHabitFull comes from a form that used 'habitId', it needs mapping first.
+    // However, the selectedHabit passed to EditHabitDialog should already use 'id' if fetched data has 'id'.
+    if (!updatedHabitFull.id) { toast({ title: "Error", description: "Cannot edit habit without an ID.", variant: "destructive" }); return; }
     setIsSubmittingHabit(true);
     setSubmitHabitError(null);
-    const { habitId, userId, createdAt, completions, streak, ...editableFields } = updatedHabitFull;
+    // Destructure, assuming 'id' is the primary identifier. If 'habitId' also exists, decide which one to use or remove.
+    // For now, assuming 'id' is what we want for API calls and 'habitId' might be redundant or a type artefact.
+    const { id, userId, createdAt, completions, streak, habitId, ...editableFields } = updatedHabitFull;
     const payload = editableFields;
     try {
-      // const savedHabit = await apiClient<FirestoreHabit>(`/habits/${habitId}`, { method: "PUT", body: payload });
-      await apiClient<FirestoreHabit>(`/habits/${habitId}`, { method: "PUT", body: payload });
-      // setHabits(prevHabits => prevHabits.map(h => (h.habitId === savedHabit.habitId ? savedHabit : h)));
+      await apiClient<FirestoreHabit>(`/habits/${id}`, { method: "PUT", body: payload }); // Use id for API call
       await refreshHabitsList(false); // Re-fetch after edit
-      toast({ title: "Success!", description: `Habit "${editableFields.title}" updated.` }); // Use title from payload
+      toast({ title: "Success!", description: `Habit "${editableFields.title}" updated.` });
       setEditHabitDialogOpen(false);
     } catch (error: any) {
       console.error("Failed to edit habit:", error);
@@ -183,16 +186,15 @@ export default function SortableDashboard() {
     }
   };
 
-  const deleteHabit = async (habitId: string) => {
+  const deleteHabit = async (habitIdToDelete: string) => { // Parameter renamed for clarity, it's an 'id'
     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" }); return; }
-    const habitToDelete = habits.find(h => h.habitId === habitId);
+    const habitToDelete = habits.find(h => h.id === habitIdToDelete); // Changed h.habitId to h.id
     const habitTitle = habitToDelete ? habitToDelete.title : "Habit";
     try {
-      await apiClient(`/habits/${habitId}`, { method: "DELETE" });
+      await apiClient(`/habits/${habitIdToDelete}`, { method: "DELETE" }); // Use habitIdToDelete (which is an 'id')
       await refreshHabitsList(false); // Re-fetch after delete
       toast({ title: "Success", description: `Habit "${habitTitle}" archived.` });
-      // setHabits(prevHabits => prevHabits.filter(h => h.habitId !== habitId)); // State update handled by context
-      if (selectedHabit && selectedHabit.habitId === habitId) {
+      if (selectedHabit && selectedHabit.id === habitIdToDelete) { // Changed selectedHabit.habitId to selectedHabit.id
         setEditHabitDialogOpen(false);
         setSelectedHabit(null);
       }
@@ -201,7 +203,15 @@ export default function SortableDashboard() {
     }
    };
 
-  const handleEditHabitClick = (habit: FirestoreHabit) => { setSelectedHabit(habit); setEditHabitDialogOpen(true); };
+  // When a habit is clicked for editing, ensure the object passed to EditHabitDialog uses 'id'.
+  // The 'habit' object here comes from the 'habits' array (from useHabits context), which should now have 'id'.
+  const handleEditHabitClick = (habit: FirestoreHabit) => {
+    // The 'habit' object from the list (context) should have 'id'.
+    // The EditHabitDialog expects a prop 'habit' of type ClientHabitType.
+    // ClientHabitType also uses 'id'.
+    setSelectedHabit(habit);
+    setEditHabitDialogOpen(true);
+  };
 
   const handleCreateHabitClick = () => {
     const newHabitTemplate: Partial<FirestoreHabit> = {
@@ -215,7 +225,9 @@ export default function SortableDashboard() {
 
   const handleSaveHabit = async (dialogHabitData: ClientHabitType) => {
     const { id, createdAt, streak, completions, ...restOfDialogData } = dialogHabitData;
-    const firestoreCompatibleData: Omit<FirestoreHabit, "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak"> & { type: "binary" | "quantitative" } = {
+    // FirestoreHabit uses habitId, but our actual data uses id.
+    // Omit 'habitId' explicitly if it exists in FirestoreHabit type and we are using 'id'.
+    const firestoreCompatibleData: Omit<FirestoreHabit, "id" | "habitId" | "userId" | "createdAt" | "isActive" | "completions" | "streak"> & { type: "binary" | "quantitative" } = {
       title: restOfDialogData.title,
       description: restOfDialogData.description || "",
       category: restOfDialogData.category as HabitCategory,
@@ -233,14 +245,19 @@ export default function SortableDashboard() {
       targetValue: restOfDialogData.type === "quantitative" ? restOfDialogData.targetValue : undefined,
       targetUnit: restOfDialogData.type === "quantitative" ? restOfDialogData.targetUnit : undefined,
     };
-    if (selectedHabit && selectedHabit.habitId) {
+    // selectedHabit from state should use 'id' as it comes from the context-fed 'habits' array
+    if (selectedHabit && selectedHabit.id) {
       const habitToUpdate: FirestoreHabit = {
-        ...(selectedHabit as FirestoreHabit),
-        ...firestoreCompatibleData,
-        habitId: selectedHabit.habitId,
+        ...(selectedHabit as FirestoreHabit), // This spread might bring habitId if it's on selectedHabit type
+        ...firestoreCompatibleData, // This will not have habitId or id
+        id: selectedHabit.id, // Ensure 'id' is correctly passed
       };
+      // Remove habitId if it accidentally got included from selectedHabit spread and FirestoreHabit type definition
+      delete (habitToUpdate as any).habitId;
       await editHabit(habitToUpdate);
     } else {
+      // For new habits, the backend will assign an ID.
+      // The payload `firestoreCompatibleData` does not and should not contain `id` or `habitId`.
       await addHabit(firestoreCompatibleData);
     }
   };
@@ -267,13 +284,16 @@ export default function SortableDashboard() {
   else if (!user && !userLoading) { habitContent = (<div className="text-center py-8 text-muted-foreground"><p>Please log in to manage and view your habits.</p></div>); }
   else {
     if (currentDashboardView === 'day') {
+      // Ensure habits from context (which should use 'id') are correctly processed.
+      // The 'id' field for SortableHabitViewModes items should come directly from habit.id
       const validHabitsForView = habits
-        .filter(h => h && typeof h === 'object' && h.habitId) // Ensure h and h.habitId are valid
-        .map(h => ({ ...h, id: h.habitId!, isCompletedToday: isHabitCompletedOnDate(h.habitId!, currentDate) }));
+        .filter(h => h && typeof h === 'object' && h.id) // Changed h.habitId to h.id
+        // The map now directly uses h.id. ClientHabitType expects 'id'.
+        .map(h => ({ ...h, id: h.id!, isCompletedToday: isHabitCompletedOnDate(h.id!, currentDate) })); // Changed h.habitId to h.id
 
       habitContent = (
         <SortableHabitViewModes
-          habits={validHabitsForView}
+          habits={validHabitsForView} // This now passes habits with 'id'
           onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
           onEditHabit={handleEditHabitClick}
           onDeleteHabit={deleteHabit}
@@ -282,7 +302,7 @@ export default function SortableDashboard() {
           }}
         />);
     } else if (currentDashboardView === 'week') {
-      habitContent = <WeekView habits={habits} currentDate={currentDate} />;
+      habitContent = <WeekView habits={habits} currentDate={currentDate} />; // WeekView needs to be checked to use 'id'
     } else if (currentDashboardView === 'month') {
       habitContent = <MonthView habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
     }
