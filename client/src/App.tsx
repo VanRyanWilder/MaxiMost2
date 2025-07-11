@@ -64,6 +64,7 @@ import { Button } from "@/components/ui/button";
 import { User as FirebaseUser } from "firebase/auth";
 import { UserContext, useUser } from "@/context/user-context"; // Import UserContext and useUser
 import { CoachProvider } from "@/context/CoachContext"; // Import CoachProvider
+import { HabitProvider } from "@/context/HabitContext"; // Import HabitProvider
 // Assuming Spinner component exists or a placeholder will be used.
 // import { Spinner } from "@/components/ui/spinner";
 
@@ -151,10 +152,11 @@ function App() {
 
   return (
     <UserContext.Provider value={{ user: appUser, loading: isAuthLoading, error: authError }}>
-      <CoachProvider> {/* Wrap Switch with CoachProvider */}
-        <Switch>
-          {/* Public routes */}
-          <Route path="/">
+      <HabitProvider> {/* HabitProvider wraps CoachProvider and Switch */}
+        <CoachProvider>
+          <Switch>
+            {/* Public routes */}
+            <Route path="/">
           {() => {
             // useUser() will get its values from the Provider immediately above.
             // isAuthLoading is false here, so context.loading from useUser() will be false.
@@ -304,6 +306,7 @@ function App() {
       <Route component={NotFound} />
     </Switch>
   </CoachProvider>
+</HabitProvider>
 </UserContext.Provider>
   );
 }

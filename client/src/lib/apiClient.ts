@@ -113,6 +113,14 @@ export async function apiClient<T>(
     console.warn("VITE_API_BASE_URL is not set. Using relative path for API calls. Ensure proxy is configured for local development.");
   }
 
+  // Diagnostic log for request details including token status
+  console.log(`API Request: ${method} ${fullUrl}`, {
+    headers: config.headers, // Log all headers being sent
+    tokenStatus: idToken ? 'Present' : (passedToken === null ? 'Explicitly Null' : (idToken === null ? 'Absent (No User)' : 'Absent (Error/Undetermined)')),
+    // Log body only if it's not FormData or too large
+    bodyPreview: (body && !(body instanceof FormData) && JSON.stringify(body).length < 500) ? body : (body instanceof FormData ? 'FormData' : (body ? 'Omitted (Large/Binary)' : undefined))
+  });
+
   try {
     const response = await fetch(fullUrl, config);
 
