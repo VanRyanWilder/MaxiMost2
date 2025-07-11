@@ -30,36 +30,33 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate }) => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-border">
-        <thead className="bg-muted/50">
+    <div className="overflow-x-auto rounded-lg bg-black/20 border border-white/10 p-1"> {/* Added container style */}
+      <table className="min-w-full divide-y divide-white/20"> {/* Table border */}
+        <thead className="bg-white/5"> {/* Header background */}
           <tr>
-            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider sticky left-0 bg-muted/50 z-10">
+            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider sticky left-0 bg-black/20 z-10"> {/* Header text & sticky bg */}
               Habit
             </th>
             {daysOfWeek.map(day => (
-              <th key={day.toISOString()} scope="col" className="px-4 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              <th key={day.toISOString()} scope="col" className="px-4 py-3 text-center text-xs font-medium text-gray-300 uppercase tracking-wider"> {/* Header text */}
                 <div>{format(day, 'EEE')}</div>
                 <div className="text-sm font-normal">{format(day, 'd')}</div>
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="bg-background divide-y divide-border">
+        <tbody className="bg-transparent divide-y divide-white/10"> {/* Body background and row divide */}
           {habits.map((habit) => (
-            // Use habit.id if FirestoreHabit objects are guaranteed to have 'id' after context processing
-            // If FirestoreHabit type still defines habitId and it's present, that could be used too,
-            // but for consistency with the fix, 'id' is preferred.
-            <tr key={habit.id || habit.habitId}> {/* Changed to habit.id, with fallback to habit.habitId if type is not updated */}
-              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-foreground sticky left-0 bg-background z-10">
+            <tr key={habit.id || habit.habitId} className="hover:bg-white/5 transition-colors"> {/* Row hover effect */}
+              <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-100 sticky left-0 bg-black/20 z-10"> {/* Cell text & sticky bg */}
                 {habit.title}
               </td>
               {daysOfWeek.map(day => (
                 <td key={day.toISOString()} className="px-4 py-3 text-center">
                   {getHabitCompletionForDate(habit, day) ? (
-                    <CheckSquare className="h-5 w-5 text-green-500 mx-auto" />
+                    <CheckSquare className="h-5 w-5 text-green-400 mx-auto" /> /* Adjusted icon color */
                   ) : (
-                    <Square className="h-5 w-5 text-muted-foreground mx-auto opacity-50" />
+                    <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" /> /* Adjusted icon color */
                   )}
                 </td>
               ))}

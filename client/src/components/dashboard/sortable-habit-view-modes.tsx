@@ -73,13 +73,16 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   onReorderHabits,
   onEditHabit,
 }) => {
-  const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
-  const [dayOffset, setDayOffset] = useState(0);
-  const [weekOffset, setWeekOffset] = useState(0);
-  const [monthOffset, setMonthOffset] = useState(0);
+  // Internal viewMode state removed, as this component will now only render the "daily" view content.
+  // The actual view (day, week, month) is controlled by DashboardPage.tsx.
+  // const [viewMode, setViewMode] = useState<'daily' | 'weekly' | 'monthly'>('weekly');
+  const [dayOffset, setDayOffset] = useState(0); // Keep dayOffset for daily view navigation
+  // weekOffset and monthOffset are removed as they are not relevant for a dedicated daily view component.
+  // const [weekOffset, setWeekOffset] = useState(0);
+  // const [monthOffset, setMonthOffset] = useState(0);
   const [filterCategory, setFilterCategory] = useState('all');
   
-  // Calculate current date based on offsets
+  // Calculate current date based on offsets for the daily view
   const today = startOfToday();
   const currentDay = addDays(today, dayOffset); // For daily view & basis for weekly
   
@@ -189,54 +192,19 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
   return (
     <div className="space-y-4 max-w-5xl mx-auto">
       <div className="flex flex-col space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="join">
-              <Button 
-                onClick={() => {
-                  setViewMode("daily");
-                  // Don't reset offsets when changing view mode to maintain day consistency
-                  // This way, if user navigated to a specific day in weekly view
-                  // then switches to daily view, they'll see the same day
-                }} 
-                variant={viewMode === "daily" ? "default" : "outline"}
-                className="rounded-none"
-              >
-                <Calendar className="h-4 w-4 mr-1" />
-                Daily
-              </Button>
-              <Button 
-                onClick={() => {
-                  setViewMode("weekly");
-                  // Keep the current day offset to maintain consistency
-                  // This allows us to switch back and forth between views
-                  // while maintaining the same day context
-                }} 
-                variant={viewMode === "weekly" ? "default" : "outline"}
-                className="rounded-none"
-              >
-                <CalendarDays className="h-4 w-4 mr-1" />
-                Weekly
-              </Button>
-              <Button 
-                onClick={() => {
-                  setViewMode("monthly");
-                  // Keep the current day offset for consistency across all views
-                  // This ensures a seamless transition between different view modes
-                }} 
-                variant={viewMode === "monthly" ? "default" : "outline"}
-                className="rounded-none"
-              >
-                <Grid3X3 className="h-4 w-4 mr-1" />
-                Monthly
-              </Button>
-            </div>
-          </div>
+        {/* The Day/Week/Month toggle buttons were here. Removed as they are now controlled by DashboardPage.tsx */}
+        {/* The filter and Add Habit button are kept as they are specific to this component's context when it's rendered (as the 'day' view) */}
+        <div className="flex items-center justify-end"> {/* Changed justify-between to justify-end since left side (toggles) is gone */}
+          {/* Removed the div that wrapped the "join" button group */}
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2"> {/* This div now takes full width or aligns right */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+                >
                   <Filter className="h-4 w-4 mr-1" />
                   {filterCategory === 'all' ? 'All Categories' : 
                    filterCategory === 'absolute' ? 'Absolute Habits' :
@@ -244,281 +212,85 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                    filterCategory}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setFilterCategory('all')}>
+              {/* Assuming DropdownMenuContent will be themed globally or separately if it uses a Portal */}
+              <DropdownMenuContent align="end" className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                <DropdownMenuItem onClick={() => setFilterCategory('all')} className="focus:bg-white/10 focus:text-white">
                   All Categories
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('absolute')}>
+                <DropdownMenuItem onClick={() => setFilterCategory('absolute')} className="focus:bg-white/10 focus:text-white">
                   Absolute Habits
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFilterCategory('frequency')}>
+                <DropdownMenuItem onClick={() => setFilterCategory('frequency')} className="focus:bg-white/10 focus:text-white">
                   Frequency
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             
-            <Button onClick={handleCreateHabit} variant="default" size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              onClick={handleCreateHabit}
+              variant="default"
+              size="sm"
+              className="bg-blue-500/80 hover:bg-blue-500 text-white" // Glass theme friendly primary button
+            >
               <Plus className="h-4 w-4 mr-1" /> Add Habit
             </Button>
           </div>
         </div>
 
-        {/* Daily view */}
-        {viewMode === "daily" && (
-          <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Daily View</h3>
-              <div className="flex items-center space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(prev => prev - 1)}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(0)}
-                >
-                  Today
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setDayOffset(prev => prev + 1)}
-                >
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+        {/* This component now only renders the "Daily View" content.
+            The weekly and monthly views are handled directly by DashboardPage.tsx */}
+        <div className="bg-transparent rounded-lg p-0"> {/* Adjusted container: transparent, no explicit border/padding here */}
+          <div className="flex items-center justify-between mb-4">
+            {/* Title for the daily view section - can be styled or removed if not needed */}
+            <h3 className="text-lg font-semibold text-gray-200">Today's Focus</h3> {/* Updated text color */}
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDayOffset(prev => prev - 1)}
+                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" /> Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDayOffset(0)}
+                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+              >
+                Today
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDayOffset(prev => prev + 1)}
+                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+              >
+                Next <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
             </div>
-            <div className="text-sm text-gray-500 mb-4">
-              {format(currentDay, 'MMM d, yyyy')}
-            </div>
-            {habits.length === 0 ? (
-              <div className="p-6 text-center">
-                <p className="text-muted-foreground">No habits yet. Add some from the Habit Library.</p>
-              </div>  
-            ) : (
-              <DailyViewFixedUpdated
-                habits={filteredHabits} // Each habit in filteredHabits has its own .completions
-                // completions prop removed
-                currentDay={currentDay}
-                onToggleHabit={onToggleHabit}
-                onAddHabit={onAddHabit}
-                onEditHabit={handleEditHabit}
-                onDeleteHabit={handleDeleteHabit}
-                onReorderHabits={onReorderHabits}
-                filterCategory={filterCategory}
-              />
-            )}
           </div>
-        )}
-      
-        {/* Weekly view */}
-        {viewMode === "weekly" && (
-          <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Weekly View</h3>
-              <div className="flex items-center space-x-2">
-                {/* Week navigation */}
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setWeekOffset(prev => prev - 1)}
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Previous
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setWeekOffset(0)}
-                >
-                  This Week
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setWeekOffset(prev => prev + 1)}
-                >
-                  Next <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
+          <div className="text-sm text-gray-400 mb-4"> {/* Updated text color */}
+            {format(currentDay, 'MMM d, yyyy')}
+          </div>
+          {habits.length === 0 ? (
+            <div className="p-6 text-center">
+              <p className="text-gray-400">No habits yet. Add some from the Habit Library.</p> {/* Updated text color */}
             </div>
-            
-            <WeeklyTableViewFixedUpdated
-              habits={filteredHabits} // Each habit in filteredHabits has its own .completions
-              // completions prop removed
-              weekDates={weekDates}
+          ) : (
+            <DailyViewFixedUpdated
+              habits={filteredHabits}
+              currentDay={currentDay}
               onToggleHabit={onToggleHabit}
               onAddHabit={onAddHabit}
               onEditHabit={handleEditHabit}
               onDeleteHabit={handleDeleteHabit}
               onReorderHabits={onReorderHabits}
-              selectedCategory={filterCategory}
-              currentDay={currentDay}
+              filterCategory={filterCategory}
             />
-          </div>
-        )}
-      
-        {/* Monthly view */}
-        {viewMode === "monthly" && (
-          <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">{format(currentMonth, 'MMMM yyyy')}</h3>
-              <div className="flex items-center space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setMonthOffset(prev => prev - 1)}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setMonthOffset(0)}
-                >
-                  Today
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setMonthOffset(prev => prev + 1)}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-7 gap-1">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (
-                <div key={i} className="text-center font-medium text-sm p-2">
-                  {day}
-                </div>
-              ))}
-              
-              {calendarDays.map((day, index) => {
-                const isCurrentDisplayMonth = day.getMonth() === monthToDisplay.getMonth();
-                const isTodayDate = isSameDay(day, today);
-                
-                let completedOnDayCount = 0;
-                let absoluteHabitsOnDayCount = 0;
-                let completedAbsoluteOnDayCount = 0;
-                let frequencyHabitsOnDayCount = 0;
-                let completedFrequencyOnDayCount = 0;
-
-                if (isCurrentDisplayMonth) {
-                  filteredHabits.forEach(habit => {
-                    const habitCompletions = habit.completions || [];
-                    const isCompleted = habitCompletions.some(c =>
-                      isSameDay(new Date(c.date), day) && c.value > 0
-                    );
-
-                    if (isCompleted) {
-                      completedOnDayCount++;
-                    }
-                    if (habit.isAbsolute) {
-                      absoluteHabitsOnDayCount++;
-                      if (isCompleted) {
-                        completedAbsoluteOnDayCount++;
-                      }
-                    } else {
-                      frequencyHabitsOnDayCount++;
-                      if (isCompleted) {
-                        completedFrequencyOnDayCount++;
-                      }
-                    }
-                  });
-                }
-                
-                const totalHabitsForDay = filteredHabits.length; // Or only count habits relevant for *that* day if filtering by frequency
-                const completionPercentage = totalHabitsForDay > 0
-                  ? (completedOnDayCount / totalHabitsForDay) * 100
-                  : 0;
-                
-                const handleDayCellClick = (clickedDate: Date) => {
-                  if (!isCurrentDisplayMonth) return; // Prevent action on non-current month days if button is not disabled by other means
-
-                  const newDayOffset = differenceInDays(clickedDate, today);
-                  setDayOffset(newDayOffset);
-
-                  let monthDiff = 0;
-                  let tempDate = startOfMonth(today);
-                  if (isBefore(startOfMonth(clickedDate), tempDate)) { // Compare start of months
-                    while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
-                      tempDate = subMonths(tempDate, 1);
-                      monthDiff--;
-                    }
-                  } else if (isAfter(startOfMonth(clickedDate), tempDate)) {
-                     while (!isSameDay(startOfMonth(clickedDate), tempDate)) {
-                      tempDate = addMonths(tempDate, 1);
-                      monthDiff++;
-                    }
-                  }
-                  setMonthOffset(monthDiff);
-                  setWeekOffset(0);
-                  setViewMode('daily');
-                };
-
-                return (
-                  <button
-                    type="button"
-                    key={index} 
-                    onClick={() => handleDayCellClick(day)}
-                    className={cn(
-                      "border rounded-md p-2 min-h-[80px] text-left w-full flex flex-col justify-between",
-                      isCurrentDisplayMonth ? 'bg-white hover:bg-gray-50 dark:bg-neutral-800 dark:hover:bg-neutral-700' : 'bg-gray-50 text-gray-400 dark:bg-neutral-800/50 dark:text-neutral-500',
-                      isTodayDate ? 'border-blue-500 ring-1 ring-blue-500 dark:border-blue-700' : 'border-gray-200 dark:border-neutral-700'
-                    )}
-                    disabled={!isCurrentDisplayMonth}
-                  >
-                    <div className={`text-right text-sm font-medium ${!isCurrentDisplayMonth ? 'text-gray-400 dark:text-neutral-600' : 'text-gray-700 dark:text-neutral-300'}`}>
-                      {format(day, 'd')}
-                    </div>
-                    
-                    {isCurrentDisplayMonth && totalHabitsForDay > 0 && ( // Use totalHabitsForDay
-                      <div className="mt-1 space-y-1">
-                        {absoluteHabitsOnDayCount > 0 && (
-                          <div className="flex items-center justify-between text-xs">
-                            <span className={`${completedAbsoluteOnDayCount === absoluteHabitsOnDayCount ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-neutral-400'}`}>
-                              Daily
-                            </span>
-                            <span className={`font-semibold ${completedAbsoluteOnDayCount === absoluteHabitsOnDayCount ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-neutral-300'}`}>
-                              {completedAbsoluteOnDayCount}/{absoluteHabitsOnDayCount}
-                            </span>
-                          </div>
-                        )}
-                        
-                        {frequencyHabitsOnDayCount > 0 && (
-                           <div className="flex items-center justify-between text-xs">
-                            <span className={`${completedFrequencyOnDayCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-neutral-400'}`}>
-                              Freq.
-                            </span>
-                            <span className={`font-semibold ${completedFrequencyOnDayCount > 0 ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-neutral-300'}`}>
-                              {completedFrequencyOnDayCount}/{frequencyHabitsOnDayCount}
-                            </span>
-                          </div>
-                        )}
-                        
-                        <Progress
-                          value={completionPercentage}
-                          className="h-1.5"
-                          indicatorClassName={
-                            completionPercentage >= 100 ? "bg-green-500" :
-                            completionPercentage > 50 ? "bg-blue-500" :
-                            completionPercentage > 0 ? "bg-yellow-500" :
-                            "bg-gray-300 dark:bg-neutral-600"
-                          }
-                        />
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
+          )}
+        </div>
+        {/* Weekly and Monthly view sections are removed from this component */}
       </div>
     </div>
   );

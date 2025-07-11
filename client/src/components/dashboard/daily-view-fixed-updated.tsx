@@ -249,17 +249,22 @@ export function DailyViewFixedUpdated({
       />
       {/* No habits state */}
       {filteredHabits.length === 0 && (
-        <div className="p-8 text-center">
-          <div className="flex justify-center mb-3 text-gray-400">
+        <div className="p-8 text-center rounded-lg bg-black/20 border border-white/10"> {/* Added glass style to container */}
+          <div className="flex justify-center mb-3 text-gray-500"> {/* Icon color slightly darker for empty state */}
             <CheckSquare className="h-12 w-12" />
           </div>
-          <h3 className="text-lg font-medium mb-2">No habits found</h3>
-          <p className="text-gray-500 mb-4">
+          <h3 className="text-lg font-medium mb-2 text-gray-200">No habits found</h3> {/* Text color */}
+          <p className="text-gray-400 mb-4"> {/* Text color */}
             {filterCategory === 'all' 
               ? "You haven't created any habits yet." 
               : `No habits found in the "${filterCategory}" category.`}
           </p>
-          <Button onClick={onAddHabit}>
+          {/* Styled button for glass theme */}
+          <Button
+            onClick={onAddHabit}
+            variant="outline"
+            className="text-gray-200 border-white/30 hover:bg-white/10 hover:text-white"
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add New Habit
           </Button>
@@ -269,7 +274,8 @@ export function DailyViewFixedUpdated({
       {/* Daily Absolute Habits section */}
       {displayedAbsoluteHabits && displayedAbsoluteHabits.length > 0 && (
         <>
-          <div className="font-medium text-sm mb-2 px-4 py-2 bg-blue-50 rounded-md text-blue-700">
+          {/* Updated section header style for glass theme */}
+          <div className="font-semibold text-sm mb-2 px-3 py-2 bg-white/5 border border-white/10 rounded-md text-gray-200">
             Absolute Habits (Daily)
           </div>
           
@@ -285,91 +291,73 @@ export function DailyViewFixedUpdated({
               <div className="space-y-2">
                 {displayedAbsoluteHabits.map(habit => (
                   <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                    <div className={`flex justify-between p-3 rounded-lg border ${
-                        habit.iconColor === 'red' ? 'border-red-200 dark:border-red-900' :
-                        habit.iconColor === 'orange' ? 'border-orange-200 dark:border-orange-900' :
-                        habit.iconColor === 'amber' ? 'border-amber-200 dark:border-amber-900' :
-                        habit.iconColor === 'yellow' ? 'border-yellow-200 dark:border-yellow-900' :
-                        habit.iconColor === 'green' ? 'border-green-200 dark:border-green-900' :
-                        habit.iconColor === 'indigo' ? 'border-indigo-200 dark:border-indigo-900' :
-                        habit.iconColor === 'purple' ? 'border-purple-200 dark:border-purple-900' :
-                        'border-blue-200 dark:border-blue-900'
-                      }`}
-                      style={{
-                        backgroundColor: habit.iconColor === 'red' ? '#FEF2F2' :
-                                         habit.iconColor === 'orange' ? '#FFF7ED' :
-                                         habit.iconColor === 'amber' ? '#FFFBEB' :
-                                         habit.iconColor === 'yellow' ? '#FEFCE8' :
-                                         habit.iconColor === 'green' ? '#F0FDF4' :
-                                         habit.iconColor === 'indigo' ? '#EEF2FF' :
-                                         habit.iconColor === 'purple' ? '#FAF5FF' :
-                                         '#EFF6FF'
-                      }}>
-                      <div className="flex items-center">
-                        <div className="mr-3 p-1 rounded">
-                          {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor)}
+                    {/* Applying glassmorphism to the habit item container */}
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 shadow-lg hover:bg-black/30 transition-colors">
+                      <div className="flex items-center flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
+                        {/* Icon background made subtle or transparent */}
+                        <div className={`mr-3 p-1 rounded bg-${habit.iconColor}-500/10`}>
+                          {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor || 'gray')} {/* Ensure iconColor has a fallback for getHabitIcon */}
                         </div>
-                        <div>
-                          <div className={`font-medium flex items-center ${
-                            habit.iconColor === 'red' ? 'text-red-600 dark:text-red-400' :
-                            habit.iconColor === 'orange' ? 'text-orange-600 dark:text-orange-400' :
-                            habit.iconColor === 'amber' ? 'text-amber-600 dark:text-amber-400' :
-                            habit.iconColor === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' :
-                            habit.iconColor === 'green' ? 'text-green-600 dark:text-green-400' :
-                            habit.iconColor === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' :
-                            habit.iconColor === 'purple' ? 'text-purple-600 dark:text-purple-400' :
-                            'text-blue-600 dark:text-blue-400'
-                          }`}>
-                            {habit.title}
-{typeof habit.streak === "number" && habit.streak > 0 && (
-                              <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
-                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
+                        <div className="flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
+                          {/* Text colors updated for light theme on dark background */}
+                          <div className="font-medium flex items-center text-gray-100 truncate">
+                            <span className="truncate">{habit.title}</span> {/* Title truncation */}
+                            {typeof habit.streak === "number" && habit.streak > 0 && (
+                              <Badge variant="outline" className="text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0">
+                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-400 text-amber-400" /> {habit.streak}
                               </Badge>
                             )}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {habit.description}
-                            {habit.type === 'quantitative' && habit.targetValue && (
-                              <span className="block text-xs mt-0.5">
-                                Target: {habit.targetValue} {habit.targetUnit || ''}
-                              </span>
-                            )}
-                          </div>
+                          {habit.description && ( // Only show description if it exists
+                            <div className="text-xs text-gray-400 truncate mt-0.5"> {/* Description truncation and color */}
+                              {habit.description}
+                            </div>
+                          )}
+                          {habit.type === 'quantitative' && habit.targetValue && (
+                            <span className="block text-xs text-gray-400 mt-0.5">
+                              Target: {habit.targetValue} {habit.targetUnit || ''}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-shrink-0 ml-2"> {/* Added flex-shrink-0 and ml-2 */}
                         <Button 
-                          variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
+                          variant={isHabitCompletedOnDate(habit.id, today) ? "secondary" : "outline"} // Use secondary for completed
                           size="sm"
                           onClick={() => {
                             if (habit.type === 'quantitative') {
                               setLoggingHabitInfo({ habit, date: today });
                               setLogModalOpen(true);
                             } else {
-                              onToggleHabit(habit.id, today); // Binary toggle
+                              onToggleHabit(habit.id, today);
                             }
                           }}
-                          className="min-w-[100px]"
+                          className={`min-w-[100px] ${
+                            isHabitCompletedOnDate(habit.id, today)
+                              ? 'bg-green-500/80 hover:bg-green-500/90 text-white border-green-500/50' // Completed style
+                              : 'text-gray-300 border-white/30 hover:bg-white/10 hover:text-white' // Default outline style
+                          }`}
                         >
                           {isHabitCompletedOnDate(habit.id, today) && habit.type !== 'quantitative'
-                            ? <><Check className="mr-1 h-4 w-4" /> Completed</>
+                            ? <><Check className="mr-1 h-4 w-4" /> Done</> // Shortened text
                             : habit.type === 'quantitative'
-                              ? "Log Value"
-                              : "Mark Done"
+                              ? "Log" // Shortened text
+                              : "Complete" // Shortened text
                           }
                         </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-white/10"> {/* Style trigger */}
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                          {/* Assuming DropdownMenuContent is themed globally or will be separately */}
+                          <DropdownMenuContent align="end" className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                            <DropdownMenuItem onClick={() => handleEditHabit(habit)} className="focus:bg-white/10 focus:text-white">
                               <Pencil className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                            <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)} className="focus:bg-white/10 focus:text-white">
                               <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
@@ -388,7 +376,8 @@ export function DailyViewFixedUpdated({
       {/* Frequency-based Habits section */}
       {displayedFrequencyHabits && displayedFrequencyHabits.length > 0 && (
         <>
-          <div className="font-medium text-sm mb-2 px-4 py-2 bg-green-50 rounded-md text-green-700 mt-6">
+          {/* Updated section header style for glass theme */}
+          <div className="font-semibold text-sm mb-2 px-3 py-2 bg-white/5 border border-white/10 rounded-md text-gray-200 mt-6">
             Frequency-based Habits (Weekly Target)
           </div>
           
@@ -404,92 +393,90 @@ export function DailyViewFixedUpdated({
               <div className="space-y-2">
                 {displayedFrequencyHabits.map(habit => (
                   <TableSortableItem key={habit.id} id={habit.id} habit={habit}>
-                    <div className="flex justify-between p-3 rounded-lg border">
-                      <div className="flex items-center">
-                        <div className={`mr-3 p-1 rounded ${habit.iconColor ? `bg-${habit.iconColor}-100` : 'bg-blue-100'}`}>
-                          {getHabitIcon(habit.icon)}
+                    {/* Applying glassmorphism to the habit item container */}
+                    <div className="flex justify-between items-center p-3 rounded-lg bg-black/20 backdrop-blur-sm border border-white/10 shadow-lg hover:bg-black/30 transition-colors">
+                      <div className="flex items-center flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
+                        {/* Icon background made subtle or transparent */}
+                        <div className={`mr-3 p-1 rounded bg-${habit.iconColor}-500/10`}>
+                          {getHabitIcon(habit.icon, "h-5 w-5", habit.iconColor || 'gray')} {/* Ensure iconColor has a fallback */}
                         </div>
-                        <div>
-                          <div className="font-medium flex items-center">
-                            {habit.title}
-                            <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700">
+                        <div className="flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for title truncation */}
+                          {/* Text colors updated for light theme on dark background */}
+                          <div className="font-medium flex items-center text-gray-100 truncate">
+                            <span className="truncate">{habit.title}</span> {/* Title truncation */}
+                            <Badge variant="outline" className="text-[10px] ml-2 font-medium px-1 py-0 h-4 bg-white/5 border-white/20 text-sky-300 flex-shrink-0"> {/* Glass styled badge */}
                               {getFrequencyText(habit.frequency)}
                             </Badge>
+                            {/* TODO: Review styling for hasMetWeeklyFrequency badge for glass theme */}
                             {(() => {
-                              const hasMetFrequency = habit.frequency && habit.frequency !== 'daily' && hasMetWeeklyFrequency(habit);
-                              const targetDays = getTargetDays(habit);
-                              const completedDays = countCompletedDaysInWeek(habit.id);
-                              const isExceeding = completedDays > targetDays;
-                              
-                              return hasMetFrequency && (
-                                <Badge className={`px-1.5 py-0.5 h-5 ${isExceeding ? 'bg-green-100 text-green-700 border-green-300' : 'bg-white border-2 border-green-600'} ml-1`}>
-                                  {isExceeding ? (
-                                    <>
-                                      <div className="flex items-center">
-                                        <Check className="h-3.5 w-3.5 text-green-600" />
-                                        {completedDays > targetDays && (
-                                          <span className="text-xs text-green-600 font-semibold ml-0.5">+{completedDays - targetDays}</span>
-                                        )}
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <div className="flex items-center">
-                                      <Check className="h-3.5 w-3.5 text-green-600" />
-                                      <span className="text-xs text-green-600 font-semibold ml-0.5">Done</span>
-                                    </div>
-                                  )}
-                                </Badge>
-                              );
+                              const hasMet = habit.frequency && habit.frequency !== 'daily' && hasMetWeeklyFrequency(habit);
+                              // const targetDays = getTargetDays(habit);
+                              // const completedDays = countCompletedDaysInWeek(habit.id); // This function is not defined here
+                              // const isExceeding = completedDays > targetDays;
+                              if (hasMet) {
+                                return (
+                                  <Badge className="px-1.5 py-0.5 h-5 bg-green-500/20 text-green-300 border-green-500/30 ml-1 flex-shrink-0">
+                                    <Check className="h-3.5 w-3.5" /> Done
+                                  </Badge>
+                                );
+                              }
+                              return null;
                             })()}
-{typeof habit.streak === "number" && habit.streak > 0 && (
-                              <Badge variant="outline" className="text-amber-500 dark:text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-1 dark:border-amber-700">
-                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-500 text-amber-500 dark:fill-amber-300 dark:text-amber-300" /> {habit.streak}
+                            {typeof habit.streak === "number" && habit.streak > 0 && (
+                              <Badge variant="outline" className="text-amber-300 text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0">
+                                <Star className="h-2.5 w-2.5 mr-0.5 fill-amber-400 text-amber-400" /> {habit.streak}
                               </Badge>
                             )}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {habit.description}
-                            {habit.type === 'quantitative' && habit.targetValue && (
-                              <span className="block text-xs mt-0.5">
-                                Target: {habit.targetValue} {habit.targetUnit || ''}
-                              </span>
-                            )}
-                          </div>
+                          {habit.description && (
+                            <div className="text-xs text-gray-400 truncate mt-0.5"> {/* Description truncation and color */}
+                              {habit.description}
+                            </div>
+                          )}
+                          {habit.type === 'quantitative' && habit.targetValue && (
+                            <span className="block text-xs text-gray-400 mt-0.5">
+                              Target: {habit.targetValue} {habit.targetUnit || ''}
+                            </span>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-shrink-0 ml-2"> {/* Added flex-shrink-0 and ml-2 */}
                         <Button 
-                          variant={isHabitCompletedOnDate(habit.id, today) ? "default" : "outline"}
+                          variant={isHabitCompletedOnDate(habit.id, today) ? "secondary" : "outline"}
                           size="sm"
                           onClick={() => {
                             if (habit.type === 'quantitative') {
                               setLoggingHabitInfo({ habit, date: today });
                               setLogModalOpen(true);
                             } else {
-                              onToggleHabit(habit.id, today); // Binary toggle
+                              onToggleHabit(habit.id, today);
                             }
                           }}
-                          className="min-w-[100px]"
+                          className={`min-w-[100px] ${
+                            isHabitCompletedOnDate(habit.id, today)
+                              ? 'bg-green-500/80 hover:bg-green-500/90 text-white border-green-500/50' // Completed style
+                              : 'text-gray-300 border-white/30 hover:bg-white/10 hover:text-white' // Default outline style
+                          }`}
                         >
                           {isHabitCompletedOnDate(habit.id, today) && habit.type !== 'quantitative'
-                            ? <><Check className="mr-1 h-4 w-4" /> Completed</>
+                            ? <><Check className="mr-1 h-4 w-4" /> Done</>
                             : habit.type === 'quantitative'
-                              ? "Log Value"
-                              : "Mark Done"
+                              ? "Log"
+                              : "Complete"
                           }
                         </Button>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
+                            <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-white/10"> {/* Style trigger */}
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEditHabit(habit)}>
+                          <DropdownMenuContent align="end" className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                            <DropdownMenuItem onClick={() => handleEditHabit(habit)} className="focus:bg-white/10 focus:text-white">
                               <Pencil className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)}>
+                            <DropdownMenuItem onClick={() => handleDeleteHabit(habit.id)} className="focus:bg-white/10 focus:text-white">
                               <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
@@ -508,7 +495,12 @@ export function DailyViewFixedUpdated({
       {/* Add habit button */}
       {filteredHabits.length > 0 && (
         <div className="flex justify-center mt-4">
-          <Button onClick={onAddHabit} variant="outline">
+          {/* Styled button for glass theme */}
+          <Button
+            onClick={onAddHabit}
+            variant="outline"
+            className="text-gray-200 border-white/30 hover:bg-white/10 hover:text-white"
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Habit
           </Button>

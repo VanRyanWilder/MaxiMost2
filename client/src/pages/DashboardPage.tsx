@@ -337,10 +337,14 @@ export default function SortableDashboard() {
                   {(['day', 'week', 'month'] as const).map((view) => (
                     <Button
                       key={view}
-                      variant={currentDashboardView === view ? 'default' : 'outline'}
+                      variant={currentDashboardView === view ? 'secondary' : 'outline'} // Using 'secondary' for active for better glass compatibility
                       onClick={() => setCurrentDashboardView(view)}
                       size="sm"
-                      className="capitalize"
+                      className={
+                        currentDashboardView === view
+                        ? "capitalize bg-white/20 hover:bg-white/30 text-white border-white/30" // Active glass style
+                        : "capitalize text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Inactive glass style
+                      }
                     >
                       {view}
                     </Button>
