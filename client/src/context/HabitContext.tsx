@@ -34,26 +34,31 @@ export const HabitProvider = ({ children }: { children: ReactNode }) => {
     setLoadHabitsError(null);
 
     try {
-      console.log("HabitContext: Fetching habits..."); // Context specific log
+      console.log("HabitContext: Fetching habits...");
       const fetchedHabits = await apiClient<FirestoreHabit[]>("/habits", { method: "GET" });
-      // Assuming diagnostic logs for apiClient itself are now active for token/header checks.
+      console.log('HabitContext - Raw fetched data from /api/habits:', JSON.stringify(fetchedHabits)); // DETAILED LOG 1
 
       if (!Array.isArray(fetchedHabits)) {
-        console.error("HabitContext: Fetched habits response is not an array:", fetchedHabits);
-        throw new Error("Invalid data format received for habits from context.");
+        console.error("HabitContext: Fetched habits response is not an array. Data:", fetchedHabits);
+        // Set habits to empty array and throw error or set error state
+        setHabits([]);
+        throw new Error("Invalid data format: Expected an array for habits.");
       }
 
       const validHabits = fetchedHabits.filter(h =>
         h && typeof h === 'object' && typeof h.title === 'string' && h.habitId
       );
+      console.log('HabitContext - Filtered valid habits (count):', validHabits.length); // DETAILED LOG 2a
+      console.log('HabitContext - Filtered valid habits (titles):', JSON.stringify(validHabits.map(h => h.title))); // DETAILED LOG 2b
+
 
       const habitsWithEnsuredCompletions = validHabits.map(h => ({
         ...h,
-        completions: (h.completions || []).map(c => ({ ...c })) // Basic completion mapping
-        // More robust date transformation for completions might be needed here if API returns raw timestamps
+        completions: (h.completions || []).map(c => ({ ...c }))
       }));
 
-      console.log("HabitContext: Setting habits:", JSON.stringify(habitsWithEnsuredCompletions.map(h=>h.title))); // Log titles
+      // This log shows what's about to be set to state
+      console.log('HabitContext - Processed habits passed to setHabits (titles):', JSON.stringify(habitsWithEnsuredCompletions.map(h=>h.title))); // DETAILED LOG 3
       setHabits(habitsWithEnsuredCompletions);
 
     } catch (error: any) {

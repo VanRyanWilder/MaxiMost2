@@ -41,15 +41,7 @@ export default function SortableDashboard() {
     fetchHabits: refreshHabitsList
   } = useHabits();
 
-  // DIAGNOSTIC LOG: Log context values whenever they change
-  useEffect(() => {
-    console.log('DashboardPage - Context Values Update:', {
-      habitsCount: habits.length,
-      habitsTitles: habits.map(h => h.title), // Log only titles to keep it concise
-      isLoadingHabits,
-      loadHabitsError: loadHabitsError ? loadHabitsError.message : null,
-    });
-  }, [habits, isLoadingHabits, loadHabitsError]);
+  // Removed DIAGNOSTIC LOG for context values update from DashboardPage
 
   const [isSubmittingHabit, setIsSubmittingHabit] = useState<boolean>(false);
   const [submitHabitError, setSubmitHabitError] = useState<string | null>(null);
@@ -261,14 +253,7 @@ export default function SortableDashboard() {
   };
 
   let habitContent;
-  // DIAGNOSTIC LOG: Log values just before determining habitContent
-  console.log('DashboardPage - Render Check:', {
-    habitsLength: habits.length,
-    isLoadingHabits,
-    userLoadingAuth: userLoading, // Renamed for clarity vs isLoadingHabits
-    isUserPresent: !!user,
-    loadHabitsError: loadHabitsError ? loadHabitsError.message : null,
-  });
+  // Removed DIAGNOSTIC LOG for Render Check from DashboardPage
 
   if (isLoadingHabits) { habitContent = (<div className="flex justify-center items-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /><p className="ml-2">Loading habits...</p></div>); }
   else if (loadHabitsError) { habitContent = (<div className="flex flex-col items-center justify-center py-10 text-destructive"><AlertCircle className="h-8 w-8 mb-2" /><p className="font-semibold">Error loading habits</p><p className="text-sm">{loadHabitsError.message}</p></div>); } // Use loadHabitsError.message
