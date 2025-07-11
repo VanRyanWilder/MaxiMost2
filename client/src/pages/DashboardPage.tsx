@@ -4,7 +4,13 @@ import { useTheme } from "@/components/theme-provider";
 import { PageContainer } from "@/components/layout/page-container";
 import { HeaderWithSettings } from "@/components/layout/header-with-settings";
 import { SettingsProvider } from "@/components/settings/settings-panel";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Replaced by GlassCard
+import {
+  GlassCard,
+  GlassCardHeader,
+  GlassCardTitle,
+  GlassCardContent
+} from "@/components/glass/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Moon, CircleDollarSign, Users, AlertCircle, Loader2, Activity, CheckSquare, Calendar, Plus, Zap, Flame, Dumbbell, Brain, Droplets, BookOpen, Pill, TrendingUp, Menu, Utensils, Moon as BedIcon, Layers } from "lucide-react";
@@ -297,15 +303,15 @@ export default function SortableDashboard() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1 space-y-8">
 
-            {/* Main Habit Tracker card - MOVED TO TOP */}
-            <Card>
-              <CardHeader className="pb-2">
+            {/* Main Habit Tracker card - MOVED TO TOP, now using GlassCard */}
+            <GlassCard>
+              <GlassCardHeader className="pb-2">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                  {/* Title size increased */}
-                  <CardTitle className="text-2xl font-semibold">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal">{habits.length} habits</Badge>)}</CardTitle>
+                  {/* Title size increased, text color will be handled by GlassCardTitle */}
+                  <GlassCardTitle className="text-2xl">Habit Dashboard{!isLoadingHabits && !loadHabitsError && user && (<Badge variant="outline" className="ml-2 font-normal bg-white/10 border-white/20 text-white">{habits.length} habits</Badge>)}</GlassCardTitle>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </GlassCardHeader>
+              <GlassCardContent>
                 {/* View Toggle Buttons */}
                 <div className="mb-4 flex justify-center sm:justify-start space-x-2">
                   {(['day', 'week', 'month'] as const).map((view) => (
@@ -321,8 +327,8 @@ export default function SortableDashboard() {
                   ))}
                 </div>
                 {habitContent}
-              </CardContent>
-            </Card>
+              </GlassCardContent>
+            </GlassCard>
 
             {/* Habit Stacks Section - REMOVED as per UIX-10 */}
             {/*

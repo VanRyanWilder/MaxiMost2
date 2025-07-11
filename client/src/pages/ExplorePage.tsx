@@ -3,7 +3,7 @@ import { PageContainer } from "@/components/layout/page-container";
 // Assuming these components exist based on comments in sortable-dashboard-new.tsx
 import { DailyMotivation } from "@/components/dashboard/daily-motivation";
 // Assuming TopRatedSupplements is actually TopSupplementsSection based on file listing
-import { TopSupplementsSection } from "@/components/dashboard/top-supplements-section";
+// import { TopSupplementsSection } from "@/components/dashboard/top-supplements-section"; // Commented out as file not found
 
 
 const ExplorePage: React.FC = () => {
@@ -11,12 +11,13 @@ const ExplorePage: React.FC = () => {
     <PageContainer>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Explore</h1>
-          <p className="text-muted-foreground">Discover new insights, tools, and resources to enhance your journey.</p>
+          {/* Ensure title and paragraph text is legible against dark background */}
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Explore</h1>
+          <p className="text-gray-300">Discover new insights, tools, and resources to enhance your journey.</p>
         </div>
 
-        <DailyMotivation />
-        <TopSupplementsSection />
+        <DailyMotivation /> {/* Already uses GlassCard */}
+        {/* <TopSupplementsSection /> */} {/* Commented out */}
 
         {/* Other potential sections for Explore page could be:
           - Community Highlights

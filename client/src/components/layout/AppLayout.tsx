@@ -155,7 +155,8 @@ export function AppLayout({ children, pageTitle = "MaxiMost" }: AppLayoutProps) 
         {/* <div>APP LAYOUT HEADER COMMENTED OUT</div> */} {/* Placeholder removed */}
 
         {/* Page content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-muted/20">
+        {/* Changed bg-muted/20 to bg-black/5 for better particle visibility and glassmorphism base */}
+        <main className="flex-1 p-4 md:p-6 lg:p-8 bg-black/5">
           {children}
         </main>
       </div>

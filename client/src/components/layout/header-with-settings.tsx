@@ -107,9 +107,8 @@ export function HeaderWithSettings({
                 )}
               </div>
             )}
-            
-            {/* Settings button */}
-            <SettingsPanel />
+            {/* SettingsPanel removed from here as per UIX-14 */}
+            {/* <SettingsPanel /> */}
           </div>
         </div>
         

@@ -181,6 +181,8 @@ const iconCategories = Object.entries(iconMap).reduce<Record<string, string[]>>(
   return acc;
 }, {});
 
+import { cn } from "@/lib/utils"; // Import cn for combining classNames
+
 export function EditHabitDialog({ 
   open, 
   setOpen,
@@ -307,12 +309,20 @@ export function EditHabitDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent
+        className={cn(
+          "sm:max-w-[500px]",
+          "bg-black/50 backdrop-blur-md border border-white/20 shadow-xl", // Glassmorphism styles
+          // Remove default shadcn dialog background if necessary, e.g. by overriding:
+          // "bg-transparent dark:bg-transparent"
+          // Ensure text colors inside are light by default or set explicitly
+        )}
+      >
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-white"> {/* Ensure title is light */}
             {isCreatingNewHabit.current ? "Create New Habit" : "Edit Habit"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-300"> {/* Ensure description is light */}
             {isCreatingNewHabit.current 
               ? "Define a new habit to add to your dashboard."
               : "Refine this habit to maximize your success and consistency."}
@@ -322,14 +332,14 @@ export function EditHabitDialog({
         <div className="grid gap-4 py-4">
           {/* Basic Information */}
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title" className="text-right">
+            <Label htmlFor="title" className="text-right text-gray-300"> {/* Label text color */}
               Name
             </Label>
             <Input
               id="title"
               value={editedHabit.title}
               onChange={(e) => setEditedHabit({...editedHabit, title: e.target.value})}
-              className="col-span-3"
+              className="col-span-3 bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:ring-offset-0 focus:ring-primary/50"
               placeholder="Habit name"
             />
           </div>
@@ -339,7 +349,7 @@ export function EditHabitDialog({
             <Button
               variant="link"
               onClick={() => setIsDetailsExpanded(!isDetailsExpanded)}
-              className="text-sm text-primary hover:text-primary/80"
+              className="text-sm text-blue-400 hover:text-blue-300" /* Adjusted link color for dark theme */
             >
               {isDetailsExpanded ? "Show Less Details..." : "Add More Details..."}
             </Button>
@@ -349,21 +359,21 @@ export function EditHabitDialog({
             <>
               {/* Description */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="description" className="text-right">
+                <Label htmlFor="description" className="text-right text-gray-300">
                   Description
                 </Label>
                 <Textarea
                   id="description"
                   value={editedHabit.description}
                   onChange={(e) => setEditedHabit({...editedHabit, description: e.target.value})}
-                  className="col-span-3"
+                  className="col-span-3 bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:ring-offset-0 focus:ring-primary/50"
                   placeholder="Brief description"
                 />
               </div>
 
               {/* Frequency */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="frequency" className="text-right">
+                <Label htmlFor="frequency" className="text-right text-gray-300">
                   Frequency
                 </Label>
                 <Select
@@ -374,80 +384,80 @@ export function EditHabitDialog({
                     ...(value === 'daily' ? { isAbsolute: true } : {})
                   })}
                 >
-                  <SelectTrigger className="col-span-3">
+                  <SelectTrigger className="col-span-3 bg-white/5 border-white/20 text-white data-[placeholder]:text-gray-400 focus:ring-offset-0 focus:ring-primary/50">
                     <SelectValue placeholder="Select frequency" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="daily">Daily (every day)</SelectItem>
-                    <SelectItem value="2x-week">2x per week</SelectItem>
-                    <SelectItem value="3x-week">3x per week</SelectItem>
-                    <SelectItem value="4x-week">4x per week</SelectItem>
-                    <SelectItem value="5x-week">5x per week</SelectItem>
-                    <SelectItem value="6x-week">6x per week</SelectItem>
+                  <SelectContent className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                    <SelectItem value="daily" className="focus:bg-white/10 focus:text-white">Daily (every day)</SelectItem>
+                    <SelectItem value="2x-week" className="focus:bg-white/10 focus:text-white">2x per week</SelectItem>
+                    <SelectItem value="3x-week" className="focus:bg-white/10 focus:text-white">3x per week</SelectItem>
+                    <SelectItem value="4x-week" className="focus:bg-white/10 focus:text-white">4x per week</SelectItem>
+                    <SelectItem value="5x-week" className="focus:bg-white/10 focus:text-white">5x per week</SelectItem>
+                    <SelectItem value="6x-week" className="focus:bg-white/10 focus:text-white">6x per week</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Time Commitment */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="timeCommitment" className="text-right">
+                <Label htmlFor="timeCommitment" className="text-right text-gray-300">
                   Time Needed
                 </Label>
                 <Input
                   id="timeCommitment"
                   value={editedHabit.timeCommitment}
                   onChange={(e) => setEditedHabit({...editedHabit, timeCommitment: e.target.value})}
-                  className="col-span-3"
+                  className="col-span-3 bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:ring-offset-0 focus:ring-primary/50"
                   placeholder="e.g. 5 min, 1 hour"
                 />
               </div>
 
               {/* Category */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="category" className="text-right">
+                <Label htmlFor="category" className="text-right text-gray-300">
                   Category
                 </Label>
                 <Select
                   value={editedHabit.category}
                   onValueChange={(value: HabitCategory) => setEditedHabit({...editedHabit, category: value})}
                 >
-                  <SelectTrigger className="col-span-3">
+                  <SelectTrigger className="col-span-3 bg-white/5 border-white/20 text-white data-[placeholder]:text-gray-400 focus:ring-offset-0 focus:ring-primary/50">
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="physical">
+                  <SelectContent className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                    <SelectItem value="physical" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <Dumbbell className="h-4 w-4 text-red-500" />
+                        <Dumbbell className="h-4 w-4 text-red-400" />
                         <span>Physical Training</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="nutrition">
+                    <SelectItem value="nutrition" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <Utensils className="h-4 w-4 text-orange-500" />
+                        <Utensils className="h-4 w-4 text-orange-400" />
                         <span>Nutrition & Fueling</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="sleep">
+                    <SelectItem value="sleep" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <Moon className="h-4 w-4 text-indigo-500" />
+                        <Moon className="h-4 w-4 text-indigo-400" />
                         <span>Sleep & Hygiene</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="mental">
+                    <SelectItem value="mental" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-yellow-500" />
+                        <Zap className="h-4 w-4 text-yellow-400" />
                         <span>Mental Acuity & Growth</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="relationships">
+                    <SelectItem value="relationships" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-blue-500" />
+                        <Users className="h-4 w-4 text-blue-400" />
                         <span>Relationships & Community</span>
                       </div>
                     </SelectItem>
-                    <SelectItem value="financial">
+                    <SelectItem value="financial" className="focus:bg-white/10 focus:text-white">
                       <div className="flex items-center gap-2">
-                        <CircleDollarSign className="h-4 w-4 text-green-500" />
+                        <CircleDollarSign className="h-4 w-4 text-green-400" />
                         <span>Financial Habits</span>
                       </div>
                     </SelectItem>
@@ -457,7 +467,7 @@ export function EditHabitDialog({
 
               {/* Habit Type (Binary/Quantitative) */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="habitType" className="text-right">
+                <Label htmlFor="habitType" className="text-right text-gray-300">
                   Habit Type
                 </Label>
                 <Select
@@ -471,12 +481,12 @@ export function EditHabitDialog({
                     });
                   }}
                 >
-                  <SelectTrigger className="col-span-3">
+                  <SelectTrigger className="col-span-3 bg-white/5 border-white/20 text-white data-[placeholder]:text-gray-400 focus:ring-offset-0 focus:ring-primary/50">
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="binary">Binary (Done / Not Done)</SelectItem>
-                    <SelectItem value="quantitative">Quantitative (Track a Value)</SelectItem>
+                  <SelectContent className="bg-black/80 backdrop-blur-sm border-white/20 text-gray-200">
+                    <SelectItem value="binary" className="focus:bg-white/10 focus:text-white">Binary (Done / Not Done)</SelectItem>
+                    <SelectItem value="quantitative" className="focus:bg-white/10 focus:text-white">Quantitative (Track a Value)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -484,7 +494,7 @@ export function EditHabitDialog({
               {/* Target Value (Conditional) */}
               {editedHabit.type === "quantitative" && (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="targetValue" className="text-right">
+                  <Label htmlFor="targetValue" className="text-right text-gray-300">
                     Target Value
                   </Label>
                   <Input
@@ -492,7 +502,7 @@ export function EditHabitDialog({
                     type="number"
                     value={editedHabit.targetValue || ""}
                     onChange={(e) => setEditedHabit({ ...editedHabit, targetValue: e.target.value ? parseFloat(e.target.value) : undefined })}
-                    className="col-span-3"
+                    className="col-span-3 bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:ring-offset-0 focus:ring-primary/50"
                     placeholder="e.g., 64, 30, 10000"
                   />
                 </div>
@@ -501,14 +511,14 @@ export function EditHabitDialog({
               {/* Unit (Conditional) */}
               {editedHabit.type === "quantitative" && (
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="targetUnit" className="text-right">
+                  <Label htmlFor="targetUnit" className="text-right text-gray-300">
                     Unit
                   </Label>
                   <Input
                     id="targetUnit"
                     value={editedHabit.targetUnit || ""}
                     onChange={(e) => setEditedHabit({ ...editedHabit, targetUnit: e.target.value })}
-                    className="col-span-3"
+                    className="col-span-3 bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:ring-offset-0 focus:ring-primary/50"
                     placeholder="e.g., oz, minutes, steps, pages"
                   />
                 </div>
@@ -516,7 +526,7 @@ export function EditHabitDialog({
 
               {/* Icon Color */}
               <div className="grid grid-cols-4 items-start gap-4">
-                <Label className="text-right pt-2">
+                <Label className="text-right pt-2 text-gray-300">
                   Color
                 </Label>
                 <div className="col-span-3 grid grid-cols-5 gap-3">
@@ -524,14 +534,16 @@ export function EditHabitDialog({
                     <button
                       key={scheme.id}
                       type="button"
-                      className={`w-10 h-10 rounded-md ${scheme.bg} flex items-center justify-center ${
+                      className={cn(
+                        `w-10 h-10 rounded-md flex items-center justify-center transition-all`,
+                        scheme.bg?.replace('bg-', 'bg-opacity-20 ') || 'bg-gray-500/20', // Lighter bg for glass
                         editedHabit.iconColor === scheme.id
-                          ? "ring-2 ring-offset-2 ring-blue-500"
-                          : "hover:ring-1 hover:ring-offset-1 hover:ring-blue-300"
-                      }`}
+                          ? "ring-2 ring-offset-1 ring-blue-400 ring-offset-black/30" // Adjusted ring for glass
+                          : "hover:ring-1 hover:ring-offset-1 hover:ring-blue-400 ring-offset-black/30"
+                      )}
                       onClick={() => handleColorChange(scheme.id)}
                     >
-                      <div className={`w-6 h-6 rounded-full ${scheme.primary}`} />
+                      <div className={cn(`w-6 h-6 rounded-full opacity-80`, scheme.primary)} />
                     </button>
                   ))}
                 </div>
@@ -539,33 +551,34 @@ export function EditHabitDialog({
               
               {/* Icon selection */}
               <div className="grid grid-cols-4 items-start gap-4">
-                <Label className="text-right pt-2">
+                <Label className="text-right pt-2 text-gray-300">
                   Icon
                 </Label>
                 <div className="col-span-3">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={`p-2 rounded-md ${
-                      editedHabit.iconColor
-                        ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.bg
-                        : "bg-blue-100"
-                    }`}>
+                    <div className={cn(
+                      `p-2 rounded-md`,
+                       editedHabit.iconColor
+                         ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.bg?.replace('bg-','bg-opacity-20 ') || 'bg-gray-500/20'
+                         : "bg-blue-500/20"
+                    )}>
                       {renderIcon(editedHabit.icon, `h-5 w-5 ${
                         editedHabit.iconColor
-                          ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary
-                          : "text-blue-500"
+                          ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary || 'text-blue-300'
+                          : "text-blue-300"
                       }`)}
                     </div>
-                    <span className="text-sm font-medium">Current Icon</span>
+                    <span className="text-sm font-medium text-gray-200">Current Icon</span>
                   </div>
 
                   <Tabs value={iconPickerTab} onValueChange={setIconPickerTab} className="w-full">
-                    <TabsList className="grid grid-cols-6 mb-2">
-                      <TabsTrigger value="physical" className="text-xs text-red-500">Physical</TabsTrigger>
-                      <TabsTrigger value="nutrition" className="text-xs text-orange-500">Nutrition</TabsTrigger>
-                      <TabsTrigger value="sleep" className="text-xs text-indigo-500">Sleep</TabsTrigger>
-                      <TabsTrigger value="mental" className="text-xs text-yellow-500">Mental</TabsTrigger>
-                      <TabsTrigger value="relationships" className="text-xs text-blue-500">Social</TabsTrigger>
-                      <TabsTrigger value="financial" className="text-xs text-green-500">Financial</TabsTrigger>
+                    <TabsList className="grid grid-cols-3 sm:grid-cols-6 mb-2 bg-white/5 border-white/10 rounded-md p-1">
+                      <TabsTrigger value="physical" className="text-xs text-red-400 data-[state=active]:bg-white/10 data-[state=active]:text-red-300 hover:bg-white/10">Physical</TabsTrigger>
+                      <TabsTrigger value="nutrition" className="text-xs text-orange-400 data-[state=active]:bg-white/10 data-[state=active]:text-orange-300 hover:bg-white/10">Nutrition</TabsTrigger>
+                      <TabsTrigger value="sleep" className="text-xs text-indigo-400 data-[state=active]:bg-white/10 data-[state=active]:text-indigo-300 hover:bg-white/10">Sleep</TabsTrigger>
+                      <TabsTrigger value="mental" className="text-xs text-yellow-400 data-[state=active]:bg-white/10 data-[state=active]:text-yellow-300 hover:bg-white/10">Mental</TabsTrigger>
+                      <TabsTrigger value="relationships" className="text-xs text-blue-400 data-[state=active]:bg-white/10 data-[state=active]:text-blue-300 hover:bg-white/10">Social</TabsTrigger>
+                      <TabsTrigger value="financial" className="text-xs text-green-400 data-[state=active]:bg-white/10 data-[state=active]:text-green-300 hover:bg-white/10">Financial</TabsTrigger>
                     </TabsList>
 
                     {Object.keys(iconCategories).map(category => (
@@ -577,13 +590,16 @@ export function EditHabitDialog({
                               type="button"
                               variant="outline"
                               size="icon"
-                              className={`p-2 ${editedHabit.icon === iconKey ? "ring-2 ring-blue-500 ring-opacity-80" : ""}`}
+                              className={cn(
+                                `p-2 bg-white/5 border-white/10 hover:bg-white/20`,
+                                editedHabit.icon === iconKey ? "ring-2 ring-blue-400 ring-opacity-80" : ""
+                              )}
                               onClick={() => handleIconChange(iconKey)}
                             >
                               {renderIcon(iconKey, `h-5 w-5 ${
                                 editedHabit.iconColor
-                                  ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary
-                                  : "text-blue-500"
+                                  ? colorSchemes.find(c => c.id === editedHabit.iconColor)?.primary || 'text-blue-300'
+                                  : "text-blue-300"
                               }`)}
                             </Button>
                           ))}
@@ -594,42 +610,40 @@ export function EditHabitDialog({
                 </div>
               </div>
 
-              {/* Impact & Effort */}
+              {/* Impact & Effort Sliders */}
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">
+                <Label className="text-right text-gray-300">
                   Impact (1-10)
                 </Label>
                 <div className="col-span-3">
                   <Slider
                     value={[editedHabit.impact]}
-                    min={1}
-                    max={10}
-                    step={1}
+                    min={1} max={10} step={1}
                     onValueChange={(value) => setEditedHabit({...editedHabit, impact: value[0]})}
+                    className="[&>span:first-child]:bg-blue-500 [&>span:first-child]:opacity-70 [&_[role=slider]]:bg-blue-400 [&_[role=slider]]:border-blue-300 [&_[role=slider]:focus-visible]:ring-blue-400/70"
                   />
-                  <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                  <div className="flex justify-between mt-1 text-xs text-gray-400">
                     <span>Low</span>
-                    <span className="font-semibold text-foreground">{editedHabit.impact}</span>
+                    <span className="font-semibold text-gray-200">{editedHabit.impact}</span>
                     <span>High</span>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-4 items-center gap-4">
-                <Label className="text-right">
+                <Label className="text-right text-gray-300">
                   Effort (1-10)
                 </Label>
                 <div className="col-span-3">
                   <Slider
                     value={[editedHabit.effort]}
-                    min={1}
-                    max={10}
-                    step={1}
+                    min={1} max={10} step={1}
                     onValueChange={(value) => setEditedHabit({...editedHabit, effort: value[0]})}
+                    className="[&>span:first-child]:bg-green-500 [&>span:first-child]:opacity-70 [&_[role=slider]]:bg-green-400 [&_[role=slider]]:border-green-300 [&_[role=slider]:focus-visible]:ring-green-400/70"
                   />
-                  <div className="flex justify-between mt-1 text-xs text-muted-foreground">
+                  <div className="flex justify-between mt-1 text-xs text-gray-400">
                     <span>Easy</span>
-                    <span className="font-semibold text-foreground">{editedHabit.effort}</span>
+                    <span className="font-semibold text-gray-200">{editedHabit.effort}</span>
                     <span>Hard</span>
                   </div>
                 </div>
@@ -638,17 +652,17 @@ export function EditHabitDialog({
           )}
         </div>
         
-        <DialogFooter className="flex justify-between">
+        <DialogFooter className="flex justify-between pt-4 border-t border-white/10">
           {!isCreatingNewHabit.current && onDelete && (
-            <Button type="button" variant="destructive" onClick={handleDelete}>
+            <Button type="button" variant="destructive" onClick={handleDelete} className="bg-red-700/80 hover:bg-red-600/100 text-white border-red-500/50 hover:border-red-400">
               Delete
             </Button>
           )}
           <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={handleClose} className="text-gray-200 border-white/30 hover:bg-white/10 hover:text-white">
               Cancel
             </Button>
-            <Button type="button" onClick={handleSave}>
+            <Button type="button" onClick={handleSave} className="bg-primary hover:bg-primary/90 text-white">
               Save
             </Button>
           </div>

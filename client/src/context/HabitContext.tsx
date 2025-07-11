@@ -38,11 +38,28 @@ export const HabitProvider = ({ children }: { children: ReactNode }) => {
       const fetchedHabits = await apiClient<FirestoreHabit[]>("/habits", { method: "GET" });
       console.log('HabitContext - Raw fetched data from /api/habits:', JSON.stringify(fetchedHabits)); // DETAILED LOG 1
 
-      if (!Array.isArray(fetchedHabits)) {
+      if (Array.isArray(fetchedHabits)) {
+        fetchedHabits.forEach((h, index) => {
+          if (!h || typeof h !== 'object') {
+            console.warn(`HabitContext: Fetched item at index ${index} is not an object or is null/undefined.`);
+            return; // Skip further checks for this item
+          }
+          // It's an object, check for habitId and title
+          if (!h.habitId) {
+            console.warn(`HabitContext: Fetched habit (index ${index}, title: "${h.title || 'N/A'}") is missing habitId. Object:`, JSON.stringify(h));
+          }
+          if (typeof h.title !== 'string') {
+            console.warn(`HabitContext: Fetched habit (index ${index}, habitId: "${h.habitId || 'N/A'}") has a non-string title (or title is missing). Object:`, JSON.stringify(h));
+          }
+        });
+      } else {
         console.error("HabitContext: Fetched habits response is not an array. Data:", fetchedHabits);
-        // Set habits to empty array and throw error or set error state
-        setHabits([]);
-        throw new Error("Invalid data format: Expected an array for habits.");
+        setHabits([]); // Clear habits if response is not an array
+        // Avoid throwing error here to let finally block execute, error is already logged
+        // Consider setting loadHabitsError state here if not already handled by catch
+        setLoadHabitsError(new Error("Invalid data format: Expected an array for habits."));
+        setIsLoadingHabits(false); // Ensure loading is stopped
+        return; // Exit early if data format is incorrect
       }
 
       const validHabits = fetchedHabits.filter(h =>
