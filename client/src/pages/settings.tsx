@@ -349,6 +349,6 @@ export default function Settings() {
           </Tabs>
         </div>
       </PageContainer>
-    </>
+    // </> // Removed extraneous closing fragment
   );
 }
