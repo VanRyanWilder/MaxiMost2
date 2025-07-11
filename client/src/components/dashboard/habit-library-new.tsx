@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Replaced by GlassCard
+import {
+  GlassCard,
+  GlassCardContent,
+  GlassCardHeader,
+  GlassCardTitle
+} from "@/components/glass/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -1114,70 +1120,71 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
   const visibleHabits = isExpanded ? allHabits : allHabits.slice(0, 9);
 
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold flex items-center">
-          <Library className="h-4 w-4 mr-2 text-blue-500" />
+    <GlassCard className="mb-4"> {/* Changed to GlassCard */}
+      <GlassCardHeader className="pb-2"> {/* Changed to GlassCardHeader */}
+        {/* GlassCardTitle handles text color */}
+        <GlassCardTitle className="text-lg flex items-center">
+          <Library className="h-4 w-4 mr-2 text-blue-400" /> {/* Adjusted icon color */}
           Habit Library
-        </CardTitle>
-        <p className="text-xs text-muted-foreground">
+        </GlassCardTitle>
+        {/* Use GlassCardDescription or ensure text color is light */}
+        <p className="text-xs text-gray-400">
           Add ready-made habits to your tracking system
         </p>
-      </CardHeader>
+      </GlassCardHeader>
       
-      <CardContent>
+      <GlassCardContent> {/* Changed to GlassCardContent */}
         <div className="w-full">
-          <h3 className="text-sm font-medium flex items-center mb-3">
-            <CheckSquare className="h-3.5 w-3.5 mr-1 text-blue-500" />
+          <h3 className="text-sm font-medium flex items-center mb-3 text-gray-200"> {/* Adjusted text color */}
+            <CheckSquare className="h-3.5 w-3.5 mr-1 text-blue-400" /> {/* Adjusted icon color */}
             Quick-Add Habits
           </h3>
           
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            {/* Show only visible habits based on expanded state */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4"> {/* Responsive grid */}
             {visibleHabits.map(habit => (
               <div 
                 key={habit.id}
-                className="p-2 rounded-md bg-gray-50 dark:bg-gray-800 shadow-sm flex flex-col items-center gap-1 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                // Styling for individual habit items for glass theme
+                className="p-3 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 shadow-md flex flex-col items-center gap-1 cursor-pointer transition-colors"
                 onClick={() => onAddHabit?.(habit)}
               >
                 <div className="flex-shrink-0 mb-1">
-                  {renderIcon(habit.icon, habit.iconColor)}
+                  {/* Ensure renderIcon provides good contrast or adjust icon colors in habitSuggestions */}
+                  {renderIcon(habit.icon, habit.iconColor || 'gray')}
                 </div>
                 <div className="w-full text-center">
-                  <p className="text-sm font-medium truncate text-foreground">
+                  <p className="text-sm font-medium truncate text-gray-100">
                     {habit.title}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{habit.description}</p>
+                  <p className="text-xs text-gray-400 truncate">{habit.description}</p>
                 </div>
-                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 mt-1">
-                  <Plus className="h-3 w-3" />
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0 mt-1 text-gray-300 hover:text-white hover:bg-white/10"> {/* Style Button */}
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             ))}
             
-            {/* Show expand/collapse button if we have more than the initial set */}
             {allHabits.length > 9 && (
               <div 
-                className="col-span-3 text-center mt-2 text-xs text-blue-600 cursor-pointer hover:text-blue-800"
+                className="col-span-1 sm:col-span-2 md:col-span-3 text-center mt-2 text-xs text-blue-400 hover:text-blue-300 cursor-pointer" /* Adjusted link color */
                 onClick={() => setIsExpanded(!isExpanded)}
               >
-                {isExpanded ? 'Show less habits' : 'Show more habits'} ({allHabits.length} total)
+                {isExpanded ? 'Show less habits' : `Show more habits (${allHabits.length - 9} more)`}
               </div>
             )}
           </div>
         
           {/* Habit Stacks Section */}
-          <div className="mt-6 border-t pt-4">
-            <h3 className="text-sm font-medium flex items-center mb-3">
-              <Zap className="h-3.5 w-3.5 mr-1 text-yellow-500" />
+          <div className="mt-6 border-t border-white/10 pt-4"> {/* Adjusted border color */}
+            <h3 className="text-sm font-medium flex items-center mb-3 text-gray-200"> {/* Adjusted text color */}
+              <Zap className="h-3.5 w-3.5 mr-1 text-yellow-400" /> {/* Adjusted icon color */}
               Habit Stacks
             </h3>
             
-            {/* 2x4 Grid Layout for Habit Stacks */}
-            
-            {/* New 2x4 Grid Layout for Habit Stacks */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4"> {/* Responsive grid */}
               {habitSuggestions.stacks.slice(0, 8).map(stack => (
+                // Assuming HabitStackCard will also be themed appropriately or its styles adjusted
+                // For now, the container for these cards is themed.
                 <HabitStackCard
                   key={stack.id}
                   stack={stack}
@@ -1187,7 +1194,7 @@ export function HabitLibrary({ onAddHabit }: HabitLibraryProps) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </GlassCardContent>
+    </GlassCard>
   );
 }
