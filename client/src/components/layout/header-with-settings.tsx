@@ -130,7 +130,7 @@ export function HeaderWithSettings({
         
         {/* Current date display */}
         {currentDay && (
-          <div className="text-sm text-gray-400 mt-1"> {/* Text color */}
+          <div className="text-sm text-gray-300 mt-1"> {/* Updated text color for better contrast */}
             {format(currentDay, 'EEEE, MMMM d, yyyy')}
           </div>
         )}

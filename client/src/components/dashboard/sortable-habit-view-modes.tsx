@@ -200,7 +200,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
                 >
                   <Filter className="h-4 w-4 mr-1" />
                   {filterCategory === 'all' ? 'All Categories' : 
@@ -245,7 +245,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(prev => prev - 1)}
-                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
               >
                 <ChevronLeft className="h-4 w-4 mr-1" /> Previous
               </Button>
@@ -253,7 +253,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(0)}
-                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
               >
                 Today
               </Button>
@@ -261,7 +261,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(prev => prev + 1)}
-                className="text-gray-300 border-white/30 hover:bg-white/10 hover:text-white" // Glass theme style
+                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
               >
                 Next <ChevronRight className="h-4 w-4 ml-1" />
               </Button>

@@ -58,7 +58,10 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate, onToggleHabit 
                 return (
                   <td
                     key={day.toISOString()}
-                    className="px-4 py-3 text-center cursor-pointer"
+                    className={cn(
+                      "px-4 py-3 text-center cursor-pointer transition-colors",
+                      isCompleted ? "bg-green-500/10 hover:bg-green-500/20" : "hover:bg-white/5"
+                    )}
                     onClick={() => {
                       if (onToggleHabit && habit.id && habit.type === "binary") { // Only toggle binary habits directly
                         onToggleHabit(habit.id, day);
@@ -77,7 +80,7 @@ const WeekView: React.FC<WeekViewProps> = ({ habits, currentDate, onToggleHabit 
                     }}
                   >
                     {isCompleted ? (
-                      <CheckSquare className="h-5 w-5 text-green-400 mx-auto" />
+                      <CheckSquare className="h-5 w-5 text-green-400 fill-green-500/30 mx-auto" /> // Added fill
                     ) : (
                       <Square className="h-5 w-5 text-gray-600 mx-auto opacity-70" />
                     )}

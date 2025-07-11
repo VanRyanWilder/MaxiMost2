@@ -127,17 +127,18 @@ export const iconMap: Record<string, IconMapItem> = {
 };
 
 // Predefined color schemes for habits
+// Added primaryBg for the actual color swatch
 export const colorSchemes = [
-  {id: "blue", primary: "text-blue-500", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200"},
-  {id: "green", primary: "text-green-500", bg: "bg-green-100", lightBg: "bg-green-50/50", border: "border-green-200"},
-  {id: "red", primary: "text-red-500", bg: "bg-red-100", lightBg: "bg-red-50/50", border: "border-red-200"},
-  {id: "amber", primary: "text-amber-500", bg: "bg-amber-100", lightBg: "bg-amber-50/50", border: "border-amber-200"},
-  {id: "purple", primary: "text-purple-500", bg: "bg-purple-100", lightBg: "bg-purple-50/50", border: "border-purple-200"},
-  {id: "indigo", primary: "text-indigo-500", bg: "bg-indigo-100", lightBg: "bg-indigo-50/50", border: "border-indigo-200"},
-  {id: "pink", primary: "text-pink-500", bg: "bg-pink-100", lightBg: "bg-pink-50/50", border: "border-pink-200"},
-  {id: "cyan", primary: "text-cyan-500", bg: "bg-cyan-100", lightBg: "bg-cyan-50/50", border: "border-cyan-200"},
-  {id: "teal", primary: "text-teal-500", bg: "bg-teal-100", lightBg: "bg-teal-50/50", border: "border-teal-200"},
-  {id: "orange", primary: "text-orange-500", bg: "bg-orange-100", lightBg: "bg-orange-50/50", border: "border-orange-200"},
+  {id: "blue", primary: "text-blue-500", primaryBg: "bg-blue-500", bg: "bg-blue-100", lightBg: "bg-blue-50/50", border: "border-blue-200"},
+  {id: "green", primary: "text-green-500", primaryBg: "bg-green-500", bg: "bg-green-100", lightBg: "bg-green-50/50", border: "border-green-200"},
+  {id: "red", primary: "text-red-500", primaryBg: "bg-red-500", bg: "bg-red-100", lightBg: "bg-red-50/50", border: "border-red-200"},
+  {id: "amber", primary: "text-amber-500", primaryBg: "bg-amber-500", bg: "bg-amber-100", lightBg: "bg-amber-50/50", border: "border-amber-200"},
+  {id: "purple", primary: "text-purple-500", primaryBg: "bg-purple-500", bg: "bg-purple-100", lightBg: "bg-purple-50/50", border: "border-purple-200"},
+  {id: "indigo", primary: "text-indigo-500", primaryBg: "bg-indigo-500", bg: "bg-indigo-100", lightBg: "bg-indigo-50/50", border: "border-indigo-200"},
+  {id: "pink", primary: "text-pink-500", primaryBg: "bg-pink-500", bg: "bg-pink-100", lightBg: "bg-pink-50/50", border: "border-pink-200"},
+  {id: "cyan", primary: "text-cyan-500", primaryBg: "bg-cyan-500", bg: "bg-cyan-100", lightBg: "bg-cyan-50/50", border: "border-cyan-200"},
+  {id: "teal", primary: "text-teal-500", primaryBg: "bg-teal-500", bg: "bg-teal-100", lightBg: "bg-teal-50/50", border: "border-teal-200"},
+  {id: "orange", primary: "text-orange-500", primaryBg: "bg-orange-500", bg: "bg-orange-100", lightBg: "bg-orange-50/50", border: "border-orange-200"},
 ];
 
 // Default habit template for creating new habits
@@ -535,15 +536,16 @@ export function EditHabitDialog({
                       key={scheme.id}
                       type="button"
                       className={cn(
-                        `w-10 h-10 rounded-md flex items-center justify-center transition-all`,
-                        scheme.bg?.replace('bg-', 'bg-opacity-20 ') || 'bg-gray-500/20', // Lighter bg for glass
+                        `w-10 h-10 rounded-lg flex items-center justify-center transition-all`, // Changed to rounded-lg for consistency
+                        "bg-white/5 hover:bg-white/10", // Subtle background for the button itself
                         editedHabit.iconColor === scheme.id
-                          ? "ring-2 ring-offset-1 ring-blue-400 ring-offset-black/30" // Adjusted ring for glass
+                          ? "ring-2 ring-offset-1 ring-blue-400 ring-offset-black/30"
                           : "hover:ring-1 hover:ring-offset-1 hover:ring-blue-400 ring-offset-black/30"
                       )}
                       onClick={() => handleColorChange(scheme.id)}
                     >
-                      <div className={cn(`w-6 h-6 rounded-full opacity-80`, scheme.primary)} />
+                      {/* Use primaryBg for the actual color swatch */}
+                      <div className={cn(`w-6 h-6 rounded-full`, scheme.primaryBg || 'bg-gray-500')} />
                     </button>
                   ))}
                 </div>
