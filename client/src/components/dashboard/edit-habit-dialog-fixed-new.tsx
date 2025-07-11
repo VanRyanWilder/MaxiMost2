@@ -211,6 +211,7 @@ export function EditHabitDialog({
           id: `h-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
         };
         setEditedHabit(newHabit);
+        setIsDetailsExpanded(false); // Explicitly set to false for new habits
         isCreatingNewHabit.current = true;
       }
     }

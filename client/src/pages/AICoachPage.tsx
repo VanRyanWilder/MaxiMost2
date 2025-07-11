@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Send } from 'lucide-react';
+import { Send, AlertCircle } from 'lucide-react'; // Added AlertCircle
 import { useCoach, CoachPersonaId } from '@/context/CoachContext';
-import { coachPersonaData, CoachPersonaDetails } from '@/data/coachPersonaData'; // Use CoachPersonaDetails
+import { coachPersonaData, CoachPersona } from '@/data/coachPersonaData'; // Use CoachPersona type
 import ChatMessage from '@/components/ai/ChatMessage';
 
 // This local 'coachSelectorButtons' array is for the selector UI
@@ -22,8 +22,15 @@ interface Message {
 
 const AICoachPage: React.FC = () => {
   const { selectedCoachId, setSelectedCoachId } = useCoach();
-  // Ensure currentCoach uses CoachPersonaDetails type
-  const currentCoach: CoachPersonaDetails = coachPersonaData[selectedCoachId as keyof typeof coachPersonaData] || coachPersonaData.stoic;
+
+  // Correctly find the current coach and provide a default
+  const currentCoachOrDefault = coachPersonaData.find(coach => coach.id === selectedCoachId) || coachPersonaData.find(coach => coach.id === 'stoic');
+  // Ensure currentCoach is not undefined before proceeding. Fallback to a default stub if necessary.
+  const currentCoach: CoachPersona = currentCoachOrDefault || {
+    id: 'fallback', name: 'Default Coach', title: 'Default Coach', description: 'A helpful assistant.',
+    iconName: 'user', iconColor: 'text-gray-500', sampleQuote: '', cannedResponses: ["Hello! How can I help?"],
+    imageUrl: '', glowColor: '#FFFFFF', glowColorRgb: '255,255,255'
+  };
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
@@ -37,12 +44,15 @@ const AICoachPage: React.FC = () => {
   // Initial greeting from the coach when selected or when component mounts with a default coach
   useEffect(() => {
     setMessages([]); // Clear previous messages when coach changes
-    const greeting = currentCoach.cannedResponses[0] || "How can I assist you today?";
-    // Add initial greeting with a slight delay to ensure UI is ready
+    // Defensive check for currentCoach and cannedResponses
+    const greeting = (currentCoach && currentCoach.cannedResponses && currentCoach.cannedResponses.length > 0)
+      ? currentCoach.cannedResponses[0]
+      : "How can I assist you today?";
+
     setTimeout(() => {
         setMessages([{ id: `ai-greeting-${Date.now()}`, text: greeting, sender: 'ai', timestamp: new Date().toLocaleTimeString() }]);
     }, 100);
-  }, [selectedCoachId, currentCoach]); // Depend on currentCoach directly as well
+  }, [selectedCoachId, currentCoach]);
 
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -56,24 +66,38 @@ const AICoachPage: React.FC = () => {
       timestamp: new Date().toLocaleTimeString(),
     };
     setMessages(prev => [...prev, userMessage]);
-    const messageToSend = currentMessage; // Capture current message before clearing
+    const messageToSend = currentMessage;
     setCurrentMessage('');
 
-    // Simulate AI response
     setTimeout(() => {
-      const cannedResponses = currentCoach.cannedResponses;
-      // Simple logic: if user message is short, pick first response, else random.
-      const aiResponseText = messageToSend.length < 10 && cannedResponses.length > 1 ? cannedResponses[1] : cannedResponses[Math.floor(Math.random() * cannedResponses.length)];
+      let aiResponseText = "I'm listening. Tell me more."; // Default fallback
+      if (currentCoach && currentCoach.cannedResponses && currentCoach.cannedResponses.length > 0) {
+        const cannedResponses = currentCoach.cannedResponses;
+        aiResponseText = messageToSend.length < 10 && cannedResponses.length > 1
+          ? cannedResponses[1]
+          : cannedResponses[Math.floor(Math.random() * cannedResponses.length)];
+      }
 
       const aiMessage: Message = {
         id: `ai-${Date.now()}`,
-        text: aiResponseText || "I'm listening. Tell me more.", // Fallback response
+        text: aiResponseText,
         sender: 'ai',
         timestamp: new Date().toLocaleTimeString(),
       };
       setMessages(prev => [...prev, aiMessage]);
-    }, 1000 + Math.random() * 500); // Simulate a slightly shorter delay
+    }, 1000 + Math.random() * 500);
   };
+
+  // Fallback UI if currentCoach is somehow still not resolved (should not happen with the stub)
+  if (!currentCoach || !currentCoach.id) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center bg-neutral-900 text-neutral-100 p-4">
+        <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Coach Data Error</h2>
+        <p className="text-neutral-400 text-center">There was an issue loading coach information. Please try again later or select a different coach.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full bg-neutral-900 text-neutral-100">
@@ -84,8 +108,8 @@ const AICoachPage: React.FC = () => {
               <img src={currentCoach.imageUrl} alt={currentCoach.name} className="w-10 h-10 rounded-full border-2" style={{borderColor: currentCoach.glowColor || '#FFFFFF'}} />
             )}
             <div>
-              <h1 className="text-xl font-semibold text-neutral-100">{currentCoach.name}</h1>
-              <p className="text-xs text-neutral-400">{currentCoach.description}</p>
+              <h1 className="text-xl font-semibold text-neutral-100">{currentCoach.name || "AI Coach"}</h1>
+              <p className="text-xs text-neutral-400">{currentCoach.description || "Your personal AI assistant."}</p>
             </div>
           </div>
         </div>

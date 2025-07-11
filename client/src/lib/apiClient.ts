@@ -71,9 +71,16 @@ export async function apiClient<T>(
     headers["Authorization"] = `Bearer ${idToken}`;
   }
 
+  // Add cache-busting headers for GET requests
+  if (method === "GET") {
+    headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    headers["Pragma"] = "no-cache";
+    headers["Expires"] = "0";
+  }
+
   const config: RequestInit = {
     method,
-    headers,
+    headers, // headers object now includes cache-control for GET
     ...restOptions,
   };
 
@@ -81,7 +88,10 @@ export async function apiClient<T>(
   if (body && method !== "GET" && method !== "HEAD") {
     if (typeof body === "object" && !(body instanceof FormData)) {
       config.body = JSON.stringify(body);
-      headers["Content-Type"] = "application/json";
+      // Ensure Content-Type is not duplicated if already in customHeaders
+      if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+      }
     } else {
       config.body = body; // For FormData or other types
     }
