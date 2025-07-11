@@ -1,6 +1,7 @@
 import React from 'react';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, parseISO } from 'date-fns'; // Added parseISO
 import { toast } from "@/hooks/use-toast"; // Import toast
+import { cn } from "@/lib/utils"; // Import cn utility
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckSquare, Square } from 'lucide-react'; // For completion status
 import { FirestoreHabit } from '../../../../shared/types/firestore'; // Adjust path as needed
