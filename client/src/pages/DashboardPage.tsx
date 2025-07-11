@@ -41,6 +41,16 @@ export default function SortableDashboard() {
     fetchHabits: refreshHabitsList
   } = useHabits();
 
+  // DIAGNOSTIC LOG: Log context values whenever they change
+  useEffect(() => {
+    console.log('DashboardPage - Context Values Update:', {
+      habitsCount: habits.length,
+      habitsTitles: habits.map(h => h.title), // Log only titles to keep it concise
+      isLoadingHabits,
+      loadHabitsError: loadHabitsError ? loadHabitsError.message : null,
+    });
+  }, [habits, isLoadingHabits, loadHabitsError]);
+
   const [isSubmittingHabit, setIsSubmittingHabit] = useState<boolean>(false);
   const [submitHabitError, setSubmitHabitError] = useState<string | null>(null);
   const [editHabitDialogOpen, setEditHabitDialogOpen] = useState(false);
@@ -49,7 +59,6 @@ export default function SortableDashboard() {
   const [showPerfectWeekConfetti, setShowPerfectWeekConfetti] = useState(false);
   const [currentDashboardView, setCurrentDashboardView] = useState<'day' | 'week' | 'month'>('day');
   const [currentDisplayMonth, setCurrentDisplayMonth] = useState(new Date());
-  const [listRenderKey, setListRenderKey] = useState(0); // For forcing re-mount of habit list
 
   const { user, userLoading } = useUser(); // userLoading from UserContext is for auth state, not habit data loading
 
@@ -111,7 +120,6 @@ export default function SortableDashboard() {
       await apiClient(`/habits/${habit.habitId}/complete`, { method: "POST", body: { value: completionApiValue, date: format(dateObj, "yyyy-MM-dd") }});
       toast({ title: "Success", description: `"${habit.title}" completion logged.` });
       await refreshHabitsList(false); // Use context's fetch function
-      setListRenderKey(prevKey => prevKey + 1); // Re-add to maintain forced re-mount strategy with context
     } catch (error: any) {
       console.error(`Failed to log completion for habit "${habit.title}":`, error);
       toast({ title: "Error", description: `Failed to log completion: ${error.message}`, variant: "destructive" });
@@ -143,7 +151,6 @@ export default function SortableDashboard() {
       console.log('Habit submitted to API with title:', habitData.title); // DIAGNOSTIC LOG
 
       await refreshHabitsList(false); // Use context's fetch function
-      setListRenderKey(prevKey => prevKey + 1); // Re-add to maintain forced re-mount strategy with context
 
       toast({ title: "Success!", description: `Habit "${habitData.title}" creation submitted.` });
       setEditHabitDialogOpen(false);
@@ -167,7 +174,6 @@ export default function SortableDashboard() {
       await apiClient<FirestoreHabit>(`/habits/${habitId}`, { method: "PUT", body: payload });
       // setHabits(prevHabits => prevHabits.map(h => (h.habitId === savedHabit.habitId ? savedHabit : h)));
       await refreshHabitsList(false); // Re-fetch after edit
-      setListRenderKey(prevKey => prevKey + 1); // Re-add to maintain forced re-mount strategy with context
       toast({ title: "Success!", description: `Habit "${editableFields.title}" updated.` }); // Use title from payload
       setEditHabitDialogOpen(false);
     } catch (error: any) {
@@ -186,7 +192,6 @@ export default function SortableDashboard() {
     try {
       await apiClient(`/habits/${habitId}`, { method: "DELETE" });
       await refreshHabitsList(false); // Re-fetch after delete
-      setListRenderKey(prevKey => prevKey + 1); // Re-add to maintain forced re-mount strategy with context
       toast({ title: "Success", description: `Habit "${habitTitle}" archived.` });
       // setHabits(prevHabits => prevHabits.filter(h => h.habitId !== habitId)); // State update handled by context
       if (selectedHabit && selectedHabit.habitId === habitId) {
@@ -256,8 +261,17 @@ export default function SortableDashboard() {
   };
 
   let habitContent;
+  // DIAGNOSTIC LOG: Log values just before determining habitContent
+  console.log('DashboardPage - Render Check:', {
+    habitsLength: habits.length,
+    isLoadingHabits,
+    userLoadingAuth: userLoading, // Renamed for clarity vs isLoadingHabits
+    isUserPresent: !!user,
+    loadHabitsError: loadHabitsError ? loadHabitsError.message : null,
+  });
+
   if (isLoadingHabits) { habitContent = (<div className="flex justify-center items-center py-10"><Loader2 className="h-8 w-8 animate-spin text-primary" /><p className="ml-2">Loading habits...</p></div>); }
-  else if (loadHabitsError) { habitContent = (<div className="flex flex-col items-center justify-center py-10 text-destructive"><AlertCircle className="h-8 w-8 mb-2" /><p className="font-semibold">Error loading habits</p><p className="text-sm">{loadHabitsError}</p></div>); }
+  else if (loadHabitsError) { habitContent = (<div className="flex flex-col items-center justify-center py-10 text-destructive"><AlertCircle className="h-8 w-8 mb-2" /><p className="font-semibold">Error loading habits</p><p className="text-sm">{loadHabitsError.message}</p></div>); } // Use loadHabitsError.message
   else if (habits.length === 0 && !userLoading && user) { habitContent = (<div className="text-center py-8 text-muted-foreground"><p>No habits added yet. Start building your optimal life!</p><Button onClick={handleCreateHabitClick} variant="outline" size="sm" className="mt-2"><Plus className="h-4 w-4 mr-1" />Add Your First Habit</Button></div>); }
   else if (!user && !userLoading) { habitContent = (<div className="text-center py-8 text-muted-foreground"><p>Please log in to manage and view your habits.</p></div>); }
   else {
@@ -268,22 +282,18 @@ export default function SortableDashboard() {
 
       habitContent = (
         <SortableHabitViewModes
-          key={`day-view-${listRenderKey}`} // Apply key
           habits={validHabitsForView}
           onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
           onEditHabit={handleEditHabitClick}
           onDeleteHabit={deleteHabit}
-          // onReorderHabits={(newOrderedHabits) => setHabits(newOrderedHabits.map(h => ({...h, habitId: h.id})))} // Commented out, DND needs context/backend integration
           onReorderHabits={(newOrderedHabits) => {
             console.warn("DND reorder visual update only, not persisted via context/backend yet.");
-            // To visually update, would need a local version or a way to set context state that doesn't auto-refetch.
-            // For now, this will do nothing to the context's `habits` state.
           }}
         />);
     } else if (currentDashboardView === 'week') {
-      habitContent = <WeekView key={`week-view-${listRenderKey}`} habits={habits} currentDate={currentDate} />;
+      habitContent = <WeekView habits={habits} currentDate={currentDate} />;
     } else if (currentDashboardView === 'month') {
-      habitContent = <MonthView key={`month-view-${listRenderKey}`} habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
+      habitContent = <MonthView habits={habits} currentDisplayMonth={currentDisplayMonth} setCurrentDisplayMonth={setCurrentDisplayMonth} />;
     }
   }
 
