@@ -361,8 +361,8 @@ export default function SortableDashboard() {
                       size="sm"
                       className={
                         currentDashboardView === view
-                        ? "capitalize bg-white/20 hover:bg-white/30 text-white border-white/30" // Active glass style
-                        : "capitalize text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Inactive: darker border, lighter on hover
+                        ? "capitalize bg-blue-600 hover:bg-blue-500 text-white border border-blue-500" // Prominent active blue style
+                        : "capitalize text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Inactive style
                       }
                     >
                       {view}

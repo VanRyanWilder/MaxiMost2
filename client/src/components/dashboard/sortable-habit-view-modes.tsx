@@ -227,7 +227,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
               onClick={handleCreateHabit}
               variant="default"
               size="sm"
-              className="bg-blue-500/80 hover:bg-blue-500 text-white" // Glass theme friendly primary button
+              className="bg-blue-600 hover:bg-blue-500 text-white" // Unified vibrant blue style
             >
               <Plus className="h-4 w-4 mr-1" /> Add Habit
             </Button>
@@ -245,7 +245,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(prev => prev - 1)}
-                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
+                  className="text-gray-200 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Brighter text
               >
                 <ChevronLeft className="h-4 w-4 mr-1" /> Previous
               </Button>
@@ -253,7 +253,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(0)}
-                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
+                  className="text-gray-200 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Brighter text
               >
                 Today
               </Button>
@@ -261,7 +261,7 @@ export const SortableHabitViewModes: React.FC<SortableHabitViewProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={() => setDayOffset(prev => prev + 1)}
-                  className="text-gray-300 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Consistent inactive style
+                  className="text-gray-200 border-gray-600/70 hover:bg-white/10 hover:text-white hover:border-white/20" // Brighter text
               >
                 Next <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
