@@ -129,3 +129,76 @@ export function calculateStreakProgress(
     progress
   };
 }
+
+// --- New function for daily habit streaks based on CompletionEntry[] ---
+import { CompletionEntry } from '@/types/habit'; // Ensure this path is correct
+import { subDays } from 'date-fns'; // Added missing import for subDays
+
+/**
+ * Calculates the current streak for a specific daily habit.
+ * A streak is defined as consecutive days of completion ending on the given 'currentReferenceDay' or the day before it.
+ *
+ * @param completions Array of completion entries for the habit.
+ * @param currentReferenceDay The date to calculate the streak relative to (e.g., 'today' from the view).
+ * @returns The current streak count.
+ */
+export function calculateDailyHabitStreak(
+  completions: CompletionEntry[] | undefined,
+  currentReferenceDay: Date
+): number {
+  if (!completions || completions.length === 0) {
+    return 0;
+  }
+
+  const today = startOfDay(currentReferenceDay); // Use the reference day
+
+  // Filter for valid completions (value > 0) and parse dates
+  const validCompletionDates = completions
+    .filter(c => c.value > 0 && c.date)
+    .map(c => startOfDay(parseISO(c.date))) // Normalize to start of day for reliable comparison
+    .sort((a, b) => b.getTime() - a.getTime()); // Sort descending by date
+
+  if (validCompletionDates.length === 0) {
+    return 0;
+  }
+
+  let streak = 0;
+  let expectedDate = today;
+
+  // Check if today is completed
+  const todayCompleted = validCompletionDates.some(d => isSameDay(d, today));
+
+  // Check if yesterday is completed
+  const yesterday = subDays(today, 1);
+  const yesterdayCompleted = validCompletionDates.some(d => isSameDay(d, yesterday));
+
+  if (todayCompleted) {
+    // Streak includes today
+    expectedDate = today;
+  } else if (yesterdayCompleted) {
+    // Streak ends on yesterday
+    expectedDate = yesterday;
+  } else {
+    // Neither today nor yesterday is completed, so no current streak.
+    return 0;
+  }
+
+  // Iterate backwards from the most recent valid completion day (expectedDate)
+  for (const completionDate of validCompletionDates) {
+    if (isSameDay(completionDate, expectedDate)) {
+      streak++;
+      expectedDate = subDays(expectedDate, 1); // Move to the previous day to check
+    } else if (completionDate < expectedDate) {
+      // If we find a completion date that is earlier than the current day we are checking in the streak,
+      // AND it's not the expectedDate, it means there was a gap.
+      // This condition might be tricky if completions are not perfectly sequential in the sorted list
+      // after the initial expectedDate is found.
+      // The primary check is `isSameDay(completionDate, expectedDate)`. If it's not, and it's earlier, the streak is broken.
+      break;
+    }
+    // If completionDate is later than expectedDate, it means we jumped too far back in sorted list,
+    // which shouldn't happen if we correctly set initial expectedDate.
+  }
+
+  return streak;
+}

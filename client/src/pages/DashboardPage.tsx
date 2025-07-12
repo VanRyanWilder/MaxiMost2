@@ -44,7 +44,8 @@ export default function SortableDashboard() {
     habits,
     isLoadingHabits,
     loadHabitsError,
-    fetchHabits: refreshHabitsList
+    fetchHabits: refreshHabitsList,
+    setHabitsDirectly // Get the new setter from context
   } = useHabits();
 
   // Removed DIAGNOSTIC LOG for context values update from DashboardPage
@@ -92,7 +93,12 @@ export default function SortableDashboard() {
   };
 
   const toggleCompletion = async (habitId: string, date: Date | string, quantValue?: number) => {
-     if (!user) { toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" }); return; }
+    console.log("[DashboardPage] toggleCompletion called for habitId:", habitId, "Date:", date, "Value:", quantValue); // Diagnostic log
+     if (!user) {
+       toast({ title: "Authentication Error", description: "You must be logged in.", variant: "destructive" });
+       console.error("[DashboardPage] User not authenticated for toggleCompletion."); // Diagnostic log
+       return;
+     }
     // Assuming habitId parameter is the correct 'id' from the backend
     const habit = habits.find(h => h.id === habitId); // Changed h.habitId to h.id
     if (!habit) { toast({ title: "Error", description: "Habit not found.", variant: "destructive" }); return; }
@@ -297,8 +303,10 @@ export default function SortableDashboard() {
           onToggleHabit={toggleCompletion} onAddHabit={handleCreateHabitClick}
           onEditHabit={handleEditHabitClick}
           onDeleteHabit={deleteHabit}
-          onReorderHabits={(newOrderedHabits) => {
-            console.warn("DND reorder visual update only, not persisted via context/backend yet.");
+          onReorderHabits={(newOrderedHabits: FirestoreHabit[]) => {
+            console.log("[DashboardPage] onReorderHabits called with new order. Updating context.");
+            setHabitsDirectly(newOrderedHabits);
+            // TODO: Future enhancement - API call to persist this order to backend.
           }}
         />);
     } else if (currentDashboardView === 'week') {

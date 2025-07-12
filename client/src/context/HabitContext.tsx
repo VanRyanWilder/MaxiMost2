@@ -9,8 +9,7 @@ interface HabitContextType {
   isLoadingHabits: boolean;
   loadHabitsError: Error | null;
   fetchHabits: (showLoadingIndicator?: boolean) => Promise<void>;
-  // addHabit, editHabit, deleteHabit could also be here if we want full CRUD in context
-  // For now, focusing on fetch/re-fetch as per FIX-27
+  setHabitsDirectly: (newHabits: FirestoreHabit[]) => void; // For direct state manipulation like reordering
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -103,8 +102,13 @@ export const HabitProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user, fetchHabits]); // fetchHabits is stable due to its own useCallback wrapping
 
+  // Function to allow direct setting of habits, e.g., for reordering
+  const setHabitsDirectly = (newHabits: FirestoreHabit[]) => {
+    setHabits(newHabits);
+  };
+
   return (
-    <HabitContext.Provider value={{ habits, isLoadingHabits, loadHabitsError, fetchHabits }}>
+    <HabitContext.Provider value={{ habits, isLoadingHabits, loadHabitsError, fetchHabits, setHabitsDirectly }}>
       {children}
     </HabitContext.Provider>
   );

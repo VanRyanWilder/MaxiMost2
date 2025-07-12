@@ -25,6 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { TableSortableItem } from './table-sortable-item';
 import { ConfettiCelebration } from "@/components/ui/confetti-celebration";
+import { calculateDailyHabitStreak } from "@/lib/streak-utils"; // Import streak calculation utility
 
 interface DailyViewProps {
   habits: Habit[]; // Each Habit object should contain its own 'completions: HabitCompletionEntry[]'
@@ -50,7 +51,8 @@ export function DailyViewFixedUpdated({
   filterCategory
 }: DailyViewProps) {
   const today = currentDay;
-  const [showConfetti, setShowConfetti] = useState(false);
+  const [showPerfectDayConfetti, setShowPerfectDayConfetti] = useState(false); // Renamed for clarity
+  const [justCompletedHabitId, setJustCompletedHabitId] = useState<string | null>(null); // For single habit completion confetti
   const [logModalOpen, setLogModalOpen] = useState(false);
   const [loggingHabitInfo, setLoggingHabitInfo] = useState<{habit: Habit, date: Date} | null>(null);
   
@@ -90,11 +92,12 @@ export function DailyViewFixedUpdated({
     );
     
     if (allCompleted) {
-      setShowConfetti(true);
-      const timer = setTimeout(() => setShowConfetti(false), 3000);
-      return () => clearTimeout(timer);
+      setShowPerfectDayConfetti(true); // Use renamed state
+      // onComplete for perfectDay will be handled by the component itself
+    } else {
+      setShowPerfectDayConfetti(false); // Ensure it's off if not all completed
     }
-  }, [habits, filterCategory, today]); // Removed completions from dependency array
+  }, [habits, filterCategory, today, isHabitCompletedOnDate]);
   
   // Get target days from frequency
   const getTargetDays = (habit: Habit): number => {
@@ -246,9 +249,15 @@ export function DailyViewFixedUpdated({
     <div className="space-y-4">
       {/* Confetti celebration when all absolute habits are completed */}
       <ConfettiCelebration 
-        trigger={showConfetti} 
+        trigger={showPerfectDayConfetti}
         type="perfectDay"
-        onComplete={() => setShowConfetti(false)}
+        onComplete={() => setShowPerfectDayConfetti(false)} // Use renamed state setter
+      />
+      {/* Confetti for single habit completion */}
+      <ConfettiCelebration
+        trigger={!!justCompletedHabitId}
+        type="habitCompleted"
+        onComplete={() => setJustCompletedHabitId(null)}
       />
       {/* No habits state */}
       {filteredHabits.length === 0 && (
@@ -305,10 +314,12 @@ export function DailyViewFixedUpdated({
                           {/* Text colors updated for light theme on dark background */}
                           <div className={`font-medium flex items-center text-gray-100 truncate ${isHabitCompletedOnDate(habit.id, today) ? 'text-gray-400' : 'text-gray-100'}`}>
                             <span className={`truncate ${isHabitCompletedOnDate(habit.id, today) ? 'line-through' : ''}`}>{habit.title}</span> {/* Title truncation & strike-through */}
-                            {typeof habit.streak === "number" && habit.streak > 0 && (
+                            {(habit.frequency === 'daily' ? calculateDailyHabitStreak(habit.completions, today) : habit.streak ?? 0) > 0 && (
                               <Badge variant="outline" className={`text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
                                 <Star className={`h-2.5 w-2.5 mr-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-amber-600 fill-amber-600' : 'text-amber-400 fill-amber-400'}`} />
-                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>{habit.streak}</span>
+                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>
+                                  {habit.frequency === 'daily' ? calculateDailyHabitStreak(habit.completions, today) : habit.streak}
+                                </span>
                               </Badge>
                             )}
                           </div>
@@ -332,8 +343,12 @@ export function DailyViewFixedUpdated({
                             if (habit.type === 'quantitative') {
                               setLoggingHabitInfo({ habit, date: today });
                               setLogModalOpen(true);
-                            } else {
+                            } else { // Binary habit
+                              const wasCompleted = isHabitCompletedOnDate(habit.id, today);
                               onToggleHabit(habit.id, today);
+                              if (!wasCompleted) { // If it's being marked as newly complete
+                                setJustCompletedHabitId(habit.id);
+                              }
                             }
                           }}
                           className={`min-w-[100px] ${
@@ -422,10 +437,12 @@ export function DailyViewFixedUpdated({
                               }
                               return null;
                             })()}
-                            {typeof habit.streak === "number" && habit.streak > 0 && (
+                            {(habit.frequency === 'daily' ? calculateDailyHabitStreak(habit.completions, today) : habit.streak ?? 0) > 0 && (
                               <Badge variant="outline" className={`text-[10px] font-medium px-1 py-0 h-4 ml-2 border-amber-500/50 bg-amber-500/10 flex-shrink-0 ${isHabitCompletedOnDate(habit.id, today) ? 'opacity-70' : ''}`}>
                                 <Star className={`h-2.5 w-2.5 mr-0.5 ${isHabitCompletedOnDate(habit.id, today) ? 'text-amber-600 fill-amber-600' : 'text-amber-400 fill-amber-400'}`} />
-                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>{habit.streak}</span>
+                                <span className={isHabitCompletedOnDate(habit.id, today) ? 'text-amber-500' : 'text-amber-300'}>
+                                  {habit.frequency === 'daily' ? calculateDailyHabitStreak(habit.completions, today) : habit.streak}
+                                </span>
                               </Badge>
                             )}
                           </div>
@@ -449,8 +466,12 @@ export function DailyViewFixedUpdated({
                             if (habit.type === 'quantitative') {
                               setLoggingHabitInfo({ habit, date: today });
                               setLogModalOpen(true);
-                            } else {
+                            } else { // Binary habit
+                              const wasCompleted = isHabitCompletedOnDate(habit.id, today);
                               onToggleHabit(habit.id, today);
+                              if (!wasCompleted) { // If it's being marked as newly complete
+                                setJustCompletedHabitId(habit.id);
+                              }
                             }
                           }}
                           className={`min-w-[100px] ${

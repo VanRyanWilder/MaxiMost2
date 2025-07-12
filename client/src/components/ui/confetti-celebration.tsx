@@ -5,7 +5,7 @@ import confetti from 'canvas-confetti';
 interface ConfettiCelebrationProps {
   trigger: boolean;
   onComplete?: () => void;
-  type?: 'default' | 'perfectWeek' | 'perfectDay';
+  type?: 'default' | 'perfectWeek' | 'perfectDay' | 'habitCompleted'; // Added 'habitCompleted' type
 }
 
 export const ConfettiCelebration = ({ 
@@ -47,6 +47,11 @@ export const ConfettiCelebration = ({
           hasPlayedRef.current = false;
           if (onComplete) onComplete();
         });
+      } else if (type === 'habitCompleted') { // Handle new type
+        shootHabitCompletedConfetti(myConfetti).then(() => {
+          hasPlayedRef.current = false;
+          if (onComplete) onComplete();
+        });
       } else {
         // Default celebration
         shootDefaultConfetti(myConfetti).then(() => {
@@ -76,6 +81,24 @@ async function shootDefaultConfetti(myConfetti: any) {
     });
 
     setTimeout(resolve, 1000);
+  });
+}
+
+// Function for single habit completion confetti
+async function shootHabitCompletedConfetti(myConfetti: any) {
+  return new Promise<void>(resolve => {
+    // A smaller, quicker burst for single habit completion
+    myConfetti({
+      particleCount: 50, // Fewer particles
+      spread: 60,
+      origin: { y: 0.7 }, // Slightly lower origin
+      colors: ['#3b82f6', '#60a5fa', '#fbbf24', '#f59e0b'], // Mix of blue and gold, or theme colors
+      ticks: 150, // Shorter duration
+      gravity: 0.9,
+      scalar: 0.8, // Smaller particles
+    });
+
+    setTimeout(resolve, 800); // Shorter overall animation time before onComplete
   });
 }
 
